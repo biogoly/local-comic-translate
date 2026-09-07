@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import imkit as imk
 import numpy as np
 from typing import TYPE_CHECKING, List
@@ -9,7 +10,7 @@ from PySide6 import QtCore, QtWidgets, QtGui
 from app.ui.dayu_widgets.message import MMessage
 from app.ui.messages import Messages
 from app.ui.commands.image import SetImageCommand, ToggleSkipImagesCommand
-from app.ui.commands.inpaint import PatchInsertCommand
+from app.ui.commands.inpaint import PatchClearCommand, PatchInsertCommand
 from app.ui.commands.inpaint import PatchCommandBase
 from app.ui.commands.box import AddTextItemCommand
 from app.ui.list_view_image_loader import ListViewImageLoader
@@ -23,6 +24,60 @@ if TYPE_CHECKING:
     from controller import ComicTranslate
 
 
+IMAGE_SORT_NAME_ASC = "name_asc"
+IMAGE_SORT_NAME_DESC = "name_desc"
+IMAGE_SORT_MODIFIED_ASC = "modified_asc"
+IMAGE_SORT_MODIFIED_DESC = "modified_desc"
+IMAGE_SORT_MODES = {
+    IMAGE_SORT_NAME_ASC,
+    IMAGE_SORT_NAME_DESC,
+    IMAGE_SORT_MODIFIED_ASC,
+    IMAGE_SORT_MODIFIED_DESC,
+}
+
+
+def _natural_path_key(file_path: str) -> tuple:
+    """Return a case-insensitive filename key with numeric chunks as integers."""
+    filename = os.path.basename(os.path.normpath(file_path))
+    chunks = tuple(
+        (0, int(chunk)) if chunk.isdigit() else (1, chunk.casefold())
+        for chunk in re.split(r"(\d+)", filename)
+        if chunk
+    )
+    return chunks, filename.casefold(), os.path.normcase(file_path)
+
+
+def sort_image_paths(file_paths: list[str], mode: str) -> list[str]:
+    """Return a reordered copy of image paths for a supported page-sort mode."""
+    if mode not in IMAGE_SORT_MODES:
+        raise ValueError(f"Unsupported image sort mode: {mode}")
+
+    paths = list(file_paths)
+    if mode in {IMAGE_SORT_NAME_ASC, IMAGE_SORT_NAME_DESC}:
+        return sorted(
+            paths,
+            key=_natural_path_key,
+            reverse=mode == IMAGE_SORT_NAME_DESC,
+        )
+
+    existing_paths: list[tuple[str, float]] = []
+    missing_paths: list[str] = []
+    for file_path in paths:
+        try:
+            existing_paths.append((file_path, float(os.path.getmtime(file_path))))
+        except (OSError, TypeError, ValueError):
+            missing_paths.append(file_path)
+
+    newest_first = mode == IMAGE_SORT_MODIFIED_DESC
+    existing_paths.sort(
+        key=lambda item: (item[1], _natural_path_key(item[0])),
+        reverse=newest_first,
+    )
+    # Missing/unavailable files remain usable and are grouped predictably last.
+    missing_paths.sort(key=_natural_path_key)
+    return [file_path for file_path, _mtime in existing_paths] + missing_paths
+
+
 class ImageStateController:
     def __init__(self, main: ComicTranslate):
         self.main = main
@@ -34,6 +89,7 @@ class ImageStateController:
         self._suppress_dismiss_message_ids: set[int] = set()
         self._active_transient_skip_message: MMessage | None = None
         self._force_default_view_once = False
+        self._batch_edit_macro_paths: set[str] = set()
         
         # Initialize lazy image loader for list view
         self.page_list_loader = ListViewImageLoader(
@@ -661,6 +717,16 @@ class ImageStateController:
 
         self.main.mark_project_dirty()
 
+    def sort_images(self, mode: str):
+        if len(self.main.image_files) < 2:
+            return
+
+        try:
+            new_order = sort_image_paths(self.main.image_files, mode)
+        except ValueError:
+            return
+        self.handle_image_reorder(new_order)
+
     def on_page_list_current_item_changed(self, current, previous):
         if not current:
             self._hide_active_page_skip_error()
@@ -775,21 +841,29 @@ class ImageStateController:
         if not saved_patches:
             return
         mem_list = self.main.in_memory_patches.get(file_path, [])
-        mem_hashes = {m['hash'] for m in mem_list}
+        mem_keys = {
+            (m.get('patch_id'), m.get('hash'))
+            for m in mem_list
+        }
         loaded = []
         for saved in saved_patches:
             # Stop stale preload work when user already switched to another page.
             if request_id is not None and request_id != self._nav_request_id:
                 return
-            if saved['hash'] not in mem_hashes:
+            saved_key = (saved.get('patch_id'), saved.get('hash'))
+            if saved_key not in mem_keys:
                 ensure_path_materialized(saved['png_path'])
                 rgb_img = imk.read_image(saved['png_path'])
                 if rgb_img is not None:
-                    loaded.append({
+                    entry = {
                         'bbox': saved['bbox'],
                         'image': rgb_img,
                         'hash': saved['hash'],
-                    })
+                    }
+                    if saved.get('patch_id') is not None:
+                        entry['patch_id'] = saved['patch_id']
+                    loaded.append(entry)
+                    mem_keys.add(saved_key)
         if loaded:
             self.main.in_memory_patches.setdefault(file_path, []).extend(loaded)
 
@@ -982,7 +1056,9 @@ class ImageStateController:
             self.main.loaded_images.append(file_path)
             if len(self.main.loaded_images) > self.main.max_images_in_memory:
                 oldest_image = self.main.loaded_images.pop(0)
-                del self.main.image_data[oldest_image]
+                # Async navigation can enqueue the same page more than once;
+                # another load may already have evicted its pixel buffer.
+                self.main.image_data.pop(oldest_image, None)
                 self.main.in_memory_history[oldest_image] = []
 
                 self.main.in_memory_patches.pop(oldest_image, None)
@@ -1002,7 +1078,21 @@ class ImageStateController:
         # for every patch in the persistent store:
         mem_list = self.main.in_memory_patches.setdefault(file_path, [])
         for saved in self.main.image_patches.get(file_path, []):
-            match = next((m for m in mem_list if m['hash'] == saved['hash']), None)
+            saved_patch_id = saved.get('patch_id')
+            match = next(
+                (
+                    m for m in mem_list
+                    if (
+                        saved_patch_id is not None
+                        and m.get('patch_id') == saved_patch_id
+                    )
+                    or (
+                        saved_patch_id is None
+                        and m.get('hash') == saved.get('hash')
+                    )
+                ),
+                None,
+            )
             if match:
                 prop = {
                     'bbox': saved['bbox'],
@@ -1018,11 +1108,75 @@ class ImageStateController:
                     'image': rgb_img,
                     'hash': saved['hash']
                 }
-                self.main.in_memory_patches[file_path].append(prop)
+
+            if saved_patch_id is not None:
+                prop['patch_id'] = saved_patch_id
+                if match is not None:
+                    match['patch_id'] = saved_patch_id
+            if match is None:
+                self.main.in_memory_patches[file_path].append(dict(prop))
             
             # draw it
             if not PatchCommandBase.find_matching_item(self.main.image_viewer._scene, prop):   
                 PatchCommandBase.create_patch_item(prop, self.main.image_viewer)
+
+    def get_composited_page_image(self, file_path: str):
+        """Return the current page pixels with saved inpainting patches applied."""
+        image = self.main.image_data.get(file_path)
+        if image is None:
+            image = self.load_image(file_path)
+            if image is not None:
+                self.main.image_data[file_path] = image
+        if image is None:
+            return None
+
+        composited = image.copy()
+        image_height, image_width = composited.shape[:2]
+        memory_patches = self.main.in_memory_patches.get(file_path, [])
+
+        for saved in self.main.image_patches.get(file_path, []):
+            patch_id = saved.get("patch_id")
+            match = next(
+                (
+                    patch
+                    for patch in memory_patches
+                    if (
+                        patch_id is not None
+                        and patch.get("patch_id") == patch_id
+                    )
+                    or (
+                        patch_id is None
+                        and patch.get("hash") == saved.get("hash")
+                    )
+                ),
+                None,
+            )
+            patch_image = match.get("image") if match is not None else None
+            if patch_image is None:
+                ensure_path_materialized(saved["png_path"])
+                patch_image = imk.read_image(saved["png_path"])
+            if patch_image is None:
+                continue
+
+            x, y, width, height = [int(value) for value in saved["bbox"]]
+            dst_x1 = max(0, x)
+            dst_y1 = max(0, y)
+            dst_x2 = min(image_width, x + width, x + patch_image.shape[1])
+            dst_y2 = min(image_height, y + height, y + patch_image.shape[0])
+            if dst_x2 <= dst_x1 or dst_y2 <= dst_y1:
+                continue
+
+            src_x1 = dst_x1 - x
+            src_y1 = dst_y1 - y
+            src_x2 = src_x1 + (dst_x2 - dst_x1)
+            src_y2 = src_y1 + (dst_y2 - dst_y1)
+            composited[dst_y1:dst_y2, dst_x1:dst_x2] = patch_image[
+                src_y1:src_y2,
+                src_x1:src_x2,
+                : composited.shape[2],
+            ]
+
+        return composited
 
     def save_current_image(self, file_path: str):
         if self.main.webtoon_mode:
@@ -1336,9 +1490,47 @@ class ImageStateController:
         command = PatchInsertCommand(self.main, patches, file_path, display=should_display)
         target_stack.push(command)
 
+    def begin_batch_page_edit(self, file_path: str):
+        """Group one page's automatic text and cleanup into one undo step."""
+        if file_path in self._batch_edit_macro_paths:
+            return
+        stack = self.main.undo_stacks.get(file_path)
+        if stack is None:
+            return
+        stack.beginMacro(self.main.tr("Automatic translation"))
+        self._batch_edit_macro_paths.add(file_path)
+
+    def end_batch_page_edit(self, file_path: str):
+        if file_path not in self._batch_edit_macro_paths:
+            return
+        stack = self.main.undo_stacks.get(file_path)
+        self._batch_edit_macro_paths.discard(file_path)
+        if stack is not None:
+            stack.endMacro()
+
+    def close_batch_page_edits(self):
+        """Close any macro left open by cancellation or a failed batch page."""
+        for file_path in list(self._batch_edit_macro_paths):
+            self.end_batch_page_edit(file_path)
+
     def apply_inpaint_patches(self, patches):
         command = PatchInsertCommand(self.main, patches, self.main.image_files[self.main.curr_img_idx])
         self.main.undo_group.activeStack().push(command)
+
+    def revert_current_page_inpainting(self):
+        if not (0 <= self.main.curr_img_idx < len(self.main.image_files)):
+            return
+        file_path = self.main.image_files[self.main.curr_img_idx]
+        if not self.main.image_patches.get(file_path):
+            MMessage.info(
+                self.main.tr("There is no inpainting to revert on this page."),
+                parent=self.main,
+                duration=4,
+            )
+            return
+        stack = self.main.undo_stacks.get(file_path)
+        if stack is not None:
+            stack.push(PatchClearCommand(self.main, file_path))
 
     def cleanup(self):
         """Clean up resources, including the lazy loader."""

@@ -231,9 +231,14 @@ def load_state_from_proj_file(comic_translate: ComicTranslate, file_name: str):
             for p in patch_list:
                 abs_png = _join_from_archive_relpath(unique_patches_dir, p.get('png_path', ''))
                 if os.path.isfile(abs_png):  
-                    new_list.append({'bbox': p['bbox'],
-                                    'png_path': abs_png,
-                                    'hash': p['hash']})
+                    patch_entry = {
+                        'bbox': p['bbox'],
+                        'png_path': abs_png,
+                        'hash': p['hash'],
+                    }
+                    if p.get('patch_id') is not None:
+                        patch_entry['patch_id'] = p['patch_id']
+                    new_list.append(patch_entry)
             if new_list:
                 reconstructed[page_path] = new_list
 

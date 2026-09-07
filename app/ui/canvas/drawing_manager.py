@@ -44,6 +44,9 @@ class DrawingManager:
         self.current_path.moveTo(scene_pos)
 
         if self.viewer.current_tool == 'brush':
+            # A move-only QPainterPath has no painted pixels. Add a tiny segment
+            # so a single click creates a round-cap cleanup dot.
+            self.current_path.lineTo(scene_pos + QPointF(0.01, 0.0))
             pen = QPen(self.brush_color, self.brush_size, 
                        Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
             self.current_path_item = self._scene.addPath(self.current_path, pen)
@@ -66,6 +69,7 @@ class DrawingManager:
                 import traceback
                 traceback.print_exc()
                 self.before_erase_state = []
+            self.erase_at(scene_pos)
 
     def continue_stroke(self, scene_pos: QPointF):
         """Continues an existing drawing or erasing stroke."""

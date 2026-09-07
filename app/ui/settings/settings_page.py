@@ -100,7 +100,9 @@ class SettingsPage(QtWidgets.QWidget):
 
     def _sync_extra_context_limit(self, translator: str) -> None:
         normalized = self.ui.reverse_mappings.get(translator, translator)
-        self.ui.llms_page.set_extra_context_unlimited(normalized == "Custom")
+        is_local = normalized == "Local LLM"
+        self.ui.llms_page.set_extra_context_unlimited(normalized in {"Custom", "Local LLM"})
+        self.ui.llms_page.set_local_settings_visible(is_local)
 
     def on_theme_changed(self, theme: str):
         self.theme_changed.emit(theme)
@@ -126,9 +128,25 @@ class SettingsPage(QtWidgets.QWidget):
         return self.ui.use_gpu_checkbox.isChecked()
 
     def get_llm_settings(self):
+        local_page = self.ui.llms_page
         return {
             'extra_context': self.ui.extra_context.toPlainText(),
             'image_input_enabled': self.ui.image_checkbox.isChecked(),
+            'local_runtime': local_page.local_runtime_combo.currentData() or 'managed',
+            'local_endpoint': local_page.local_endpoint.text().strip(),
+            'local_model': local_page.local_model.text().strip(),
+            'local_api_key': local_page.local_api_key.text(),
+            'llama_server_path': local_page.llama_server_path.text().strip(),
+            'llama_model_path': local_page.llama_model_path.text().strip(),
+            'llama_mmproj_path': local_page.llama_mmproj_path.text().strip(),
+            'local_context_size': local_page.local_context_size.value(),
+            'local_gpu_layers': local_page.local_gpu_layers.value(),
+            'local_startup_timeout': local_page.local_startup_timeout.value(),
+            'local_request_timeout': local_page.local_request_timeout.value(),
+            'local_max_tokens': local_page.local_max_tokens.value(),
+            'local_temperature': local_page.local_temperature.value(),
+            'local_top_p': local_page.local_top_p.value(),
+            'local_top_k': local_page.local_top_k.value(),
         }
 
     def get_export_settings(self):
@@ -274,6 +292,12 @@ class SettingsPage(QtWidgets.QWidget):
         settings = QSettings("ComicLabs", "ComicTranslate")
         all_settings = self.get_all_settings()
 
+        # Treat an external local-server token like the other optional API keys.
+        # The live value is still available to the running translator, but it is
+        # persisted only when the user enabled Save Keys.
+        if not self.ui.save_keys_checkbox.isChecked():
+            all_settings.get('llm', {}).update({'local_api_key': ''})
+
         def process_group(group_key, group_value, settings_obj: QSettings):
             """Helper function to process a group and its nested values."""
             if is_dataclass(group_value):
@@ -385,6 +409,22 @@ class SettingsPage(QtWidgets.QWidget):
         settings.beginGroup('llm')
         self.ui.extra_context.setPlainText(settings.value('extra_context', ''))
         self.ui.image_checkbox.setChecked(settings.value('image_input_enabled', False, type=bool))
+        local_page = self.ui.llms_page
+        local_page.set_local_runtime(settings.value('local_runtime', 'managed', type=str))
+        local_page.local_endpoint.setText(settings.value('local_endpoint', 'http://127.0.0.1:11434/v1', type=str))
+        local_page.local_model.setText(settings.value('local_model', 'gemma4:e4b', type=str))
+        local_page.local_api_key.setText(settings.value('local_api_key', '', type=str))
+        local_page.llama_server_path.setText(settings.value('llama_server_path', '', type=str))
+        local_page.llama_model_path.setText(settings.value('llama_model_path', '', type=str))
+        local_page.llama_mmproj_path.setText(settings.value('llama_mmproj_path', '', type=str))
+        local_page.local_context_size.setValue(settings.value('local_context_size', 8192, type=int))
+        local_page.local_gpu_layers.setValue(settings.value('local_gpu_layers', 999, type=int))
+        local_page.local_startup_timeout.setValue(settings.value('local_startup_timeout', 90, type=int))
+        local_page.local_request_timeout.setValue(settings.value('local_request_timeout', 300, type=int))
+        local_page.local_max_tokens.setValue(settings.value('local_max_tokens', 4096, type=int))
+        local_page.local_temperature.setValue(settings.value('local_temperature', 0.2, type=float))
+        local_page.local_top_p.setValue(settings.value('local_top_p', 0.9, type=float))
+        local_page.local_top_k.setValue(settings.value('local_top_k', 40, type=int))
         settings.endGroup()
 
         # Load export settings

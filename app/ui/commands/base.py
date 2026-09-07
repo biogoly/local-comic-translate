@@ -233,6 +233,7 @@ class PatchCommandBase:
     """Shared helpers for pixmap patch commands"""
 
     HASH_KEY = 0
+    PATCH_ID_KEY = 1
 
     @staticmethod
     def create_patch_item(properties, viewer: ImageViewer):
@@ -258,6 +259,8 @@ class PatchCommandBase:
             item.setPos(x, y)
             item.setZValue(0.5)
         item.setData(PatchCommandBase.HASH_KEY, properties['hash'])
+        if properties.get('patch_id') is not None:
+            item.setData(PatchCommandBase.PATCH_ID_KEY, properties['patch_id'])
         viewer._scene.addItem(item)
         viewer._scene.update()
         return item
@@ -266,6 +269,7 @@ class PatchCommandBase:
     def find_matching_item(scene, properties):
         x, y, w, h = properties['bbox']
         want_hash = properties['hash']
+        want_patch_id = properties.get('patch_id')
         
         # Check if we have scene position (webtoon mode)
         if 'scene_pos' in properties:
@@ -277,10 +281,15 @@ class PatchCommandBase:
             if not isinstance(itm, QtWidgets.QGraphicsPixmapItem):
                 continue
 
-            # Check hash first for efficiency
-            stored_hash = itm.data(PatchCommandBase.HASH_KEY)
-            if stored_hash != want_hash:
-                continue
+            # New patches have an instance id so undo never removes an older,
+            # visually identical patch. Legacy project patches fall back to hash.
+            if want_patch_id is not None:
+                if itm.data(PatchCommandBase.PATCH_ID_KEY) != want_patch_id:
+                    continue
+            else:
+                stored_hash = itm.data(PatchCommandBase.HASH_KEY)
+                if stored_hash != want_hash:
+                    continue
 
             # Check size
             if (itm.pixmap().width() != w or itm.pixmap().height() != h):
@@ -294,3 +303,14 @@ class PatchCommandBase:
                 
         return None
 
+    @staticmethod
+    def remove_patch_item(viewer: ImageViewer, item):
+        manager = getattr(getattr(viewer, 'webtoon_manager', None), 'scene_item_manager', None)
+        patch_manager = getattr(manager, 'patch_manager', None) if manager is not None else None
+        if patch_manager is not None:
+            for page_idx, page_items in list(patch_manager.loaded_patch_items.items()):
+                patch_manager.loaded_patch_items[page_idx] = [
+                    candidate for candidate in page_items if candidate is not item
+                ]
+        if item is not None and item.scene() == viewer._scene:
+            viewer._scene.removeItem(item)

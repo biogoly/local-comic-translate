@@ -48,6 +48,8 @@ class ComicTranslate(ComicTranslateUI):
     progress_update = QtCore.Signal(int, int, int, int, bool)
     image_skipped = QtCore.Signal(str, str, str)
     blk_rendered = QtCore.Signal(str, int, object, str)
+    batch_page_edit_started = QtCore.Signal(str)
+    batch_page_edit_finished = QtCore.Signal(str)
     render_state_ready = QtCore.Signal(str)
     download_event = QtCore.Signal(str, str)  # status, name
 
@@ -132,6 +134,8 @@ class ComicTranslate(ComicTranslateUI):
         self.patches_processed.connect(self.image_ctrl.on_inpaint_patches_processed)
         self.progress_update.connect(self.update_progress)
         self.blk_rendered.connect(self.text_ctrl.on_blk_rendered)
+        self.batch_page_edit_started.connect(self.image_ctrl.begin_batch_page_edit)
+        self.batch_page_edit_finished.connect(self.image_ctrl.end_batch_page_edit)
         self.render_state_ready.connect(self.image_ctrl.on_render_state_ready)
         self.render_state_ready.connect(self.project_ctrl._on_batch_page_done)
         self.download_event.connect(self.on_download_event)
@@ -200,6 +204,8 @@ class ComicTranslate(ComicTranslateUI):
         self.set_all_button.clicked.connect(self.text_ctrl.set_src_trg_all)
         self.clear_rectangles_button.clicked.connect(self.image_viewer.clear_rectangles)
         self.clear_brush_strokes_button.clicked.connect(self.image_viewer.clear_brush_strokes)
+        self.apply_inpaint_button.clicked.connect(self.apply_inpaint_cleanup)
+        self.revert_inpaint_button.clicked.connect(self.image_ctrl.revert_current_page_inpainting)
         self.draw_blklist_blks.clicked.connect(self.restore_text_blocks)
         self.change_all_blocks_size_dec.clicked.connect(lambda: self.text_ctrl.change_all_blocks_size(-int(self.change_all_blocks_size_diff.text())))
         self.change_all_blocks_size_inc.clicked.connect(lambda: self.text_ctrl.change_all_blocks_size(int(self.change_all_blocks_size_diff.text())))
@@ -246,6 +252,7 @@ class ComicTranslate(ComicTranslateUI):
         # Page List
         self.page_list.currentItemChanged.connect(self.image_ctrl.on_page_list_current_item_changed)
         self.page_list.order_changed.connect(self.image_ctrl.handle_image_reorder)
+        self.page_list.sort_requested.connect(self.image_ctrl.sort_images)
         self.page_list.del_img.connect(self.image_ctrl.handle_image_deletion)
         self.page_list.insert_browser.sig_files_changed.connect(self.image_ctrl.thread_insert)
         self.page_list.toggle_skip_img.connect(self.image_ctrl.handle_toggle_skip_images)
@@ -503,6 +510,13 @@ class ComicTranslate(ComicTranslateUI):
 
     def cancel_current_task(self):
         self.task_runner_ctrl.cancel_current_task()
+        # Interrupt a managed local inference request promptly. The next local
+        # translation will restart the server with the current settings.
+        try:
+            from modules.translation.llm.llama_server import shutdown_local_runtime
+            shutdown_local_runtime()
+        except Exception:
+            pass
 
     def run_finish_only(self, finished_callback: Callable, error_callback: Callable = None):
         self.task_runner_ctrl.run_finish_only(finished_callback, error_callback)
@@ -690,6 +704,7 @@ class ComicTranslate(ComicTranslateUI):
                 )
 
     def on_batch_process_finished(self):
+        self.image_ctrl.close_batch_page_edits()
         try:
             if self._memlogger is not None:
                 self._memlogger.emit("batch_finished")
@@ -751,6 +766,13 @@ class ComicTranslate(ComicTranslateUI):
 
     def inpaint_and_set(self):
         self.manual_workflow_ctrl.inpaint_and_set()
+
+    def apply_inpaint_cleanup(self):
+        """Apply painted cleanup strokes from either workflow mode."""
+        if not self.manual_radio.isChecked():
+            self.manual_radio.setChecked(True)
+            self.manual_mode_selected()
+        self.inpaint_and_set()
 
     def blk_detect_segment(self, result): 
         self.manual_workflow_ctrl.blk_detect_segment(result)
@@ -918,5 +940,11 @@ class ComicTranslate(ComicTranslateUI):
 
         try:
             self.settings_page.shutdown()
+        except Exception:
+            pass
+
+        try:
+            from modules.translation.llm.llama_server import shutdown_local_runtime
+            shutdown_local_runtime()
         except Exception:
             pass

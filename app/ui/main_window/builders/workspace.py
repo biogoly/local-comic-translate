@@ -10,6 +10,7 @@ from app.ui.dayu_widgets.combo_box import MComboBox, MFontComboBox
 from app.ui.dayu_widgets.divider import MDivider
 from app.ui.dayu_widgets.line_edit import MLineEdit
 from app.ui.dayu_widgets.loading import MLoading
+from app.ui.dayu_widgets.menu import MMenu
 from app.ui.dayu_widgets.progress_bar import MProgressBar
 from app.ui.dayu_widgets.push_button import MPushButton
 from app.ui.dayu_widgets.radio_button import MRadioButton
@@ -98,6 +99,29 @@ class WorkspaceMixin:
         left_layout = QtWidgets.QVBoxLayout()
         left_layout.addWidget(MDivider())
 
+        page_list_header = QtWidgets.QHBoxLayout()
+        page_list_header.setContentsMargins(0, 0, 0, 0)
+        page_list_header.addWidget(QtWidgets.QLabel(self.tr("Pages")))
+        page_list_header.addStretch()
+
+        self.sort_pages_button = MToolButton()
+        self.sort_pages_button.setText(self.tr("Sort"))
+        self.sort_pages_button.setToolButtonStyle(
+            QtCore.Qt.ToolButtonStyle.ToolButtonTextOnly
+        )
+        self.sort_pages_button.setStyleSheet(
+            "QToolButton::menu-indicator { image: none; width: 0px; }"
+        )
+        self.sort_pages_button.setToolTip(self.tr("Sort Pages"))
+        self.sort_pages_button.setPopupMode(
+            QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup
+        )
+        self.page_sort_menu = MMenu(parent=self.sort_pages_button)
+        self.page_list.populate_sort_menu(self.page_sort_menu)
+        self.sort_pages_button.setMenu(self.page_sort_menu)
+        page_list_header.addWidget(self.sort_pages_button)
+        left_layout.addLayout(page_list_header)
+
         self.image_card_layout = QtWidgets.QVBoxLayout()
         self.image_card_layout.addStretch(1)
 
@@ -163,6 +187,9 @@ class WorkspaceMixin:
         t_combo_text_layout.addWidget(self.t_combo)
         self.t_text_edit = MTextEdit()
         self.t_text_edit.setFixedHeight(120)
+        self.t_text_edit.setPlaceholderText(
+            self.tr("Type translated or replacement text to show on the page")
+        )
         t_combo_text_layout.addWidget(self.t_text_edit)
         input_layout.addLayout(t_combo_text_layout)
 
@@ -220,6 +247,12 @@ class WorkspaceMixin:
         self.italic_button.setToolTip(self.tr("Italic"))
         self.underline_button = self.create_tool_button(svg="underline.svg", checkable=True)
         self.underline_button.setToolTip(self.tr("Underline"))
+        for inline_format_button in (
+            self.bold_button,
+            self.italic_button,
+            self.underline_button,
+        ):
+            inline_format_button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
         main_text_settings_layout.addWidget(self.block_font_color_button)
         main_text_settings_layout.addWidget(self.alignment_tool_group)
@@ -264,9 +297,21 @@ class WorkspaceMixin:
         misc_lay = QtWidgets.QHBoxLayout()
 
         self.pan_button = self.create_tool_button(svg="pan_tool.svg", checkable=True)
-        self.pan_button.setToolTip(self.tr("Pan Image"))
+        self.pan_button.setToolTip(self.tr("Pan Image after Zooming"))
         self.pan_button.clicked.connect(self.toggle_pan_tool)
         self.tool_buttons["pan"] = self.pan_button
+
+        self.zoom_out_button = self.create_tool_button(svg="minus_line.svg")
+        self.zoom_out_button.setToolTip(self.tr("Zoom Out (Ctrl+-)"))
+        self.zoom_out_button.clicked.connect(self.image_viewer.zoom_out)
+
+        self.zoom_fit_button = self.create_tool_button(text=self.tr("Fit"), svg="refresh_line.svg")
+        self.zoom_fit_button.setToolTip(self.tr("Fit Page to Window (Ctrl+0)"))
+        self.zoom_fit_button.clicked.connect(self.image_viewer.fit_to_window)
+
+        self.zoom_in_button = self.create_tool_button(svg="add_line.svg")
+        self.zoom_in_button.setToolTip(self.tr("Zoom In (Ctrl+= or Ctrl+Mouse Wheel)"))
+        self.zoom_in_button.clicked.connect(self.image_viewer.zoom_in)
 
         self.set_all_button = MPushButton(self.tr("Set for all"))
         self.set_all_button.setToolTip(
@@ -274,13 +319,21 @@ class WorkspaceMixin:
         )
 
         misc_lay.addWidget(self.pan_button)
+        misc_lay.addWidget(self.zoom_out_button)
+        misc_lay.addWidget(self.zoom_fit_button)
+        misc_lay.addWidget(self.zoom_in_button)
         misc_lay.addWidget(self.set_all_button)
         misc_lay.addStretch()
 
         box_tools_lay = QtWidgets.QHBoxLayout()
 
         self.box_button = self.create_tool_button(svg="select.svg", checkable=True)
-        self.box_button.setToolTip(self.tr("Draw or Select Text Boxes"))
+        self.box_button.setToolTip(
+            self.tr(
+                "Draw or Select Text Regions; typing in the Target Text field "
+                "creates borderless text on the page"
+            )
+        )
         self.box_button.clicked.connect(self.toggle_box_tool)
         self.tool_buttons["box"] = self.box_button
 
@@ -326,7 +379,9 @@ class WorkspaceMixin:
         inp_tools_lay = QtWidgets.QHBoxLayout()
 
         self.brush_button = self.create_tool_button(svg="brush-fill.svg", checkable=True)
-        self.brush_button.setToolTip(self.tr("Draw Brush Strokes for Cleaning Image"))
+        self.brush_button.setToolTip(
+            self.tr("Paint Areas to Clean, then click Apply Cleanup")
+        )
         self.brush_button.clicked.connect(self.toggle_brush_tool)
         self.tool_buttons["brush"] = self.brush_button
 
@@ -338,9 +393,21 @@ class WorkspaceMixin:
         self.clear_brush_strokes_button = self.create_tool_button(svg="clear-outlined.svg")
         self.clear_brush_strokes_button.setToolTip(self.tr("Remove all the brush strokes on the Image"))
 
+        self.apply_inpaint_button = self.create_tool_button(svg="pipeline_clean.svg")
+        self.apply_inpaint_button.setToolTip(
+            self.tr("Apply Cleanup to the Painted Areas")
+        )
+
+        self.revert_inpaint_button = self.create_tool_button(svg="undo.svg")
+        self.revert_inpaint_button.setToolTip(
+            self.tr("Revert All Inpainting on the Current Page (Undoable)")
+        )
+
         inp_tools_lay.addWidget(self.brush_button)
         inp_tools_lay.addWidget(self.eraser_button)
         inp_tools_lay.addWidget(self.clear_brush_strokes_button)
+        inp_tools_lay.addWidget(self.apply_inpaint_button)
+        inp_tools_lay.addWidget(self.revert_inpaint_button)
         inp_tools_lay.addStretch()
 
         self.brush_eraser_slider = MSlider()

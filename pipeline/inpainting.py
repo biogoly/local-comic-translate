@@ -78,7 +78,13 @@ class InpaintingHandler:
 
         config = get_config(settings_page)
         inpaint_blocks = self._get_manual_fast_fill_blocks(mappings)
-        inpaint_input_img = self.inpaint_image(image, mask, config, blk_list=inpaint_blocks or None)
+        inpaint_input_img = self.inpaint_image(
+            image,
+            mask,
+            config,
+            blk_list=inpaint_blocks or None,
+            preserve_unmatched_mask=True,
+        )
         inpaint_input_img = imk.convert_scale_abs(inpaint_input_img) 
 
         return inpaint_input_img
@@ -273,12 +279,37 @@ class InpaintingHandler:
         if base_bounds is None or len(base_bounds) < 4:
             return None
 
+        expanded_bounds = None
         if getattr(block, "text_class", None) == "text_bubble":
             bubble_bounds = getattr(block, "bubble_xyxy", None)
             if bubble_bounds is not None and len(bubble_bounds) >= 4:
-                return adjust_text_line_coordinates(bubble_bounds, 10, 10, image)
+                expanded_bounds = adjust_text_line_coordinates(
+                    bubble_bounds, 10, 10, image
+                )
 
-        return adjust_text_line_coordinates(base_bounds, 10, 10, image)
+        if expanded_bounds is None:
+            expanded_bounds = adjust_text_line_coordinates(
+                base_bounds, 10, 10, image
+            )
+
+        # Detector and webtoon coordinates may be floating point. NumPy slices
+        # require integer indices, so normalize once at this boundary and keep
+        # the expanded region inclusive by flooring starts and ceiling ends.
+        try:
+            values = np.asarray(expanded_bounds[:4], dtype=np.float64)
+        except (TypeError, ValueError, IndexError):
+            return None
+        if values.size < 4 or not np.all(np.isfinite(values)):
+            return None
+
+        image_height, image_width = image.shape[:2]
+        x1 = max(0, min(image_width, int(np.floor(values[0]))))
+        y1 = max(0, min(image_height, int(np.floor(values[1]))))
+        x2 = max(0, min(image_width, int(np.ceil(values[2]))))
+        y2 = max(0, min(image_height, int(np.ceil(values[3]))))
+        if x2 <= x1 or y2 <= y1:
+            return None
+        return x1, y1, x2, y2
 
     @staticmethod
     def _same_bounds(
@@ -542,6 +573,7 @@ class InpaintingHandler:
         image: np.ndarray,
         mask: np.ndarray,
         blk_list: list | None,
+        preserve_unmatched_mask: bool = False,
     ) -> tuple[np.ndarray, np.ndarray, int]:
         if image is None or mask is None or not np.any(mask) or not blk_list:
             return image.copy(), mask.copy(), 0
@@ -663,7 +695,7 @@ class InpaintingHandler:
                 reason,
             )
 
-        if cleaned_blocks:
+        if cleaned_blocks and not preserve_unmatched_mask:
             bubble_scope = np.zeros(mask.shape, dtype=bool)
             bubble_allowed = np.zeros(mask.shape, dtype=bool)
             for bubble_block in cleaned_bubble_blocks:
@@ -807,7 +839,14 @@ class InpaintingHandler:
         h = int(stats[label, imk.CC_STAT_HEIGHT])
         return num_labels - 1, int(stats[label, imk.CC_STAT_AREA]), (x, y, w, h)
 
-    def inpaint_image(self, image: np.ndarray, mask: np.ndarray, config, blk_list: list | None = None) -> np.ndarray:
+    def inpaint_image(
+        self,
+        image: np.ndarray,
+        mask: np.ndarray,
+        config,
+        blk_list: list | None = None,
+        preserve_unmatched_mask: bool = False,
+    ) -> np.ndarray:
         """
         Intelligently chooses between full-image and patch-based inpainting
         based on image size, number of text blocks, and total mask area.
@@ -817,7 +856,12 @@ class InpaintingHandler:
         if mask is None or not np.any(mask):
             return image.copy()
 
-        working_image, working_mask, cleaned_blocks = self._apply_fast_bubble_cleanup(image, mask, blk_list)
+        working_image, working_mask, cleaned_blocks = self._apply_fast_bubble_cleanup(
+            image,
+            mask,
+            blk_list,
+            preserve_unmatched_mask=preserve_unmatched_mask,
+        )
         if cleaned_blocks:
             logger.info("Inpaint hybrid: fast-cleaned %d bubble blocks", cleaned_blocks)
         if working_mask is None or not np.any(working_mask):
@@ -905,7 +949,13 @@ class InpaintingHandler:
         if mask is None:
             return []
         config = get_config(self.main_page.settings_page)
-        inpainted = self.inpaint_image(image, mask, config, blk_list=blk_list or None)
+        inpainted = self.inpaint_image(
+            image,
+            mask,
+            config,
+            blk_list=blk_list or None,
+            preserve_unmatched_mask=True,
+        )
         inpainted = imk.convert_scale_abs(inpainted)
         return self._get_regular_patches(mask, inpainted)
 

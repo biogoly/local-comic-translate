@@ -355,17 +355,9 @@ class FlowMixin:
             blocks=blocks,
             has_patches=bool(accumulated["patches"]),
         )
-        self._store_page_text_items(
-            page_index=global_index,
-            image_path=image_path,
-            blocks=prepared_blocks,
-            image_shape=(page_info["height"], page_info["width"], 3),
-            live_blocks=live_blocks,
-        )
-        accumulated["emitted_block_count"] = len(accumulated["blocks"])
-
         pending_patch_paths = set(patch_paths or ())
         pending_patch_paths.add(image_path)
+        pending_patches_by_path: dict[str, list[dict]] = {}
         for patch_path in pending_patch_paths:
             patch_accum = page_accum.get(patch_path)
             if patch_accum is None:
@@ -373,8 +365,29 @@ class FlowMixin:
             emitted_patch_count = int(patch_accum.get("emitted_patch_count", 0))
             pending_patches = list(patch_accum["patches"][emitted_patch_count:])
             if pending_patches:
-                self.main_page.patches_processed.emit(pending_patches, patch_path)
+                pending_patches_by_path[patch_path] = pending_patches
             patch_accum["emitted_patch_count"] = len(patch_accum["patches"])
+
+        macro_paths = [image_path]
+        macro_paths.extend(
+            path for path in pending_patches_by_path if path != image_path
+        )
+        for path in macro_paths:
+            self.main_page.batch_page_edit_started.emit(path)
+        try:
+            self._store_page_text_items(
+                page_index=global_index,
+                image_path=image_path,
+                blocks=prepared_blocks,
+                image_shape=(page_info["height"], page_info["width"], 3),
+                live_blocks=live_blocks,
+            )
+            accumulated["emitted_block_count"] = len(accumulated["blocks"])
+            for patch_path, pending_patches in pending_patches_by_path.items():
+                self.main_page.patches_processed.emit(pending_patches, patch_path)
+        finally:
+            for path in reversed(macro_paths):
+                self.main_page.batch_page_edit_finished.emit(path)
 
         logger.info(
             "Webtoon batch page-progress: page=%s blocks=%d patches=%d",
@@ -677,6 +690,7 @@ class FlowMixin:
                 )
                 self._run_translation_on_blocks(
                     image=current_record["image"],
+                    # Process every OCR region regardless of detector class.
                     blocks=ocr_blocks,
                     source_lang=source_lang,
                     target_lang=target_lang,

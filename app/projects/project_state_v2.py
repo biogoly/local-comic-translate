@@ -359,9 +359,14 @@ def save_state_to_proj_file_v2(comic_translate: "ComicTranslate", file_name: str
         for patch in patch_list:
             src_png = patch["png_path"]
             blob_hash = add_blob_if_needed(src_png, "patch")
-            image_patches_references[page_path].append(
-                {"bbox": patch["bbox"], "png_hash": blob_hash, "hash": patch["hash"]}
-            )
+            patch_reference = {
+                "bbox": patch["bbox"],
+                "png_hash": blob_hash,
+                "hash": patch["hash"],
+            }
+            if patch.get("patch_id") is not None:
+                patch_reference["patch_id"] = patch["patch_id"]
+            image_patches_references[page_path].append(patch_reference)
 
     page_paths = list(
         dict.fromkeys(
@@ -611,7 +616,14 @@ def _materialize_from_manifest_and_pages(
             patch_disk_path = os.path.join(page_folder, f"{idx}_{png_hash[:12]}{ext}")
             register_lazy_blob_path(project_file, patch_disk_path, str(png_hash))
 
-            new_list.append({"bbox": patch["bbox"], "png_path": patch_disk_path, "hash": patch["hash"]})
+            patch_entry = {
+                "bbox": patch["bbox"],
+                "png_path": patch_disk_path,
+                "hash": patch["hash"],
+            }
+            if patch.get("patch_id") is not None:
+                patch_entry["patch_id"] = patch["patch_id"]
+            new_list.append(patch_entry)
 
         if new_list:
             reconstructed[page_path] = new_list

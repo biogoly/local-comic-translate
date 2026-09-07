@@ -100,6 +100,7 @@ class PageListView(QListWidget):
     toggle_skip_img = Signal(list, bool)  # list of images, bool for skip status (True=skip, False=unskip)
     translate_imgs = Signal(list)
     order_changed = Signal(list)  # reordered item identities (file paths when available)
+    sort_requested = Signal(str)
 
     def __init__(self) -> None:
         super().__init__()
@@ -182,10 +183,26 @@ class PageListView(QListWidget):
             self.order_changed.emit(after_order)
         self.viewport().update()
 
+    def populate_sort_menu(self, menu) -> None:
+        options = (
+            (self.tr("Name: A to Z"), "name_asc"),
+            (self.tr("Name: Z to A"), "name_desc"),
+            (self.tr("Modified: Oldest First"), "modified_asc"),
+            (self.tr("Modified: Newest First"), "modified_desc"),
+        )
+        for label, mode in options:
+            action = menu.addAction(label)
+            action.triggered.connect(
+                lambda _checked=False, sort_mode=mode: self.sort_requested.emit(sort_mode)
+            )
+
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = MMenu(parent=self)
         insert = menu.addAction(self.tr('Insert'))
         delete_act = menu.addAction(self.tr('Delete'))
+
+        sort_menu = menu.addMenu(self.tr("Sort Pages"))
+        self.populate_sort_menu(sort_menu)
 
         # decide whether to show "Skip" or "Unskip"
         selected = self.selectedItems()

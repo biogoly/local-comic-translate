@@ -2,20 +2,34 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Sequence
 
+import imkit as imk
 from PySide6 import QtCore
 
-from modules.detection.processor import TextBlockDetector
+from modules.detection.processor import TextBlockDetector
 from modules.ocr.processor import OCRProcessor
 from modules.rendering.render import pyside_word_wrap, is_vertical_block, get_best_render_area
 from modules.translation.processor import Translator
 from modules.utils.common_utils import is_close
 from modules.utils.device import resolve_device
+from modules.utils.image_utils import generate_mask
 from modules.utils.language_utils import get_language_code, is_no_space_lang
 from modules.utils.language_utils import to_canonical_language_name
-from modules.utils.pipeline_config import validate_ocr, validate_translator
+from modules.utils.pipeline_config import get_config, validate_ocr, validate_translator
 from modules.utils.textblock import sort_blk_list
-from modules.utils.translator_utils import is_there_text, format_translations, set_upper_case
-from pipeline.webtoon_utils import get_visible_text_items, get_first_visible_block
+from modules.utils.translator_utils import (
+    format_translations,
+    is_renderable_translation,
+    is_there_text,
+    set_upper_case,
+)
+from pipeline.inpainting import call_inpaint_image
+from pipeline.webtoon_utils import (
+    filter_and_convert_visible_blocks,
+    find_block_page_index,
+    get_first_visible_block,
+    get_visible_text_items,
+    restore_original_block_coordinates,
+)
 
 if TYPE_CHECKING:
     from app.ui.canvas.text_item import TextBlockItem
@@ -403,7 +417,7 @@ class ManualWorkflowController:
                 translate_selected_pages,
                 on_translation_ready,
                 self.main.default_error_handler,
-                lambda: self.update_translated_text_items(single_block),
+                lambda: self._finish_translation(single_block),
             )
             return
 
@@ -420,14 +434,14 @@ class ManualWorkflowController:
                 lambda: self.main.pipeline.translate_webtoon_visible_area(single_block),
                 None,
                 self.main.default_error_handler,
-                lambda: self.update_translated_text_items(single_block),
+                lambda: self._finish_translation(single_block),
             )
         else:
             self.main.run_threaded(
                 lambda: self.main.pipeline.translate_image(single_block),
                 None,
                 self.main.default_error_handler,
-                lambda: self.update_translated_text_items(single_block),
+                lambda: self._finish_translation(single_block),
             )
 
     def _get_visible_text_items(self) -> list[TextBlockItem]:
@@ -437,8 +451,149 @@ class ManualWorkflowController:
             self.main.image_viewer.text_items, self.main.image_viewer.webtoon_manager
         )
 
+    @staticmethod
+    def _find_text_item_for_block(
+        blk: TextBlock,
+        text_items: Sequence[TextBlockItem],
+    ) -> TextBlockItem | None:
+        return next(
+            (
+                item
+                for item in text_items
+                if is_close(item.pos().x(), blk.xyxy[0], 5)
+                and is_close(item.pos().y(), blk.xyxy[1], 5)
+                and is_close(item.rotation(), blk.angle, 1)
+            ),
+            None,
+        )
+
+    def _file_path_for_block(self, blk: TextBlock) -> str:
+        if self.main.webtoon_mode:
+            page_idx = find_block_page_index(
+                blk,
+                self.main.image_viewer.webtoon_manager,
+            )
+            if page_idx is not None and 0 <= page_idx < len(self.main.image_files):
+                return self.main.image_files[page_idx]
+        return self._current_file_path() or ""
+
+    def _visible_blocks_for_translation_refresh(self) -> list[TextBlock]:
+        if not self.main.webtoon_mode:
+            return list(self.main.blk_list)
+        _image, mappings = self.main.image_viewer.get_visible_area_image()
+        if not mappings:
+            return []
+        blocks = filter_and_convert_visible_blocks(
+            self.main,
+            self.main.pipeline,
+            mappings,
+            single_block=False,
+        )
+        restore_original_block_coordinates(blocks)
+        return blocks
+
+    def _finish_translation(self, single_block: bool) -> None:
+        """Finish manual translation, cleaning a newly translated selected box first."""
+        if not single_block:
+            self.update_translated_text_items(False)
+            return
+
+        blk = self.main.pipeline.get_selected_block()
+        if not (
+            blk
+            and getattr(blk, "text", "").strip()
+            and is_renderable_translation(getattr(blk, "translation", ""))
+        ):
+            self.update_translated_text_items(True)
+            return
+
+        # Existing text layers already sit on a cleaned background. Only run a
+        # focused cleanup when materializing a translation that has no layer yet.
+        if self._find_text_item_for_block(blk, self._get_visible_text_items()) is not None:
+            self.update_translated_text_items(True)
+            return
+
+        self.main.run_threaded(
+            lambda: self._inpaint_translated_block(blk),
+            self._apply_translated_block_patches,
+            self.main.default_error_handler,
+            lambda: self.update_translated_text_items(True),
+        )
+
+    def _inpaint_translated_block(self, blk: TextBlock) -> dict[str, list[dict]]:
+        """Inpaint one explicitly selected block and return patches grouped by page."""
+        inpainting = self.main.pipeline.inpainting
+        blocks: list[TextBlock]
+
+        if self.main.webtoon_mode:
+            image, mappings = self.main.image_viewer.get_visible_area_image()
+            if image is None or not mappings:
+                return {}
+            blocks = filter_and_convert_visible_blocks(
+                self.main,
+                self.main.pipeline,
+                mappings,
+                single_block=True,
+            )
+        else:
+            file_path = self._current_file_path()
+            if not file_path:
+                return {}
+            image = self.main.image_ctrl.get_composited_page_image(file_path)
+            if image is None:
+                return {}
+            blocks = [blk.deep_copy() if hasattr(blk, "deep_copy") else blk]
+
+        if not blocks:
+            return {}
+
+        try:
+            mask = generate_mask(image, blocks)
+            if mask is None or not mask.any():
+                return {}
+            config = get_config(self.main.settings_page)
+            inpainted = call_inpaint_image(
+                inpainting,
+                image,
+                mask,
+                config,
+                blk_list=blocks,
+            )
+            inpainted = imk.convert_scale_abs(inpainted)
+            patches = inpainting.get_inpainted_patches(mask, inpainted)
+        finally:
+            if self.main.webtoon_mode:
+                restore_original_block_coordinates(blocks)
+
+        if not patches:
+            return {}
+        if not self.main.webtoon_mode:
+            return {file_path: patches}
+
+        grouped: dict[str, list[dict]] = {}
+        for patch in patches:
+            patch_file = patch.get("file_path")
+            if not patch_file:
+                continue
+            clean_patch = {"bbox": patch["bbox"], "image": patch["image"]}
+            for key in ("scene_pos", "page_index"):
+                if key in patch:
+                    clean_patch[key] = patch[key]
+            grouped.setdefault(patch_file, []).append(clean_patch)
+        return grouped
+
+    def _apply_translated_block_patches(self, grouped: dict[str, list[dict]]) -> None:
+        applied = False
+        for file_path, patches in (grouped or {}).items():
+            if not patches:
+                continue
+            self.main.image_ctrl.on_inpaint_patches_processed(patches, file_path)
+            applied = True
+        if applied:
+            self.main.mark_project_dirty()
+
     def update_translated_text_items(self, single_blk: bool) -> None:
-        
+
         def set_new_text(
             text_item: TextBlockItem, 
             wrapped: str, 
@@ -448,9 +603,13 @@ class ManualWorkflowController:
             text_item.set_font_size(font_size)
 
         text_items_to_process = self._get_visible_text_items()
-        if not text_items_to_process:
-            self.finish_ocr_translate(single_blk)
-            return
+        if single_blk:
+            selected_blk = self.main.pipeline.get_selected_block()
+            blocks_to_process = [selected_blk] if selected_blk is not None else []
+        else:
+            # Manual mode processes the user's block list, including free text
+            # and newly drawn boxes that have no detector classification.
+            blocks_to_process = self._visible_blocks_for_translation_refresh()
 
         rs = self.main.render_settings()
         upper = rs.upper_case
@@ -459,54 +618,63 @@ class ManualWorkflowController:
 
         def on_format_finished() -> None:
             self._resolve_current_page_if_translated()
-            for text_item in text_items_to_process:
-                text_item.handleDeselection()
-                x1, y1 = int(text_item.pos().x()), int(text_item.pos().y())
-                rot = text_item.rotation()
+            wrap_count = 0
+            default_alignment = self.main.button_to_alignment[rs.alignment_id]
 
-                blk = next(
-                    (
-                        b
-                        for b in self.main.blk_list
-                        if is_close(b.xyxy[0], x1, 5)
-                        and is_close(b.xyxy[1], y1, 5)
-                        and is_close(b.angle, rot, 1)
-                    ),
-                    None,
-                )
-                if not (blk and blk.translation):
+            for blk in blocks_to_process:
+                if not (blk and is_renderable_translation(blk.translation)):
                     continue
+
+                text_item = self._find_text_item_for_block(blk, text_items_to_process)
+                image_path = self._file_path_for_block(blk)
+                if text_item is not None:
+                    text_item.handleDeselection()
 
                 vertical = is_vertical_block(blk, trg_lng_cd)
                 wrap_args = (
                     blk.translation,
-                    text_item.font_family,
+                    text_item.font_family if text_item is not None else rs.font_family,
                     blk.xyxy[2] - blk.xyxy[0],
                     blk.xyxy[3] - blk.xyxy[1],
-                    float(text_item.line_spacing),
-                    float(text_item.outline_width),
-                    text_item.bold,
-                    text_item.italic,
-                    text_item.underline,
-                    text_item.alignment,
-                    text_item.direction,
+                    float(text_item.line_spacing) if text_item is not None else float(rs.line_spacing),
+                    float(text_item.outline_width) if text_item is not None else float(rs.outline_width),
+                    text_item.bold if text_item is not None else rs.bold,
+                    text_item.italic if text_item is not None else rs.italic,
+                    text_item.underline if text_item is not None else rs.underline,
+                    text_item.alignment if text_item is not None else default_alignment,
+                    text_item.direction if text_item is not None else rs.direction,
                     rs.max_font_size,
                     rs.min_font_size,
                     vertical,
                     is_no_space_lang(trg_lng_cd),
                 )
 
+                def apply_wrapped_text(
+                    wrap_res,
+                    ti=text_item,
+                    block=blk,
+                    path=image_path,
+                ) -> None:
+                    if ti is None:
+                        self.main.text_ctrl.on_blk_rendered(
+                            wrap_res[0], wrap_res[1], block, path
+                        )
+                    else:
+                        set_new_text(ti, wrap_res[0], wrap_res[1])
+
                 self.main.run_threaded(
                     pyside_word_wrap,
-                    lambda wrap_res, ti=text_item: set_new_text(
-                        ti, wrap_res[0], wrap_res[1]
-                    ),
+                    apply_wrapped_text,
                     self.main.default_error_handler,
                     None,
                     *wrap_args,
                 )
+                wrap_count += 1
 
-            self.main.run_finish_only(finished_callback=self.main.on_manual_finished)
+            if wrap_count:
+                self.main.run_finish_only(finished_callback=self.main.on_manual_finished)
+            else:
+                self.finish_ocr_translate(single_blk)
 
         self.main.run_threaded(
             lambda: format_translations(self.main.blk_list, trg_lng_cd, upper_case=upper),
@@ -546,7 +714,9 @@ class ManualWorkflowController:
                     if not strokes:
                         continue
                     blk_list = state.get("blk_list", [])
-                    image = self._load_page_image(file_path)
+                    # Repeated cleanup must start from the current composited
+                    # page, including every earlier inpainting patch.
+                    image = self.main.image_ctrl.get_composited_page_image(file_path)
                     if image is None:
                         continue
 

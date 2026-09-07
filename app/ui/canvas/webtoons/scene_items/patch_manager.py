@@ -58,6 +58,8 @@ class PatchManager:
                     'png_path': patch_data['png_path'],
                     'hash': patch_data['hash']
                 }
+                if patch_data.get('patch_id') is not None:
+                    prop['patch_id'] = patch_data['patch_id']
                 
                 # Always convert from bbox even if scene_pos is available
                 # scene pos data may be stale if an image has been deleted
@@ -76,7 +78,18 @@ class PatchManager:
                     self.loaded_patch_items[page_idx].append(patch_item)
                     # Also add to in-memory patches if not already there
                     mem_list = self.main_controller.in_memory_patches.setdefault(file_path, [])
-                    if not any(p['hash'] == prop['hash'] for p in mem_list):
+                    patch_id = prop.get('patch_id')
+                    if not any(
+                        (
+                            patch_id is not None
+                            and p.get('patch_id') == patch_id
+                        )
+                        or (
+                            patch_id is None
+                            and p.get('hash') == prop['hash']
+                        )
+                        for p in mem_list
+                    ):
                         # Load image for in-memory storage
                         ensure_path_materialized(patch_data['png_path'])
                         cv_img = imk.read_image(patch_data['png_path'])
@@ -86,6 +99,8 @@ class PatchManager:
                                 'image': cv_img,
                                 'hash': patch_data['hash']
                             }
+                            if patch_data.get('patch_id') is not None:
+                                mem_prop['patch_id'] = patch_data['patch_id']
                             mem_list.append(mem_prop)
     
     def unload_patches(self, page_idx: int):

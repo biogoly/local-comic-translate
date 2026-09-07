@@ -56,6 +56,24 @@ SHORTCUT_DEFINITIONS: tuple[ShortcutDefinition, ...] = (
         description=QT_TRANSLATE_NOOP("ShortcutDefinitions", "Toggle brush stroke drawing on or off."),
         default="Ctrl+D",
     ),
+    ShortcutDefinition(
+        id="zoom_in",
+        label=QT_TRANSLATE_NOOP("ShortcutDefinitions", "Zoom In"),
+        description=QT_TRANSLATE_NOOP("ShortcutDefinitions", "Zoom into the comic page."),
+        default="Ctrl+=",
+    ),
+    ShortcutDefinition(
+        id="zoom_out",
+        label=QT_TRANSLATE_NOOP("ShortcutDefinitions", "Zoom Out"),
+        description=QT_TRANSLATE_NOOP("ShortcutDefinitions", "Zoom out of the comic page."),
+        default="Ctrl+-",
+    ),
+    ShortcutDefinition(
+        id="fit_page",
+        label=QT_TRANSLATE_NOOP("ShortcutDefinitions", "Fit Page"),
+        description=QT_TRANSLATE_NOOP("ShortcutDefinitions", "Fit the current comic page to the window."),
+        default="Ctrl+0",
+    ),
 )
 
 

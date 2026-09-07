@@ -26,6 +26,19 @@ class EventHandler:
         if self.viewer.webtoon_mode:
             self.viewer.webtoon_manager.update_page_on_click(scene_pos)
 
+        # Cleanup strokes must take priority over translated text and rectangle
+        # overlays. Otherwise those items consume the press as selection/drag,
+        # making the brush appear broken precisely over a rendered bubble.
+        if (
+            event.button() == Qt.LeftButton
+            and self.viewer.current_tool in {'brush', 'eraser'}
+            and self.viewer.hasPhoto()
+            and self._is_on_image(scene_pos)
+        ):
+            self.viewer.drawing_manager.start_stroke(scene_pos)
+            event.accept()
+            return
+
         if isinstance(clicked_item, (TextBlockItem, MoveableRectItem)):
             if isinstance(clicked_item, TextBlockItem):
                 if ctrl_pressed and not clicked_item.editing_mode:
@@ -95,10 +108,6 @@ class EventHandler:
             self._press_handle_pan(event)
             return
 
-        if self.viewer.current_tool in ['brush', 'eraser'] and self.viewer.hasPhoto():
-            if self._is_on_image(scene_pos):
-                self.viewer.drawing_manager.start_stroke(scene_pos)
-
         # Only pass to QGraphicsView for panning or tool-specific interactions, not our items
         scroll = self.viewer.dragMode() == QtWidgets.QGraphicsView.DragMode.ScrollHandDrag
         if self.viewer.current_tool == 'pan' or scroll:
@@ -106,6 +115,16 @@ class EventHandler:
     
     def handle_mouse_move(self, event: QtGui.QMouseEvent):
         scene_pos = self.viewer.mapToScene(event.position().toPoint())
+
+        if (
+            self.viewer.current_tool in {'brush', 'eraser'}
+            and self.viewer.drawing_manager.current_path is not None
+        ):
+            if self._is_on_image(scene_pos):
+                self.viewer.drawing_manager.continue_stroke(scene_pos)
+            self.last_scene_pos = scene_pos
+            event.accept()
+            return
 
         # Explicitly handle dragging our items first
         if self._move_handle_drag(event, scene_pos):
@@ -123,16 +142,21 @@ class EventHandler:
             self._move_handle_pan(event)
             return
         
-        if self.viewer.current_tool in ['brush', 'eraser'] and self.viewer.drawing_manager.current_path:
-            if self._is_on_image(scene_pos):
-                self.viewer.drawing_manager.continue_stroke(scene_pos)
-        
         if self.viewer.current_tool == 'box':
             self._move_handle_box_resize(scene_pos)
 
         self.last_scene_pos = scene_pos
 
     def handle_mouse_release(self, event: QtGui.QMouseEvent):
+        if (
+            event.button() == Qt.LeftButton
+            and self.viewer.current_tool in {'brush', 'eraser'}
+            and self.viewer.drawing_manager.current_path is not None
+        ):
+            self.viewer.drawing_manager.end_stroke()
+            event.accept()
+            return
+
         interaction_finished = False # Flag to track if we handled the event
 
         if event.button() == Qt.LeftButton:
@@ -162,9 +186,6 @@ class EventHandler:
             self._release_handle_pan()
             return
         
-        if self.viewer.current_tool in ['brush', 'eraser']:
-            self.viewer.drawing_manager.end_stroke()
-            
         if self.viewer.current_tool == 'box':
             self._release_handle_box_creation()
 
@@ -172,10 +193,17 @@ class EventHandler:
         if not self.viewer.hasPhoto(): 
             return
         
-        if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
-            factor = 1.25 if event.angleDelta().y() > 0 else 1 / 1.25
-            self.viewer.scale(factor, factor)
-            self.viewer.zoom += 1 if factor > 1 else -1
+        if event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            delta = event.angleDelta().y()
+            if delta == 0:
+                delta = event.pixelDelta().y()
+            if delta == 0:
+                event.accept()
+                return
+
+            factor = self.viewer.ZOOM_FACTOR if delta > 0 else 1 / self.viewer.ZOOM_FACTOR
+            self.viewer.zoom_by(factor, anchor_under_mouse=True)
+            event.accept()
         else:
             # Call QGraphicsView's wheelEvent directly
             QtWidgets.QGraphicsView.wheelEvent(self.viewer, event)

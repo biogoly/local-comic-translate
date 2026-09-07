@@ -1,9 +1,42 @@
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any, Mapping, Optional
+
 import onnxruntime as ort
+
 from .paths import get_user_data_dir
+
+
+logger = logging.getLogger(__name__)
+
+
+def _preload_onnx_runtime_dependencies() -> None:
+    """Load CUDA/cuDNN DLLs supplied by ONNX Runtime's Python extras.
+
+    Passing an empty directory tells recent ONNX Runtime releases to search the
+    NVIDIA packages installed in site-packages. Older and CPU-only releases do
+    not necessarily expose this helper, so startup remains compatible with
+    those installations.
+    """
+    preload_dlls = getattr(ort, "preload_dlls", None)
+    if not callable(preload_dlls):
+        return
+
+    try:
+        preload_dlls(directory="")
+    except TypeError:
+        # Compatibility with ONNX Runtime versions that lack ``directory``.
+        try:
+            preload_dlls()
+        except Exception as exc:
+            logger.debug("Could not preload ONNX Runtime dependencies: %s", exc)
+    except Exception as exc:
+        logger.debug("Could not preload ONNX Runtime dependencies: %s", exc)
+
+
+_preload_onnx_runtime_dependencies()
 
 
 def torch_available() -> bool:
@@ -139,7 +172,8 @@ def get_providers(device: Optional[str] = None) -> list[Any]:
 
     Rules:
     - If device is the string 'cpu' (case-insensitive) -> return ['CPUExecutionProvider']
-    - Otherwise return available providers with options for certain GPU providers
+    - Select only the requested accelerator and its required fallbacks
+    - TensorRT is used only when explicitly requested; CUDA does not require it
     - If no providers are available, fall back to ['CPUExecutionProvider']
     """
     try:
@@ -147,49 +181,61 @@ def get_providers(device: Optional[str] = None) -> list[Any]:
     except Exception:
         available = []
 
-    if device and isinstance(device, str) and device.lower() == 'cpu':
+    requested = device.lower().split(":", 1)[0] if isinstance(device, str) else None
+    if requested == 'cpu':
         return ['CPUExecutionProvider']
 
     if not available:
         return ['CPUExecutionProvider']
 
-    
-    # Use user data directory for cache
-    base_models_dir = os.path.join(get_user_data_dir(), "models")
-    
-    # OpenVINO cache
-    ov_cache_dir = os.path.join(base_models_dir, 'onnx-gpu-cache', 'openvino')
-    os.makedirs(ov_cache_dir, exist_ok=True)
+    if requested is None:
+        requested = _resolve_onnx_device()
 
-    # TensorRT cache
-    trt_cache_dir = os.path.join(base_models_dir, 'onnx-gpu-cache', 'tensorrt')
-    os.makedirs(trt_cache_dir, exist_ok=True)
+    provider_names = {
+        'cuda': 'CUDAExecutionProvider',
+        'tensorrt': 'TensorrtExecutionProvider',
+        'coreml': 'CoreMLExecutionProvider',
+        'rocm': 'ROCMExecutionProvider',
+        'openvino': 'OpenVINOExecutionProvider',
+    }
+    primary = provider_names.get(requested)
+    if primary not in available:
+        return ['CPUExecutionProvider']
 
-    # CoreML cache
-    coreml_cache_dir = os.path.join(base_models_dir, 'onnx-gpu-cache', 'coreml')
-    os.makedirs(coreml_cache_dir, exist_ok=True)
-
-    provider_options = {
-        'OpenVINOExecutionProvider': {
+    configured: list[Any]
+    if requested == 'openvino':
+        cache_dir = os.path.join(
+            get_user_data_dir(), 'models', 'onnx-gpu-cache', 'openvino'
+        )
+        os.makedirs(cache_dir, exist_ok=True)
+        configured = [(primary, {
             'device_type': 'GPU',
             'precision': 'FP32',
-            'cache_dir': ov_cache_dir,
-        },
-        'TensorrtExecutionProvider': {
+            'cache_dir': cache_dir,
+        })]
+    elif requested == 'tensorrt':
+        cache_dir = os.path.join(
+            get_user_data_dir(), 'models', 'onnx-gpu-cache', 'tensorrt'
+        )
+        os.makedirs(cache_dir, exist_ok=True)
+        configured = [(primary, {
             'trt_engine_cache_enable': True,
-            'trt_engine_cache_path': trt_cache_dir,
-        },
-        'CoreMLExecutionProvider': {
-            'ModelCacheDirectory': coreml_cache_dir,
-        }
-    }
+            'trt_engine_cache_path': cache_dir,
+        })]
+        # TensorRT delegates unsupported nodes to CUDA before falling back to CPU.
+        if 'CUDAExecutionProvider' in available:
+            configured.append('CUDAExecutionProvider')
+    elif requested == 'coreml':
+        cache_dir = os.path.join(
+            get_user_data_dir(), 'models', 'onnx-gpu-cache', 'coreml'
+        )
+        os.makedirs(cache_dir, exist_ok=True)
+        configured = [(primary, {'ModelCacheDirectory': cache_dir})]
+    else:
+        configured = [primary]
 
-    configured: list[Any] = []
-    for p in available:
-        if p in provider_options:
-            configured.append((p, provider_options[p]))
-        else:
-            configured.append(p)
+    if 'CPUExecutionProvider' not in configured:
+        configured.append('CPUExecutionProvider')
 
     return configured
 

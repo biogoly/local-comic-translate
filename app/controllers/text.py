@@ -169,7 +169,9 @@ class TextController:
             self.main.blk_list.append(blk)
 
         command = AddTextItemCommand(self.main, text_item)
-        self.main.push_command(command)
+        stack = self.main.undo_stacks.get(image_path)
+        if stack is not None:
+            stack.push(command)
 
     def on_text_item_selected(self, text_item: TextBlockItem):
         self._commit_pending_text_command()
@@ -260,7 +262,22 @@ class TextController:
                 old_translation = self.main.curr_tblock.translation
                 self.main.curr_tblock.translation = new_text
 
-            if self.main.curr_tblock_item and self.main.curr_tblock_item in self.main.image_viewer._scene.items():
+                # A hand-drawn box initially has a TextBlock but no canvas text
+                # item. Materialize one on the first typed character so manual
+                # lettering behaves like a normal text box without requiring a
+                # separate Render Text click.
+                if (
+                    self.main.curr_tblock_item is not None
+                    and self.main.curr_tblock_item.scene() is not self.main.image_viewer._scene
+                ):
+                    self.main.curr_tblock_item = None
+                if self.main.curr_tblock_item is None and new_text:
+                    self.create_manual_text_item(self.main.curr_tblock, new_text)
+
+            if (
+                self.main.curr_tblock_item
+                and self.main.curr_tblock_item.scene() is self.main.image_viewer._scene
+            ):
                 old_item_text = self.main.curr_tblock_item.toPlainText()
                 cursor_position = self.main.t_text_edit.textCursor().position()
                 self._apply_text_item_text_delta(self.main.curr_tblock_item, new_text)
@@ -273,8 +290,94 @@ class TextController:
                 old_item_text is None or old_item_text == new_text
             ):
                 return
+            self.main.mark_project_dirty()
         finally:
             self._is_updating_from_edit = False
+
+    def create_manual_text_item(self, blk: TextBlock, text: str) -> TextBlockItem | None:
+        """Create live, borderless canvas text for a manually edited box."""
+        if not text or not self.main.image_viewer.hasPhoto():
+            return None
+
+        existing = next(
+            (
+                item
+                for item in self.main.image_viewer.text_items
+                if is_close(item.pos().x(), blk.xyxy[0], 5)
+                and is_close(item.pos().y(), blk.xyxy[1], 5)
+                and is_close(item.rotation(), blk.angle, 1)
+            ),
+            None,
+        )
+        if existing is not None:
+            self.main.curr_tblock_item = existing
+            return existing
+
+        render_settings = self.render_settings()
+        try:
+            font_size = max(1.0, float(self.main.font_size_dropdown.currentText()))
+        except (TypeError, ValueError):
+            font_size = max(1.0, float(render_settings.max_font_size))
+
+        text_color = QColor(render_settings.color or "#000000")
+        if not text_color.isValid():
+            text_color = QColor("#000000")
+        outline_color = None
+        if render_settings.outline:
+            outline_color = QColor(render_settings.outline_color or "#ffffff")
+            if not outline_color.isValid():
+                outline_color = QColor("#ffffff")
+
+        align_id = render_settings.alignment_id
+        alignment = self.main.button_to_alignment[align_id]
+        target_lang = self.main.lang_mapping.get(self.main.t_combo.currentText(), None)
+        vertical = is_vertical_block(blk, get_language_code(target_lang))
+        x1, y1, width, height = blk.xywh
+
+        properties = TextItemProperties(
+            text=text,
+            font_family=render_settings.font_family,
+            font_size=font_size,
+            text_color=text_color,
+            alignment=alignment,
+            line_spacing=float(render_settings.line_spacing),
+            outline_color=outline_color,
+            outline_width=float(render_settings.outline_width),
+            bold=render_settings.bold,
+            italic=render_settings.italic,
+            underline=render_settings.underline,
+            direction=render_settings.direction,
+            position=(x1, y1),
+            rotation=blk.angle,
+            scale=1.0,
+            transform_origin=blk.tr_origin_point if blk.tr_origin_point else (0, 0),
+            width=max(1, width),
+            height=max(1, height),
+            vertical=vertical,
+        )
+        text_item = self.main.image_viewer.add_text_item(properties)
+        # Keep the drawn width even for a one-character initial value.
+        if not vertical:
+            text_item.setTextWidth(max(1, width))
+
+        self.main.image_viewer.deselect_all()
+        text_item.selected = True
+        text_item.setSelected(True)
+        self.main.curr_tblock = blk
+        self.main.curr_tblock_item = text_item
+
+        command = AddTextItemCommand(self.main, text_item)
+        file_path = (
+            self.main.image_files[self.main.curr_img_idx]
+            if 0 <= self.main.curr_img_idx < len(self.main.image_files)
+            else None
+        )
+        stack = self.main.undo_stacks.get(file_path) if file_path else None
+        if stack is None:
+            stack = self.main.undo_group.activeStack()
+        if stack is not None:
+            stack.push(command)
+        return text_item
 
     def update_text_block_from_item(self, text_item: TextBlockItem, new_text: str):
         if self._suspend_text_command:
@@ -517,6 +620,22 @@ class TextController:
                     lambda item: item.set_color(font_color),
                 )
 
+    def _sync_target_editor_format_selection(self, item: TextBlockItem) -> None:
+        """Mirror a Target Text selection onto its rendered canvas item.
+
+        The Target Text editor intentionally stores plain text while the canvas
+        item owns rich formatting. When a user highlights a word in that editor,
+        its character offsets are therefore the reliable bridge to the matching
+        range in the canvas document.
+        """
+        editor = self.main.t_text_edit
+        if not editor.hasFocus() or editor.toPlainText() != item.toPlainText():
+            return
+
+        cursor = editor.textCursor()
+        if cursor.hasSelection():
+            item.set_format_selection(cursor.selectionStart(), cursor.selectionEnd())
+
     def left_align(self):
         if self.main.curr_tblock_item:
             item = self.main.curr_tblock_item
@@ -544,6 +663,7 @@ class TextController:
     def bold(self):
         if self.main.curr_tblock_item:
             item = self.main.curr_tblock_item
+            self._sync_target_editor_format_selection(item)
             command = TextFormatCommand(self.main.image_viewer, item)
             state = self.main.bold_button.isChecked()
             item.set_bold(state)
@@ -553,6 +673,7 @@ class TextController:
     def italic(self):
         if self.main.curr_tblock_item:
             item = self.main.curr_tblock_item
+            self._sync_target_editor_format_selection(item)
             command = TextFormatCommand(self.main.image_viewer, item)
             state = self.main.italic_button.isChecked()
             item.set_italic(state)
@@ -562,6 +683,7 @@ class TextController:
     def underline(self):
         if self.main.curr_tblock_item:
             item = self.main.curr_tblock_item
+            self._sync_target_editor_format_selection(item)
             command = TextFormatCommand(self.main.image_viewer, item)
             state = self.main.underline_button.isChecked()
             item.set_underline(state)

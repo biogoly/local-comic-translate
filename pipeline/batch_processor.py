@@ -143,13 +143,15 @@ class BatchProcessor:
             if self.block_detection.block_detector_cache is None:
                 self.block_detection.block_detector_cache = TextBlockDetector(settings_page)
             
-            blk_list = self.block_detection.block_detector_cache.detect(image)
+            blk_list = self.block_detection.block_detector_cache.detect(image) or []
 
             self.emit_progress(index, total_images, 2, 10, False)
             if self._is_cancelled():
                 return
 
             self.block_detection.annotate_language_if_auto(image, blk_list, source_lang)
+
+            logger.info("Automatic workflow: processing all %d detected text blocks", len(blk_list))
 
             if blk_list:
                 # Get ocr cache key for batch processing
@@ -216,6 +218,7 @@ class BatchProcessor:
             )
             
             try:
+                # Use the complete block list regardless of detector class.
                 translator.translate(blk_list, image, extra_context)
                 # Cache the translation results for potential future use
                 self.cache_manager._cache_translation_results(translation_cache_key, blk_list)
@@ -327,12 +330,19 @@ class BatchProcessor:
             if self._is_cancelled():
                 return
 
-            inpaint_input_img = call_inpaint_image(self.inpainting, image, mask, config, blk_list=inpaint_blk_list)
-            inpaint_input_img = imk.convert_scale_abs(inpaint_input_img)
-
-            # Saving cleaned image
-            patches = self.inpainting.get_inpainted_patches(mask, inpaint_input_img)
-            self.main_page.patches_processed.emit(patches, image_path)
+            if inpaint_blk_list:
+                inpaint_input_img = call_inpaint_image(
+                    self.inpainting,
+                    image,
+                    mask,
+                    config,
+                    blk_list=inpaint_blk_list,
+                )
+                inpaint_input_img = imk.convert_scale_abs(inpaint_input_img)
+                patches = self.inpainting.get_inpainted_patches(mask, inpaint_input_img)
+            else:
+                inpaint_input_img = image.copy()
+                patches = []
 
             if export_settings['export_inpainted_image']:
                 path = os.path.join(directory, f"comic_translate_{timestamp}", "cleaned_images", archive_bname)
@@ -396,10 +406,6 @@ class BatchProcessor:
                     return_metrics=True
                 )
                 
-                # Display text if on current page  
-                if image_path == file_on_display:
-                    self.main_page.blk_rendered.emit(translation, font_size, blk, image_path)
-
                 # Smart Color Override
                 font_color = get_smart_text_color(blk.font_color, setting_font_color)
 
@@ -450,13 +456,20 @@ class BatchProcessor:
                 'blk_list': blk_list                   
             })
 
-            # Notify UI that this page's render state is finalized.
-            # This enables a deterministic refresh when the user navigates to this page
-            # during processing and misses live blk_rendered events.
-            self.main_page.render_state_ready.emit(image_path)
+            # Publish the page only after every patch and text item is ready. The
+            # surrounding macro makes automatic cleanup and translated text a
+            # single Undo/Redo operation on the displayed page. A page containing
+            # no rendered text must not create an empty undo entry.
+            if patches or text_items_state:
+                self.main_page.batch_page_edit_started.emit(image_path)
+                if patches:
+                    self.main_page.patches_processed.emit(patches, image_path)
+                self.main_page.render_state_ready.emit(image_path)
+                self.main_page.batch_page_edit_finished.emit(image_path)
+            else:
+                self.main_page.render_state_ready.emit(image_path)
 
             if image_path == file_on_display:
                 self.main_page.blk_list = blk_list
 
             self.emit_progress(index, total_images, 10, 10, False)
-

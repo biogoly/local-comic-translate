@@ -5,6 +5,7 @@ from PySide6.QtGui import QColor
 from typing import Any
 
 from modules.utils.textblock import TextBlock
+from modules.utils.bubble_geometry import build_fallback_bubble_clip
 from modules.detection.utils.content import get_inpaint_mask
 
 
@@ -182,12 +183,14 @@ def build_bubble_clip_mask(
             # Fall back to ellipse on any error
             pass
 
-    cy_grid, cx_grid = np.ogrid[:height, :width]
-    ellipse_cx = (bx1_rel + bx2_rel) / 2.0
-    ellipse_cy = (by1_rel + by2_rel) / 2.0
-    rx = max(1.0, (bx2_rel - bx1_rel) / 2.0)
-    ry = max(1.0, (by2_rel - by1_rel) / 2.0)
-    return (((cx_grid - ellipse_cx) / rx) ** 2 + ((cy_grid - ellipse_cy) / ry) ** 2) <= 1.0
+    return build_fallback_bubble_clip(
+        mask_shape,
+        bounds,
+        bubble_xyxy,
+        inset=inset,
+        image=image,
+        seed_bbox=seed_bbox,
+    )
 
 
 def clip_mask_to_bubble(

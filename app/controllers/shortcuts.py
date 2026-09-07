@@ -57,6 +57,9 @@ class ShortcutController:
             "delete_selected_box": self._delete_selected_box,
             "restore_text_blocks": self._restore_text_blocks,
             "toggle_brush_strokes": self._toggle_brush_strokes,
+            "zoom_in": self._zoom_in,
+            "zoom_out": self._zoom_out,
+            "fit_page": self._fit_page,
         }
         handler = handlers.get(shortcut_id)
         if handler is not None:
@@ -117,3 +120,18 @@ class ShortcutController:
         if not self._workspace_is_active() or self._is_text_input_focused():
             return
         self.main.brush_button.click()
+
+    def _zoom_in(self) -> None:
+        if not self._workspace_is_active() or self._is_text_input_focused():
+            return
+        self.main.image_viewer.zoom_in()
+
+    def _zoom_out(self) -> None:
+        if not self._workspace_is_active() or self._is_text_input_focused():
+            return
+        self.main.image_viewer.zoom_out()
+
+    def _fit_page(self) -> None:
+        if not self._workspace_is_active() or self._is_text_input_focused():
+            return
+        self.main.image_viewer.fit_to_window()

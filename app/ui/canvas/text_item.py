@@ -81,6 +81,8 @@ class TextBlockItem(QGraphicsTextItem):
         self.resize_start = None
         self.editing_mode = False
         self.last_selection = None 
+        self._format_selection = None
+        self._restoring_insertion_format = False
         self._drag_selecting = False
         self._drag_select_anchor = None
 
@@ -186,15 +188,92 @@ class TextBlockItem(QGraphicsTextItem):
 
     def set_text(self, text, width):
         if self.is_html(text):
+            self._format_selection = None
             self.setHtml(text)
             self.setTextWidth(width)
             self.set_outline(self.outline_color, self.outline_width)
         else:
             self.set_plain_text(text)
+            # set_plain_text applies formatting and derives a content width.
+            # Restore the caller's box width so manual text wraps inside the
+            # region the user drew instead of collapsing to a single line.
+            if width is not None and width > 0:
+                self.setTextWidth(width)
+                self.set_alignment(self.alignment)
 
     def set_plain_text(self, text):
+        self._format_selection = None
         self.setPlainText(text)
         self.apply_all_attributes()
+
+    def _format_cursor(self) -> QTextCursor:
+        """Return the live selection, restoring the last editor selection if needed."""
+        cursor = self.textCursor()
+        if cursor.hasSelection() or not self._format_selection:
+            return cursor
+
+        start, end = self._format_selection
+        text_length = max(0, self.document().characterCount() - 1)
+        if 0 <= start < end <= text_length:
+            cursor.setPosition(start)
+            cursor.setPosition(end, QTextCursor.KeepAnchor)
+        return cursor
+
+    def set_format_selection(self, start: int, end: int) -> bool:
+        """Select a plain-text range for the next inline formatting action."""
+        try:
+            start = int(start)
+            end = int(end)
+        except (TypeError, ValueError):
+            return False
+
+        text_length = max(0, self.document().characterCount() - 1)
+        start = max(0, min(start, text_length))
+        end = max(0, min(end, text_length))
+        if start >= end:
+            return False
+
+        cursor = self.textCursor()
+        cursor.setPosition(start)
+        cursor.setPosition(end, QTextCursor.KeepAnchor)
+        self._format_selection = (start, end)
+        self.setTextCursor(cursor)
+        return True
+
+    def has_format_selection(self) -> bool:
+        return self._format_cursor().hasSelection()
+
+    def _restore_base_insertion_format(self):
+        """Keep the item's font when all text is deleted and typing resumes."""
+        if self._restoring_insertion_format:
+            return
+
+        self._restoring_insertion_format = True
+        try:
+            family = (
+                self.font_family.strip()
+                if isinstance(self.font_family, str) and self.font_family.strip()
+                else QApplication.font().family()
+            )
+            font = QFont(family)
+            font.setPointSizeF(max(1.0, float(self.font_size)))
+            font.setBold(bool(self.bold))
+            font.setItalic(bool(self.italic))
+            font.setUnderline(bool(self.underline))
+
+            char_format = QTextCharFormat()
+            char_format.setFont(font)
+            char_format.setForeground(self.text_color)
+
+            self.document().setDefaultFont(font)
+            self.setDefaultTextColor(self.text_color)
+            cursor = self.textCursor()
+            cursor.clearSelection()
+            cursor.setCharFormat(char_format)
+            self.setTextCursor(cursor)
+            self._format_selection = None
+        finally:
+            self._restoring_insertion_format = False
 
     def is_html(self, text):
         import re
@@ -204,7 +283,7 @@ class TextBlockItem(QGraphicsTextItem):
         return bool(re.search(r'<(div|span|p|br|html|body|style)[^>]*>', text, re.IGNORECASE))
 
     def set_font(self, font_family, font_size):
-        if not self.textCursor().hasSelection():
+        if not self.has_format_selection():
             self.font_family = font_family
             self.font_size = font_size
 
@@ -218,7 +297,7 @@ class TextBlockItem(QGraphicsTextItem):
 
     def set_font_size(self, font_size):
         font_size = max(1, font_size)
-        if not self.textCursor().hasSelection():
+        if not self.has_format_selection():
             self.font_size = font_size
         self.update_text_format('size', font_size)
 
@@ -253,7 +332,7 @@ class TextBlockItem(QGraphicsTextItem):
         self.update()
 
     def update_text_format(self, attribute, value):
-        cursor = self.textCursor()
+        cursor = self._format_cursor()
         has_selection = cursor.hasSelection()
 
         format_operations = {
@@ -294,9 +373,13 @@ class TextBlockItem(QGraphicsTextItem):
                 self.document().setDefaultFont(font)
             self.document().setDefaultTextOption(doc_format)
         
-        # Clear the selection by moving the cursor to the end of the document
-        cursor.clearSelection()
-        cursor.movePosition(QTextCursor.End)
+        # Preserve a word selection so multiple controls (for example bold and
+        # italic) can be applied without forcing the user to select it again.
+        if has_selection:
+            self._format_selection = (cursor.selectionStart(), cursor.selectionEnd())
+        else:
+            cursor.clearSelection()
+            cursor.movePosition(QTextCursor.End)
 
         self.setTextCursor(cursor)
         self.update()
@@ -313,7 +396,7 @@ class TextBlockItem(QGraphicsTextItem):
         cursor.mergeBlockFormat(block_format)
 
     def set_color(self, color):
-        if not self.textCursor().hasSelection():
+        if not self.has_format_selection():
             self.text_color = color
         self.update_text_format('color', color)
 
@@ -461,17 +544,17 @@ class TextBlockItem(QGraphicsTextItem):
         return doc
 
     def set_bold(self, state):
-        if not self.textCursor().hasSelection():
+        if not self.has_format_selection():
             self.bold = state
         self.update_text_format('bold', state)
 
     def set_italic(self, state):
-        if not self.textCursor().hasSelection():
+        if not self.has_format_selection():
             self.italic = state
         self.update_text_format('italic', state)
 
     def set_underline(self, state):
-        if not self.textCursor().hasSelection():
+        if not self.has_format_selection():
             self.underline = state
         self.update_text_format('underline', state)
 
@@ -608,6 +691,8 @@ class TextBlockItem(QGraphicsTextItem):
         
         # Default handling for all other cases
         super().keyPressEvent(event)
+        if self.editing_mode:
+            self.on_selection_changed()
 
     def enter_editing_mode(self):
         self.editing_mode = True
@@ -627,6 +712,8 @@ class TextBlockItem(QGraphicsTextItem):
 
     def _on_text_changed(self):
         new_text = self.toPlainText()
+        if not new_text:
+            self._restore_base_insertion_format()
         self.text_changed.emit(new_text)
         self.update_outlines()
 
@@ -652,9 +739,12 @@ class TextBlockItem(QGraphicsTextItem):
         if self.editing_mode and self.layout and event.button() == Qt.MouseButton.LeftButton:
             self._drag_selecting = False
             self._drag_select_anchor = None
+            self.on_selection_changed()
             event.accept()
             return
         super().mouseReleaseEvent(event)
+        if self.editing_mode and event.button() == Qt.MouseButton.LeftButton:
+            self.on_selection_changed()
 
     def contextMenuEvent(self, event):
         super().contextMenuEvent(event)
@@ -816,6 +906,11 @@ class TextBlockItem(QGraphicsTextItem):
 
     def on_selection_changed(self):
         cursor = self.textCursor()
+        self._format_selection = (
+            (cursor.selectionStart(), cursor.selectionEnd())
+            if cursor.hasSelection()
+            else None
+        )
         properties = self.get_selected_text_properties(cursor)
         if self.editing_mode:
             self.text_highlighted.emit(properties)

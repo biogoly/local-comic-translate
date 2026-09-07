@@ -1,186 +1,212 @@
-# Comic Translate
+# Local Comic Translate
+
 English | [한국어](docs/README_ko.md) | [Français](docs/README_fr.md) | [简体中文](docs/README_zh-CN.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png">
+<img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate interface">
 
-## Intro
-Many Automatic Manga Translators exist. Very few properly support comics of other kinds in other languages. 
-This project was created to utilize the ability of State of the Art (SOTA) Large Language Models (LLMs) like GPT and translate comics from all over the world. 
+Local Comic Translate is a community fork of [Comic Translate](https://github.com/ogkalu2/comic-translate) focused on private, local translation and a safer hands-on desktop editing workflow. It keeps the upstream application's detection, OCR, inpainting, rendering, project, archive, and webtoon features while adding a managed `llama.cpp` translator and substantial editing and reliability improvements.
 
-Currently, it supports translating comics from the following languages: English, Korean, Japanese, French, Simplified Chinese, Traditional Chinese, Russian, German, Dutch, Spanish and Italian. It can translate to the above mentioned and more. 
+The inherited OCR pipeline supports English, Korean, Japanese, French, Simplified and Traditional Chinese, Russian, German, Dutch, Spanish, and Italian as source languages, with those and additional languages available as translation targets.
 
-- [The State of Machine Translation](#the-state-of-machine-translation)
-- [Preview](#comic-samples)
-- [Getting Started](#installation)
-    - [Installation](#installation)
-        - [Download](#download)
-        - [From Source](#from-source)
-    - [Usage](#usage)
-        - [Tips](#tips)
+This fork is under active development. The changes described below currently require running from source; the downloads on the upstream Comic Translate website do not include them. The translated README files also still describe the upstream project and may not yet reflect the fork-specific features.
 
-- [How it works](#how-it-works)
-    - [Text Detection](#text-detection)
-    - [OCR](#OCR)
-    - [Inpainting](#inpainting)
-    - [Translation](#translation)
-    - [Text Rendering](#text-rendering)
+## Highlights of this fork
 
-- [Acknowledgements](#acknowledgements)
+### Local first, private LLM translation
 
-## The State of Machine Translation
-For a couple dozen languages, the best Machine Translator is not Google Translate, Papago or even DeepL, but a SOTA LLM like GPT-4, and by far. 
-This is very apparent for distant language pairs (Korean<->English, Japanese<->English etc) where other translators still often devolve into gibberish.
-Excerpt from "The Walking Practice"(보행 연습) by Dolki Min(돌기민)
-![Model](https://i.imgur.com/72jvLBa.png)
+- A **Local LLM** translator that does not require a hosted translation API or Comic Translate account.
+- **Managed llama.cpp** mode launches a local `llama-server` process, chooses an unused loopback port, reuses the process between requests, and stops it when the app exits.
+- **External server** mode supports OpenAI-compatible `/v1` endpoints such as Ollama, LM Studio, or a separately managed `llama-server`.
+- Configurable GGUF model, optional multimodal projector (`mmproj`), context size, GPU layers, startup/request timeouts, maximum output tokens, temperature, Top P, and Top K.
+- Optional page-image input for vision-capable models. The existing OCR remains the primary text source; the image gives a multimodal model additional context and a chance to correct obvious OCR mistakes.
+- Strict block-ID validation and automatic retries prevent incomplete or malformed model output from silently shifting translations into the wrong bubbles.
+- Page-level translation caching uses the original source image, so later inpainting does not unnecessarily invalidate a cached translation.
 
-## Comic Samples
-GPT-4 as Translator.
-Note: Some of these also have Official English Translations
+### Safer manual editing
 
-[The Wretched of the High Seas](https://www.drakoo.fr/bd/drakoo/les_damnes_du_grand_large/les_damnes_du_grand_large_-_histoire_complete/9782382330128)
+- A practical page-by-page workflow for reviewing detected regions before anything is erased.
+- Zoom In, Zoom Out, and Fit controls, plus configurable keyboard shortcuts.
+- Natural page sorting by filename and sorting by modification time.
+- Borderless replacement text appears immediately when a new text region is drawn and text is entered.
+- Deleting and retyping text preserves the chosen font.
+- Bold, italic, and underline can be applied to selected words instead of only to the entire text item.
+- Full-page manual translation creates any missing text layers. Translating a selected, not-yet-rendered region cleans it before creating its translated text layer.
 
-<img src="https://i.imgur.com/75HwK4r.jpg" width="49%"> <img src="https://i.imgur.com/3oRt5fX.jpg" width="49%">
+### Inpainting and undo improvements
 
-[Journey to the West](https://ac.qq.com/Comic/comicInfo/id/541812)
+- Every manual cleanup pass is undoable and redoable with the normal Undo/Redo controls.
+- **Revert All Inpainting on the Current Page** removes all saved cleanup patches as one undoable action.
+- Repeated cleanup starts from the currently composited page, preventing previously removed text from reappearing in later patches.
+- Manual brush cleanup handles single clicks as well as strokes and uses integer-safe image bounds.
+- Geometry-aware fallback masks distinguish rectangular caption boxes from round balloons, reducing leftover text in square corners while remaining conservative around artwork.
+- Automatic page edits are grouped into predictable undo steps.
 
-<img src="https://i.imgur.com/zk7yiKe.jpg" width="49%"> <img src="https://i.imgur.com/4ycSi8j.jpg" width="49%">
+### GPU and reliability work
 
-[The Wormworld Saga](https://wormworldsaga.com/index.php)
+- Windows dependencies include ONNX Runtime GPU with matching CUDA 13/cuDNN 9 runtime packages; TensorRT is no longer probed unless explicitly requested.
+- CUDA failure cleanly falls back to CPU instead of requiring TensorRT.
+- Fixes cover asynchronous page navigation, project patch identity and persistence, repeated inpainting composition, and missing render updates.
+- A regression suite covers local LLM responses, detection labels, automatic/manual translation, text editing, image sorting, inpainting geometry and undo, translation caching, and device selection.
 
-<img src="https://i.imgur.com/cVVGVXp.jpg" width="49%"> <img src="https://i.imgur.com/SSl81sb.jpg" width="49%">
+## Recommended workflow
 
-[Frieren: Beyond Journey's End](https://renta.papy.co.jp/renta/sc/frm/item/220775/title/742932/)
+Automatic translation remains available, but careful comic restoration usually benefits from processing one page at a time:
 
-<img src="https://i.imgur.com/ANGHVhG.png" width="49%"> <img src="https://i.imgur.com/9zSh1DW.png" width="49%">
+1. Load the comic and use **Sort** if the pages are not in reading order.
+2. Select **Manual** mode and click **Detect**.
+3. Review the regions before processing: delete detections that belong to artwork and draw boxes around any missed dialogue or captions.
+4. Click **Recognize**, then correct the source text if OCR made a mistake.
+5. Click **Translate** and review or edit the target text.
+6. Click **Segment**, inspect the proposed cleanup areas, then click **Clean**.
+7. Click **Render** and adjust each text item for font, size, alignment, spacing, and emphasis.
+8. Use the cleanup brush and **Apply Cleanup** for any remaining marks. Undo/Redo or **Revert All Inpainting on the Current Page** is available if cleanup damages the art.
 
-[Days of Sand](https://9ekunst.nl/2021/05/20/nieuw-album-van-aimee-de-jongh-is-benauwend-als-een-zandstorm/)
-
-<img src="https://i.imgur.com/m7PDiXN.jpg" width="49%"> <img src="https://i.imgur.com/eUwTGnn.jpg" width="49%">
-
-[Player (OH Hyeon-Jun)](https://comic.naver.com/webtoon/list?titleId=745876&page=1&sort=ASC&tab=fri)
-
-<img src="https://i.imgur.com/KGwiHJh.jpg" width="49%"> <img src="https://i.imgur.com/B8RMbRQ.jpg" width="49%">
-
-[Carbon & Silicon](https://www.amazon.com/Carbone-Silicium-French-Mathieu-Bablet-ebook/dp/B0C1LTGZ85/)
-
-<img src="https://i.imgur.com/h51XJx4.jpg" width="49%"> <img src="https://i.imgur.com/sLitjUY.jpg" width="49%">
+The detector intentionally keeps both speech-bubble text and free-floating text. This prevents manual mode from losing valid OCR regions, but it also means **Translate All** can inpaint artistic titles, signs, sound effects, or other lettering that is part of the art. Manual review before cleaning is the recommended approach when preserving artwork matters.
 
 ## Installation
-### Download
-* **Desktop App**: Download and install Comic Translate for Windows and macOS from [here](https://www.comic-translate.com). 
 
-  >Ignore Smart Screen for Windows (Click More info > Run anyway). 
+### Requirements
 
-  >For macOS, after trying to open, go to Settings > Privacy and Security > Scroll down and click Open Anyway. 
+- Python 3.12
+- [Git](https://git-scm.com/)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- A local `llama-server` executable and a compatible GGUF model if you want to use managed local translation
+- WinRAR or 7-Zip on `PATH` when opening CBR archives
 
-  >Note: GPU acceleration is currently only available when running from source.
+### Run from source
 
-* **Browser Extension**: Install the Comic Translate extension for Chromium-based browsers (Chrome, Edge, Brave, etc.) [here](https://www.comic-translate.com/download) to read directly on websites.
-
-### From Source
-Alternatively, if you'd like to run the source code directly.
-
-Install Python 3.12. Tick "Add python.exe to PATH" during the setup.
 ```bash
-https://www.python.org/downloads/
-```
-Install git
-```bash
-https://git-scm.com/
-```
-Install uv
-```
-https://docs.astral.sh/uv/getting-started/installation/
-```
-
-Then, in the command line
-```bash
-git clone https://github.com/ogkalu2/comic-translate
-cd comic-translate
+git clone https://github.com/biogoly/local-comic-translate.git
+cd local-comic-translate
 uv init --python 3.12
-```
-and install the requirements
-```bash
 uv add -r requirements.txt --compile-bytecode
-```
-
-To Update, run this in the comic-translate folder
-```bash
-git pull
-uv init --python 3.12 (Note: only run this line if you did not use uv for the first time installation)
-uv add -r requirements.txt --compile-bytecode
-```
-
-If you have an NVIDIA GPU, then it is recommended to run
-```bash
-uv pip install onnxruntime-gpu
-```
-
-## Usage
-In the comic-translate directory, run
-```bash
 uv run comic.py
 ```
-This will launch the GUI
 
-### Tips
-* If you have a CBR file, you'll need to install Winrar or 7-Zip then add the folder it's installed to (e.g "C:\Program Files\WinRAR" for Windows) to Path. If it's installed but not to Path, you may get the error, 
-```bash
-raise RarCannotExec("Cannot find working tool")
+On Windows, `run.bat` is also provided after the initial dependency installation:
+
+```bat
+run.bat
 ```
-In that case, Instructions for [Windows](https://www.windowsdigitals.com/add-folder-to-path-environment-variable-in-windows-11-10/), [Linux](https://linuxize.com/post/how-to-add-directory-to-path-in-linux/), [Mac](https://techpp.com/2021/09/08/set-path-variable-in-macos-guide/)
 
-* Make sure the selected Font supports characters of the target language
-* v2.0 introduces a Manual Mode. When you run into issues with Automatic Mode (No text detected, Incorrect OCR, Insufficient Cleaning etc), you are now able to make corrections. Simply Undo the Image and toggle Manual Mode.
-* In Automatic Mode, Once an Image has been processed, it is loaded in the Viewer or stored to be loaded on switch so you can keep reading in the app as the other Images are being translated.
-* Ctrl + Mouse Wheel to Zoom otherwise Vertical Scrolling
-* The Usual Trackpad Gestures work for viewing the Image
-* Right, Left Keys to Navigate Between Images
+To update an existing checkout:
+
+```bash
+git pull
+uv add -r requirements.txt --compile-bytecode
+```
+
+### Configure a local LLM
+
+`llama.cpp` itself is an external runtime and is not installed through `requirements.txt` or `uv`. Download or build [`llama.cpp`](https://github.com/ggml-org/llama.cpp), then obtain a chat/instruction GGUF model that fits your hardware.
+
+The backend is model-agnostic; Gemma 4 is the primary model used during the fork's current development and testing.
+
+In the application:
+
+1. Open **Settings > Tools** and select **Local LLM** as the translator.
+2. Open **Settings > LLMs**.
+3. Choose one of the following runtimes:
+   - **Managed llama.cpp**: select `llama-server` (optional if it is already on `PATH`), the main GGUF model, and the matching vision projector GGUF if the model requires one.
+   - **External server**: enter the OpenAI-compatible base URL and exact model name exposed by the server. The default URL, `http://127.0.0.1:11434/v1`, targets Ollama.
+4. Enable **Provide Image as Input to AI** only if the selected model and server support vision. In managed mode, configure the required `mmproj` file first.
+
+The conservative translation defaults are Temperature `0.20`, Top P `0.90`, and Top K `40`. They are good starting points for translation; adjust them only if your model's own documentation recommends different sampling values. Set Top K to `0` to disable it.
+
+### GPU acceleration
+
+There are two independent GPU settings:
+
+- **Settings > Tools > Use GPU** controls supported ONNX/PyTorch work such as detection, OCR, and inpainting. On Windows, the dependency set installs ONNX Runtime GPU and matching CUDA 13/cuDNN 9 runtime packages. A compatible NVIDIA driver is still required, but a separate CUDA Toolkit or TensorRT installation is not.
+- **Settings > LLMs > GPU layers** controls how many layers managed `llama.cpp` tries to offload. External servers manage their own GPU settings.
+
+CPU fallback remains available. GPU speedups vary by model, page size, and which pipeline stage is the bottleneck; a full page workflow may not scale in proportion to raw GPU utilization.
+
+## Usage tips
+
+- `Ctrl` + mouse wheel: zoom
+- `Ctrl` + `=`: zoom in
+- `Ctrl` + `-`: zoom out
+- `Ctrl` + `0`: fit page to the window
+- Arrow Left/Right: move between pages
+- Standard trackpad gestures work in the image viewer
+- Make sure the selected font supports the target language
+- Page sort options are **Name: A to Z**, **Name: Z to A**, **Modified: Oldest First**, and **Modified: Newest First**. Filename sorting is natural, so `page2` comes before `page10`.
+- If a CBR file raises `RarCannotExec("Cannot find working tool")`, add the WinRAR or 7-Zip installation folder to `PATH`.
 
 ## How it works
-### Speech Bubble Detection and Text Segmentation
-[bubble-and-text-detector](https://huggingface.co/ogkalu/comic-text-and-bubble-detector). RT-DETR-v2 model trained on 11k images of comics (Manga, Webtoons, Western).
-Algorithmic segmentation based on the boxes provided from the detection model.
 
-<img src="https://i.imgur.com/TlzVH3j.jpg" width="49%"> <img src="https://i.imgur.com/h18XrYT.jpg" width="49%"> 
+### Speech-bubble detection and text segmentation
+
+The application uses the upstream [bubble-and-text-detector](https://huggingface.co/ogkalu/comic-text-and-bubble-detector), an RT-DETR-v2 model trained on manga, webtoons, and Western comics. Detection results remain editable before OCR, segmentation, or cleanup.
+
+<img src="https://i.imgur.com/TlzVH3j.jpg" width="49%" alt="Detected comic text"> <img src="https://i.imgur.com/h18XrYT.jpg" width="49%" alt="Segmented comic text">
 
 ### OCR
-By Default:
-* [manga-ocr](https://github.com/kha-white/manga-ocr) for Japanese
-* [Pororo](https://github.com/yunwoong7/korean_ocr_using_pororo) for Korean 
-* [PPOCRv5](https://www.paddleocr.ai/main/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html) for Everything Else
 
-Optional:
+The default OCR backends are:
 
-These can be used for any of the supported languages.
+- [manga-ocr](https://github.com/kha-white/manga-ocr) for Japanese
+- [Pororo](https://github.com/yunwoong7/korean_ocr_using_pororo) for Korean
+- [PPOCRv5](https://www.paddleocr.ai/main/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html) for other supported languages
 
-* Gemini 2.0 Flash
-* Microsoft Azure Vision
-
-### Inpainting
-To remove the segmented text
-* A [Manga/Anime finetuned](https://huggingface.co/dreMaz/AnimeMangaInpainting) [lama](https://github.com/advimman/lama) checkpoint. Implementation courtsey of [lama-cleaner](https://github.com/Sanster/lama-cleaner)
-* [AOT-GAN](https://arxiv.org/abs/2104.01431) based model by [zyddnys](https://github.com/zyddnys)
-
-<img src="https://i.imgur.com/cVVGVXp.jpg" width="49%"> <img src="https://i.imgur.com/bLkPyqG.jpg" width="49%">
+Gemini and Microsoft Azure Vision remain available as optional upstream OCR integrations.
 
 ### Translation
-Currently, this supports using GPT-4.1, Claude-4.5, 
-Gemini-2.5.
 
-All LLMs are fed the entire page text to aid translations. 
-There is also the Option to provide the Image itself for further context. 
+The upstream hosted LLM integrations remain available. This fork additionally provides the local OpenAI-compatible path described above. All LLM translators receive the page's recognized text together for context; compatible multimodal models can optionally receive the page image as well.
 
-### Text Rendering
-Wrapped text in bounding boxes obtained from bubbles and text.
+### Inpainting
+
+The current local inpainting backends remain LaMa, MI-GAN, and AOT. The fork improves how cleanup masks and patches are applied, edited, persisted, and reversed; it does not yet replace these backends with a generative image-edit model.
+
+<img src="https://i.imgur.com/cVVGVXp.jpg" width="49%" alt="Comic before inpainting"> <img src="https://i.imgur.com/bLkPyqG.jpg" width="49%" alt="Comic after inpainting">
+
+### Text rendering
+
+Translated or manually entered text is wrapped inside editable regions. Font, size, alignment, spacing, color, outline, direction, and character-level emphasis can be adjusted before export.
+
+## Tests
+
+Run the regression suite from the repository root:
+
+```bash
+uv run python -m unittest discover -s tests -v
+```
+
+## Current limitations
+
+- This is an early source-only fork; broad testing across languages, models, layouts, and operating systems is still in progress.
+- Automatic mode cannot always distinguish dialogue from lettering that belongs to the artwork. Use Manual mode when preservation is important.
+- Detection, OCR, translation, segmentation, and inpainting can all require human correction on difficult pages.
+- Vision input requires a genuinely multimodal model, a compatible server, and (when applicable) the matching projector file.
+- Local generation quality and speed depend heavily on model choice, quantization, context size, and available RAM/VRAM.
+- The other-language README files have not yet been updated with fork-specific documentation.
+
+## Comic samples from the upstream project
+
+These examples show Comic Translate's original hosted GPT workflow. Some titles also have official English translations.
+
+- [The Wretched of the High Seas](https://www.drakoo.fr/bd/drakoo/les_damnes_du_grand_large/les_damnes_du_grand_large_-_histoire_complete/9782382330128)
+- [Journey to the West](https://ac.qq.com/Comic/comicInfo/id/541812)
+- [The Wormworld Saga](https://wormworldsaga.com/index.php)
+- [Frieren: Beyond Journey's End](https://renta.papy.co.jp/renta/sc/frm/item/220775/title/742932/)
+- [Days of Sand](https://9ekunst.nl/2021/05/20/nieuw-album-van-aimee-de-jongh-is-benauwd-als-een-zandstorm/)
+- [Player (OH Hyeon-Jun)](https://comic.naver.com/webtoon/list?titleId=745876&page=1&sort=ASC&tab=fri)
+- [Carbon & Silicon](https://www.amazon.com/Carbone-Silicium-French-Mathieu-Bablet-ebook/dp/B0C1LTGZ85/)
 
 ## Acknowledgements
 
-* [https://github.com/Sanster/lama-cleaner](https://github.com/Sanster/lama-cleaner)
-* [https://huggingface.co/dreMaz](https://huggingface.co/dreMaz)
-* [https://github.com/yunwoong7/korean_ocr_using_pororo](https://github.com/yunwoong7/korean_ocr_using_pororo)
-* [https://github.com/kha-white/manga-ocr](https://github.com/kha-white/manga-ocr)
-* [https://github.com/JaidedAI/EasyOCR](https://github.com/JaidedAI/EasyOCR)
-* [https://github.com/PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
-* [https://github.com/RapidAI/RapidOCR](https://github.com/RapidAI/RapidOCR)
-* [https://github.com/phenom-films/dayu_widgets](https://github.com/phenom-films/dayu_widgets)
+This work is a fork of [ogkalu2/comic-translate](https://github.com/ogkalu2/comic-translate). The original application, models, interface, and integrations are the foundation for the changes documented here.
+
+- [llama.cpp](https://github.com/ggml-org/llama.cpp)
+- [lama-cleaner](https://github.com/Sanster/lama-cleaner)
+- [dreMaz/AnimeMangaInpainting](https://huggingface.co/dreMaz/AnimeMangaInpainting)
+- [Pororo Korean OCR](https://github.com/yunwoong7/korean_ocr_using_pororo)
+- [manga-ocr](https://github.com/kha-white/manga-ocr)
+- [EasyOCR](https://github.com/JaidedAI/EasyOCR)
+- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
+- [RapidOCR](https://github.com/RapidAI/RapidOCR)
+- [dayu_widgets](https://github.com/phenom-films/dayu_widgets)
+
+Licensed under the [Apache License 2.0](LICENSE).

@@ -119,6 +119,21 @@ class Messages:
         )
 
     @staticmethod
+    def show_local_llm_not_configured_error(parent, details: str = ""):
+        text = QCoreApplication.translate(
+            "Messages",
+            "Local LLM is not configured yet. Open Settings > LLMs and complete the local runtime fields."
+        )
+        if details:
+            text = f"{text}\n\n{details}"
+        MMessage.error(
+            text=text,
+            parent=parent,
+            duration=None,
+            closable=True,
+        )
+
+    @staticmethod
     def show_error_with_copy(parent, title: str, text: str, detailed_text: str | None = None):
         """
         Show a critical error dialog where the main text is selectable and the

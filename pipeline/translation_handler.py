@@ -40,7 +40,10 @@ class TranslationHandler:
         )
         if self.main_page.image_viewer.hasPhoto() and self.main_page.blk_list:
             settings_page = self.main_page.settings_page
-            image = self.main_page.image_viewer.get_image_array()
+            # Cache against the immutable source page. Inpainting patches change
+            # the composited viewer pixels after every manual translation and
+            # must not create a new translation-cache namespace each time.
+            image = self.main_page.image_viewer.get_image_array(include_patches=False)
             extra_context = settings_page.get_llm_settings()['extra_context']
             translator_key = settings_page.get_tool_selection('translator')
 
@@ -133,7 +136,9 @@ class TranslationHandler:
             return
         
         # Get the visible area image and mapping data
-        visible_image, mappings = self.main_page.image_viewer.get_visible_area_image()
+        visible_image, mappings = self.main_page.image_viewer.get_visible_area_image(
+            include_patches=False
+        )
         if visible_image is None or not mappings:
             logger.warning("No visible area found for translation")
             return

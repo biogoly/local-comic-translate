@@ -2,7 +2,12 @@ import numpy as np
 from typing import List, Dict, Tuple
 
 from PySide6 import QtWidgets, QtCore, QtGui
-from PySide6.QtWidgets import QGraphicsView, QGraphicsPixmapItem, QGraphicsScene
+from PySide6.QtWidgets import (
+    QGraphicsPathItem,
+    QGraphicsPixmapItem,
+    QGraphicsScene,
+    QGraphicsView,
+)
 from PySide6.QtCore import Signal, Qt, QRectF, QPointF
 
 from .text_item import TextBlockItem
@@ -16,6 +21,10 @@ from .event_handler import EventHandler
 
 
 class ImageViewer(QGraphicsView):
+    ZOOM_FACTOR = 1.25
+    MIN_VIEW_SCALE = 0.02
+    MAX_VIEW_SCALE = 16.0
+
     # Signals
     rectangle_created = Signal(MoveableRectItem)
     rectangle_selected = Signal(QRectF)
@@ -148,6 +157,60 @@ class ImageViewer(QGraphicsView):
                 self.scale(factor, factor)
                 self.centerOn(rect.center())
 
+    def view_scale(self) -> float:
+        """Return the current horizontal view scale."""
+        transform = self.transform()
+        return float(np.hypot(transform.m11(), transform.m12()))
+
+    def zoom_by(self, factor: float, *, anchor_under_mouse: bool = False) -> bool:
+        """Scale the canvas with practical bounds for comic-page editing."""
+        if not self.hasPhoto() or factor <= 0:
+            return False
+
+        current_scale = self.view_scale()
+        if current_scale <= 0:
+            return False
+
+        # Never make an already-unusual saved/fit transform jump in the opposite
+        # direction merely to satisfy a limit.
+        minimum_scale = min(self.MIN_VIEW_SCALE, current_scale)
+        maximum_scale = max(self.MAX_VIEW_SCALE, current_scale)
+        target_scale = max(minimum_scale, min(maximum_scale, current_scale * factor))
+        applied_factor = target_scale / current_scale
+        if abs(applied_factor - 1.0) < 1e-6:
+            return False
+
+        old_anchor = self.transformationAnchor()
+        requested_anchor = (
+            QGraphicsView.AnchorUnderMouse
+            if anchor_under_mouse
+            else QGraphicsView.AnchorViewCenter
+        )
+        self.setTransformationAnchor(requested_anchor)
+        try:
+            self.scale(applied_factor, applied_factor)
+        finally:
+            self.setTransformationAnchor(old_anchor)
+
+        self.zoom += np.log(applied_factor) / np.log(self.ZOOM_FACTOR)
+        if self.webtoon_mode:
+            self.webtoon_manager.on_scroll()
+        return True
+
+    def zoom_in(self) -> bool:
+        return self.zoom_by(self.ZOOM_FACTOR)
+
+    def zoom_out(self) -> bool:
+        return self.zoom_by(1.0 / self.ZOOM_FACTOR)
+
+    def fit_to_window(self) -> None:
+        if not self.hasPhoto():
+            return
+        self.fitInView()
+        self.zoom = 0
+        if self.webtoon_mode:
+            self.webtoon_manager.on_scroll()
+
     def set_tool(self, tool: str):
         self.current_tool = tool
         if tool == 'pan':
@@ -260,7 +323,22 @@ class ImageViewer(QGraphicsView):
             original_transform = self.transform()
             self._scene.views()[0].resetTransform()
             self._scene.setSceneRect(0, 0, original_size.width(), original_size.height())
-            self._scene.render(painter)
+            # Rectangles and brush paths are editing guides, never comic art.
+            # Hide them only while flattening the page so text-box borders and
+            # cleanup strokes cannot leak into a saved image.
+            editor_items = [
+                item
+                for item in self._scene.items()
+                if isinstance(item, (MoveableRectItem, QGraphicsPathItem))
+            ]
+            editor_visibility = [(item, item.isVisible()) for item in editor_items]
+            for item, _was_visible in editor_visibility:
+                item.setVisible(False)
+            try:
+                self._scene.render(painter)
+            finally:
+                for item, was_visible in editor_visibility:
+                    item.setVisible(was_visible)
             painter.end()
 
 
@@ -283,7 +361,10 @@ class ImageViewer(QGraphicsView):
             painter.drawPixmap(0, 0, pixmap)
             
             # Updated patch detection logic - patches are now added directly to scene
-            for item in self._scene.items():
+            # QGraphicsScene.items() defaults to top-to-bottom. Composite in
+            # bottom-to-top order so a newer cleanup patch remains on top of
+            # the older patch it was meant to correct.
+            for item in self._scene.items(Qt.SortOrder.AscendingOrder):
                 if isinstance(item, QGraphicsPixmapItem) and item != self.photo:
                     # Check if this is a patch item (has the hash key data)
                     if item.data(0) is not None:  # HASH_KEY = 0 from PatchCommandBase

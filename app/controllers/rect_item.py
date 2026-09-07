@@ -75,6 +75,11 @@ class RectItemController:
         command = AddRectangleCommand(self.main, rect_item, new_blk, self.main.blk_list)
         self.main.undo_group.activeStack().push(command)
 
+        # A newly drawn box is the user's active text region. Selecting it here
+        # binds the source/target editors immediately; previously the user had
+        # to click the box a second time before typing had any target block.
+        self.main.image_viewer.select_rectangle(rect_item)
+
     def handle_rectangle_deletion(self, rect: QRectF):
         rect_coords = rect.getCoords()
         current_text_block = self.find_corresponding_text_block(rect_coords, 0.5)

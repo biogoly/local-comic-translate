@@ -1,11 +1,12 @@
 from collections import deque
 import numpy as np
 from typing import Set, Optional
-from PySide6.QtWidgets import QGraphicsPixmapItem, QGraphicsRectItem
+from PySide6.QtWidgets import QGraphicsPathItem, QGraphicsPixmapItem, QGraphicsRectItem
 from PySide6.QtCore import QTimer, QRectF, Qt
 from PySide6.QtGui import QPixmap, QColor, QPen, QBrush, QImage, QPainter
 import imkit as imk
 from app.path_materialization import ensure_path_materialized
+from ..rectangle import MoveableRectItem
 
 
 class LazyImageLoader:
@@ -495,8 +496,22 @@ class LazyImageLoader:
             page_scene_rect = QRectF(0, page_y_position, original_size.width(), page_height)
             self._scene.setSceneRect(page_scene_rect)
             
-            # Render the scene area for this page
-            self._scene.render(painter)
+            # Box rectangles and brush paths are editor-only overlays. They
+            # must remain visible in the workspace but never be flattened into
+            # the exported comic page.
+            editor_items = [
+                item
+                for item in self._scene.items()
+                if isinstance(item, (MoveableRectItem, QGraphicsPathItem))
+            ]
+            editor_visibility = [(item, item.isVisible()) for item in editor_items]
+            for item, _was_visible in editor_visibility:
+                item.setVisible(False)
+            try:
+                self._scene.render(painter)
+            finally:
+                for item, was_visible in editor_visibility:
+                    item.setVisible(was_visible)
             painter.end()
 
             # Scale down the image to the original size
@@ -530,7 +545,9 @@ class LazyImageLoader:
             
             page_scene_bounds = QRectF(page_scene_left, page_scene_top, pixmap.width(), page_height)
             
-            for item in self._scene.items():
+            # Preserve scene stacking when flattening patches for another
+            # inpainting pass: oldest first, newest last.
+            for item in self._scene.items(Qt.SortOrder.AscendingOrder):
                 if isinstance(item, QGraphicsPixmapItem) and item != page_item:
                     # Check if this is a patch item (has the hash key data)
                     if item.data(0) is not None:  # HASH_KEY = 0 from PatchCommandBase
@@ -796,4 +813,3 @@ class LazyImageLoader:
             if new_idx is not None:
                 remapped[new_idx] = value
         return remapped
-

@@ -69,6 +69,7 @@ class SettingsPageUI(QtWidgets.QWidget):
         ]
         
         self.supported_translators = [
+            self.tr("Local LLM"),
             self.tr("Gemini-3.1-Flash-Lite"),
             self.tr("GPT-4.1"),
             self.tr("GPT-4.1-mini"),
@@ -110,6 +111,7 @@ class SettingsPageUI(QtWidgets.QWidget):
             self.tr("Light"): "Light",
 
             # Translator mappings
+            self.tr("Local LLM"): "Local LLM",
             self.tr("Custom"): "Custom",
             self.tr("Deepseek"): "Deepseek",
             self.tr("GPT-4.1"): "GPT-4.1",
