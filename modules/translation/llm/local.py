@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import logging
+import time
 from typing import Any
 
 import numpy as np
@@ -23,6 +25,9 @@ from .local_response import (
 )
 from ...utils.textblock import TextBlock
 from ...utils.translator_utils import get_raw_text
+
+
+logger = logging.getLogger(__name__)
 
 
 class LocalLLMTranslation(BaseLLMTranslation):
@@ -149,25 +154,49 @@ class LocalLLMTranslation(BaseLLMTranslation):
         )
 
         url = chat_completions_url(api_base_url)
-        try:
-            response = requests.post(
-                url,
-                headers=headers,
-                json=payload,
-                timeout=self.timeout,
-            )
-            response.raise_for_status()
-            response_data = response.json()
-        except requests.exceptions.RequestException as exc:
-            details = ""
-            if exc.response is not None:
-                try:
-                    details = f" Server response: {json.dumps(exc.response.json())}"
-                except (ValueError, TypeError):
-                    details = f" HTTP status: {exc.response.status_code}."
-            raise RuntimeError(f"Local LLM request failed: {exc}.{details}") from exc
-        except ValueError as exc:
-            raise RuntimeError("The local LLM server returned invalid response JSON.") from exc
+        previous_server_output = ""
+        response_data: Any = None
+        for attempt in range(2):
+            try:
+                response = requests.post(
+                    url,
+                    headers=headers,
+                    json=payload,
+                    timeout=self.timeout,
+                )
+                response.raise_for_status()
+                response_data = response.json()
+                break
+            except requests.exceptions.ConnectionError as exc:
+                if attempt == 0:
+                    if self.runtime_mode == "managed":
+                        runtime = get_llama_server_runtime()
+                        previous_server_output = runtime.recent_output()
+                        diagnostic = (
+                            f"\nRecent llama-server output:\n{previous_server_output}"
+                            if previous_server_output
+                            else ""
+                        )
+                        logger.warning(
+                            "Managed llama-server connection dropped; restarting and retrying once.%s",
+                            diagnostic,
+                        )
+                        api_base_url = runtime.restart(self._managed_server_config())
+                        url = chat_completions_url(api_base_url)
+                    else:
+                        logger.warning(
+                            "External Local LLM connection dropped; retrying once: %s",
+                            exc,
+                        )
+                        time.sleep(0.5)
+                    continue
+                raise RuntimeError(
+                    self._format_request_failure(exc, previous_server_output)
+                ) from exc
+            except requests.exceptions.RequestException as exc:
+                raise RuntimeError(self._format_request_failure(exc)) from exc
+            except ValueError as exc:
+                raise RuntimeError("The local LLM server returned invalid response JSON.") from exc
 
         try:
             return extract_message_content(response_data)
@@ -180,7 +209,10 @@ class LocalLLMTranslation(BaseLLMTranslation):
                 raise RuntimeError("No external Local LLM endpoint is configured.")
             return self.api_base_url
 
-        config = LlamaServerConfig(
+        return get_llama_server_runtime().ensure_running(self._managed_server_config())
+
+    def _managed_server_config(self) -> LlamaServerConfig:
+        return LlamaServerConfig(
             executable_path=self.llama_server_path,
             model_path=self.llama_model_path,
             mmproj_path=self.llama_mmproj_path,
@@ -188,7 +220,26 @@ class LocalLLMTranslation(BaseLLMTranslation):
             gpu_layers=self.gpu_layers,
             startup_timeout=self.startup_timeout,
         )
-        return get_llama_server_runtime().ensure_running(config)
+
+    def _format_request_failure(
+        self,
+        exc: requests.exceptions.RequestException,
+        previous_server_output: str = "",
+    ) -> str:
+        details = ""
+        if exc.response is not None:
+            try:
+                details = f" Server response: {json.dumps(exc.response.json())}"
+            except (ValueError, TypeError):
+                details = f" HTTP status: {exc.response.status_code}."
+
+        if self.runtime_mode == "managed":
+            current_output = get_llama_server_runtime().recent_output()
+            server_output = current_output or previous_server_output
+            if server_output:
+                details += f"\nRecent llama-server output:\n{server_output}"
+
+        return f"Local LLM request failed: {exc}.{details}"
 
 
 def _as_int(value: Any, default: int, minimum: int) -> int:

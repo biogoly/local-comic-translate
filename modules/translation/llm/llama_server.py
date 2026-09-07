@@ -20,6 +20,7 @@ from urllib.request import urlopen
 
 logger = logging.getLogger(__name__)
 MANAGED_MODEL_ALIAS = "local-comic-translate"
+MULTIMODAL_UBATCH_SIZE = 2048
 
 
 @dataclass(frozen=True)
@@ -145,7 +146,13 @@ class LlamaServerRuntime:
             "--jinja",
         ]
         if config.mmproj_path:
-            command.extend(["--mmproj", config.mmproj_path])
+            # Gemma 4 vision evaluation is non-causal and cannot be split across
+            # llama.cpp's default 512-token physical micro-batches. Match the
+            # default logical batch so the complete image-token batch fits.
+            command.extend([
+                "--mmproj", config.mmproj_path,
+                "--ubatch-size", str(MULTIMODAL_UBATCH_SIZE),
+            ])
         return command
 
     def stop(self) -> None:
@@ -154,6 +161,16 @@ class LlamaServerRuntime:
         self._stop_requested.set()
         with self._lock:
             self._stop_locked()
+
+    def restart(self, config: LlamaServerConfig) -> str:
+        """Restart the managed process and return its new ``/v1`` URL."""
+        self.stop()
+        return self.ensure_running(config)
+
+    def recent_output(self) -> str:
+        """Return the captured tail of llama-server output for diagnostics."""
+        with self._lock:
+            return self._formatted_output_tail()
 
     def _validate_config(self, config: LlamaServerConfig) -> LlamaServerConfig:
         executable = resolve_llama_server(config.executable_path)

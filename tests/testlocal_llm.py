@@ -3,9 +3,12 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
+import requests
+
 from modules.translation.llm.llama_server import (
     LlamaServerConfig,
     MANAGED_MODEL_ALIAS,
+    MULTIMODAL_UBATCH_SIZE,
     LlamaServerRuntime,
     resolve_llama_server,
 )
@@ -145,6 +148,67 @@ class OpenAICompatibilityTests(unittest.TestCase):
 
         self.assertEqual(translator.top_k, 64)
 
+    def test_managed_request_restarts_once_after_connection_reset(self):
+        translator = LocalLLMTranslation()
+        response = MagicMock()
+        response.json.return_value = {
+            "choices": [{"message": {"content": '{"block_0":"Hello"}'}}]
+        }
+        runtime = MagicMock()
+        runtime.recent_output.return_value = "server process exited"
+        runtime.restart.return_value = "http://127.0.0.1:54322/v1"
+
+        with (
+            patch.object(
+                translator,
+                "_get_api_base_url",
+                return_value="http://127.0.0.1:54321/v1",
+            ),
+            patch(
+                "modules.translation.llm.local.requests.post",
+                side_effect=[requests.exceptions.ConnectionError("reset"), response],
+            ) as post,
+            patch(
+                "modules.translation.llm.local.get_llama_server_runtime",
+                return_value=runtime,
+            ),
+        ):
+            content = translator._perform_translation("translate", "system", None)
+
+        self.assertEqual(content, '{"block_0":"Hello"}')
+        runtime.restart.assert_called_once()
+        self.assertEqual(
+            post.call_args_list[1].args[0],
+            "http://127.0.0.1:54322/v1/chat/completions",
+        )
+
+    def test_repeated_managed_connection_reset_includes_server_output(self):
+        translator = LocalLLMTranslation()
+        runtime = MagicMock()
+        runtime.recent_output.return_value = "fatal: model runner stopped"
+        runtime.restart.return_value = "http://127.0.0.1:54322/v1"
+
+        with (
+            patch.object(
+                translator,
+                "_get_api_base_url",
+                return_value="http://127.0.0.1:54321/v1",
+            ),
+            patch(
+                "modules.translation.llm.local.requests.post",
+                side_effect=[
+                    requests.exceptions.ConnectionError("first reset"),
+                    requests.exceptions.ConnectionError("second reset"),
+                ],
+            ),
+            patch(
+                "modules.translation.llm.local.get_llama_server_runtime",
+                return_value=runtime,
+            ),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "fatal: model runner stopped"):
+                translator._perform_translation("translate", "system", None)
+
 
 class LlamaServerRuntimeTests(unittest.TestCase):
     def test_command_contains_model_alias_and_multimodal_projector(self):
@@ -163,6 +227,20 @@ class LlamaServerRuntimeTests(unittest.TestCase):
         self.assertIn("--jinja", command)
         self.assertEqual(command[command.index("--port") + 1], "54321")
         self.assertEqual(command[command.index("--mmproj") + 1], "mmproj.gguf")
+        self.assertEqual(
+            command[command.index("--ubatch-size") + 1],
+            str(MULTIMODAL_UBATCH_SIZE),
+        )
+
+    def test_text_only_command_keeps_llama_cpp_default_ubatch(self):
+        config = LlamaServerConfig(
+            executable_path="llama-server",
+            model_path="model.gguf",
+        )
+
+        command = LlamaServerRuntime.build_command(config, 54321)
+
+        self.assertNotIn("--ubatch-size", command)
 
     def test_explicit_executable_resolution(self):
         with tempfile.TemporaryDirectory() as directory:
