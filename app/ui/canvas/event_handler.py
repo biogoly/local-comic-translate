@@ -284,12 +284,12 @@ class EventHandler:
     def _press_handle_resize(self, event, scene_pos) -> bool:
         blk_item, rect_item = self.viewer.sel_rot_item()
         sel_item = blk_item or rect_item
-        if isinstance(sel_item, TextBlockItem) and sel_item.editing_mode:
-            return False
         if sel_item and self.viewer.interaction_manager._in_resize_area(sel_item, scene_pos):
             local_pos = sel_item.mapFromScene(scene_pos)
             handle = self.viewer.interaction_manager.get_resize_handle(sel_item, local_pos)
             if handle:
+                if isinstance(sel_item, TextBlockItem) and sel_item.editing_mode:
+                    sel_item.exit_editing_mode()
                 sel_item.resize_handle = handle
                 sel_item.init_resize(scene_pos)
                 # Record state for undo purposes (instead of calling mousePressEvent which expects QGraphicsSceneMouseEvent)
@@ -387,9 +387,6 @@ class EventHandler:
         blk_item, rect_item = self.viewer.sel_rot_item()
         sel_item = blk_item or rect_item
 
-        if isinstance(sel_item, TextBlockItem) and sel_item.editing_mode:
-            return False
-
         if not sel_item: 
             return False
 
@@ -409,6 +406,11 @@ class EventHandler:
             cursor = self.viewer.interaction_manager.get_resize_cursor(sel_item, local_pos)
             self.viewer.viewport().setCursor(cursor)
             return True
+
+        # Inside an editing text item, leave all non-resize motion to Qt so it
+        # can continue positioning the caret and selecting characters.
+        if isinstance(sel_item, TextBlockItem) and sel_item.editing_mode:
+            return False
         
         if self.viewer.interaction_manager._in_rotate_ring(sel_item, scene_pos):
             outer_rect = sel_item.boundingRect().adjusted(-self.viewer.interaction_manager.rotate_margin_max, 

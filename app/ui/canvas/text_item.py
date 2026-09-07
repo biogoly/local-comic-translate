@@ -243,6 +243,14 @@ class TextBlockItem(QGraphicsTextItem):
     def has_format_selection(self) -> bool:
         return self._format_cursor().hasSelection()
 
+    def clear_format_selection(self):
+        """Clear an inline-format range when switching to box geometry work."""
+        self._format_selection = None
+        cursor = self.textCursor()
+        if cursor.hasSelection():
+            cursor.clearSelection()
+            self.setTextCursor(cursor)
+
     def _restore_base_insertion_format(self):
         """Keep the item's font when all text is deleted and typing resumes."""
         if self._restoring_insertion_format:
@@ -707,6 +715,7 @@ class TextBlockItem(QGraphicsTextItem):
         self.setCacheMode(QGraphicsItem.CacheMode.DeviceCoordinateCache)
         self.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
         self.setFlag(QGraphicsTextItem.GraphicsItemFlag.ItemIsMovable, True)
+        self.clear_format_selection()
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.clearFocus()
 
@@ -762,6 +771,9 @@ class TextBlockItem(QGraphicsTextItem):
             self.update()
 
     def init_resize(self, scene_pos: QPointF):
+        # Geometry changes must scale the complete document, not a stale word
+        # selection left behind by inline formatting controls.
+        self.clear_format_selection()
         self.resizing = True
         self.resize_start = scene_pos
 

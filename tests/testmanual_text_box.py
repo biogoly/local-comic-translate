@@ -302,6 +302,58 @@ class ManualTextBoxTests(unittest.TestCase):
         self.assertTrue(styled.charFormat().font().italic())
         self.assertTrue(styled.charFormat().font().underline())
 
+    def test_resize_handles_work_after_inline_word_formatting(self):
+        rect = self.main.image_viewer.add_rectangle(
+            QtCore.QRectF(0, 0, 80, 45), QtCore.QPointF(20, 20)
+        )
+        self.main.rect_item_ctrl.handle_rectangle_creation(rect)
+        self.main.t_text_edit.setPlainText("plain styled")
+        self.app.processEvents()
+        item = self.main.image_viewer.text_items[0]
+        item.enter_editing_mode()
+
+        cursor = item.textCursor()
+        cursor.setPosition(6)
+        cursor.setPosition(12, QtGui.QTextCursor.MoveMode.KeepAnchor)
+        item.setTextCursor(cursor)
+        item.on_selection_changed()
+        self.main.bold_button.click()
+
+        old_width = item.boundingRect().width()
+        old_font_size = item.font_size
+        press_pos = item.mapToScene(
+            item.boundingRect().topLeft() - QtCore.QPointF(5, 5)
+        )
+        event = SimpleNamespace(accept=lambda: None)
+
+        handled = self.main.image_viewer.event_handler._press_handle_resize(
+            event, press_pos
+        )
+
+        self.assertTrue(handled)
+        self.assertFalse(item.editing_mode)
+        self.assertIsNone(item._format_selection)
+
+        self.main.image_viewer.event_handler._move_handle_item_interaction(
+            press_pos - QtCore.QPointF(5, 5)
+        )
+
+        self.assertGreater(item.boundingRect().width(), old_width)
+        self.assertGreater(item.font_size, old_font_size)
+
+        plain = QtGui.QTextCursor(item.document())
+        plain.setPosition(0)
+        plain.setPosition(1, QtGui.QTextCursor.MoveMode.KeepAnchor)
+        styled = QtGui.QTextCursor(item.document())
+        styled.setPosition(6)
+        styled.setPosition(7, QtGui.QTextCursor.MoveMode.KeepAnchor)
+        self.assertAlmostEqual(
+            plain.charFormat().font().pointSizeF(), item.font_size, delta=0.1
+        )
+        self.assertAlmostEqual(
+            styled.charFormat().font().pointSizeF(), item.font_size, delta=0.1
+        )
+
     def test_inline_formatting_uses_target_text_editor_selection(self):
         rect = self.main.image_viewer.add_rectangle(
             QtCore.QRectF(0, 0, 100, 45), QtCore.QPointF(20, 20)
