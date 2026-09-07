@@ -66,17 +66,14 @@ class SplashScreen(QWidget):
         # Apply styling
         self.setStyleSheet("""
             #splashContainer {
-                background-color: white;
-                border: 2px solid #cccccc;
-                border-radius: 8px;
+                background-color: transparent;
+                border: none;
             }
             #titleBar {
-                background-color: #f0f0f0;
-                border-top-left-radius: 6px;
-                border-top-right-radius: 6px;
+                background-color: transparent;
             }
             QPushButton {
-                background-color: transparent;
+                background-color: rgba(255, 255, 255, 190);
                 border: none;
                 border-radius: 4px;
                 color: #333333;

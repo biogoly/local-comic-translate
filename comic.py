@@ -181,7 +181,9 @@ def main():
     # High DPI Scaling
     screen = app.primaryScreen()
     dpr = screen.devicePixelRatio()
-    target_w, target_h = 400, 225
+    # Match the replacement artwork's aspect ratio without cropping it.
+    target_w = 400
+    target_h = round(target_w * splash_pix.height() / splash_pix.width())
     splash_pix = splash_pix.scaled(int(target_w * dpr), int(target_h * dpr), Qt.KeepAspectRatio, Qt.SmoothTransformation)
     splash_pix.setDevicePixelRatio(dpr)
     splash = SplashScreen(splash_pix)
