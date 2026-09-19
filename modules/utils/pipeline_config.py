@@ -13,6 +13,7 @@ from modules.inpainting.schema import Config
 from app.ui.messages import Messages
 from app.ui.settings.settings_page import SettingsPage
 from modules.translation.llm.llama_server import resolve_llama_server
+from modules.translation.providers import provider_for_translator
 
 if TYPE_CHECKING:
     from controller import ComicTranslate
@@ -41,7 +42,7 @@ def get_config(settings_page: SettingsPage):
     return config
 
 def validate_ocr(main: ComicTranslate):
-    """Ensure either API credentials are set or the user is authenticated."""
+    """Validate local OCR or direct provider credentials."""
     settings_page = main.settings_page
     settings = settings_page.get_all_settings()
     ocr_tool = settings['tools']['ocr']
@@ -51,15 +52,15 @@ def validate_ocr(main: ComicTranslate):
         return False
     
     normalized_ocr = settings_page.ui.value_mappings.get(ocr_tool, ocr_tool)
-    if normalized_ocr != "Default" and not settings_page.is_logged_in():
-        Messages.show_not_logged_in_error(main)
-        return False
-        
-    return True
+    if normalized_ocr == "Default":
+        return True
+    service = "Microsoft Azure" if normalized_ocr == "Microsoft OCR" else "Google Gemini"
+    fields = ("api_key_ocr", "endpoint") if service == "Microsoft Azure" else ("api_key",)
+    return _validate_provider(main, service, fields)
 
 
 def validate_translator(main: ComicTranslate, target_lang: str):
-    """Ensure either API credentials are set or the user is authenticated, plus check compatibility."""
+    """Validate local runtime or the selected direct provider."""
     settings_page = main.settings_page
     tr = settings_page.ui.tr
     settings = settings_page.get_all_settings()
@@ -104,22 +105,23 @@ def validate_translator(main: ComicTranslate, target_lang: str):
             return False
         return True
 
-    if not settings_page.is_logged_in():
-        Messages.show_not_logged_in_error(main)
+    provider = provider_for_translator(normalized_translator)
+    if provider is None:
+        Messages.show_missing_tool_error(main, QCoreApplication.translate("ToolsPage", "Translator"))
         return False
+    return _validate_provider(main, provider, ("api_key", "model"))
 
-    # Credential checks
-    if "Custom" in translator_tool:
-        # Custom requires api_key, api_url, and model to be configured LOCALLY
-        service = tr('Custom')
-        creds = credentials.get(service, {})
-        # Check if all required fields are present and non-empty
-        if not all([creds.get('api_key'), creds.get('api_url'), creds.get('model')]):
-            Messages.show_custom_not_configured_error(main)
-            return False
-        return True
-        
-    return True
+
+def _validate_provider(main, service, fields):
+    credentials = main.settings_page.get_credentials(service)
+    if all(str(credentials.get(field) or "").strip() for field in fields):
+        if "endpoint" not in fields or urlparse(credentials["endpoint"]).scheme == "https":
+            return True
+    Messages.show_error_with_copy(
+        main, QCoreApplication.translate("Messages", "Provider APIs"),
+        QCoreApplication.translate("Messages", "Configure the API key and required fields in Settings > Provider APIs: {provider}").format(provider=service),
+    )
+    return False
 
 def font_selected(main: ComicTranslate):
     if not main.render_settings().font_family:

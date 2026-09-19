@@ -28,4 +28,16 @@ class DeepseekTranslation(GPTTranslation):
         self.model_name = model_name
         credentials = settings.get_credentials(settings.ui.tr('Deepseek'))
         self.api_key = credentials.get('api_key', '')
-        self.model = MODEL_MAP.get(self.model_name)
+        self.model = (credentials.get('model') or MODEL_MAP.get(self.model_name))
+        self.supports_images = self.model == "deepseek-flash"
+
+    def _make_api_request(self, payload, headers):
+        payload = dict(payload)
+        payload["max_tokens"] = payload.pop("max_completion_tokens")
+        payload["thinking"] = {"type": "disabled"}
+        payload["messages"] = [dict(message) for message in payload["messages"]]
+        for message in payload["messages"]:
+            content = message["content"]
+            if isinstance(content, list) and all(part.get("type") == "text" for part in content):
+                message["content"] = "\n".join(part["text"] for part in content)
+        return super()._make_api_request(payload, headers)

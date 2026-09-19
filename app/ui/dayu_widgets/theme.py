@@ -154,11 +154,28 @@ class MTheme(object):
         self.text_warning_color = self.warning_7
 
     def set_theme(self, theme):
+        theme = str(theme).strip().lower()
         if theme == "light":
             self._light()
+            self.is_dark = False
+        elif theme == "midnight":
+            self._midnight()
+            self.is_dark = True
+        elif theme == "parchment":
+            self._parchment()
+            self.is_dark = False
+        elif theme == "lavender":
+            self._lavender()
+            self.is_dark = False
+        elif theme == "mint":
+            self._mint()
+            self.is_dark = False
         else:
+            theme = "dark"
             self._dark()
-        self._init_icon(theme)
+            self.is_dark = True
+        self.theme_name = theme
+        self._init_icon("dark" if self.is_dark else "light")
 
     def set_primary_color(self, color):
         self.primary_color = color
@@ -310,6 +327,78 @@ class MTheme(object):
         self.background_out_color = "#eeeeee"
         self.mask_color = utils.fade_color(self.background_color, "90%")
         self.toast_color = "#333333"
+
+    def _midnight(self):
+        """Low-glare blue-black palette for long image-editing sessions."""
+        self.title_color = "#f2f7fc"
+        self.primary_text_color = "#d8e4ef"
+        self.secondary_text_color = "#93a8bc"
+        self.disable_color = "#5f7285"
+        self.border_color = "#33495e"
+        self.divider_color = "#263a4d"
+        self.header_color = "#101d2a"
+        self.icon_color = "#9eb4c8"
+
+        self.background_color = "#162432"
+        self.background_selected_color = "#10202e"
+        self.background_in_color = "#1c2d3d"
+        self.background_out_color = "#263b4e"
+        self.mask_color = utils.fade_color(self.background_color, "90%")
+        self.toast_color = "#2b4256"
+
+    def _parchment(self):
+        """Warm, low-contrast paper palette for comics and scanned artwork."""
+        self.title_color = "#382d24"
+        self.primary_text_color = "#4b3d31"
+        self.secondary_text_color = "#786957"
+        self.disable_color = "#d7c9b5"
+        self.border_color = "#cbb99d"
+        self.divider_color = "#ddd0bc"
+        self.header_color = "#eee2cf"
+        self.icon_color = "#746451"
+
+        self.background_color = "#f3eadb"
+        self.background_selected_color = "#e3d3b9"
+        self.background_in_color = "#fcf6eb"
+        self.background_out_color = "#e9dcc8"
+        self.mask_color = utils.fade_color(self.background_color, "90%")
+        self.toast_color = "#57493b"
+
+    def _lavender(self):
+        """Soft lavender surfaces with dark plum text for a quiet workspace."""
+        self.title_color = "#352c43"
+        self.primary_text_color = "#493e59"
+        self.secondary_text_color = "#71627f"
+        self.disable_color = "#cec3da"
+        self.border_color = "#c4b5d3"
+        self.divider_color = "#ded3e8"
+        self.header_color = "#e6ddef"
+        self.icon_color = "#71627f"
+
+        self.background_color = "#eee8f4"
+        self.background_selected_color = "#dcd0e8"
+        self.background_in_color = "#f8f4fc"
+        self.background_out_color = "#e3d9ed"
+        self.mask_color = utils.fade_color(self.background_color, "90%")
+        self.toast_color = "#50405f"
+
+    def _mint(self):
+        """Pastel mint surfaces with deep green text and gentle contrast."""
+        self.title_color = "#293e35"
+        self.primary_text_color = "#354e42"
+        self.secondary_text_color = "#5f7669"
+        self.disable_color = "#bfd5c9"
+        self.border_color = "#aecbbb"
+        self.divider_color = "#cfe2d7"
+        self.header_color = "#dceee3"
+        self.icon_color = "#5f7669"
+
+        self.background_color = "#e6f2eb"
+        self.background_selected_color = "#cce3d6"
+        self.background_in_color = "#f3fbf6"
+        self.background_out_color = "#d8ecdf"
+        self.mask_color = utils.fade_color(self.background_color, "90%")
+        self.toast_color = "#3d584b"
 
     def apply(self, widget):
         size_dict = get_theme_size()

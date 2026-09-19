@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-from typing import TypedDict, TYPE_CHECKING
+from typing import NotRequired, TypedDict, TYPE_CHECKING
 from PySide6.QtGui import QColor, QBrush, QPen, QPainterPath, Qt
 from PySide6.QtWidgets import QGraphicsPathItem
 from PySide6.QtCore import QRectF, QPointF
@@ -228,12 +228,18 @@ class PatchProperties(TypedDict):
     bbox: tuple            # (x, y, w, h)
     png_path: str          # absolute path to the patch PNG on disk
     hash: str             # hash of the patch image + bbox
+    patch_id: NotRequired[str]
+    scene_pos: NotRequired[list]
+    page_index: NotRequired[int]
+    kind: NotRequired[str]      # "inpaint" (default) | "flux2_edit"
+    metadata: NotRequired[dict]  # sanitized, msgpack-safe edit metadata
 
 class PatchCommandBase:
     """Shared helpers for pixmap patch commands"""
 
     HASH_KEY = 0
     PATCH_ID_KEY = 1
+    KIND_KEY = 2
 
     @staticmethod
     def create_patch_item(properties, viewer: ImageViewer):
@@ -261,6 +267,8 @@ class PatchCommandBase:
         item.setData(PatchCommandBase.HASH_KEY, properties['hash'])
         if properties.get('patch_id') is not None:
             item.setData(PatchCommandBase.PATCH_ID_KEY, properties['patch_id'])
+        if properties.get('kind') is not None:
+            item.setData(PatchCommandBase.KIND_KEY, str(properties['kind']))
         viewer._scene.addItem(item)
         viewer._scene.update()
         return item

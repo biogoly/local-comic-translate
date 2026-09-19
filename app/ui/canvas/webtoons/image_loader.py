@@ -499,10 +499,14 @@ class LazyImageLoader:
             # Box rectangles and brush paths are editor-only overlays. They
             # must remain visible in the workspace but never be flattened into
             # the exported comic page.
+            repair = getattr(self.viewer, 'repair_controller', None)
+            transient_items = repair.transient_items() if repair is not None else []
+            transient_items.append(self.viewer.brush_cursor_overlay.item)
             editor_items = [
                 item
                 for item in self._scene.items()
                 if isinstance(item, (MoveableRectItem, QGraphicsPathItem))
+                or item in transient_items
             ]
             editor_visibility = [(item, item.isVisible()) for item in editor_items]
             for item, _was_visible in editor_visibility:

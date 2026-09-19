@@ -1,1 +1,3 @@
-__version__ = "2.8.8"
+"""Version of the Local Comic Translate fork."""
+
+__version__ = "0.1.0"

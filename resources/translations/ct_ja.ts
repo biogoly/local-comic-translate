@@ -121,6 +121,648 @@
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="33"/>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="34"/>
+        <source>Redo</source>
+        <translation>やり直す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="39"/>
+        <source>Detect</source>
+        <translation>検出する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="40"/>
+        <source>Recognize</source>
+        <translation>認識する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="41"/>
+        <source>Translate</source>
+        <translation>翻訳する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="42"/>
+        <source>Segment</source>
+        <translation>セグメント</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="43"/>
+        <source>Clean</source>
+        <translation>クリーン</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="44"/>
+        <source>Render</source>
+        <translation>与える</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="61"/>
+        <source>Manual</source>
+        <translation>マニュアル</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="64"/>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="73"/>
+        <source>Toggle Webtoon Mode. For comics that are read in long vertical strips</source>
+        <translation>ウェブトゥーン モードを切り替えます。縦長の漫画を読む場合</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="77"/>
+        <source>Translate All</source>
+        <translation>すべて翻訳</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="83"/>
+        <source>Report</source>
+        <translation>報告</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="105"/>
+        <source>Pages</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="109"/>
+        <source>Sort</source>
+        <translation>並べ替え</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="116"/>
+        <source>Sort Pages</source>
+        <translation>ページを並べ替え</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="137"/>
+        <source>Click or drag files here</source>
+        <translation>ここにファイルをクリックまたはドラッグします</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="159"/>
+        <source>Import Images, PDFs, Epubs or Comic Book Archive Files(cbr, cbz, etc)</source>
+        <translation>画像、PDF、Epub、またはコミック ブック アーカイブ ファイル (cbr、cbz など) をインポート</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="177"/>
+        <source>Source Language</source>
+        <translation>ソース言語</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="187"/>
+        <source>Target Language</source>
+        <translation>対象言語</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="192"/>
+        <source>Type translated or replacement text to show on the page</source>
+        <translation>ページに表示する翻訳文または置換テキストを入力</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="201"/>
+        <source>Font</source>
+        <translation>フォント</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="203"/>
+        <source>Font Size</source>
+        <translation>フォントサイズ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="212"/>
+        <source>Line Spacing</source>
+        <translation>行間</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="231"/>
+        <source>Font Color</source>
+        <translation>フォントの色</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="246"/>
+        <source>Bold</source>
+        <translation>大胆な</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="248"/>
+        <source>Italic</source>
+        <translation>イタリック</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="250"/>
+        <source>Underline</source>
+        <translation>下線</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="267"/>
+        <source>Outline</source>
+        <translation>概要</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="271"/>
+        <source>Outline Color</source>
+        <translation>輪郭の色</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="278"/>
+        <source>Outline Width</source>
+        <translation>輪郭の幅</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="301"/>
+        <source>Pan Image after Zooming</source>
+        <translation>拡大後に画像を移動</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="306"/>
+        <source>Zoom Out (Ctrl+-)</source>
+        <translation>縮小 (Ctrl+-)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="309"/>
+        <source>Fit</source>
+        <translation>全体表示</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="310"/>
+        <source>Fit Page to Window (Ctrl+0)</source>
+        <translation>ページをウィンドウに合わせる (Ctrl+0)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="314"/>
+        <source>Zoom In (Ctrl+= or Ctrl+Mouse Wheel)</source>
+        <translation>拡大 (Ctrl+= または Ctrl+マウスホイール)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="317"/>
+        <source>Set for all</source>
+        <translation>全員に設定</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="319"/>
+        <source>Sets the Source and Target Language on the current page for all pages</source>
+        <translation>すべてのページの現在のページにソース言語とターゲット言語を設定します</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="334"/>
+        <source>Draw or Select Text Regions; typing in the Target Text field creates borderless text on the page</source>
+        <translation>テキスト領域を描画または選択します。「翻訳先テキスト」に入力すると、ページに枠線のないテキストが作成されます</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="342"/>
+        <source>Delete Selected Box</source>
+        <translation>選択したボックスを削除</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="345"/>
+        <source>Remove all the Boxes on the Image</source>
+        <translation>画像上のすべてのボックスを削除します</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="350"/>
+        <source>Draws all the Text Blocks in the existing Text Block List
+back on the Image (for further editing)</source>
+        <translation>既存のテキストブロック一覧にあるすべてのテキストブロックを画像上に再描画します
+（さらに編集するため）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="361"/>
+        <source>Reduce the size of all blocks</source>
+        <translation>すべてのブロックのサイズを小さくする</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="372"/>
+        <source>Increase the size of all blocks</source>
+        <translation>すべてのブロックのサイズを大きくする</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="384"/>
+        <source>Paint Areas to Clean, then click Apply Cleanup</source>
+        <translation>消したい領域を塗り、「クリーンアップを適用」をクリック</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="390"/>
+        <source>Erase Brush Strokes</source>
+        <translation>ブラシ ストロークの消去</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="395"/>
+        <source>Remove all the brush strokes on the Image</source>
+        <translation>画像上のすべてのブラシ ストロークを削除します</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="399"/>
+        <source>Apply Cleanup to the Painted Areas</source>
+        <translation>塗った領域にクリーンアップを適用</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="404"/>
+        <source>Revert All Inpainting on the Current Page (Undoable)</source>
+        <translation>現在のページのインペイントをすべて取り消す（元に戻せます）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="418"/>
+        <source>Brush/Eraser Size Slider</source>
+        <translation>ブラシ/消しゴムサイズスライダー</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="422"/>
+        <source>Box Drawing</source>
+        <translation>ボックス図面</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="426"/>
+        <source>Inpainting</source>
+        <translation>修復</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="431"/>
+        <source>Artistic Edit (FLUX.2 Klein)</source>
+        <translation>アート編集 (FLUX.2 Klein)</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="104"/>
+        <source>The AI provider flagged this content</source>
+        <translation>AI プロバイダーがこのコンテンツにフラグを立てました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="106"/>
+        <source>Insufficient credits</source>
+        <translation>クレジットが不十分です</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="108"/>
+        <source>Request timed out</source>
+        <translation>リクエストがタイムアウトしました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="114"/>
+        <source>Rate limited by provider</source>
+        <translation>プロバイダーによる料金制限</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="121"/>
+        <source>Authentication failed</source>
+        <translation>認証に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="128"/>
+        <source>Network or connection error</source>
+        <translation>ネットワークまたは接続エラー</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="137"/>
+        <source>Provider unavailable</source>
+        <translation>プロバイダーが利用できない</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="143"/>
+        <source>Invalid translation response</source>
+        <translation>無効な翻訳応答</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="144"/>
+        <source>Unexpected tool error</source>
+        <translation>予期しないツールエラー</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="152"/>
+        <location filename="../../app/controllers/batch_report.py" line="201"/>
+        <source>Try another text recognition tool</source>
+        <translation>別のテキスト認識ツールを試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="156"/>
+        <location filename="../../app/controllers/batch_report.py" line="205"/>
+        <source>Try another translator</source>
+        <translation>別の翻訳者を試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="157"/>
+        <source>Try another tool</source>
+        <translation>別のツールを試してみる</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="159"/>
+        <source>Buy more credits</source>
+        <translation>さらにクレジットを購入する</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="161"/>
+        <location filename="../../app/controllers/batch_report.py" line="196"/>
+        <location filename="../../app/controllers/batch_report.py" line="206"/>
+        <source>Try again</source>
+        <translation>もう一度やり直してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="167"/>
+        <source>Wait and try again</source>
+        <translation>待ってからもう一度試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="174"/>
+        <source>Check API settings</source>
+        <translation>API設定を確認する</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="181"/>
+        <source>Check your connection</source>
+        <translation>接続を確認してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="190"/>
+        <source>Try again later</source>
+        <translation>後でもう一度試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="212"/>
+        <source>Image could not be opened</source>
+        <translation>画像を開けませんでした</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="213"/>
+        <source>No text blocks detected</source>
+        <translation>テキストブロックは検出されませんでした</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="214"/>
+        <source>Text recognition failed</source>
+        <translation>テキスト認識に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="215"/>
+        <source>Translation failed</source>
+        <translation>翻訳に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="216"/>
+        <source>Webtoon text recognition chunk failed</source>
+        <translation>ウェブトゥーンのテキスト認識チャンクが失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="218"/>
+        <source>Webtoon translation chunk failed</source>
+        <translation>ウェブトゥーン翻訳チャンクが失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="221"/>
+        <source>Page processing failed</source>
+        <translation>ページ処理に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="310"/>
+        <source>This image is not in the current project.</source>
+        <translation>この画像は現在のプロジェクトにはありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="334"/>
+        <location filename="../../app/controllers/batch_report.py" line="497"/>
+        <source>No batch report is available yet.</source>
+        <translation>バッチ レポートはまだありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="349"/>
+        <location filename="../../app/controllers/batch_report.py" line="440"/>
+        <source>No skipped images are available to retry.</source>
+        <translation>再試行できるスキップ済み画像はありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="357"/>
+        <location filename="../../app/controllers/batch_report.py" line="436"/>
+        <source>Wait for the current batch to finish before retrying skipped images.</source>
+        <translation>スキップ済み画像を再試行する前に、現在のバッチが完了するまで待ってください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Cancelled</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Completed</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="385"/>
+        <source>{0}  |  Updated {1}</source>
+        <translation>{0} |  {1} を更新しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="412"/>
+        <source>Total</source>
+        <translation>合計</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="413"/>
+        <location filename="../../app/controllers/batch_report.py" line="476"/>
+        <source>Skipped</source>
+        <translation>スキップされました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="423"/>
+        <source>Skipped Images ({0})</source>
+        <translation>スキップされた画像 ({0})</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="429"/>
+        <source>Retry Skipped Images</source>
+        <translation>スキップ済み画像を再試行</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="447"/>
+        <source>Double-click a row to open that page.</source>
+        <translation>行をダブルクリックしてそのページを開きます。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Image</source>
+        <translation>画像</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Reason</source>
+        <translation>理由</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="486"/>
+        <source>No skipped images in this batch.</source>
+        <translation>このバッチにはスキップされた画像はありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="511"/>
+        <source>Batch Report</source>
+        <translation>バッチレポート</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1516"/>
+        <source>Automatic translation</source>
+        <translation>自動翻訳</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1544"/>
+        <source>There is no inpainting to revert on this page.</source>
+        <translation>このページには取り消すインペイントがありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="447"/>
+        <source>Project Recovery</source>
+        <translation>プロジェクトの回復</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="448"/>
+        <source>An autosaved project from a previous session was found.</source>
+        <translation>以前のセッションから自動保存されたプロジェクトが見つかりました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="450"/>
+        <source>Last autosave: {saved_at}
+Do you want to restore it?</source>
+        <translation>最後の自動保存: {saved_at}
+復元しますか?</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="452"/>
+        <source>Restore</source>
+        <translation>復元する</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="453"/>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="652"/>
+        <location filename="../../app/controllers/projects.py" line="661"/>
+        <source>Export Folder</source>
+        <translation>エクスポートフォルダー</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="653"/>
+        <source>Choose a folder path, not an existing file.</source>
+        <translation>既存のファイルではなく、フォルダーのパスを選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="663"/>
+        <source>Could not create the selected export folder.
+
+{error}</source>
+        <translation>{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1142"/>
+        <location filename="../../app/controllers/projects.py" line="1152"/>
+        <location filename="../../app/controllers/projects.py" line="1222"/>
+        <source>Project File</source>
+        <translation>プロジェクトファイル</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1143"/>
+        <source>Choose an existing folder for the project file.</source>
+        <translation>プロジェクトファイル用の既存のフォルダーを選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1154"/>
+        <source>Could not create the selected project folder.
+
+{error}</source>
+        <translation>選択したプロジェクトフォルダーを作成できませんでした。
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1165"/>
+        <source>Overwrite Project File</source>
+        <translation>プロジェクトファイルを上書き</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1167"/>
+        <source>A project file already exists at this location.
+
+{path}
+
+Overwrite it?</source>
+        <translation>この場所にはすでにプロジェクトファイルがあります。
+
+{path}
+
+上書きしますか？</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1190"/>
+        <source>Old Project File Kept</source>
+        <translation>古いプロジェクトファイルを保持</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1192"/>
+        <source>The project was saved to the new location, but the old file could not be removed.
+
+{path}
+
+{error}</source>
+        <translation>プロジェクトは新しい場所に保存されましたが、古いファイルを削除できませんでした。
+
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1200"/>
+        <source>Project file updated.</source>
+        <translation>プロジェクトファイルを更新しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1224"/>
+        <source>Could not move the project file.
+
+{error}</source>
+        <translation>プロジェクトファイルを移動できませんでした。
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1235"/>
+        <source>Project file renamed.</source>
+        <translation>プロジェクトファイル名を変更しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1237"/>
+        <source>Project file moved.</source>
+        <translation>プロジェクトファイルを移動しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1375"/>
+        <source>Project Not Found</source>
+        <translation>プロジェクトが見つかりません</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1377"/>
+        <source>The selected project file could not be found.
+It may have been moved, renamed, or deleted.
+
+{path}</source>
+        <translation>選択したプロジェクトファイルが見つかりませんでした。
+移動、名前変更、または削除された可能性があります。
+
+{path}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1457"/>
+        <source>Auto</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1458"/>
+        <source>English</source>
+        <translation>英語</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -269,6 +911,643 @@
         <source>Mongolian</source>
         <translation>モンゴル語</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="33"/>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="34"/>
+        <source>Redo</source>
+        <translation>やり直す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="39"/>
+        <source>Detect</source>
+        <translation>検出する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="40"/>
+        <source>Recognize</source>
+        <translation>認識する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="41"/>
+        <source>Translate</source>
+        <translation>翻訳する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="42"/>
+        <source>Segment</source>
+        <translation>セグメント</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="43"/>
+        <source>Clean</source>
+        <translation>クリーン</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="44"/>
+        <source>Render</source>
+        <translation>与える</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="61"/>
+        <source>Manual</source>
+        <translation>マニュアル</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="64"/>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="73"/>
+        <source>Toggle Webtoon Mode. For comics that are read in long vertical strips</source>
+        <translation>ウェブトゥーン モードを切り替えます。縦長の漫画を読む場合</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="77"/>
+        <source>Translate All</source>
+        <translation>すべて翻訳</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="80"/>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="83"/>
+        <source>Report</source>
+        <translation>報告</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="105"/>
+        <source>Pages</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="109"/>
+        <source>Sort</source>
+        <translation>並べ替え</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="116"/>
+        <source>Sort Pages</source>
+        <translation>ページを並べ替え</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="137"/>
+        <source>Click or drag files here</source>
+        <translation>ここにファイルをクリックまたはドラッグします</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="159"/>
+        <source>Import Images, PDFs, Epubs or Comic Book Archive Files(cbr, cbz, etc)</source>
+        <translation>画像、PDF、Epub、またはコミック ブック アーカイブ ファイル (cbr、cbz など) をインポート</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="177"/>
+        <source>Source Language</source>
+        <translation>ソース言語</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="187"/>
+        <source>Target Language</source>
+        <translation>対象言語</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="192"/>
+        <source>Type translated or replacement text to show on the page</source>
+        <translation>ページに表示する翻訳文または置換テキストを入力</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="201"/>
+        <source>Font</source>
+        <translation>フォント</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="203"/>
+        <source>Font Size</source>
+        <translation>フォントサイズ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="212"/>
+        <source>Line Spacing</source>
+        <translation>行間</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="231"/>
+        <source>Font Color</source>
+        <translation>フォントの色</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="246"/>
+        <source>Bold</source>
+        <translation>大胆な</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="248"/>
+        <source>Italic</source>
+        <translation>イタリック</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="250"/>
+        <source>Underline</source>
+        <translation>下線</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="267"/>
+        <source>Outline</source>
+        <translation>概要</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="271"/>
+        <source>Outline Color</source>
+        <translation>輪郭の色</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="278"/>
+        <source>Outline Width</source>
+        <translation>輪郭の幅</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="301"/>
+        <source>Pan Image after Zooming</source>
+        <translation>拡大後に画像を移動</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="306"/>
+        <source>Zoom Out (Ctrl+-)</source>
+        <translation>縮小 (Ctrl+-)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="309"/>
+        <source>Fit</source>
+        <translation>全体表示</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="310"/>
+        <source>Fit Page to Window (Ctrl+0)</source>
+        <translation>ページをウィンドウに合わせる (Ctrl+0)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="314"/>
+        <source>Zoom In (Ctrl+= or Ctrl+Mouse Wheel)</source>
+        <translation>拡大 (Ctrl+= または Ctrl+マウスホイール)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="317"/>
+        <source>Set for all</source>
+        <translation>全員に設定</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="319"/>
+        <source>Sets the Source and Target Language on the current page for all pages</source>
+        <translation>すべてのページの現在のページにソース言語とターゲット言語を設定します</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="334"/>
+        <source>Draw or Select Text Regions; typing in the Target Text field creates borderless text on the page</source>
+        <translation>テキスト領域を描画または選択します。「翻訳先テキスト」に入力すると、ページに枠線のないテキストが作成されます</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="342"/>
+        <source>Delete Selected Box</source>
+        <translation>選択したボックスを削除</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="345"/>
+        <source>Remove all the Boxes on the Image</source>
+        <translation>画像上のすべてのボックスを削除します</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="350"/>
+        <source>Draws all the Text Blocks in the existing Text Block List
+back on the Image (for further editing)</source>
+        <translation>既存のテキストブロック一覧にあるすべてのテキストブロックを画像上に再描画します
+（さらに編集するため）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="361"/>
+        <source>Reduce the size of all blocks</source>
+        <translation>すべてのブロックのサイズを小さくする</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="372"/>
+        <source>Increase the size of all blocks</source>
+        <translation>すべてのブロックのサイズを大きくする</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="384"/>
+        <source>Paint Areas to Clean, then click Apply Cleanup</source>
+        <translation>消したい領域を塗り、「クリーンアップを適用」をクリック</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="390"/>
+        <source>Erase Brush Strokes</source>
+        <translation>ブラシ ストロークの消去</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="395"/>
+        <source>Remove all the brush strokes on the Image</source>
+        <translation>画像上のすべてのブラシ ストロークを削除します</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="399"/>
+        <source>Apply Cleanup to the Painted Areas</source>
+        <translation>塗った領域にクリーンアップを適用</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="404"/>
+        <source>Revert All Inpainting on the Current Page (Undoable)</source>
+        <translation>現在のページのインペイントをすべて取り消す（元に戻せます）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="418"/>
+        <source>Brush/Eraser Size Slider</source>
+        <translation>ブラシ/消しゴムサイズスライダー</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="422"/>
+        <source>Box Drawing</source>
+        <translation>ボックス図面</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="426"/>
+        <source>Inpainting</source>
+        <translation>修復</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="431"/>
+        <source>Artistic Edit (FLUX.2 Klein)</source>
+        <translation>アート編集 (FLUX.2 Klein)</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="104"/>
+        <source>The AI provider flagged this content</source>
+        <translation>AI プロバイダーがこのコンテンツにフラグを立てました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="106"/>
+        <source>Insufficient credits</source>
+        <translation>クレジットが不十分です</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="108"/>
+        <source>Request timed out</source>
+        <translation>リクエストがタイムアウトしました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="114"/>
+        <source>Rate limited by provider</source>
+        <translation>プロバイダーによる料金制限</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="121"/>
+        <source>Authentication failed</source>
+        <translation>認証に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="128"/>
+        <source>Network or connection error</source>
+        <translation>ネットワークまたは接続エラー</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="137"/>
+        <source>Provider unavailable</source>
+        <translation>プロバイダーが利用できない</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="143"/>
+        <source>Invalid translation response</source>
+        <translation>無効な翻訳応答</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="144"/>
+        <source>Unexpected tool error</source>
+        <translation>予期しないツールエラー</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="152"/>
+        <location filename="../../app/controllers/batch_report.py" line="201"/>
+        <source>Try another text recognition tool</source>
+        <translation>別のテキスト認識ツールを試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="156"/>
+        <location filename="../../app/controllers/batch_report.py" line="205"/>
+        <source>Try another translator</source>
+        <translation>別の翻訳者を試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="157"/>
+        <source>Try another tool</source>
+        <translation>別のツールを試してみる</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="159"/>
+        <source>Buy more credits</source>
+        <translation>さらにクレジットを購入する</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="161"/>
+        <location filename="../../app/controllers/batch_report.py" line="196"/>
+        <location filename="../../app/controllers/batch_report.py" line="206"/>
+        <source>Try again</source>
+        <translation>もう一度やり直してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="167"/>
+        <source>Wait and try again</source>
+        <translation>待ってからもう一度試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="174"/>
+        <source>Check API settings</source>
+        <translation>API設定を確認する</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="181"/>
+        <source>Check your connection</source>
+        <translation>接続を確認してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="190"/>
+        <source>Try again later</source>
+        <translation>後でもう一度試してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="212"/>
+        <source>Image could not be opened</source>
+        <translation>画像を開けませんでした</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="213"/>
+        <source>No text blocks detected</source>
+        <translation>テキストブロックは検出されませんでした</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="214"/>
+        <source>Text recognition failed</source>
+        <translation>テキスト認識に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="215"/>
+        <source>Translation failed</source>
+        <translation>翻訳に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="216"/>
+        <source>Webtoon text recognition chunk failed</source>
+        <translation>ウェブトゥーンのテキスト認識チャンクが失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="218"/>
+        <source>Webtoon translation chunk failed</source>
+        <translation>ウェブトゥーン翻訳チャンクが失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="221"/>
+        <source>Page processing failed</source>
+        <translation>ページ処理に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="310"/>
+        <source>This image is not in the current project.</source>
+        <translation>この画像は現在のプロジェクトにはありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="334"/>
+        <location filename="../../app/controllers/batch_report.py" line="497"/>
+        <source>No batch report is available yet.</source>
+        <translation>バッチ レポートはまだありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="349"/>
+        <location filename="../../app/controllers/batch_report.py" line="440"/>
+        <source>No skipped images are available to retry.</source>
+        <translation>再試行できるスキップ済み画像はありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="357"/>
+        <location filename="../../app/controllers/batch_report.py" line="436"/>
+        <source>Wait for the current batch to finish before retrying skipped images.</source>
+        <translation>スキップ済み画像を再試行する前に、現在のバッチが完了するまで待ってください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Cancelled</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Completed</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="385"/>
+        <source>{0}  |  Updated {1}</source>
+        <translation>{0} |  {1} を更新しました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="412"/>
+        <source>Total</source>
+        <translation>合計</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="413"/>
+        <location filename="../../app/controllers/batch_report.py" line="476"/>
+        <source>Skipped</source>
+        <translation>スキップされました</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="423"/>
+        <source>Skipped Images ({0})</source>
+        <translation>スキップされた画像 ({0})</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="429"/>
+        <source>Retry Skipped Images</source>
+        <translation>スキップ済み画像を再試行</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="447"/>
+        <source>Double-click a row to open that page.</source>
+        <translation>行をダブルクリックしてそのページを開きます。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Image</source>
+        <translation>画像</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Reason</source>
+        <translation>理由</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="486"/>
+        <source>No skipped images in this batch.</source>
+        <translation>このバッチにはスキップされた画像はありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="511"/>
+        <source>Batch Report</source>
+        <translation>バッチレポート</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1516"/>
+        <source>Automatic translation</source>
+        <translation>自動翻訳</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1544"/>
+        <source>There is no inpainting to revert on this page.</source>
+        <translation>このページには取り消すインペイントがありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="447"/>
+        <source>Project Recovery</source>
+        <translation>プロジェクトの回復</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="448"/>
+        <source>An autosaved project from a previous session was found.</source>
+        <translation>以前のセッションから自動保存されたプロジェクトが見つかりました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="450"/>
+        <source>Last autosave: {saved_at}
+Do you want to restore it?</source>
+        <translation>最後の自動保存: {saved_at}
+復元しますか?</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="452"/>
+        <source>Restore</source>
+        <translation>復元する</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="453"/>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="652"/>
+        <location filename="../../app/controllers/projects.py" line="661"/>
+        <source>Export Folder</source>
+        <translation>エクスポートフォルダー</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="653"/>
+        <source>Choose a folder path, not an existing file.</source>
+        <translation>既存のファイルではなく、フォルダーのパスを選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="663"/>
+        <source>Could not create the selected export folder.
+
+{error}</source>
+        <translation>{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1142"/>
+        <location filename="../../app/controllers/projects.py" line="1152"/>
+        <location filename="../../app/controllers/projects.py" line="1222"/>
+        <source>Project File</source>
+        <translation>プロジェクトファイル</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1143"/>
+        <source>Choose an existing folder for the project file.</source>
+        <translation>プロジェクトファイル用の既存のフォルダーを選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1154"/>
+        <source>Could not create the selected project folder.
+
+{error}</source>
+        <translation>選択したプロジェクトフォルダーを作成できませんでした。
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1165"/>
+        <source>Overwrite Project File</source>
+        <translation>プロジェクトファイルを上書き</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1167"/>
+        <source>A project file already exists at this location.
+
+{path}
+
+Overwrite it?</source>
+        <translation>この場所にはすでにプロジェクトファイルがあります。
+
+{path}
+
+上書きしますか？</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1190"/>
+        <source>Old Project File Kept</source>
+        <translation>古いプロジェクトファイルを保持</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1192"/>
+        <source>The project was saved to the new location, but the old file could not be removed.
+
+{path}
+
+{error}</source>
+        <translation>プロジェクトは新しい場所に保存されましたが、古いファイルを削除できませんでした。
+
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1200"/>
+        <source>Project file updated.</source>
+        <translation>プロジェクトファイルを更新しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1224"/>
+        <source>Could not move the project file.
+
+{error}</source>
+        <translation>プロジェクトファイルを移動できませんでした。
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1235"/>
+        <source>Project file renamed.</source>
+        <translation>プロジェクトファイル名を変更しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1237"/>
+        <source>Project file moved.</source>
+        <translation>プロジェクトファイルを移動しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1375"/>
+        <source>Project Not Found</source>
+        <translation>プロジェクトが見つかりません</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1377"/>
+        <source>The selected project file could not be found.
+It may have been moved, renamed, or deleted.
+
+{path}</source>
+        <translation>選択したプロジェクトファイルが見つかりませんでした。
+移動、名前変更、または削除された可能性があります。
+
+{path}</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -314,6 +1593,14 @@
         <location filename="../../app/ui/settings/credentials_page.py" line="129"/>
         <source>Folder ID</source>
         <translation>フォルダーID</translation>
+    </message>
+    <message>
+        <source>Keys are stored in this computer's application settings, not in projects.</source>
+        <translation>キーはこのコンピューターのアプリ設定に保存され、プロジェクトには保存されません。</translation>
+    </message>
+    <message>
+        <source>Optional cloud services use your own API keys and provider billing. Text and enabled image context are sent to the selected provider. Local LLM needs no cloud account. Select the translator in Tools.</source>
+        <translation>任意のクラウドサービスは、ご自身のAPIキーとプロバイダーの課金を使用します。テキストと有効化した画像コンテキストは選択したプロバイダーに送信されます。Local LLMにクラウドアカウントは不要です。ツールで翻訳エンジンを選択してください。</translation>
     </message>
 </context>
 <context>
@@ -456,6 +1743,152 @@
         <location filename="../../app/ui/settings/llms_page.py" line="22"/>
         <source>Extra Context:</source>
         <translation>追加のコンテキスト:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="36"/>
+        <source>Local LLM</source>
+        <translation>ローカル LLM</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="40"/>
+        <source>Run a GGUF model with llama.cpp, or connect to an existing OpenAI-compatible server such as Ollama or LM Studio.</source>
+        <translation>llama.cpp で GGUF モデルを実行するか、Ollama や LM Studio などの OpenAI 互換サーバーに接続します。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="47"/>
+        <source>Choose Local LLM under Tools &gt; Translator to use these settings.</source>
+        <translation>これらの設定を使うには、「ツール &gt; 翻訳エンジン」で「ローカル LLM」を選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="54"/>
+        <source>Managed llama.cpp</source>
+        <translation>管理対象の llama.cpp</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="55"/>
+        <source>External server</source>
+        <translation>外部サーバー</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="56"/>
+        <source>Runtime:</source>
+        <translation>実行環境:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="62"/>
+        <source>Optional when llama-server is on PATH</source>
+        <translation>llama-server が PATH にあれば省略可能</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="64"/>
+        <source>Main GGUF model (required)</source>
+        <translation>メイン GGUF モデル（必須）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="66"/>
+        <source>Vision projector GGUF, when required by the model</source>
+        <translation>モデルで必要な場合は視覚プロジェクター GGUF</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="78"/>
+        <location filename="../../app/ui/settings/llms_page.py" line="112"/>
+        <source> s</source>
+        <translation> 秒</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="80"/>
+        <source>llama-server:</source>
+        <translation>llama-server:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="81"/>
+        <source>Model:</source>
+        <translation>モデル:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="82"/>
+        <source>Vision projector:</source>
+        <translation>視覚プロジェクター:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="83"/>
+        <source>Context size:</source>
+        <translation>コンテキストサイズ:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="84"/>
+        <source>GPU layers:</source>
+        <translation>GPU レイヤー数:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="85"/>
+        <source>Startup timeout:</source>
+        <translation>起動タイムアウト:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="93"/>
+        <source>Server model name</source>
+        <translation>サーバー上のモデル名</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="96"/>
+        <source>Optional</source>
+        <translation>任意</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="97"/>
+        <source>Saved only when Save Keys is enabled in Advanced settings.</source>
+        <translation>詳細設定の「キーを保存」が有効な場合のみ保存されます。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="98"/>
+        <source>Base URL:</source>
+        <translation>ベース URL:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="99"/>
+        <source>Model name:</source>
+        <translation>モデル名:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="100"/>
+        <source>API key:</source>
+        <translation>API キー:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="103"/>
+        <source>Generation</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="126"/>
+        <source>Limit sampling to the K most likely tokens; 0 disables Top K</source>
+        <translation>最も確率の高い K 個のトークンに候補を制限します。0 で Top K を無効化</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="128"/>
+        <source>Max output tokens:</source>
+        <translation>最大出力トークン数:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="129"/>
+        <source>Request timeout:</source>
+        <translation>リクエストタイムアウト:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="130"/>
+        <source>Temperature:</source>
+        <translation>温度:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="131"/>
+        <source>Top P:</source>
+        <translation>Top P:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="132"/>
+        <source>Top K:</source>
+        <translation>Top K:</translation>
     </message>
 </context>
 <context>
@@ -649,6 +2082,23 @@ Open Batch Report to see all skipped images and reasons.</source>
         <source>Imported a PSD that was not exported by this application. Visible image layers were flattened, and unsupported Photoshop features may not match exactly.</source>
         <translation>このアプリケーションから書き出されたものではないPSDがインポートされました。表示されている画像レイヤーはフラット化され、未対応のPhotoshop機能は正確に一致しない場合があります。</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/messages.py" line="123"/>
+        <source>Local LLM is not configured yet. Open Settings &gt; LLMs and complete the local runtime fields.</source>
+        <translation>ローカル LLM が未設定です。「設定 &gt; LLM」でローカル実行環境の項目を入力してください。</translation>
+    </message>
+    <message>
+        <source>Provider APIs</source>
+        <translation>プロバイダーAPI</translation>
+    </message>
+    <message>
+        <source>Check your provider's billing and API limits.</source>
+        <translation>プロバイダーの請求状況とAPIの利用制限を確認してください。</translation>
+    </message>
+    <message>
+        <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
+        <translation>設定 &gt; プロバイダーAPIでAPIキーと必須項目を設定してください: {provider}</translation>
+    </message>
 </context>
 <context>
     <name>NavRailMixin</name>
@@ -800,6 +2250,31 @@ Open Batch Report to see all skipped images and reasons.</source>
         <location filename="../../app/ui/list_view.py" line="202"/>
         <source>Translate</source>
         <translation>翻訳する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="188"/>
+        <source>Name: A to Z</source>
+        <translation>名前: 昇順</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="189"/>
+        <source>Name: Z to A</source>
+        <translation>名前: 降順</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="190"/>
+        <source>Modified: Oldest First</source>
+        <translation>更新日時: 古い順</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="191"/>
+        <source>Modified: Newest First</source>
+        <translation>更新日時: 新しい順</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="204"/>
+        <source>Sort Pages</source>
+        <translation>ページを並べ替え</translation>
     </message>
 </context>
 <context>
@@ -1446,6 +2921,40 @@ Restart now?</source>
         <source>About</source>
         <translation>について</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="67"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="119"/>
+        <source>Midnight</source>
+        <translation>ミッドナイト</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="68"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="120"/>
+        <source>Parchment</source>
+        <translation>パーチメント</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="69"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="121"/>
+        <source>Lavender</source>
+        <translation>ラベンダー</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="70"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="122"/>
+        <source>Mint</source>
+        <translation>ミント</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="79"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="125"/>
+        <source>Local LLM</source>
+        <translation>ローカル LLM</translation>
+    </message>
+    <message>
+        <source>Provider APIs</source>
+        <translation>プロバイダーAPI</translation>
+    </message>
 </context>
 <context>
     <name>ShortcutDefinitions</name>
@@ -1518,6 +3027,36 @@ Restart now?</source>
         <location filename="../../app/shortcuts.py" line="56"/>
         <source>Toggle brush stroke drawing on or off.</source>
         <translation>ブラシストロークの描画をオンまたはオフにします。</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="61"/>
+        <source>Zoom In</source>
+        <translation>拡大</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="62"/>
+        <source>Zoom into the comic page.</source>
+        <translation>漫画のページを拡大します。</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="67"/>
+        <source>Zoom Out</source>
+        <translation>縮小</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="68"/>
+        <source>Zoom out of the comic page.</source>
+        <translation>漫画のページを縮小します。</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="73"/>
+        <source>Fit Page</source>
+        <translation>ページ全体表示</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="74"/>
+        <source>Fit the current comic page to the window.</source>
+        <translation>現在の漫画ページをウィンドウに合わせます。</translation>
     </message>
 </context>
 <context>
@@ -1941,6 +3480,76 @@ back on the Image (for further editing)</source>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="358"/>
         <source>Inpainting</source>
         <translation>修復</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="105"/>
+        <source>Pages</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="109"/>
+        <source>Sort</source>
+        <translation>並べ替え</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="116"/>
+        <source>Sort Pages</source>
+        <translation>ページを並べ替え</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="192"/>
+        <source>Type translated or replacement text to show on the page</source>
+        <translation>ページに表示する翻訳文または置換テキストを入力</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="301"/>
+        <source>Pan Image after Zooming</source>
+        <translation>拡大後に画像を移動</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="306"/>
+        <source>Zoom Out (Ctrl+-)</source>
+        <translation>縮小 (Ctrl+-)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="309"/>
+        <source>Fit</source>
+        <translation>全体表示</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="310"/>
+        <source>Fit Page to Window (Ctrl+0)</source>
+        <translation>ページをウィンドウに合わせる (Ctrl+0)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="314"/>
+        <source>Zoom In (Ctrl+= or Ctrl+Mouse Wheel)</source>
+        <translation>拡大 (Ctrl+= または Ctrl+マウスホイール)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="334"/>
+        <source>Draw or Select Text Regions; typing in the Target Text field creates borderless text on the page</source>
+        <translation>テキスト領域を描画または選択します。「翻訳先テキスト」に入力すると、ページに枠線のないテキストが作成されます</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="384"/>
+        <source>Paint Areas to Clean, then click Apply Cleanup</source>
+        <translation>消したい領域を塗り、「クリーンアップを適用」をクリック</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="399"/>
+        <source>Apply Cleanup to the Painted Areas</source>
+        <translation>塗った領域にクリーンアップを適用</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="404"/>
+        <source>Revert All Inpainting on the Current Page (Undoable)</source>
+        <translation>現在のページのインペイントをすべて取り消す（元に戻せます）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="431"/>
+        <source>Artistic Edit (FLUX.2 Klein)</source>
+        <translation>アート編集 (FLUX.2 Klein)</translation>
     </message>
 </context>
 <context>
@@ -2448,6 +4057,16 @@ It may have been moved, renamed, or deleted.
         <source>English</source>
         <translation>英語</translation>
     </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1516"/>
+        <source>Automatic translation</source>
+        <translation>自動翻訳</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1544"/>
+        <source>There is no inpainting to revert on this page.</source>
+        <translation>このページには取り消すインペイントがありません。</translation>
+    </message>
 </context>
 <context>
     <name>self.settings.ui</name>
@@ -2526,6 +4145,19 @@ It may have been moved, renamed, or deleted.
         <location filename="../../modules/translation/processor.py" line="68"/>
         <source>Yandex</source>
         <translation>ヤンデックス</translation>
+    </message>
+    <message>
+        <location filename="../../modules/translation/processor.py" line="59"/>
+        <source>Local LLM</source>
+        <translation>ローカル LLM</translation>
+    </message>
+    <message>
+        <source>Google Gemini</source>
+        <translation>Google ジェミニ</translation>
+    </message>
+    <message>
+        <source>Anthropic Claude</source>
+        <translation>人間的なクロード</translation>
     </message>
 </context>
 <context>
@@ -2620,6 +4252,881 @@ It may have been moved, renamed, or deleted.
         <location filename="../../app/ui/canvas/rectangle.py" line="81"/>
         <source>Translate</source>
         <translation>翻訳する</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="36"/>
+        <source>No Data</source>
+        <translation>データなし</translation>
+    </message>
+</context>
+<context>
+    <name>ArtisticEditController</name>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="54"/>
+        <source>The selected box has no recognized source text.</source>
+        <translation>選択した枠には認識済みの原文がありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="58"/>
+        <source>The selected box has no translation yet.</source>
+        <translation>選択した枠にはまだ翻訳がありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="170"/>
+        <source>Select exactly one box on the page.</source>
+        <translation>ページ上の枠を1つだけ選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="174"/>
+        <source>Paint the area to edit with the cleanup brush.</source>
+        <translation>クリーンアップブラシで編集する領域を塗ってください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="180"/>
+        <source>Artistic Edit currently requires single-page mode.</source>
+        <translation>アート編集は現在、単一ページモードでのみ使用できます。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="184"/>
+        <source>Open a comic page first.</source>
+        <translation>まず漫画のページを開いてください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="191"/>
+        <source>Configure a FLUX Python executable in Artistic Edit settings or LOCAL_COMIC_TRANSLATE_FLUX_PYTHON.</source>
+        <translation>アート編集の設定または LOCAL_COMIC_TRANSLATE_FLUX_PYTHON で FLUX 用 Python 実行ファイルを設定してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="207"/>
+        <source>Select FLUX Python executable</source>
+        <translation>FLUX 用 Python 実行ファイルを選択</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="209"/>
+        <source>Python executable (python.exe);;All files (*)</source>
+        <translation>Python 実行ファイル (python.exe);;すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="215"/>
+        <source>The selected Python executable does not exist.</source>
+        <translation>選択した Python 実行ファイルが存在しません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="223"/>
+        <source>FLUX Python selected. Enter a prompt and choose an edit area.</source>
+        <translation>FLUX 用 Python を選択しました。指示を入力し、編集領域を選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="229"/>
+        <source>Select exactly one OCR text box first.</source>
+        <translation>まず OCR のテキスト枠を1つだけ選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="260"/>
+        <source>Paint an area before generating.</source>
+        <translation>生成する前に領域を塗ってください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="264"/>
+        <source>Select exactly one box before generating.</source>
+        <translation>生成する前に枠を1つだけ選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="278"/>
+        <source>The selected LoRA is no longer available; refresh the list.</source>
+        <translation>選択した LoRA は利用できなくなりました。一覧を更新してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="297"/>
+        <source>Enter an edit prompt first.</source>
+        <translation>まず編集指示を入力してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="302"/>
+        <source>Whole-page Artistic Edit</source>
+        <translation>ページ全体のアート編集</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="304"/>
+        <source>A whole-page generation is slower and may alter unrelated artwork. Continue?</source>
+        <translation>ページ全体の生成には時間がかかり、無関係な絵も変わる可能性があります。続行しますか？</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="316"/>
+        <source>The current page could not be read.</source>
+        <translation>現在のページを読み込めませんでした。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="332"/>
+        <source>No valid FLUX Python executable is configured.</source>
+        <translation>FLUX 用の有効な Python 実行ファイルが設定されていません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="386"/>
+        <source>Starting FLUX worker…</source>
+        <translation>FLUX プロセスを起動中…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="432"/>
+        <source>Importing PyTorch and Diffusers…</source>
+        <translation>PyTorch と Diffusers を読み込み中…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="435"/>
+        <source>Loading {model} BF16 weights…</source>
+        <translation>{model} の BF16 重みを読み込み中…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="440"/>
+        <source>Configuring {device}…</source>
+        <translation>{device} を設定中…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="483"/>
+        <source>FLUX model unloaded.</source>
+        <translation>FLUX モデルをメモリから解放しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="508"/>
+        <source>Preview ready.</source>
+        <translation>プレビューの準備ができました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="514"/>
+        <source>The preview belongs to another page. Return and regenerate it.</source>
+        <translation>このプレビューは別のページのものです。そのページに戻って再生成してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="517"/>
+        <source>The page can no longer be read.</source>
+        <translation>ページを読み込めなくなりました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="521"/>
+        <source>The page geometry changed. Regenerate the preview.</source>
+        <translation>ページの形状が変わりました。プレビューを再生成してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="523"/>
+        <source>The source pixels changed. Regenerate before applying.</source>
+        <translation>元の画像のピクセルが変わりました。適用前に再生成してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="532"/>
+        <source>None</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="535"/>
+        <source>Model: {model} | Precision: BF16 | LoRA: {lora} | Seed: {seed} | Steps: {steps} | Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution
+Prompt: {prompt}</source>
+        <translation>モデル: {model} | 精度: BF16 | LoRA: {lora} | シード: {seed} | ステップ: {steps} | 所要時間: {elapsed:.1f}s | 解像度 {percent}% で処理
+指示: {prompt}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="583"/>
+        <source>The current page has no undo history.</source>
+        <translation>現在のページには取り消し履歴がありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="607"/>
+        <location filename="../../app/controllers/artistic_edit.py" line="611"/>
+        <source>Artistic edit</source>
+        <translation>アート編集</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="623"/>
+        <source>Artistic edit applied. Use Undo to reverse it.</source>
+        <translation>アート編集を適用しました。「元に戻す」で取り消せます。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="630"/>
+        <source>Cancelling Artistic Edit…</source>
+        <translation>アート編集をキャンセル中…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="635"/>
+        <source>Artistic Edit cancelled.</source>
+        <translation>アート編集をキャンセルしました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="648"/>
+        <source>Artistic Edit failed.</source>
+        <translation>アート編集に失敗しました。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="656"/>
+        <source>The FLUX model is not loaded.</source>
+        <translation>FLUX モデルが読み込まれていません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="660"/>
+        <source>Unloading FLUX model…</source>
+        <translation>FLUX モデルを解放中…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="671"/>
+        <source>There are no artistic edits to revert on this page.</source>
+        <translation>このページには取り消すアート編集がありません。</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="680"/>
+        <source>Revert artistic edits</source>
+        <translation>アート編集を取り消す</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="696"/>
+        <source>Could not scan LoRAs: %1</source>
+        <translation>LoRA を検索できませんでした: %1</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="435"/>
+        <source>Preparing {model} (BF16) runtime…</source>
+        <translation>{model} (BF16) の実行環境を準備中…</translation>
+    </message>
+    <message>
+        <source>Cloud Artistic Edit</source>
+        <translation>クラウドアート編集</translation>
+    </message>
+    <message>
+        <source>Configure a Black Forest Labs API key in Settings &gt; Provider APIs.</source>
+        <translation>設定 &gt; プロバイダーAPIで Black Forest Labs のAPIキーを設定してください。</translation>
+    </message>
+    <message>
+        <source>Waiting for Black Forest Labs…</source>
+        <translation>Black Forest Labs の応答を待っています…</translation>
+    </message>
+    <message>
+        <source>Provider: Black Forest Labs | Model: {model} | Seed: {seed} | Elapsed: {elapsed:.1f}s | Prompt: {prompt}</source>
+        <translation>プロバイダー: Black Forest Labs | モデル: {model} | シード: {seed} | 所要時間: {elapsed:.1f}s | プロンプト: {prompt}</translation>
+    </message>
+    <message>
+        <source>Send the selected area and surrounding context (or the whole page if selected) to Black Forest Labs? This is a paid request under your provider account. Content restrictions apply. Cancel stops waiting but may not stop billing. Continue?</source>
+        <translation>選択範囲と周辺コンテキスト（ページ全体を選択した場合はページ全体）をBlack Forest Labsに送信しますか？ご自身のプロバイダーアカウントに課金されます。コンテンツ制限が適用されます。キャンセルしても待機が終了するだけで、課金を止められない場合があります。続行しますか？</translation>
+    </message>
+</context>
+<context>
+    <name>ArtisticEditPanel</name>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="67"/>
+        <source>Describe the local image edit…</source>
+        <translation>画像の部分的な編集内容を入力…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="74"/>
+        <source>Use selected translation</source>
+        <translation>選択した翻訳を使用</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="76"/>
+        <source>Artistic lettering</source>
+        <translation>アート文字</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="77"/>
+        <source>Empty speech bubble</source>
+        <translation>空の吹き出し</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="86"/>
+        <source>Generate Preview</source>
+        <translation>プレビューを生成</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="96"/>
+        <source>Select FLUX Python…</source>
+        <translation>FLUX 用 Python を選択…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="111"/>
+        <source>4B · Apache 2.0 · ~13 GB VRAM</source>
+        <translation>4B · Apache 2.0 · VRAM 約13 GB</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="114"/>
+        <source>9B · Non-commercial · gated · ~29 GB VRAM</source>
+        <translation>9B · 非商用 · アクセス申請が必要 · VRAM 約29 GB</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="116"/>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="123"/>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="426"/>
+        <source>None</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="133"/>
+        <source>LoRA / strength</source>
+        <translation>LoRA / 強度</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="140"/>
+        <source>Selected box</source>
+        <translation>選択した枠</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="141"/>
+        <source>Painted area</source>
+        <translation>塗った領域</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="142"/>
+        <source>Whole page</source>
+        <translation>ページ全体</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="144"/>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="145"/>
+        <source>Refresh compatible LoRAs</source>
+        <translation>対応 LoRA を更新</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="147"/>
+        <source>Folder</source>
+        <translation>フォルダー</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="148"/>
+        <source>Open the compatible LoRA folder</source>
+        <translation>対応 LoRA のフォルダーを開く</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="155"/>
+        <source>Area</source>
+        <translation>領域</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="161"/>
+        <source>Extra room on each side of the selected box for larger lettering. Uses original page pixels, regardless of zoom. Start with 32–64 px. Artwork inside this margin can also change; check the preview. 0 keeps the original box boundary.</source>
+        <translation>大きな文字用に、選択した枠の各辺に余白を追加します。ズームに関係なく元のページのピクセル単位です。32–64 px からお試しください。余白内の絵も変わる可能性があるため、プレビューを確認してください。0 で元の枠の境界を維持します。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="166"/>
+        <source>Edit margin</source>
+        <translation>編集余白</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="172"/>
+        <source>Advanced…</source>
+        <translation>詳細設定…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="190"/>
+        <source>Integer from 0 to 9223372036854775807</source>
+        <translation>0 ～ 9223372036854775807 の整数</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="191"/>
+        <source>Random each run</source>
+        <translation>毎回ランダム</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="194"/>
+        <source>Seed</source>
+        <translation>シード</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="199"/>
+        <source>Steps</source>
+        <translation>ステップ数</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="206"/>
+        <source>Surrounding artwork shown to FLUX as context. To keep lettering beyond the selected box, increase Edit margin.</source>
+        <translation>FLUX に文脈として見せる周囲の絵です。選択した枠の外の文字を残すには、編集余白を増やしてください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="209"/>
+        <source>Context</source>
+        <translation>コンテキスト</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="216"/>
+        <source>Feather</source>
+        <translation>境界のぼかし</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="222"/>
+        <source>Max side</source>
+        <translation>最大辺の長さ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="229"/>
+        <source>Distilled FLUX.2 Klein checkpoints may ignore guidance.</source>
+        <translation>蒸留済み FLUX.2 Klein モデルはガイダンスを無視する場合があります。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="231"/>
+        <source>Guidance</source>
+        <translation>ガイダンス</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="234"/>
+        <source>Single GPU 0</source>
+        <translation>GPU 0 のみ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="235"/>
+        <source>Single GPU 1</source>
+        <translation>GPU 1 のみ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="236"/>
+        <source>Model CPU offload</source>
+        <translation>モデルを CPU にオフロード</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="237"/>
+        <source>Sequential CPU offload</source>
+        <translation>逐次 CPU オフロード</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="238"/>
+        <source>Balanced multi-GPU (experimental)</source>
+        <translation>複数 GPU に均等配分（試験的）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="239"/>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="243"/>
+        <source>Device</source>
+        <translation>デバイス</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="250"/>
+        <source>Physical CUDA device used by Model/Sequential CPU offload. Single-GPU and Balanced policies ignore this value.</source>
+        <translation>モデル／逐次 CPU オフロードで使用する物理 CUDA デバイスです。単一 GPU と均等配分のモードではこの値を無視します。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="254"/>
+        <source>Offload GPU</source>
+        <translation>オフロード用 GPU</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="261"/>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="263"/>
+        <source>Unload Model</source>
+        <translation>モデルを解放</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="268"/>
+        <source>Revert Artistic Edits</source>
+        <translation>アート編集を取り消す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="376"/>
+        <source>Seed must be at most 9223372036854775807.</source>
+        <translation>シードは 9223372036854775807 以下にしてください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="430"/>
+        <source>%1 (metadata warning)</source>
+        <translation>%1（メタデータの警告）</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="483"/>
+        <source>An Artistic Edit is already running.</source>
+        <translation>アート編集はすでに実行中です。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="485"/>
+        <source>Open a page and select an edit area.</source>
+        <translation>ページを開き、編集領域を選択してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="487"/>
+        <source>Enter an editing prompt first.</source>
+        <translation>まず編集指示を入力してください。</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="489"/>
+        <source>Process the selected area with FLUX.2 Klein.</source>
+        <translation>選択領域を FLUX.2 Klein で処理します。</translation>
+    </message>
+    <message>
+        <source>Local Diffusers</source>
+        <translation>ローカル Diffusers</translation>
+    </message>
+    <message>
+        <source>BFL seeds must be at most 4294967295.</source>
+        <translation>BFLのシード値は4294967295以下にしてください。</translation>
+    </message>
+    <message>
+        <source>Cloud editing uploads the selected area plus context and incurs provider charges. Configure the key in Provider APIs. Local LoRAs and GPU controls are unavailable.</source>
+        <translation>クラウド編集では選択範囲と周辺コンテキストをアップロードし、プロバイダーの料金が発生します。プロバイダーAPIでキーを設定してください。ローカルLoRAとGPU設定は使用できません。</translation>
+    </message>
+</context>
+<context>
+    <name>ArtisticEditPreviewDialog</name>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="65"/>
+        <source>Artistic Edit Preview</source>
+        <translation>アート編集プレビュー</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="73"/>
+        <source>Before</source>
+        <translation>編集前</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="74"/>
+        <source>After</source>
+        <translation>編集後</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="102"/>
+        <source>Fit</source>
+        <translation>全体表示</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="103"/>
+        <source>Regenerate Same Seed</source>
+        <translation>同じシードで再生成</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="104"/>
+        <source>Regenerate New Seed</source>
+        <translation>新しいシードで再生成</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="105"/>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="106"/>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+</context>
+<context>
+    <name>MBigView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="339"/>
+        <source>No Data</source>
+        <translation>データなし</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFilePushButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="92"/>
+        <source>Click to browser file</source>
+        <translation>クリックしてファイルを選択</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFileToolButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="160"/>
+        <source>Click to browser file</source>
+        <translation>クリックしてファイルを選択</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFolderPushButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="439"/>
+        <source>Click to browser folder</source>
+        <translation>クリックしてフォルダーを選択</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFolderToolButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="492"/>
+        <source>Click to browser folder</source>
+        <translation>クリックしてフォルダーを選択</translation>
+    </message>
+</context>
+<context>
+    <name>MClickSaveFileToolButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="227"/>
+        <source>Click to save file</source>
+        <translation>クリックしてファイルを保存</translation>
+    </message>
+</context>
+<context>
+    <name>MColorChart</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/color_palette.py" line="38"/>
+        <source>Click to Copy Color</source>
+        <translation>クリックして色をコピー</translation>
+    </message>
+</context>
+<context>
+    <name>MComboBox</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/combo_box.py" line="84"/>
+        <source>Please Select</source>
+        <translation>選択してください</translation>
+    </message>
+</context>
+<context>
+    <name>MDragFileButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="319"/>
+        <source>Click to browser file</source>
+        <translation>クリックしてファイルを選択</translation>
+    </message>
+</context>
+<context>
+    <name>MDragFolderButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="549"/>
+        <source>Click or drag folder here</source>
+        <translation>クリックするかフォルダーをここにドラッグ</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="552"/>
+        <source>Click to browser folder or drag folder here</source>
+        <translation>フォルダーを選択するかここにドラッグ</translation>
+    </message>
+</context>
+<context>
+    <name>MFontComboBox</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/combo_box.py" line="200"/>
+        <source>Please Select</source>
+        <translation>選択してください</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/combo_box.py" line="268"/>
+        <source>Font</source>
+        <translation>フォント</translation>
+    </message>
+</context>
+<context>
+    <name>MHeaderView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="56"/>
+        <source>Select All</source>
+        <translation>すべて選択</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="57"/>
+        <source>Select None</source>
+        <translation>選択をすべて解除</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="58"/>
+        <source>Select Invert</source>
+        <translation>選択を反転</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="68"/>
+        <source>Fit Size</source>
+        <translation>サイズを合わせる</translation>
+    </message>
+</context>
+<context>
+    <name>MLineEdit</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="158"/>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="191"/>
+        <source>Enter key word to search...</source>
+        <translation>検索語を入力...</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="172"/>
+        <source>Error Detail Information</source>
+        <translation>エラーの詳細</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="182"/>
+        <source>Error information will be here...</source>
+        <translation>エラー情報がここに表示されます...</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="201"/>
+        <source>Click button to browser files</source>
+        <translation>クリックしてファイルを選択</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="211"/>
+        <source>Click button to set save file</source>
+        <translation>クリックして保存先ファイルを設定</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="220"/>
+        <source>Click button to browser folder</source>
+        <translation>クリックしてフォルダーを選択</translation>
+    </message>
+</context>
+<context>
+    <name>MListView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="393"/>
+        <source>No Data</source>
+        <translation>データなし</translation>
+    </message>
+</context>
+<context>
+    <name>MTableView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="216"/>
+        <source>No Data</source>
+        <translation>データなし</translation>
+    </message>
+</context>
+<context>
+    <name>MTreeView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="309"/>
+        <source>No Data</source>
+        <translation>データなし</translation>
+    </message>
+</context>
+<context>
+    <name>PatchCommands</name>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="127"/>
+        <source>Inpaint</source>
+        <translation>インペイント</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="129"/>
+        <source>Artistic edit</source>
+        <translation>アート編集</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="130"/>
+        <source>Patch edit</source>
+        <translation>画像パッチを編集</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="229"/>
+        <source>Revert all patches</source>
+        <translation>すべての画像パッチを取り消す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="231"/>
+        <source>Revert inpainting</source>
+        <translation>インペイントを取り消す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="233"/>
+        <source>Revert artistic edits</source>
+        <translation>アート編集を取り消す</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="235"/>
+        <source>Revert patches</source>
+        <translation>画像パッチを取り消す</translation>
+    </message>
+</context>
+<context>
+    <name>SearchableMenuBase</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/menu.py" line="434"/>
+        <location filename="../../app/ui/dayu_widgets/menu.py" line="435"/>
+        <source>Search Action...</source>
+        <translation>操作を検索...</translation>
+    </message>
+</context>
+<context>
+    <name>LocalRepairPanel</name>
+    <message>
+        <source>Restore brush</source>
+        <translation>復元ブラシ</translation>
+    </message>
+    <message>
+        <source>Brush back the original page pixels in a small area. Original text is restored too. Uses the brush size slider.</source>
+        <translation>ブラシで小さな範囲を元のページの画素に戻します。元の文字も復元されます。ブラシサイズのスライダーを使用します。</translation>
+    </message>
+    <message>
+        <source>Pick color</source>
+        <translation>色を取得</translation>
+    </message>
+    <message>
+        <source>Click an intact background area to sample its color.</source>
+        <translation>背景のきれいな部分をクリックして色を取得します。</translation>
+    </message>
+    <message>
+        <source>Fill mask with sampled color</source>
+        <translation>取得した色でマスクを塗りつぶす</translation>
+    </message>
+    <message>
+        <source>Fill the painted or segmented mask on this page, without AI inpainting or extra mask expansion.</source>
+        <translation>このページの描画・セグメンテーション済みマスクを、AI修復やマスクの追加拡張なしで塗りつぶします。</translation>
+    </message>
+<message>
+        <source>Clone brush</source>
+        <translation>コピーブラシ</translation>
+    </message>
+<message>
+        <source>Set the brush size, then Alt-click to capture a fixed sample. Paint to repeat that sample. Dashed cyan marks the source; the solid circle follows the brush. Alt-click again after changing size.</source>
+        <translation>ブラシサイズを設定し、Altクリックで固定サンプルを取得します。描画すると同じサンプルを繰り返し適用します。水色の破線がコピー元、実線の円がブラシ位置です。サイズを変更したら再度Altクリックしてください。</translation>
+    </message>
+<message>
+        <source>Sample original</source>
+        <translation>元画像からコピー</translation>
+    </message>
+<message>
+        <source>Sample the page before cleanup patches. Turn off to sample the edited page. Alt-click again after changing this option.</source>
+        <translation>クリーンアップ前のページからコピーします。オフにすると編集済みページを使用します。変更後は再度Altクリックしてください。</translation>
+    </message>
+<message>
+        <source>Soft edge</source>
+        <translation>境界のぼかし</translation>
+    </message>
+</context>
+<context>
+    <name>LocalRepairController</name>
+    <message>
+        <source>Wait for processing to finish before repairing the page.</source>
+        <translation>処理が完了してからページを修復してください。</translation>
+    </message>
+    <message>
+        <source>The original page image is unavailable.</source>
+        <translation>元のページ画像を利用できません。</translation>
+    </message>
+    <message>
+        <source>Restore area</source>
+        <translation>範囲を復元</translation>
+    </message>
+    <message>
+        <source>Pick a background color first.</source>
+        <translation>先に背景色を取得してください。</translation>
+    </message>
+    <message>
+        <source>Paint or segment the area to fill first.</source>
+        <translation>先に塗りつぶす範囲を描画または分割してください。</translation>
+    </message>
+    <message>
+        <source>Sampled color fill</source>
+        <translation>取得色で塗りつぶし</translation>
+    </message>
+</context>
+<context>
+    <name>CloneBrushController</name>
+<message>
+        <source>Clone brush</source>
+        <translation>コピーブラシ</translation>
+    </message>
+<message>
+        <source>The clone source image is unavailable.</source>
+        <translation>コピー元の画像を利用できません。</translation>
+    </message>
+<message>
+        <source>Alt-click a clean area on this page to set the clone source.</source>
+        <translation>このページのきれいな部分をAltクリックしてコピー元を設定してください。</translation>
     </message>
 </context>
 </TS>

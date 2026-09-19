@@ -5,6 +5,7 @@ from PySide6 import QtCore
 from modules.detection.processor import TextBlockDetector
 from modules.detection.script_detection import ScriptDetector
 from modules.utils.textblock import TextBlock, sort_blk_list
+from modules.utils.manual_regions import is_manual_region, merge_manual_regions
 from modules.rendering.render import get_best_render_area
 from pipeline.webtoon_utils import get_first_visible_block
 from app.ui.commands.box import ReplaceDetectedBlocksCommand
@@ -167,20 +168,29 @@ class BlockDetectionHandler:
                 
                 # Remove existing blocks that fall within the detected area to avoid duplicates
                 filtered_blocks = []
+                manual_in_view = []
                 for existing_blk in self.main_page.blk_list:
                     blk_y = existing_blk.xyxy[1]  # Top Y coordinate
                     blk_bottom = existing_blk.xyxy[3]  # Bottom Y coordinate
+
+                    if (is_manual_region(existing_blk)
+                            and blk_bottom > scene_y_min and blk_y < scene_y_max):
+                        manual_in_view.append(existing_blk)
+                        continue
                     
                     # Keep blocks that don't overlap with the detected area
                     if not (blk_y >= scene_y_min and blk_bottom <= scene_y_max):
                         filtered_blocks.append(existing_blk)
                 
                 # Add the new blocks to the filtered list
+                blk_list = merge_manual_regions(manual_in_view, blk_list)
                 self.main_page.blk_list = filtered_blocks + blk_list
             else:
+                blk_list = merge_manual_regions(self.main_page.blk_list, blk_list)
                 self.main_page.blk_list = blk_list
         else:
-            # In single image mode, replace entirely
+            # Detection refreshes automatic regions, never user-drawn ones.
+            blk_list = merge_manual_regions(self.main_page.blk_list, blk_list)
             self.main_page.blk_list = blk_list
         
         source_lang = self.main_page.s_combo.currentText()

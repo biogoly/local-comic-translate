@@ -184,7 +184,15 @@ class CacheManager:
         block_id = self._get_block_id(block)
         text = getattr(block, 'text', '') or ''
 
-        # Don't create/update cache entries for empty OCR text
+        # Explicit re-recognition supersedes earlier matches, including a box
+        # moved slightly since its last OCR. Even an empty new result must not
+        # resurrect the old text on the next whole-page cache lookup.
+        matched_id, _ = self._find_matching_block_id(cache_key, block)
+        while matched_id is not None:
+            del self.ocr_cache[cache_key][matched_id]
+            matched_id, _ = self._find_matching_block_id(cache_key, block)
+
+        # Empty results stay uncached so a later page OCR can try again.
         if not text:
             logger.debug(f"Skipping OCR cache update for empty text for block ID {block_id}")
             return
@@ -353,4 +361,4 @@ class CacheManager:
                 continue
             cached_translation = self._get_cached_translation_for_block(cache_key, block)
             if cached_translation is not None: 
-                block.translation = cached_translation  
+                block.translation = cached_translation

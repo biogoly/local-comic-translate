@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 import msgpack
 
 from .parsers import ProjectDecoder, ProjectEncoder, ensure_string_keys
+from .patch_metadata import normalize_patch_kind, sanitize_patch_metadata
 from modules.utils.file_handler import ensure_prepared_path_materialized
 
 if TYPE_CHECKING:
@@ -366,6 +367,11 @@ def save_state_to_proj_file_v2(comic_translate: "ComicTranslate", file_name: str
             }
             if patch.get("patch_id") is not None:
                 patch_reference["patch_id"] = patch["patch_id"]
+            if patch.get("kind") is not None:
+                patch_reference["kind"] = normalize_patch_kind(patch.get("kind"))
+            patch_metadata = sanitize_patch_metadata(patch.get("metadata"))
+            if patch_metadata:
+                patch_reference["metadata"] = patch_metadata
             image_patches_references[page_path].append(patch_reference)
 
     page_paths = list(
@@ -623,6 +629,11 @@ def _materialize_from_manifest_and_pages(
             }
             if patch.get("patch_id") is not None:
                 patch_entry["patch_id"] = patch["patch_id"]
+            if patch.get("kind") is not None:
+                patch_entry["kind"] = normalize_patch_kind(patch.get("kind"))
+            patch_metadata = sanitize_patch_metadata(patch.get("metadata"))
+            if patch_metadata:
+                patch_entry["metadata"] = patch_metadata
             new_list.append(patch_entry)
 
         if new_list:

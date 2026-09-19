@@ -26,6 +26,15 @@ class EventHandler:
         if self.viewer.webtoon_mode:
             self.viewer.webtoon_manager.update_page_on_click(scene_pos)
 
+        repair = getattr(self.viewer, "repair_controller", None)
+        if (event.button() == Qt.LeftButton and repair is not None
+                and self.viewer.current_tool in {"restore", "color_pick", "clone"}
+                and self.viewer.hasPhoto()):
+            if self._is_on_image(scene_pos):
+                repair.press(scene_pos, set_source=bool(event.modifiers() & Qt.AltModifier))
+            event.accept()
+            return
+
         # Cleanup strokes must take priority over translated text and rectangle
         # overlays. Otherwise those items consume the press as selection/drag,
         # making the brush appear broken precisely over a rendered bubble.
@@ -116,13 +125,19 @@ class EventHandler:
     def handle_mouse_move(self, event: QtGui.QMouseEvent):
         scene_pos = self.viewer.mapToScene(event.position().toPoint())
 
-        if (
-            self.viewer.current_tool in {'brush', 'eraser'}
-            and self.viewer.drawing_manager.current_path is not None
-        ):
-            if self._is_on_image(scene_pos):
-                self.viewer.drawing_manager.continue_stroke(scene_pos)
-            self.last_scene_pos = scene_pos
+        repair = getattr(self.viewer, "repair_controller", None)
+        if repair is not None and repair.is_drawing:
+            repair.move(scene_pos)
+            event.accept()
+            return
+        if (self.viewer.current_tool in {"brush", "eraser", "restore", "color_pick", "clone"}
+                and not self.viewer.panning):
+            self.viewer.setCursor(Qt.CrossCursor)
+            if repair is not None and self.viewer.current_tool == "clone":
+                repair.clone.hover(scene_pos)
+            elif self.viewer.drawing_manager.current_path is not None:
+                if self._is_on_image(scene_pos):
+                    self.viewer.drawing_manager.continue_stroke(scene_pos)
             event.accept()
             return
 
@@ -148,6 +163,12 @@ class EventHandler:
         self.last_scene_pos = scene_pos
 
     def handle_mouse_release(self, event: QtGui.QMouseEvent):
+        repair = getattr(self.viewer, "repair_controller", None)
+        if event.button() == Qt.LeftButton and repair is not None and repair.is_drawing:
+            repair.move(self.viewer.mapToScene(event.position().toPoint()))
+            repair.release()
+            event.accept()
+            return
         if (
             event.button() == Qt.LeftButton
             and self.viewer.current_tool in {'brush', 'eraser'}

@@ -20,8 +20,8 @@ class UpdateChecker(QObject):
     download_progress = Signal(int)
     download_finished = Signal(str) # file_path
 
-    REPO_OWNER = "ogkalu2"
-    REPO_NAME = "comic-translate"
+    REPO_OWNER = "biogoly"
+    REPO_NAME = "local-comic-translate"
 
     def __init__(self):
         super().__init__()

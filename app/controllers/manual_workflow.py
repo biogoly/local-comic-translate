@@ -14,6 +14,7 @@ from modules.utils.device import resolve_device
 from modules.utils.image_utils import generate_mask
 from modules.utils.language_utils import get_language_code, is_no_space_lang
 from modules.utils.language_utils import to_canonical_language_name
+from modules.utils.manual_regions import has_manual_translation, merge_manual_regions
 from modules.utils.pipeline_config import get_config, validate_ocr, validate_translator
 from modules.utils.textblock import sort_blk_list
 from modules.utils.translator_utils import (
@@ -145,6 +146,40 @@ class ManualWorkflowController:
             )
         return rects
 
+    @staticmethod
+    def _has_rendered_manual_translation(blk: TextBlock, text_items: Sequence) -> bool:
+        coords = getattr(blk, "xyxy", None)
+        if coords is None or len(coords) < 4 or not has_manual_translation(blk):
+            return False
+        for item in text_items:
+            if isinstance(item, dict):
+                x, y = item.get("position", (0, 0))
+                angle = item.get("rotation", 0)
+            else:
+                x, y, angle = item.pos().x(), item.pos().y(), item.rotation()
+            if (
+                is_close(x, blk.xyxy[0], 5)
+                and is_close(y, blk.xyxy[1], 5)
+                and is_close(angle, blk.angle, 1)
+            ):
+                return True
+        return False
+
+    def _clear_text_items_for_segmentation(self) -> None:
+        """Keep completed manual layers; ordinary layers are rebuilt by Render."""
+        viewer = self.main.image_viewer
+        preserved = [
+            item for item in viewer.text_items
+            if any(
+                self._has_rendered_manual_translation(blk, [item])
+                for blk in self.main.blk_list
+            )
+        ]
+        for item in list(viewer.text_items):
+            if item not in preserved:
+                viewer._scene.removeItem(item)
+        viewer.text_items[:] = preserved
+
     def _serialize_segmentation_strokes(self, blk_list: list[TextBlock], image=None) -> list[dict]:
         strokes: list[dict] = []
         build_stroke = self.main.image_viewer.drawing_manager.make_segmentation_stroke_data
@@ -182,6 +217,7 @@ class ManualWorkflowController:
                     if blk_list:
                         get_best_render_area(blk_list, image)
                     self.main.pipeline.block_detection.annotate_language_if_auto(image, blk_list, source_lang)
+                    blk_list = merge_manual_regions(state.get("blk_list", []), blk_list)
                     rtl = source_lang == "Japanese"
                     results[file_path] = sort_blk_list(blk_list, rtl)
                 return results
@@ -277,12 +313,13 @@ class ManualWorkflowController:
                         continue
                     source_lang = state.get("source_lang", source_lang_fallback)
                     cache_key = cache_manager._get_ocr_cache_key(image, source_lang, ocr_model, device)
-                    if cache_manager._can_serve_all_blocks_from_ocr_cache(cache_key, blk_list):
-                        cache_manager._apply_cached_ocr_to_blocks(cache_key, blk_list)
-                    else:
+                    pending = [blk for blk in blk_list if not has_manual_translation(blk)]
+                    if pending and cache_manager._can_serve_all_blocks_from_ocr_cache(cache_key, pending):
+                        cache_manager._apply_cached_ocr_to_blocks(cache_key, pending)
+                    elif pending:
                         ocr.initialize(self.main, source_lang)
-                        ocr.process(image, blk_list)
-                        cache_manager._cache_ocr_results(cache_key, blk_list)
+                        ocr.process(image, pending)
+                        cache_manager._cache_ocr_results(cache_key, pending)
                     results[file_path] = blk_list
                 return results
 
@@ -387,12 +424,13 @@ class ManualWorkflowController:
                         translator_key,
                         extra_context,
                     )
-                    if cache_manager._can_serve_all_blocks_from_translation_cache(cache_key, blk_list):
-                        cache_manager._apply_cached_translations_to_blocks(cache_key, blk_list)
-                    else:
-                        translator.translate(blk_list, image, extra_context)
-                        cache_manager._cache_translation_results(cache_key, blk_list)
-                    set_upper_case(blk_list, upper_case)
+                    pending = [blk for blk in blk_list if not has_manual_translation(blk)]
+                    if pending and cache_manager._can_serve_all_blocks_from_translation_cache(cache_key, pending):
+                        cache_manager._apply_cached_translations_to_blocks(cache_key, pending)
+                    elif pending:
+                        translator.translate(pending, image, extra_context)
+                        cache_manager._cache_translation_results(cache_key, pending)
+                    set_upper_case(pending, upper_case)
                     results[file_path] = blk_list
                 return results
 
@@ -609,7 +647,10 @@ class ManualWorkflowController:
         else:
             # Manual mode processes the user's block list, including free text
             # and newly drawn boxes that have no detector classification.
-            blocks_to_process = self._visible_blocks_for_translation_refresh()
+            blocks_to_process = [
+                blk for blk in self._visible_blocks_for_translation_refresh()
+                if not self._has_rendered_manual_translation(blk, text_items_to_process)
+            ]
 
         rs = self.main.render_settings()
         upper = rs.upper_case
@@ -677,7 +718,7 @@ class ManualWorkflowController:
                 self.finish_ocr_translate(single_blk)
 
         self.main.run_threaded(
-            lambda: format_translations(self.main.blk_list, trg_lng_cd, upper_case=upper),
+            lambda: format_translations(blocks_to_process, trg_lng_cd, upper_case=upper),
             None,
             self.main.default_error_handler,
             on_format_finished,
@@ -816,7 +857,7 @@ class ManualWorkflowController:
             self.main.set_tool("brush")
             self.main.disable_hbutton_group()
             self.main.image_viewer.clear_rectangles()
-            self.main.image_viewer.clear_text_items()
+            self._clear_text_items_for_segmentation()
 
             self.main.loading.setVisible(True)
             self.main.disable_hbutton_group()

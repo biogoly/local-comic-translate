@@ -29,7 +29,8 @@ class LlmsPage(QtWidgets.QWidget):
         left_layout.addWidget(self.image_checkbox)
         left_layout.addStretch(1)
 
-        # Right: settings shown only when Local LLM is selected.
+        # Keep local configuration visible even while another translator is
+        # active, so changing providers never makes these controls disappear.
         self.local_settings_container = QtWidgets.QWidget()
         right_layout = QtWidgets.QVBoxLayout(self.local_settings_container)
         self.local_settings_widget = QtWidgets.QGroupBox(self.tr("Local LLM"))
@@ -41,6 +42,12 @@ class LlmsPage(QtWidgets.QWidget):
         ))
         description.setWordWrap(True)
         local_layout.addWidget(description)
+
+        activation_hint = MLabel(self.tr(
+            "Choose Local LLM under Tools > Translator to use these settings."
+        ))
+        activation_hint.setWordWrap(True)
+        local_layout.addWidget(activation_hint)
 
         runtime_row = QtWidgets.QFormLayout()
         self.local_runtime_combo = MComboBox().small()
@@ -137,7 +144,7 @@ class LlmsPage(QtWidgets.QWidget):
         self.extra_context.textChanged.connect(self._limit_extra_context)
         self.local_runtime_combo.currentIndexChanged.connect(self._sync_runtime_widgets)
         self._sync_runtime_widgets()
-        self.set_local_settings_visible(False)
+        self.set_local_settings_visible(True)
 
     def set_local_settings_visible(self, visible: bool) -> None:
         self.local_settings_container.setVisible(visible)

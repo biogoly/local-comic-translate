@@ -33,6 +33,8 @@ from app.controllers.shortcuts import ShortcutController
 from app.controllers.task_runner import TaskRunnerController
 from app.controllers.batch_report import BatchReportController
 from app.controllers.manual_workflow import ManualWorkflowController
+from app.controllers.artistic_edit import ArtisticEditController
+from app.controllers.local_repair import LocalRepairController
 from modules.utils.exceptions import InsufficientCreditsException, ContentFlaggedException
 
 
@@ -123,6 +125,8 @@ class ComicTranslate(ComicTranslateUI):
         self.task_runner_ctrl = TaskRunnerController(self)
         self.batch_report_ctrl = BatchReportController(self)
         self.manual_workflow_ctrl = ManualWorkflowController(self)
+        self.artistic_edit_ctrl = ArtisticEditController(self)
+        self.local_repair_ctrl = LocalRepairController(self)
         try:
             if self._memlogger is not None:
                 self._memlogger.emit("after_controllers_init")
@@ -141,6 +145,7 @@ class ComicTranslate(ComicTranslateUI):
         self.download_event.connect(self.on_download_event)
 
         self.connect_ui_elements()
+        self.artistic_edit_ctrl.connect_signals()
         self.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
 
         self.project_ctrl.load_main_page_settings()
@@ -150,9 +155,6 @@ class ComicTranslate(ComicTranslateUI):
         # Populate the home screen with any previously-saved recent projects
         self.startup_home.populate(self.project_ctrl.get_recent_projects())
         
-        # Check for updates in background
-        self.settings_page.check_for_updates(is_background=True)
-
         self._processing_page_change = False  # Flag to prevent recursive page change handling
 
         # Hook the global download callback so utils can notify us
@@ -185,6 +187,9 @@ class ComicTranslate(ComicTranslateUI):
         
         # Webtoon mode toggle
         self.webtoon_toggle.clicked.connect(self.webtoon_ctrl.toggle_webtoon_mode)
+        self.webtoon_toggle.clicked.connect(
+            lambda: QtCore.QTimer.singleShot(0, self.artistic_edit_ctrl.update_availability)
+        )
 
         # Connect buttons from button_groups
         self.hbutton_group.get_button_group().buttons()[0].clicked.connect(lambda: self.block_detect())
@@ -214,15 +219,24 @@ class ComicTranslate(ComicTranslateUI):
         # Connect text edit widgets
         self.s_text_edit.textChanged.connect(self.text_ctrl.update_text_block)
         self.t_text_edit.textChanged.connect(self.text_ctrl.update_text_block_from_edit)
+        self.t_text_edit.editingFinished.connect(self.text_ctrl.commit_target_editor_text)
 
         self.s_combo.currentTextChanged.connect(self.text_ctrl.save_src_trg)
         self.t_combo.currentTextChanged.connect(self.text_ctrl.save_src_trg)
 
         # Connect image viewer signals for both modes
         self.image_viewer.rectangle_selected.connect(self.rect_item_ctrl.handle_rectangle_selection)
+        self.image_viewer.rectangle_selected.connect(self.artistic_edit_ctrl.update_availability)
         self.image_viewer.rectangle_created.connect(self.rect_item_ctrl.handle_rectangle_creation)
+        self.image_viewer.rectangle_created.connect(self.artistic_edit_ctrl.update_availability)
         self.image_viewer.rectangle_deleted.connect(self.rect_item_ctrl.handle_rectangle_deletion)
+        self.image_viewer.rectangle_deleted.connect(self.artistic_edit_ctrl.update_availability)
         self.image_viewer.command_emitted.connect(self.push_command)
+        self.image_viewer.command_emitted.connect(
+            lambda _command: QtCore.QTimer.singleShot(
+                0, self.artistic_edit_ctrl.update_availability
+            )
+        )
         self.image_viewer.connect_rect_item.connect(self.rect_item_ctrl.connect_rect_item_signals)
         self.image_viewer.connect_text_item.connect(self.text_ctrl.connect_text_item_signals)
         self.image_viewer.page_changed.connect(self.webtoon_ctrl.on_page_changed)
@@ -251,6 +265,11 @@ class ComicTranslate(ComicTranslateUI):
 
         # Page List
         self.page_list.currentItemChanged.connect(self.image_ctrl.on_page_list_current_item_changed)
+        self.page_list.currentItemChanged.connect(
+            lambda _current, _previous: QtCore.QTimer.singleShot(
+                0, self.artistic_edit_ctrl.update_availability
+            )
+        )
         self.page_list.order_changed.connect(self.image_ctrl.handle_image_reorder)
         self.page_list.sort_requested.connect(self.image_ctrl.sort_images)
         self.page_list.del_img.connect(self.image_ctrl.handle_image_deletion)
@@ -509,6 +528,9 @@ class ComicTranslate(ComicTranslateUI):
         self.task_runner_ctrl.clear_operation_queue()
 
     def cancel_current_task(self):
+        artistic = getattr(self, "artistic_edit_ctrl", None)
+        if artistic is not None and artistic.panel.is_busy():
+            artistic.cancel()
         self.task_runner_ctrl.cancel_current_task()
         # Interrupt a managed local inference request promptly. The next local
         # translation will restart the server with the current settings.
@@ -940,6 +962,11 @@ class ComicTranslate(ComicTranslateUI):
 
         try:
             self.settings_page.shutdown()
+        except Exception:
+            pass
+
+        try:
+            self.artistic_edit_ctrl.shutdown()
         except Exception:
             pass
 

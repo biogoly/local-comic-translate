@@ -32,7 +32,7 @@ class GeminiTranslation(BaseLLMTranslation):
         self.api_key = credentials.get('api_key', '')
         
         # Map friendly model name to API model name
-        self.model_api_name = MODEL_MAP.get(self.model_name)
+        self.model_api_name = (credentials.get('model') or MODEL_MAP.get(self.model_name))
     
     def _perform_translation(self, user_prompt: str, system_prompt: str, image: np.ndarray) -> str:
         """
@@ -47,10 +47,10 @@ class GeminiTranslation(BaseLLMTranslation):
             Translated text from the model
         """
         # Create API endpoint URL
-        url = f"{self.api_base_url}/{self.model_api_name}:generateContent?key={self.api_key}"
+        url = f"{self.api_base_url}/{self.model_api_name}:generateContent"
         
         # Setup generation config
-        if self.model_name in ["Gemini-3.1-Flash-Lite"]:
+        if self.model_api_name == "gemini-3.1-flash-lite":
             thinking_level = "minimal"
         else:
             thinking_level = "low"
@@ -62,6 +62,8 @@ class GeminiTranslation(BaseLLMTranslation):
                 "thinkingLevel": thinking_level
             },
         }
+        if self.model_api_name.startswith("gemini-2.5"):
+            generation_config["thinkingConfig"] = {"thinkingBudget": 1024}
         
         # Setup safety settings
         safety_settings = [
@@ -75,7 +77,7 @@ class GeminiTranslation(BaseLLMTranslation):
         parts = []
         
         # Add image if needed
-        if self.img_as_llm_input:
+        if self.img_as_llm_input and image is not None:
             # Base64 encode the image
 
             img_b64, mime_type = self.encode_image(image)
@@ -104,7 +106,8 @@ class GeminiTranslation(BaseLLMTranslation):
         
         # Send request to Gemini API
         headers = {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "x-goog-api-key": self.api_key,
         }
         
         response = requests.post(

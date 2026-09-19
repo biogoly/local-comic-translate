@@ -31,12 +31,14 @@ class TextBlock(object):
                  max_font_size: int = 0,
                  font_color: str|tuple = (),
                  direction: str = "",
+                 is_manual: bool = False,
                  **kwargs) -> None:
         
         self.xyxy = text_bbox
         self.segm_pts = text_segm_points
         self.bubble_xyxy = bubble_bbox
         self.text_class = text_class
+        self.is_manual = bool(is_manual)
         self.angle = angle
         self.tr_origin_point = ()
  
@@ -92,6 +94,7 @@ class TextBlock(object):
         
         # Copy simple attributes
         new_block.text_class = self.text_class
+        new_block.is_manual = getattr(self, 'is_manual', False)
         new_block.angle = self.angle
         new_block.tr_origin_point = copy.deepcopy(self.tr_origin_point)
         new_block.lines = copy.deepcopy(self.lines)

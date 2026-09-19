@@ -13,6 +13,7 @@ from app.ui.commands.image import SetImageCommand, ToggleSkipImagesCommand
 from app.ui.commands.inpaint import PatchClearCommand, PatchInsertCommand
 from app.ui.commands.inpaint import PatchCommandBase
 from app.ui.commands.box import AddTextItemCommand
+from app.projects.patch_metadata import PATCH_KIND_INPAINT, patch_matches_kind
 from app.ui.list_view_image_loader import ListViewImageLoader
 from app.thread_worker import GenericWorker
 from app.path_materialization import ensure_path_materialized
@@ -146,6 +147,55 @@ class ImageStateController:
             ),
         })
         return state
+
+    def restore_page_languages(self, state: dict, *, seed_sticky_languages: bool = False):
+        """Restore page languages while keeping both manual language choices sticky.
+
+        In manual mode the language pair is a project/workflow choice, not
+        a page-navigation choice.  Once the user selects a language (including
+        Auto), visiting another page must not replace it with that page's older
+        saved value.  Project loading can explicitly seed the sticky choice from
+        the initially restored page.
+        """
+        source_lang = to_canonical_language_name(
+            state.get("source_lang", self.main.s_combo.currentText()),
+            self.main.lang_mapping,
+        )
+        target_lang = to_canonical_language_name(
+            state.get("target_lang", self.main.t_combo.currentText()),
+            self.main.lang_mapping,
+        )
+
+        manual_radio = getattr(self.main, "manual_radio", None)
+        sticky_languages = bool(manual_radio is not None and manual_radio.isChecked())
+        if sticky_languages and not seed_sticky_languages:
+            source_lang = to_canonical_language_name(
+                self.main.s_combo.currentText(),
+                self.main.lang_mapping,
+            )
+            target_lang = to_canonical_language_name(
+                self.main.t_combo.currentText(),
+                self.main.lang_mapping,
+            )
+
+        state["source_lang"] = source_lang
+        state["target_lang"] = target_lang
+
+        source_was_blocked = self.main.s_combo.blockSignals(True)
+        target_was_blocked = self.main.t_combo.blockSignals(True)
+        try:
+            if not sticky_languages or seed_sticky_languages:
+                self.main.s_combo.setCurrentText(
+                    to_ui_language_label(source_lang, self.main.reverse_lang_mapping)
+                )
+                self.main.t_combo.setCurrentText(
+                    to_ui_language_label(target_lang, self.main.reverse_lang_mapping)
+                )
+        finally:
+            self.main.s_combo.blockSignals(source_was_blocked)
+            self.main.t_combo.blockSignals(target_was_blocked)
+
+        return source_lang, target_lang
 
     def _is_content_flagged_error(self, error: str) -> bool:
         lowered = (error or "").lower()
@@ -377,6 +427,9 @@ class ImageStateController:
         # Reset current_image_index
         self.main.curr_img_idx = -1
         self.main.set_project_clean()
+        artistic = getattr(self.main, "artistic_edit_ctrl", None)
+        if artistic is not None:
+            artistic.update_availability()
 
     def thread_load_images(self, paths: List[str]):
         if paths and paths[0].lower().endswith('.ctpr'):
@@ -765,14 +818,8 @@ class ImageStateController:
                 # Load minimal page state without interfering with the webtoon view
                 if file_path in self.main.image_states:
                     state = self.main.image_states[file_path]
-                    # Only load language settings in webtoon mode
-                    # Block signals to prevent triggering save when loading state
-                    self.main.s_combo.blockSignals(True)
-                    self.main.t_combo.blockSignals(True)
-                    self.main.s_combo.setCurrentText(state.get('source_lang', ''))
-                    self.main.t_combo.setCurrentText(state.get('target_lang', ''))
-                    self.main.s_combo.blockSignals(False)
-                    self.main.t_combo.blockSignals(False)
+                    # Use the same sticky manual language pair as regular navigation.
+                    self.restore_page_languages(state)
                     
                 # Clear text edits
                 self.main.text_ctrl.clear_text_edits()
@@ -1224,14 +1271,7 @@ class ImageStateController:
 
             if file_path in self.main.image_states:
                 state = self.main.image_states[file_path]
-                state["source_lang"] = to_canonical_language_name(
-                    state.get("source_lang", self.main.s_combo.currentText()),
-                    self.main.lang_mapping,
-                )
-                state["target_lang"] = to_canonical_language_name(
-                    state.get("target_lang", self.main.t_combo.currentText()),
-                    self.main.lang_mapping,
-                )
+                self.restore_page_languages(state)
 
                 # Skip state loading for newly inserted images (which have empty viewer_state)
                 # This prevents loading of incomplete state or invalid transform data.
@@ -1242,17 +1282,6 @@ class ImageStateController:
 
                     self.main.blk_list = state['blk_list'].copy()  # Load a copy of the list, not a reference
                     viewer.load_state(state['viewer_state'])
-                    # Block signals to prevent triggering save when loading state
-                    self.main.s_combo.blockSignals(True)
-                    self.main.t_combo.blockSignals(True)
-                    self.main.s_combo.setCurrentText(
-                        to_ui_language_label(state['source_lang'], self.main.reverse_lang_mapping)
-                    )
-                    self.main.t_combo.setCurrentText(
-                        to_ui_language_label(state['target_lang'], self.main.reverse_lang_mapping)
-                    )
-                    self.main.s_combo.blockSignals(False)
-                    self.main.t_combo.blockSignals(False)
                     viewer.load_brush_strokes(state['brush_strokes'])
 
                     # add_text_item/add_rectangle used by load_state already emit the
@@ -1269,23 +1298,6 @@ class ImageStateController:
                 else:
                     # New image - just set language preferences and clear everything else
                     self.main.blk_list = []
-                    # Block signals to prevent triggering save when loading state
-                    self.main.s_combo.blockSignals(True)
-                    self.main.t_combo.blockSignals(True)
-                    self.main.s_combo.setCurrentText(
-                        to_ui_language_label(
-                            state.get('source_lang', self.main.s_combo.currentText()),
-                            self.main.reverse_lang_mapping,
-                        )
-                    )
-                    self.main.t_combo.setCurrentText(
-                        to_ui_language_label(
-                            state.get('target_lang', self.main.t_combo.currentText()),
-                            self.main.reverse_lang_mapping,
-                        )
-                    )
-                    self.main.s_combo.blockSignals(False)
-                    self.main.t_combo.blockSignals(False)
                     viewer.clear_rectangles(page_switch=True)
                     viewer.clear_brush_strokes(page_switch=True)
                     viewer.clear_text_items()
@@ -1345,6 +1357,10 @@ class ImageStateController:
             if first_time_display and not self.main.webtoon_mode:
                 self.main.image_viewer.fitInView()
                 self.main.displayed_images.add(file_path)  # Mark this image as displayed
+
+            artistic = getattr(self.main, "artistic_edit_ctrl", None)
+            if artistic is not None:
+                artistic.update_availability()
 
     def force_default_view_on_next_image_load(self):
         self._force_default_view_once = True
@@ -1521,7 +1537,9 @@ class ImageStateController:
         if not (0 <= self.main.curr_img_idx < len(self.main.image_files)):
             return
         file_path = self.main.image_files[self.main.curr_img_idx]
-        if not self.main.image_patches.get(file_path):
+        # Filter by kind so accepted artistic edits are never reverted here.
+        page_patches = self.main.image_patches.get(file_path, [])
+        if not any(patch_matches_kind(patch, PATCH_KIND_INPAINT) for patch in page_patches):
             MMessage.info(
                 self.main.tr("There is no inpainting to revert on this page."),
                 parent=self.main,
@@ -1530,7 +1548,7 @@ class ImageStateController:
             return
         stack = self.main.undo_stacks.get(file_path)
         if stack is not None:
-            stack.push(PatchClearCommand(self.main, file_path))
+            stack.push(PatchClearCommand(self.main, file_path, kind=PATCH_KIND_INPAINT))
 
     def cleanup(self):
         """Clean up resources, including the lazy loader."""

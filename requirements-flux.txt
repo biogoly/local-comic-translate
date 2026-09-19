@@ -1,0 +1,13 @@
+# Optional isolated runtime for FLUX.2 Klein Artistic Edit.
+# Install into a dedicated Python 3.12 environment, not the application's .venv.
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0+cu128
+diffusers @ git+https://github.com/huggingface/diffusers.git@b8aebf4c1261c4b887778e0882e56ed19e686518
+transformers==5.5.4
+accelerate==1.13.0
+peft==0.20.0
+safetensors==0.8.0rc0
+numpy==2.4.4
+Pillow==12.2.0
+huggingface_hub==1.11.0
+sentencepiece==0.2.1

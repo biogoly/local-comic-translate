@@ -61,7 +61,7 @@ class ToolStateMixin:
         except Exception:
             current_tool = None
 
-        if current_tool == "brush":
+        if current_tool in {"brush", "restore", "clone"}:
             self.image_viewer.brush_size = size
         elif current_tool == "eraser":
             self.image_viewer.eraser_size = size
@@ -70,16 +70,9 @@ class ToolStateMixin:
             self.image_viewer.eraser_size = size
 
         if self.image_viewer.hasPhoto():
-            image = self.image_viewer.get_image_array()
-            if image is not None:
-                h, w = image.shape[:2]
-                scaled_size = self.scale_size(size, w, h)
-
-                if current_tool in {"brush", "eraser"}:
-                    self.image_viewer.set_br_er_size(size, scaled_size)
-                else:
-                    self.image_viewer.drawing_manager.set_brush_size(size, scaled_size)
-                    self.image_viewer.drawing_manager.set_eraser_size(size, scaled_size)
+            # Indicators live in image coordinates and scale with the view.
+            # Page dimensions must not change their size independently of the mask.
+            self.image_viewer.set_br_er_size(size, size)
 
     def scale_size(self, base_size, image_width, image_height):
         image_diagonal = (image_width**2 + image_height**2) ** 0.5

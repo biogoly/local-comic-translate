@@ -156,7 +156,7 @@ class BatchReportController:
                 return self.main.tr("Try another translator")
             return self.main.tr("Try another tool")
         if "insufficient credit" in lowered:
-            return self.main.tr("Buy more credits")
+            return QtCore.QCoreApplication.translate("Messages", "Check your provider's billing and API limits.")
         if "timed out" in lowered or "timeout" in lowered:
             return self.main.tr("Try again")
         if (

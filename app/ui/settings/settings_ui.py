@@ -15,7 +15,6 @@ from .text_rendering_page import TextRenderingPage
 from .project_page import ProjectPage
 from .export_page import ExportPage
 from .shortcuts_page import ShortcutsPage
-from .account_page import AccountPage
 from .about_page import AboutPage
 
 
@@ -61,24 +60,26 @@ class SettingsPageUI(QtWidgets.QWidget):
             self.tr('Gemini-2.5-Flash-Lite'), 
         ]
         self.inpaint_strategy = [self.tr('Resize'), self.tr('Original'), self.tr('Crop')]
-        self.themes = [self.tr('Dark'), self.tr('Light')]
+        self.themes = [
+            self.tr('Dark'),
+            self.tr('Light'),
+            self.tr('Midnight'),
+            self.tr('Parchment'),
+            self.tr('Lavender'),
+            self.tr('Mint'),
+        ]
         self.alignment = [self.tr("Left"), self.tr("Center"), self.tr("Right")]
 
         self.credential_services = [
-            self.tr("Custom"), 
+            self.tr("Open AI GPT"), self.tr("Google Gemini"),
+            self.tr("Anthropic Claude"), self.tr("Deepseek"),
+            self.tr("Microsoft Azure"), "Black Forest Labs",
         ]
-        
         self.supported_translators = [
-            self.tr("Local LLM"),
-            self.tr("Gemini-3.1-Flash-Lite"),
-            self.tr("GPT-4.1"),
-            self.tr("GPT-4.1-mini"),
-            self.tr("Claude-4.6-Sonnet"),
-            self.tr("Claude-4.5-Haiku"),
-            self.tr("Deepseek"),
-            self.tr("Custom"),
+            self.tr("Local LLM"), "OpenAI", self.tr("Google Gemini"),
+            self.tr("Anthropic Claude"), self.tr("Deepseek"),
         ]
-        
+
         self.languages = [
             'English', 
             '한국어', 
@@ -109,8 +110,13 @@ class SettingsPageUI(QtWidgets.QWidget):
             # Theme mappings
             self.tr("Dark"): "Dark",
             self.tr("Light"): "Light",
+            self.tr("Midnight"): "Midnight",
+            self.tr("Parchment"): "Parchment",
+            self.tr("Lavender"): "Lavender",
+            self.tr("Mint"): "Mint",
 
             # Translator mappings
+            "OpenAI": "OpenAI",
             self.tr("Local LLM"): "Local LLM",
             self.tr("Custom"): "Custom",
             self.tr("Deepseek"): "Deepseek",
@@ -195,7 +201,6 @@ class SettingsPageUI(QtWidgets.QWidget):
         self.project_page = ProjectPage(parent=self)
         self.export_page = ExportPage(parent=self)
         self.shortcuts_page = ShortcutsPage(parent=self)
-        self.account_page = AccountPage(parent=self)
         self.about_page = AboutPage(parent=self)
 
         # Backward-compatible attribute proxies for existing SettingsPage references
@@ -235,23 +240,12 @@ class SettingsPageUI(QtWidgets.QWidget):
         self.project_autosave_interval_spinbox = self.project_page.project_autosave_interval_spinbox
         self.project_autosave_folder_input = self.project_page.project_autosave_folder_input
 
-        # Account
-        self.sign_in_button = self.account_page.sign_in_button
-        self.sign_out_button = self.account_page.sign_out_button
-        self.buy_credits_button = self.account_page.buy_credits_button
-        self.email_value_label = self.account_page.email_value_label
-        self.tier_value_label = self.account_page.tier_value_label
-        self.credits_value_label = self.account_page.credits_value_label
-        self.logged_out_widget = self.account_page.logged_out_widget
-        self.logged_in_widget = self.account_page.logged_in_widget
-        
         # System
         self.check_update_button = self.about_page.check_update_button
 
 
         # Add pages to stacked widget (order must match navbar order)
         self.stacked_widget.addWidget(self.personalization_page)
-        self.stacked_widget.addWidget(self.account_page)
         self.stacked_widget.addWidget(self.tools_page)
         self.stacked_widget.addWidget(self.llms_page)
         self.stacked_widget.addWidget(self.text_rendering_page)
@@ -306,14 +300,13 @@ class SettingsPageUI(QtWidgets.QWidget):
 
         for index, setting in enumerate([
             {"title": self.tr("Personalization"), "avatar": MPixmap(".svg")},
-            {"title": self.tr("Account"), "avatar": MPixmap(".svg")},
             {"title": self.tr("Tools"), "avatar": MPixmap(".svg")},
             {"title": self.tr("LLMs"), "avatar": MPixmap(".svg")},
             {"title": self.tr("Text Rendering"), "avatar": MPixmap(".svg")},
             {"title": self.tr("Project"), "avatar": MPixmap(".svg")},
             {"title": self.tr("Export"), "avatar": MPixmap(".svg")},
             {"title": self.tr("Shortcuts"), "avatar": MPixmap(".svg")},
-            {"title": self.tr("Advanced"), "avatar": MPixmap(".svg")},
+            {"title": self.tr("Provider APIs"), "avatar": MPixmap(".svg")},
             {"title": self.tr("About"), "avatar": MPixmap(".svg")},
         ]):
             nav_card = ClickMeta(extra=False)

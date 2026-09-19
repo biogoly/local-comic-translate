@@ -1,5 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+models/loras/**/*.safetensors
+models/loras/**/*.bin
+models/loras/**/*.pt
 *.py[cod]
 *$py.class
 
@@ -10,6 +13,7 @@ __pycache__/
 # Environments
 .env
 .venv
+.venv-*/
 env/
 venv/
 
@@ -19,6 +23,7 @@ pyproject.toml
 uv.lock
 
 # Test files
+.pytest_cache/
 test_*.py
 demo_*.py
 benchmarks/

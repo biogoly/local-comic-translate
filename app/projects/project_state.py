@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import msgpack
 import os
@@ -12,6 +12,7 @@ import imkit as imk
 
 from modules.utils.archives import close_pdf_cache
 from .parsers import ProjectEncoder, ProjectDecoder, ensure_string_keys
+from .patch_metadata import normalize_patch_kind, sanitize_patch_metadata
 from .project_state_v2 import (
     close_cached_connection as close_state_v2_cached_connection,
     ensure_lazy_blob_materialized,
@@ -238,6 +239,11 @@ def load_state_from_proj_file(comic_translate: ComicTranslate, file_name: str):
                     }
                     if p.get('patch_id') is not None:
                         patch_entry['patch_id'] = p['patch_id']
+                    if p.get('kind') is not None:
+                        patch_entry['kind'] = normalize_patch_kind(p.get('kind'))
+                    patch_metadata = sanitize_patch_metadata(p.get('metadata'))
+                    if patch_metadata:
+                        patch_entry['metadata'] = patch_metadata
                     new_list.append(patch_entry)
             if new_list:
                 reconstructed[page_path] = new_list

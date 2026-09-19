@@ -7,10 +7,11 @@ import time
 import jwt
 
 from typing import Optional
-from PySide6.QtCore import QObject, Signal, QThread, QSettings, QCoreApplication
+from PySide6.QtCore import QObject, Signal, QThread, QCoreApplication
 from PySide6.QtWidgets import QMessageBox
 from .auth_server import AuthServerThread
 from .token_storage import set_token, get_token, delete_token
+from modules.utils.settings import app_settings
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +57,7 @@ class AuthClient(QObject):
         self.frontend_url = frontend_url
         self.current_request_id: Optional[str] = None # Store the ID for the current auth attempt
         self.auth_server_thread: Optional[AuthServerThread] = None
-        self.settings = QSettings("ComicLabs", "ComicTranslate")
+        self.settings = app_settings()
         self._request_lock = threading.Lock()
         self._session = requests.Session()
         # Separate session for background/non-critical calls so they don't contend
@@ -114,7 +115,7 @@ class AuthClient(QObject):
             # Use a fresh QSettings instance for thread-safety (QSettings is
             # re-entrant, but individual instances should not be shared across
             # threads).
-            settings = QSettings("ComicLabs", "ComicTranslate")
+            settings = app_settings()
             settings.beginGroup(USER_INFO_GROUP)
             settings.remove("")
             settings.endGroup()

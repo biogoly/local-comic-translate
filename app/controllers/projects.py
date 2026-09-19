@@ -32,6 +32,7 @@ from app.projects.project_state import (
 from modules.utils.archives import make
 from modules.utils.paths import get_user_data_dir, get_default_project_autosave_dir
 from modules.utils.language_utils import to_canonical_language_name
+from modules.utils.settings import app_settings
 
 logger = logging.getLogger(__name__)
 
@@ -60,14 +61,14 @@ class ProjectController:
     MAX_RECENT = 15
 
     def _read_autosave_enabled_setting(self) -> bool:
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup("export")
         value = settings.value("project_autosave_enabled", False, type=bool)
         settings.endGroup()
         return bool(value)
 
     def _write_autosave_enabled_setting(self, enabled: bool) -> None:
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup("export")
         settings.setValue("project_autosave_enabled", bool(enabled))
         settings.endGroup()
@@ -94,7 +95,7 @@ class ProjectController:
 
     def get_recent_projects(self) -> list:
         """Return list of ``{path, mtime, pinned}`` dicts sorted by mtime desc."""
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup("recent_projects")
         paths   = settings.value("paths",   []) or []
         mtimes  = settings.value("mtimes",  []) or []
@@ -146,7 +147,7 @@ class ProjectController:
 
     def clear_recent_projects(self) -> None:
         """Wipe the entire recent list."""
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup("recent_projects")
         settings.remove("")
         settings.endGroup()
@@ -154,7 +155,7 @@ class ProjectController:
     @staticmethod
     def _save_entries(entries: list) -> None:
         """Write the full entries list to QSettings."""
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup("recent_projects")
         settings.setValue("paths",  [e["path"]           for e in entries])
         settings.setValue("mtimes", [e["mtime"]          for e in entries])
@@ -1314,6 +1315,18 @@ class ProjectController:
         if not (0 <= index < len(self.main.image_files)):
             index = 0
             self.main.curr_img_idx = 0
+
+        # A newly opened project should seed the manual-mode sticky language
+        # pair from its initially restored page. Subsequent page changes
+        # keep that choice until the user explicitly changes it (including Auto).
+        initial_state = self.main.image_states.get(self.main.image_files[index])
+        manual_radio = getattr(self.main, "manual_radio", None)
+        if isinstance(initial_state, dict) and manual_radio is not None and manual_radio.isChecked():
+            self.main.image_ctrl.restore_page_languages(
+                initial_state,
+                seed_sticky_languages=True,
+            )
+
         self.main.image_ctrl.refresh_page_list()
         self.main.image_ctrl.set_page_list_current_row(index, emit_signal=False)
 
@@ -1409,7 +1422,7 @@ class ProjectController:
         self.main.settings_page.ui.extra_context.setPlainText(saved_ctx)
 
     def save_main_page_settings(self):
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
 
         self.process_group('text_rendering', self.main.render_settings(), settings)
 
@@ -1433,7 +1446,7 @@ class ProjectController:
         settings.endGroup()
 
     def load_main_page_settings(self):
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup("main_page")
 
         # Load languages and convert back to current language

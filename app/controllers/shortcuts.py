@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QSettings
 
 from app.shortcuts import get_default_shortcuts, get_shortcut_definitions
+from modules.utils.settings import app_settings
 
 if TYPE_CHECKING:
     from controller import ComicTranslate
@@ -37,7 +37,7 @@ class ShortcutController:
 
     def get_current_shortcuts(self) -> dict[str, str]:
         shortcuts = get_default_shortcuts()
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup(self.SETTINGS_GROUP)
         for definition in get_shortcut_definitions():
             shortcuts[definition.id] = settings.value(

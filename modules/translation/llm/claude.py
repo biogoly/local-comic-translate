@@ -42,7 +42,7 @@ class ClaudeTranslation(BaseLLMTranslation):
             "Content-Type": "application/json"
         }
         
-        self.model = MODEL_MAP.get(self.model_name)
+        self.model = (credentials.get('model') or MODEL_MAP.get(self.model_name))
     
     def _perform_translation(self, user_prompt: str, system_prompt: str, image: np.ndarray) -> str:
         # Prepare request payload

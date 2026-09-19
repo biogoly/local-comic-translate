@@ -70,7 +70,7 @@ class RectItemController:
         x1, y1, w, h = int(x1), int(y1), int(w), int(h)
         new_rect_coords = (x1, y1, x1 + w, y1 + h)
 
-        new_blk = TextBlock(text_bbox=np.array(new_rect_coords))
+        new_blk = TextBlock(text_bbox=np.array(new_rect_coords), is_manual=True)
         self.main.blk_list.append(new_blk)
         command = AddRectangleCommand(self.main, rect_item, new_blk, self.main.blk_list)
         self.main.undo_group.activeStack().push(command)

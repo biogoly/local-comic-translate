@@ -4,12 +4,24 @@ import hashlib
 import json
 import threading
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import QSettings, QTranslator, QLocale, \
+from PySide6.QtCore import QTranslator, QLocale, \
     Qt, QTimer, QThread, QObject, Signal, Slot, QEvent
 from PySide6.QtCore import QLibraryInfo
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtWidgets import QApplication
 from app.ui.splash_screen import SplashScreen
+from modules.utils.app_identity import (
+    ORGANIZATION_NAME,
+    SETTINGS_APPLICATION_NAME,
+    SINGLE_INSTANCE_PREFIX,
+    WINDOWS_APP_USER_MODEL_ID,
+)
+from modules.utils.paths import migrate_legacy_user_data
+from modules.utils.settings import (
+    app_settings,
+    migrate_legacy_settings,
+    repair_migrated_local_translator,
+)
 
 
 def _extract_project_file(argv: list[str]) -> str | None:
@@ -23,7 +35,7 @@ def _extract_project_file(argv: list[str]) -> str | None:
 def _single_instance_server_name() -> str:
     seed = os.path.abspath(__file__).lower().encode("utf-8", errors="ignore")
     digest = hashlib.sha1(seed).hexdigest()[:12]
-    return f"ComicTranslate-{digest}"
+    return f"{SINGLE_INSTANCE_PREFIX}-{digest}"
 
 
 def _encode_ipc_message(payload: dict) -> bytes:
@@ -139,11 +151,27 @@ def main():
     logging.basicConfig(
         level=logging.INFO,
     )
+
+    # Older releases used upstream's identity, causing separate installations to
+    # share preferences, credentials, models, and autosaves. Snapshot that data
+    # once, then keep every subsequent read and write in the fork's namespace.
+    migrate_legacy_settings()
+    if repair_migrated_local_translator():
+        logging.info("Restored Local LLM as the translator for the migrated fork profile.")
+    try:
+        migrated_files = migrate_legacy_user_data()
+        if migrated_files:
+            logging.info("Migrated %d legacy data files into the fork profile.", migrated_files)
+    except Exception as exc:
+        logging.warning("Could not migrate legacy application data: %s", exc)
+
+    QApplication.setOrganizationName(ORGANIZATION_NAME)
+    QApplication.setApplicationName(SETTINGS_APPLICATION_NAME)
     
     if sys.platform == "win32":
         # Necessary Workaround to set Taskbar Icon on Windows
         import ctypes
-        myappid = u'ComicLabs.ComicTranslate' # arbitrary string
+        myappid = WINDOWS_APP_USER_MODEL_ID
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     # Create QApplication directly instead of using the context manager
@@ -189,7 +217,7 @@ def main():
     splash = SplashScreen(splash_pix)
     
     # Get language settings
-    settings = QSettings("ComicLabs", "ComicTranslate")
+    settings = app_settings()
     selected_language = settings.value('language', get_system_language())
     
     # Create worker and thread

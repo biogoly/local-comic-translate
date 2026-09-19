@@ -11,6 +11,7 @@ from app.controllers.rect_item import RectItemController
 from app.controllers.manual_workflow import ManualWorkflowController
 from app.controllers.text import TextController
 from app.ui.canvas.image_viewer import ImageViewer
+from app.ui.dayu_widgets.text_edit import MTextEdit
 from modules.utils.textblock import TextBlock
 
 
@@ -83,7 +84,7 @@ class _ManualTextMain(QtWidgets.QWidget):
         self.t_combo.addItem("English")
         self.lang_mapping = {"English": "English"}
         self.s_text_edit = QtWidgets.QTextEdit()
-        self.t_text_edit = QtWidgets.QTextEdit()
+        self.t_text_edit = MTextEdit()
 
         self.image_files = ["page.png"]
         self.curr_img_idx = 0
@@ -140,6 +141,9 @@ class _ManualTextMain(QtWidgets.QWidget):
         )
         self.t_text_edit.textChanged.connect(
             self.text_ctrl.update_text_block_from_edit
+        )
+        self.t_text_edit.editingFinished.connect(
+            self.text_ctrl.commit_target_editor_text
         )
 
     def mark_project_dirty(self):
@@ -238,6 +242,54 @@ class ManualTextBoxTests(unittest.TestCase):
         self.assertEqual(
             self.main.image_viewer.text_items[0].toPlainText(), "Replacement text"
         )
+
+    def test_japanese_target_text_persists_for_untranslated_ocr_block(self):
+        block = TextBlock(
+            text_bbox=np.array([20, 20, 100, 65]),
+            text="原文",
+            translation="",
+        )
+        self.main.blk_list.append(block)
+        rectangle = self.main.image_viewer.add_rectangle(
+            QtCore.QRectF(0, 0, 80, 45), QtCore.QPointF(20, 20)
+        )
+        self.main.image_viewer.select_rectangle(rectangle)
+
+        self.main.t_text_edit.setPlainText("手動で入力した日本語")
+        self.app.processEvents()
+        self.assertEqual(block.translation, "手動で入力した日本語")
+
+        self.main.image_viewer.deselect_all()
+        self.main.text_ctrl.clear_text_edits()
+        self.main.image_viewer.select_rectangle(rectangle)
+
+        self.assertEqual(self.main.t_text_edit.toPlainText(), "手動で入力した日本語")
+
+    def test_focus_out_commits_japanese_target_text_after_missed_change_signal(self):
+        block = TextBlock(
+            text_bbox=np.array([20, 20, 100, 65]),
+            text="原文",
+            translation="",
+        )
+        self.main.blk_list.append(block)
+        rectangle = self.main.image_viewer.add_rectangle(
+            QtCore.QRectF(0, 0, 80, 45), QtCore.QPointF(20, 20)
+        )
+        self.main.image_viewer.select_rectangle(rectangle)
+
+        self.main.t_text_edit.blockSignals(True)
+        self.main.t_text_edit.setPlainText("日本語の手入力")
+        self.main.t_text_edit.blockSignals(False)
+        QtWidgets.QApplication.sendEvent(
+            self.main.t_text_edit,
+            QtGui.QFocusEvent(QtCore.QEvent.Type.FocusOut),
+        )
+        self.app.processEvents()
+
+        self.assertEqual(block.translation, "日本語の手入力")
+
+        self.main.image_viewer.select_rectangle(rectangle)
+        self.assertEqual(self.main.t_text_edit.toPlainText(), "日本語の手入力")
 
     def test_retyping_after_deleting_all_text_preserves_item_font(self):
         self.main.t_text_edit.setPlainText("Initial")

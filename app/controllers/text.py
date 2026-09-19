@@ -279,13 +279,7 @@ class TextController:
                 and self.main.curr_tblock_item.scene() is self.main.image_viewer._scene
             ):
                 old_item_text = self.main.curr_tblock_item.toPlainText()
-                cursor_position = self.main.t_text_edit.textCursor().position()
                 self._apply_text_item_text_delta(self.main.curr_tblock_item, new_text)
-
-                # Restore cursor position
-                cursor = self.main.t_text_edit.textCursor()
-                cursor.setPosition(cursor_position)
-                self.main.t_text_edit.setTextCursor(cursor)
             if (old_translation is None or old_translation == new_text) and (
                 old_item_text is None or old_item_text == new_text
             ):
@@ -293,6 +287,11 @@ class TextController:
             self.main.mark_project_dirty()
         finally:
             self._is_updating_from_edit = False
+
+    def commit_target_editor_text(self):
+        """Commit target text after focus-out, including completed IME input."""
+        self.update_text_block_from_edit()
+        self._commit_pending_text_command()
 
     def create_manual_text_item(self, blk: TextBlock, text: str) -> TextBlockItem | None:
         """Create live, borderless canvas text for a manually edited box."""
@@ -441,7 +440,20 @@ class TextController:
     def save_src_trg(self):
         source_lang = to_canonical_language_name(self.main.s_combo.currentText(), self.main.lang_mapping)
         target_lang = to_canonical_language_name(self.main.t_combo.currentText(), self.main.lang_mapping)
-        
+
+        manual_radio = getattr(self.main, "manual_radio", None)
+        sticky_languages = bool(manual_radio is not None and manual_radio.isChecked())
+
+        # Manual processing normally uses one language pair for the whole
+        # work. Propagate an explicit change immediately so both
+        # page navigation and multi-page manual actions keep using it.  Auto is
+        # a normal explicit choice and is propagated in exactly the same way.
+        if sticky_languages:
+            for state in self.main.image_states.values():
+                if isinstance(state, dict):
+                    state["source_lang"] = source_lang
+                    state["target_lang"] = target_lang
+
         if self.main.curr_img_idx >= 0:
             current_file = self.main.image_files[self.main.curr_img_idx]
             self.main.image_states[current_file]['source_lang'] = source_lang
@@ -943,8 +955,6 @@ class TextController:
                     target_lang = state.get("target_lang", target_lang_fallback)
                     target_lang_en = self.main.lang_mapping.get(target_lang, None)
                     trg_lng_cd = get_language_code(target_lang_en)
-                    format_translations(blk_list, trg_lng_cd, upper_case=upper)
-
                     viewer_state = state.setdefault("viewer_state", {})
                     existing_text_items = list(viewer_state.get("text_items_state", []))
                     existing_keys = {
@@ -955,13 +965,17 @@ class TextController:
                         )
                         for item in existing_text_items
                     }
+                    new_blocks = [
+                        blk for blk in blk_list
+                        if (int(blk.xyxy[0]), int(blk.xyxy[1]), float(blk.angle)) not in existing_keys
+                        and not self.main.manual_workflow_ctrl._has_rendered_manual_translation(
+                            blk, existing_text_items,
+                        )
+                    ]
+                    format_translations(new_blocks, trg_lng_cd, upper_case=upper)
 
                     new_text_items_state = []
-                    for blk in blk_list:
-                        blk_key = (int(blk.xyxy[0]), int(blk.xyxy[1]), float(blk.angle))
-                        if blk_key in existing_keys:
-                            continue
-
+                    for blk in new_blocks:
                         x1, y1, block_width, block_height = blk.xywh
                         translation = blk.translation
                         if not is_renderable_translation(translation):
@@ -1064,6 +1078,9 @@ class TextController:
             new_blocks = [
                 blk for blk in self.main.blk_list
                 if (int(blk.xyxy[0]), int(blk.xyxy[1]), blk.angle) not in existing_text_items.values()
+                and not self.main.manual_workflow_ctrl._has_rendered_manual_translation(
+                    blk, self.main.image_viewer.text_items,
+                )
             ]
 
             self.main.image_viewer.clear_rectangles()
@@ -1086,7 +1103,7 @@ class TextController:
             trg_lng_cd = get_language_code(target_lang_en)
 
             self.main.run_threaded(
-            lambda: format_translations(self.main.blk_list, trg_lng_cd, upper_case=upper)
+            lambda: format_translations(new_blocks, trg_lng_cd, upper_case=upper)
             )
 
             min_font_size = self.main.settings_page.get_min_font_size()

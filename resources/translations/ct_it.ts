@@ -121,6 +121,648 @@
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="33"/>
+        <source>Undo</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="34"/>
+        <source>Redo</source>
+        <translation>Ripeti</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="39"/>
+        <source>Detect</source>
+        <translation>Rileva</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="40"/>
+        <source>Recognize</source>
+        <translation>Riconosci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="41"/>
+        <source>Translate</source>
+        <translation>Traduci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="42"/>
+        <source>Segment</source>
+        <translation>Segmenta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="43"/>
+        <source>Clean</source>
+        <translation>Pulisci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="44"/>
+        <source>Render</source>
+        <translation>Renderizza</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="61"/>
+        <source>Manual</source>
+        <translation>Manuale</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="64"/>
+        <source>Automatic</source>
+        <translation>Automatico</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="73"/>
+        <source>Toggle Webtoon Mode. For comics that are read in long vertical strips</source>
+        <translation>Attiva/disattiva modalità Webtoon. Per fumetti letti in lunghe strisce verticali</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="77"/>
+        <source>Translate All</source>
+        <translation>Traduci tutto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="83"/>
+        <source>Report</source>
+        <translation>Rapporto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="105"/>
+        <source>Pages</source>
+        <translation>Pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="109"/>
+        <source>Sort</source>
+        <translation>Ordina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="116"/>
+        <source>Sort Pages</source>
+        <translation>Ordina pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="137"/>
+        <source>Click or drag files here</source>
+        <translation>Clicca o trascina i file qui</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="159"/>
+        <source>Import Images, PDFs, Epubs or Comic Book Archive Files(cbr, cbz, etc)</source>
+        <translation>Importa immagini, PDF, ePub o file di archivio di fumetti (cbr, cbz, ecc.)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="177"/>
+        <source>Source Language</source>
+        <translation>Lingua di origine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="187"/>
+        <source>Target Language</source>
+        <translation>Lingua di destinazione</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="192"/>
+        <source>Type translated or replacement text to show on the page</source>
+        <translation>Inserisci il testo tradotto o sostitutivo da mostrare sulla pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="201"/>
+        <source>Font</source>
+        <translation>Carattere</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="203"/>
+        <source>Font Size</source>
+        <translation>Dimensione carattere</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="212"/>
+        <source>Line Spacing</source>
+        <translation>Interlinea</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="231"/>
+        <source>Font Color</source>
+        <translation>Colore carattere</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="246"/>
+        <source>Bold</source>
+        <translation>Grassetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="248"/>
+        <source>Italic</source>
+        <translation>Corsivo</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="250"/>
+        <source>Underline</source>
+        <translation>Sottolineato</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="267"/>
+        <source>Outline</source>
+        <translation>Contorno</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="271"/>
+        <source>Outline Color</source>
+        <translation>Colore contorno</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="278"/>
+        <source>Outline Width</source>
+        <translation>Larghezza contorno</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="301"/>
+        <source>Pan Image after Zooming</source>
+        <translation>Sposta l'immagine dopo lo zoom</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="306"/>
+        <source>Zoom Out (Ctrl+-)</source>
+        <translation>Riduci (Ctrl+-)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="309"/>
+        <source>Fit</source>
+        <translation>Adatta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="310"/>
+        <source>Fit Page to Window (Ctrl+0)</source>
+        <translation>Adatta pagina alla finestra (Ctrl+0)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="314"/>
+        <source>Zoom In (Ctrl+= or Ctrl+Mouse Wheel)</source>
+        <translation>Ingrandisci (Ctrl+= o Ctrl+rotellina)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="317"/>
+        <source>Set for all</source>
+        <translation>Imposta per tutti</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="319"/>
+        <source>Sets the Source and Target Language on the current page for all pages</source>
+        <translation>Imposta la lingua di origine e di destinazione sulla pagina corrente per tutte le pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="334"/>
+        <source>Draw or Select Text Regions; typing in the Target Text field creates borderless text on the page</source>
+        <translation>Disegna o seleziona aree di testo; scrivendo nel campo Testo di destinazione si crea testo senza bordo sulla pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="342"/>
+        <source>Delete Selected Box</source>
+        <translation>Elimina riquadro selezionato</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="345"/>
+        <source>Remove all the Boxes on the Image</source>
+        <translation>Rimuovi tutte le caselle sull'immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="350"/>
+        <source>Draws all the Text Blocks in the existing Text Block List
+back on the Image (for further editing)</source>
+        <translation>Ridisegna tutti i blocchi di testo presenti nell&amp;apos;elenco dei blocchi di testo sull&amp;apos;immagine
+(per ulteriori modifiche)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="361"/>
+        <source>Reduce the size of all blocks</source>
+        <translation>Riduci la dimensione di tutti i blocchi</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="372"/>
+        <source>Increase the size of all blocks</source>
+        <translation>Aumenta la dimensione di tutti i blocchi</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="384"/>
+        <source>Paint Areas to Clean, then click Apply Cleanup</source>
+        <translation>Dipingi le aree da pulire, poi fai clic su Applica pulizia</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="390"/>
+        <source>Erase Brush Strokes</source>
+        <translation>Cancella tratti di pennello</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="395"/>
+        <source>Remove all the brush strokes on the Image</source>
+        <translation>Rimuovi tutti i tratti di pennello sull'immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="399"/>
+        <source>Apply Cleanup to the Painted Areas</source>
+        <translation>Applica pulizia alle aree dipinte</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="404"/>
+        <source>Revert All Inpainting on the Current Page (Undoable)</source>
+        <translation>Ripristina tutti i riempimenti della pagina corrente (annullabile)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="418"/>
+        <source>Brush/Eraser Size Slider</source>
+        <translation>Cursore dimensione pennello/gomma</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="422"/>
+        <source>Box Drawing</source>
+        <translation>Disegno casella</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="426"/>
+        <source>Inpainting</source>
+        <translation>Inpainting</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="431"/>
+        <source>Artistic Edit (FLUX.2 Klein)</source>
+        <translation>Modifica artistica (FLUX.2 Klein)</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="104"/>
+        <source>The AI provider flagged this content</source>
+        <translation>Il fornitore AI ha segnalato questo contenuto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="106"/>
+        <source>Insufficient credits</source>
+        <translation>Crediti insufficienti</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="108"/>
+        <source>Request timed out</source>
+        <translation>Richiesta scaduta</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="114"/>
+        <source>Rate limited by provider</source>
+        <translation>Limite di frequenza del fornitore</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="121"/>
+        <source>Authentication failed</source>
+        <translation>Autenticazione non riuscita</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="128"/>
+        <source>Network or connection error</source>
+        <translation>Errore di rete o connessione</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="137"/>
+        <source>Provider unavailable</source>
+        <translation>Fornitore non disponibile</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="143"/>
+        <source>Invalid translation response</source>
+        <translation>Risposta di traduzione non valida</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="144"/>
+        <source>Unexpected tool error</source>
+        <translation>Errore imprevisto dello strumento</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="152"/>
+        <location filename="../../app/controllers/batch_report.py" line="201"/>
+        <source>Try another text recognition tool</source>
+        <translation>Prova un altro strumento di riconoscimento testo</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="156"/>
+        <location filename="../../app/controllers/batch_report.py" line="205"/>
+        <source>Try another translator</source>
+        <translation>Prova un altro traduttore</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="157"/>
+        <source>Try another tool</source>
+        <translation>Prova un altro strumento</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="159"/>
+        <source>Buy more credits</source>
+        <translation>Acquista più crediti</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="161"/>
+        <location filename="../../app/controllers/batch_report.py" line="196"/>
+        <location filename="../../app/controllers/batch_report.py" line="206"/>
+        <source>Try again</source>
+        <translation>Riprova</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="167"/>
+        <source>Wait and try again</source>
+        <translation>Attendi e riprova</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="174"/>
+        <source>Check API settings</source>
+        <translation>Controlla le impostazioni API</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="181"/>
+        <source>Check your connection</source>
+        <translation>Controlla la connessione</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="190"/>
+        <source>Try again later</source>
+        <translation>Riprova più tardi</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="212"/>
+        <source>Image could not be opened</source>
+        <translation>Impossibile aprire l'immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="213"/>
+        <source>No text blocks detected</source>
+        <translation>Nessun blocco di testo rilevato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="214"/>
+        <source>Text recognition failed</source>
+        <translation>Riconoscimento testo non riuscito</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="215"/>
+        <source>Translation failed</source>
+        <translation>Traduzione non riuscita</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="216"/>
+        <source>Webtoon text recognition chunk failed</source>
+        <translation>Blocco di riconoscimento testo webtoon non riuscito</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="218"/>
+        <source>Webtoon translation chunk failed</source>
+        <translation>Blocco di traduzione webtoon non riuscito</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="221"/>
+        <source>Page processing failed</source>
+        <translation>Elaborazione pagina non riuscita</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="310"/>
+        <source>This image is not in the current project.</source>
+        <translation>Questa immagine non è nel progetto corrente.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="334"/>
+        <location filename="../../app/controllers/batch_report.py" line="497"/>
+        <source>No batch report is available yet.</source>
+        <translation>Nessun rapporto batch disponibile ancora.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="349"/>
+        <location filename="../../app/controllers/batch_report.py" line="440"/>
+        <source>No skipped images are available to retry.</source>
+        <translation>Nessuna immagine saltata disponibile per un nuovo tentativo.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="357"/>
+        <location filename="../../app/controllers/batch_report.py" line="436"/>
+        <source>Wait for the current batch to finish before retrying skipped images.</source>
+        <translation>Attendi il completamento del batch corrente prima di riprovare le immagini saltate.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Cancelled</source>
+        <translation>Annullato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Completed</source>
+        <translation>Completato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="385"/>
+        <source>{0}  |  Updated {1}</source>
+        <translation>{0}  |  Aggiornato {1}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="412"/>
+        <source>Total</source>
+        <translation>Totale</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="413"/>
+        <location filename="../../app/controllers/batch_report.py" line="476"/>
+        <source>Skipped</source>
+        <translation>Ignorato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="423"/>
+        <source>Skipped Images ({0})</source>
+        <translation>Immagini ignorate ({0})</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="429"/>
+        <source>Retry Skipped Images</source>
+        <translation>Riprova immagini saltate</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="447"/>
+        <source>Double-click a row to open that page.</source>
+        <translation>Doppio clic su una riga per aprire quella pagina.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Image</source>
+        <translation>Immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Reason</source>
+        <translation>Motivo</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="486"/>
+        <source>No skipped images in this batch.</source>
+        <translation>Nessuna immagine ignorata in questo batch.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="511"/>
+        <source>Batch Report</source>
+        <translation>Rapporto batch</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1516"/>
+        <source>Automatic translation</source>
+        <translation>Traduzione automatica</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1544"/>
+        <source>There is no inpainting to revert on this page.</source>
+        <translation>Non ci sono riempimenti da ripristinare su questa pagina.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="447"/>
+        <source>Project Recovery</source>
+        <translation>Recupero del progetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="448"/>
+        <source>An autosaved project from a previous session was found.</source>
+        <translation>È stato trovato un progetto salvato automaticamente da una sessione precedente.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="450"/>
+        <source>Last autosave: {saved_at}
+Do you want to restore it?</source>
+        <translation>Ultimo salvataggio automatico: {saved_at}
+Vuoi ripristinarlo?</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="452"/>
+        <source>Restore</source>
+        <translation>Ripristinare</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="453"/>
+        <source>Discard</source>
+        <translation>Scarta</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="652"/>
+        <location filename="../../app/controllers/projects.py" line="661"/>
+        <source>Export Folder</source>
+        <translation>Cartella di esportazione</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="653"/>
+        <source>Choose a folder path, not an existing file.</source>
+        <translation>Scegli il percorso di una cartella, non un file esistente.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="663"/>
+        <source>Could not create the selected export folder.
+
+{error}</source>
+        <translation>{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1142"/>
+        <location filename="../../app/controllers/projects.py" line="1152"/>
+        <location filename="../../app/controllers/projects.py" line="1222"/>
+        <source>Project File</source>
+        <translation>File di progetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1143"/>
+        <source>Choose an existing folder for the project file.</source>
+        <translation>Scegli una cartella esistente per il file di progetto.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1154"/>
+        <source>Could not create the selected project folder.
+
+{error}</source>
+        <translation>Impossibile creare la cartella del progetto selezionata.
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1165"/>
+        <source>Overwrite Project File</source>
+        <translation>Sovrascrivi file di progetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1167"/>
+        <source>A project file already exists at this location.
+
+{path}
+
+Overwrite it?</source>
+        <translation>Esiste già un file di progetto in questa posizione.
+
+{path}
+
+Sovrascriverlo?</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1190"/>
+        <source>Old Project File Kept</source>
+        <translation>Vecchio file di progetto mantenuto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1192"/>
+        <source>The project was saved to the new location, but the old file could not be removed.
+
+{path}
+
+{error}</source>
+        <translation>Il progetto è stato salvato nella nuova posizione, ma il vecchio file non ha potuto essere rimosso.
+
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1200"/>
+        <source>Project file updated.</source>
+        <translation>File di progetto aggiornato.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1224"/>
+        <source>Could not move the project file.
+
+{error}</source>
+        <translation>Impossibile spostare il file di progetto.
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1235"/>
+        <source>Project file renamed.</source>
+        <translation>File di progetto rinominato.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1237"/>
+        <source>Project file moved.</source>
+        <translation>File di progetto spostato.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1375"/>
+        <source>Project Not Found</source>
+        <translation>Progetto non trovato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1377"/>
+        <source>The selected project file could not be found.
+It may have been moved, renamed, or deleted.
+
+{path}</source>
+        <translation>Impossibile trovare il file di progetto selezionato.
+Potrebbe essere stato spostato, rinominato o eliminato.
+
+{path}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1457"/>
+        <source>Auto</source>
+        <translation>Automatico</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1458"/>
+        <source>English</source>
+        <translation>Inglese</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -269,6 +911,643 @@
         <source>Mongolian</source>
         <translation>Mongolo</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="33"/>
+        <source>Undo</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="34"/>
+        <source>Redo</source>
+        <translation>Ripeti</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="39"/>
+        <source>Detect</source>
+        <translation>Rileva</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="40"/>
+        <source>Recognize</source>
+        <translation>Riconosci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="41"/>
+        <source>Translate</source>
+        <translation>Traduci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="42"/>
+        <source>Segment</source>
+        <translation>Segmenta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="43"/>
+        <source>Clean</source>
+        <translation>Pulisci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="44"/>
+        <source>Render</source>
+        <translation>Renderizza</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="61"/>
+        <source>Manual</source>
+        <translation>Manuale</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="64"/>
+        <source>Automatic</source>
+        <translation>Automatico</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="73"/>
+        <source>Toggle Webtoon Mode. For comics that are read in long vertical strips</source>
+        <translation>Attiva/disattiva modalità Webtoon. Per fumetti letti in lunghe strisce verticali</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="77"/>
+        <source>Translate All</source>
+        <translation>Traduci tutto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="80"/>
+        <source>Cancel</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="83"/>
+        <source>Report</source>
+        <translation>Rapporto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="105"/>
+        <source>Pages</source>
+        <translation>Pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="109"/>
+        <source>Sort</source>
+        <translation>Ordina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="116"/>
+        <source>Sort Pages</source>
+        <translation>Ordina pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="137"/>
+        <source>Click or drag files here</source>
+        <translation>Clicca o trascina i file qui</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="159"/>
+        <source>Import Images, PDFs, Epubs or Comic Book Archive Files(cbr, cbz, etc)</source>
+        <translation>Importa immagini, PDF, ePub o file di archivio di fumetti (cbr, cbz, ecc.)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="177"/>
+        <source>Source Language</source>
+        <translation>Lingua di origine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="187"/>
+        <source>Target Language</source>
+        <translation>Lingua di destinazione</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="192"/>
+        <source>Type translated or replacement text to show on the page</source>
+        <translation>Inserisci il testo tradotto o sostitutivo da mostrare sulla pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="201"/>
+        <source>Font</source>
+        <translation>Carattere</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="203"/>
+        <source>Font Size</source>
+        <translation>Dimensione carattere</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="212"/>
+        <source>Line Spacing</source>
+        <translation>Interlinea</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="231"/>
+        <source>Font Color</source>
+        <translation>Colore carattere</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="246"/>
+        <source>Bold</source>
+        <translation>Grassetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="248"/>
+        <source>Italic</source>
+        <translation>Corsivo</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="250"/>
+        <source>Underline</source>
+        <translation>Sottolineato</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="267"/>
+        <source>Outline</source>
+        <translation>Contorno</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="271"/>
+        <source>Outline Color</source>
+        <translation>Colore contorno</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="278"/>
+        <source>Outline Width</source>
+        <translation>Larghezza contorno</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="301"/>
+        <source>Pan Image after Zooming</source>
+        <translation>Sposta l'immagine dopo lo zoom</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="306"/>
+        <source>Zoom Out (Ctrl+-)</source>
+        <translation>Riduci (Ctrl+-)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="309"/>
+        <source>Fit</source>
+        <translation>Adatta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="310"/>
+        <source>Fit Page to Window (Ctrl+0)</source>
+        <translation>Adatta pagina alla finestra (Ctrl+0)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="314"/>
+        <source>Zoom In (Ctrl+= or Ctrl+Mouse Wheel)</source>
+        <translation>Ingrandisci (Ctrl+= o Ctrl+rotellina)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="317"/>
+        <source>Set for all</source>
+        <translation>Imposta per tutti</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="319"/>
+        <source>Sets the Source and Target Language on the current page for all pages</source>
+        <translation>Imposta la lingua di origine e di destinazione sulla pagina corrente per tutte le pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="334"/>
+        <source>Draw or Select Text Regions; typing in the Target Text field creates borderless text on the page</source>
+        <translation>Disegna o seleziona aree di testo; scrivendo nel campo Testo di destinazione si crea testo senza bordo sulla pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="342"/>
+        <source>Delete Selected Box</source>
+        <translation>Elimina riquadro selezionato</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="345"/>
+        <source>Remove all the Boxes on the Image</source>
+        <translation>Rimuovi tutte le caselle sull'immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="350"/>
+        <source>Draws all the Text Blocks in the existing Text Block List
+back on the Image (for further editing)</source>
+        <translation>Ridisegna tutti i blocchi di testo presenti nell&amp;apos;elenco dei blocchi di testo sull&amp;apos;immagine
+(per ulteriori modifiche)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="361"/>
+        <source>Reduce the size of all blocks</source>
+        <translation>Riduci la dimensione di tutti i blocchi</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="372"/>
+        <source>Increase the size of all blocks</source>
+        <translation>Aumenta la dimensione di tutti i blocchi</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="384"/>
+        <source>Paint Areas to Clean, then click Apply Cleanup</source>
+        <translation>Dipingi le aree da pulire, poi fai clic su Applica pulizia</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="390"/>
+        <source>Erase Brush Strokes</source>
+        <translation>Cancella tratti di pennello</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="395"/>
+        <source>Remove all the brush strokes on the Image</source>
+        <translation>Rimuovi tutti i tratti di pennello sull'immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="399"/>
+        <source>Apply Cleanup to the Painted Areas</source>
+        <translation>Applica pulizia alle aree dipinte</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="404"/>
+        <source>Revert All Inpainting on the Current Page (Undoable)</source>
+        <translation>Ripristina tutti i riempimenti della pagina corrente (annullabile)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="418"/>
+        <source>Brush/Eraser Size Slider</source>
+        <translation>Cursore dimensione pennello/gomma</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="422"/>
+        <source>Box Drawing</source>
+        <translation>Disegno casella</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="426"/>
+        <source>Inpainting</source>
+        <translation>Inpainting</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="431"/>
+        <source>Artistic Edit (FLUX.2 Klein)</source>
+        <translation>Modifica artistica (FLUX.2 Klein)</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="104"/>
+        <source>The AI provider flagged this content</source>
+        <translation>Il fornitore AI ha segnalato questo contenuto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="106"/>
+        <source>Insufficient credits</source>
+        <translation>Crediti insufficienti</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="108"/>
+        <source>Request timed out</source>
+        <translation>Richiesta scaduta</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="114"/>
+        <source>Rate limited by provider</source>
+        <translation>Limite di frequenza del fornitore</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="121"/>
+        <source>Authentication failed</source>
+        <translation>Autenticazione non riuscita</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="128"/>
+        <source>Network or connection error</source>
+        <translation>Errore di rete o connessione</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="137"/>
+        <source>Provider unavailable</source>
+        <translation>Fornitore non disponibile</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="143"/>
+        <source>Invalid translation response</source>
+        <translation>Risposta di traduzione non valida</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="144"/>
+        <source>Unexpected tool error</source>
+        <translation>Errore imprevisto dello strumento</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="152"/>
+        <location filename="../../app/controllers/batch_report.py" line="201"/>
+        <source>Try another text recognition tool</source>
+        <translation>Prova un altro strumento di riconoscimento testo</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="156"/>
+        <location filename="../../app/controllers/batch_report.py" line="205"/>
+        <source>Try another translator</source>
+        <translation>Prova un altro traduttore</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="157"/>
+        <source>Try another tool</source>
+        <translation>Prova un altro strumento</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="159"/>
+        <source>Buy more credits</source>
+        <translation>Acquista più crediti</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="161"/>
+        <location filename="../../app/controllers/batch_report.py" line="196"/>
+        <location filename="../../app/controllers/batch_report.py" line="206"/>
+        <source>Try again</source>
+        <translation>Riprova</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="167"/>
+        <source>Wait and try again</source>
+        <translation>Attendi e riprova</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="174"/>
+        <source>Check API settings</source>
+        <translation>Controlla le impostazioni API</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="181"/>
+        <source>Check your connection</source>
+        <translation>Controlla la connessione</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="190"/>
+        <source>Try again later</source>
+        <translation>Riprova più tardi</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="212"/>
+        <source>Image could not be opened</source>
+        <translation>Impossibile aprire l'immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="213"/>
+        <source>No text blocks detected</source>
+        <translation>Nessun blocco di testo rilevato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="214"/>
+        <source>Text recognition failed</source>
+        <translation>Riconoscimento testo non riuscito</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="215"/>
+        <source>Translation failed</source>
+        <translation>Traduzione non riuscita</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="216"/>
+        <source>Webtoon text recognition chunk failed</source>
+        <translation>Blocco di riconoscimento testo webtoon non riuscito</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="218"/>
+        <source>Webtoon translation chunk failed</source>
+        <translation>Blocco di traduzione webtoon non riuscito</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="221"/>
+        <source>Page processing failed</source>
+        <translation>Elaborazione pagina non riuscita</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="310"/>
+        <source>This image is not in the current project.</source>
+        <translation>Questa immagine non è nel progetto corrente.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="334"/>
+        <location filename="../../app/controllers/batch_report.py" line="497"/>
+        <source>No batch report is available yet.</source>
+        <translation>Nessun rapporto batch disponibile ancora.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="349"/>
+        <location filename="../../app/controllers/batch_report.py" line="440"/>
+        <source>No skipped images are available to retry.</source>
+        <translation>Nessuna immagine saltata disponibile per un nuovo tentativo.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="357"/>
+        <location filename="../../app/controllers/batch_report.py" line="436"/>
+        <source>Wait for the current batch to finish before retrying skipped images.</source>
+        <translation>Attendi il completamento del batch corrente prima di riprovare le immagini saltate.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Cancelled</source>
+        <translation>Annullato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="382"/>
+        <source>Completed</source>
+        <translation>Completato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="385"/>
+        <source>{0}  |  Updated {1}</source>
+        <translation>{0}  |  Aggiornato {1}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="412"/>
+        <source>Total</source>
+        <translation>Totale</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="413"/>
+        <location filename="../../app/controllers/batch_report.py" line="476"/>
+        <source>Skipped</source>
+        <translation>Ignorato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="423"/>
+        <source>Skipped Images ({0})</source>
+        <translation>Immagini ignorate ({0})</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="429"/>
+        <source>Retry Skipped Images</source>
+        <translation>Riprova immagini saltate</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="447"/>
+        <source>Double-click a row to open that page.</source>
+        <translation>Doppio clic su una riga per aprire quella pagina.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Image</source>
+        <translation>Immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="452"/>
+        <source>Reason</source>
+        <translation>Motivo</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="486"/>
+        <source>No skipped images in this batch.</source>
+        <translation>Nessuna immagine ignorata in questo batch.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/batch_report.py" line="511"/>
+        <source>Batch Report</source>
+        <translation>Rapporto batch</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1516"/>
+        <source>Automatic translation</source>
+        <translation>Traduzione automatica</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1544"/>
+        <source>There is no inpainting to revert on this page.</source>
+        <translation>Non ci sono riempimenti da ripristinare su questa pagina.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="447"/>
+        <source>Project Recovery</source>
+        <translation>Recupero del progetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="448"/>
+        <source>An autosaved project from a previous session was found.</source>
+        <translation>È stato trovato un progetto salvato automaticamente da una sessione precedente.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="450"/>
+        <source>Last autosave: {saved_at}
+Do you want to restore it?</source>
+        <translation>Ultimo salvataggio automatico: {saved_at}
+Vuoi ripristinarlo?</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="452"/>
+        <source>Restore</source>
+        <translation>Ripristinare</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="453"/>
+        <source>Discard</source>
+        <translation>Scarta</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="652"/>
+        <location filename="../../app/controllers/projects.py" line="661"/>
+        <source>Export Folder</source>
+        <translation>Cartella di esportazione</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="653"/>
+        <source>Choose a folder path, not an existing file.</source>
+        <translation>Scegli il percorso di una cartella, non un file esistente.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="663"/>
+        <source>Could not create the selected export folder.
+
+{error}</source>
+        <translation>{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1142"/>
+        <location filename="../../app/controllers/projects.py" line="1152"/>
+        <location filename="../../app/controllers/projects.py" line="1222"/>
+        <source>Project File</source>
+        <translation>File di progetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1143"/>
+        <source>Choose an existing folder for the project file.</source>
+        <translation>Scegli una cartella esistente per il file di progetto.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1154"/>
+        <source>Could not create the selected project folder.
+
+{error}</source>
+        <translation>Impossibile creare la cartella del progetto selezionata.
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1165"/>
+        <source>Overwrite Project File</source>
+        <translation>Sovrascrivi file di progetto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1167"/>
+        <source>A project file already exists at this location.
+
+{path}
+
+Overwrite it?</source>
+        <translation>Esiste già un file di progetto in questa posizione.
+
+{path}
+
+Sovrascriverlo?</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1190"/>
+        <source>Old Project File Kept</source>
+        <translation>Vecchio file di progetto mantenuto</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1192"/>
+        <source>The project was saved to the new location, but the old file could not be removed.
+
+{path}
+
+{error}</source>
+        <translation>Il progetto è stato salvato nella nuova posizione, ma il vecchio file non ha potuto essere rimosso.
+
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1200"/>
+        <source>Project file updated.</source>
+        <translation>File di progetto aggiornato.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1224"/>
+        <source>Could not move the project file.
+
+{error}</source>
+        <translation>Impossibile spostare il file di progetto.
+
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1235"/>
+        <source>Project file renamed.</source>
+        <translation>File di progetto rinominato.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1237"/>
+        <source>Project file moved.</source>
+        <translation>File di progetto spostato.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1375"/>
+        <source>Project Not Found</source>
+        <translation>Progetto non trovato</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/projects.py" line="1377"/>
+        <source>The selected project file could not be found.
+It may have been moved, renamed, or deleted.
+
+{path}</source>
+        <translation>Impossibile trovare il file di progetto selezionato.
+Potrebbe essere stato spostato, rinominato o eliminato.
+
+{path}</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -314,6 +1593,14 @@
         <location filename="../../app/ui/settings/credentials_page.py" line="129"/>
         <source>Folder ID</source>
         <translation>ID cartella</translation>
+    </message>
+    <message>
+        <source>Keys are stored in this computer's application settings, not in projects.</source>
+        <translation>Le chiavi vengono salvate nelle impostazioni dell’applicazione su questo computer, non nei progetti.</translation>
+    </message>
+    <message>
+        <source>Optional cloud services use your own API keys and provider billing. Text and enabled image context are sent to the selected provider. Local LLM needs no cloud account. Select the translator in Tools.</source>
+        <translation>I servizi cloud facoltativi usano le tue chiavi API e la fatturazione del fornitore. Il testo e il contesto immagine attivato vengono inviati al fornitore scelto. Local LLM non richiede un account cloud. Scegli il traduttore in Strumenti.</translation>
     </message>
 </context>
 <context>
@@ -456,6 +1743,152 @@
         <location filename="../../app/ui/settings/llms_page.py" line="22"/>
         <source>Extra Context:</source>
         <translation>Contesto extra:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="36"/>
+        <source>Local LLM</source>
+        <translation>LLM locale</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="40"/>
+        <source>Run a GGUF model with llama.cpp, or connect to an existing OpenAI-compatible server such as Ollama or LM Studio.</source>
+        <translation>Esegui un modello GGUF con llama.cpp oppure connettiti a un server compatibile con OpenAI, come Ollama o LM Studio.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="47"/>
+        <source>Choose Local LLM under Tools &gt; Translator to use these settings.</source>
+        <translation>Scegli «LLM locale» in Strumenti &gt; Traduttore per usare queste impostazioni.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="54"/>
+        <source>Managed llama.cpp</source>
+        <translation>llama.cpp gestito</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="55"/>
+        <source>External server</source>
+        <translation>Server esterno</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="56"/>
+        <source>Runtime:</source>
+        <translation>Ambiente di esecuzione:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="62"/>
+        <source>Optional when llama-server is on PATH</source>
+        <translation>Facoltativo se llama-server è nel PATH</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="64"/>
+        <source>Main GGUF model (required)</source>
+        <translation>Modello GGUF principale (obbligatorio)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="66"/>
+        <source>Vision projector GGUF, when required by the model</source>
+        <translation>Proiettore visivo GGUF, se richiesto dal modello</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="78"/>
+        <location filename="../../app/ui/settings/llms_page.py" line="112"/>
+        <source> s</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="80"/>
+        <source>llama-server:</source>
+        <translation>llama-server:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="81"/>
+        <source>Model:</source>
+        <translation>Modello:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="82"/>
+        <source>Vision projector:</source>
+        <translation>Proiettore visivo:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="83"/>
+        <source>Context size:</source>
+        <translation>Dimensione del contesto:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="84"/>
+        <source>GPU layers:</source>
+        <translation>Livelli su GPU:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="85"/>
+        <source>Startup timeout:</source>
+        <translation>Timeout di avvio:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="93"/>
+        <source>Server model name</source>
+        <translation>Nome del modello sul server</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="96"/>
+        <source>Optional</source>
+        <translation>Facoltativo</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="97"/>
+        <source>Saved only when Save Keys is enabled in Advanced settings.</source>
+        <translation>Salvata solo se «Salva chiavi» è attivo nelle impostazioni avanzate.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="98"/>
+        <source>Base URL:</source>
+        <translation>URL di base:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="99"/>
+        <source>Model name:</source>
+        <translation>Nome del modello:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="100"/>
+        <source>API key:</source>
+        <translation>Chiave API:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="103"/>
+        <source>Generation</source>
+        <translation>Generazione</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="126"/>
+        <source>Limit sampling to the K most likely tokens; 0 disables Top K</source>
+        <translation>Limita il campionamento ai K token più probabili; 0 disattiva Top K</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="128"/>
+        <source>Max output tokens:</source>
+        <translation>Token di output massimi:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="129"/>
+        <source>Request timeout:</source>
+        <translation>Timeout della richiesta:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="130"/>
+        <source>Temperature:</source>
+        <translation>Temperatura:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="131"/>
+        <source>Top P:</source>
+        <translation>Top P:</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/llms_page.py" line="132"/>
+        <source>Top K:</source>
+        <translation>Top K:</translation>
     </message>
 </context>
 <context>
@@ -649,6 +2082,23 @@ Verifica la tua connessione Internet.</translation>
         <source>Imported a PSD that was not exported by this application. Visible image layers were flattened, and unsupported Photoshop features may not match exactly.</source>
         <translation>È stato importato un PSD che non è stato esportato da questa applicazione. I livelli immagine visibili sono stati appiattiti e le funzionalità di Photoshop non supportate potrebbero non corrispondere esattamente.</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/messages.py" line="123"/>
+        <source>Local LLM is not configured yet. Open Settings &gt; LLMs and complete the local runtime fields.</source>
+        <translation>Il LLM locale non è ancora configurato. Apri Impostazioni &gt; LLM e compila i campi dell'ambiente locale.</translation>
+    </message>
+    <message>
+        <source>Provider APIs</source>
+        <translation>API dei fornitori</translation>
+    </message>
+    <message>
+        <source>Check your provider's billing and API limits.</source>
+        <translation>Controlla la fatturazione e i limiti API del fornitore.</translation>
+    </message>
+    <message>
+        <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
+        <translation>Configura la chiave API e i campi richiesti in Impostazioni &gt; API dei fornitori: {provider}</translation>
+    </message>
 </context>
 <context>
     <name>NavRailMixin</name>
@@ -800,6 +2250,31 @@ Verifica la tua connessione Internet.</translation>
         <location filename="../../app/ui/list_view.py" line="202"/>
         <source>Translate</source>
         <translation>Traduci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="188"/>
+        <source>Name: A to Z</source>
+        <translation>Nome: dalla A alla Z</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="189"/>
+        <source>Name: Z to A</source>
+        <translation>Nome: dalla Z alla A</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="190"/>
+        <source>Modified: Oldest First</source>
+        <translation>Modifica: meno recenti prima</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="191"/>
+        <source>Modified: Newest First</source>
+        <translation>Modifica: più recenti prima</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/list_view.py" line="204"/>
+        <source>Sort Pages</source>
+        <translation>Ordina pagine</translation>
     </message>
 </context>
 <context>
@@ -1446,6 +2921,40 @@ Riavviare ora?</translation>
         <source>Export</source>
         <translation>Esporta</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="67"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="119"/>
+        <source>Midnight</source>
+        <translation>Mezzanotte</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="68"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="120"/>
+        <source>Parchment</source>
+        <translation>Pergamena</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="69"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="121"/>
+        <source>Lavender</source>
+        <translation>Lavanda</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="70"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="122"/>
+        <source>Mint</source>
+        <translation>Menta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/settings/settings_ui.py" line="79"/>
+        <location filename="../../app/ui/settings/settings_ui.py" line="125"/>
+        <source>Local LLM</source>
+        <translation>LLM locale</translation>
+    </message>
+    <message>
+        <source>Provider APIs</source>
+        <translation>API dei fornitori</translation>
+    </message>
 </context>
 <context>
     <name>ShortcutDefinitions</name>
@@ -1518,6 +3027,36 @@ Riavviare ora?</translation>
         <location filename="../../app/shortcuts.py" line="56"/>
         <source>Toggle brush stroke drawing on or off.</source>
         <translation>Attiva o disattiva il disegno dei tratti del pennello.</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="61"/>
+        <source>Zoom In</source>
+        <translation>Ingrandisci</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="62"/>
+        <source>Zoom into the comic page.</source>
+        <translation>Ingrandisci la pagina del fumetto.</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="67"/>
+        <source>Zoom Out</source>
+        <translation>Riduci</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="68"/>
+        <source>Zoom out of the comic page.</source>
+        <translation>Riduci la pagina del fumetto.</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="73"/>
+        <source>Fit Page</source>
+        <translation>Adatta pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/shortcuts.py" line="74"/>
+        <source>Fit the current comic page to the window.</source>
+        <translation>Adatta la pagina corrente del fumetto alla finestra.</translation>
     </message>
 </context>
 <context>
@@ -1941,6 +3480,76 @@ back on the Image (for further editing)</source>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="358"/>
         <source>Inpainting</source>
         <translation>Inpainting</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="105"/>
+        <source>Pages</source>
+        <translation>Pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="109"/>
+        <source>Sort</source>
+        <translation>Ordina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="116"/>
+        <source>Sort Pages</source>
+        <translation>Ordina pagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="192"/>
+        <source>Type translated or replacement text to show on the page</source>
+        <translation>Inserisci il testo tradotto o sostitutivo da mostrare sulla pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="301"/>
+        <source>Pan Image after Zooming</source>
+        <translation>Sposta l'immagine dopo lo zoom</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="306"/>
+        <source>Zoom Out (Ctrl+-)</source>
+        <translation>Riduci (Ctrl+-)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="309"/>
+        <source>Fit</source>
+        <translation>Adatta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="310"/>
+        <source>Fit Page to Window (Ctrl+0)</source>
+        <translation>Adatta pagina alla finestra (Ctrl+0)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="314"/>
+        <source>Zoom In (Ctrl+= or Ctrl+Mouse Wheel)</source>
+        <translation>Ingrandisci (Ctrl+= o Ctrl+rotellina)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="334"/>
+        <source>Draw or Select Text Regions; typing in the Target Text field creates borderless text on the page</source>
+        <translation>Disegna o seleziona aree di testo; scrivendo nel campo Testo di destinazione si crea testo senza bordo sulla pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="384"/>
+        <source>Paint Areas to Clean, then click Apply Cleanup</source>
+        <translation>Dipingi le aree da pulire, poi fai clic su Applica pulizia</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="399"/>
+        <source>Apply Cleanup to the Painted Areas</source>
+        <translation>Applica pulizia alle aree dipinte</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="404"/>
+        <source>Revert All Inpainting on the Current Page (Undoable)</source>
+        <translation>Ripristina tutti i riempimenti della pagina corrente (annullabile)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="431"/>
+        <source>Artistic Edit (FLUX.2 Klein)</source>
+        <translation>Modifica artistica (FLUX.2 Klein)</translation>
     </message>
 </context>
 <context>
@@ -2436,7 +4045,7 @@ It may have been moved, renamed, or deleted.
         <translation>Impossibile trovare il file di progetto selezionato.
 Potrebbe essere stato spostato, rinominato o eliminato.
 
-{sentiero}</translation>
+{path}</translation>
     </message>
     <message>
         <location filename="../../app/controllers/projects.py" line="1420"/>
@@ -2447,6 +4056,16 @@ Potrebbe essere stato spostato, rinominato o eliminato.
         <location filename="../../app/controllers/projects.py" line="1421"/>
         <source>English</source>
         <translation>Inglese</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1516"/>
+        <source>Automatic translation</source>
+        <translation>Traduzione automatica</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/image.py" line="1544"/>
+        <source>There is no inpainting to revert on this page.</source>
+        <translation>Non ci sono riempimenti da ripristinare su questa pagina.</translation>
     </message>
 </context>
 <context>
@@ -2526,6 +4145,19 @@ Potrebbe essere stato spostato, rinominato o eliminato.
         <location filename="../../modules/translation/processor.py" line="68"/>
         <source>Yandex</source>
         <translation>Yandex</translation>
+    </message>
+    <message>
+        <location filename="../../modules/translation/processor.py" line="59"/>
+        <source>Local LLM</source>
+        <translation>LLM locale</translation>
+    </message>
+    <message>
+        <source>Google Gemini</source>
+        <translation>Google Gemini</translation>
+    </message>
+    <message>
+        <source>Anthropic Claude</source>
+        <translation>Anthropic Claude</translation>
     </message>
 </context>
 <context>
@@ -2620,6 +4252,881 @@ Potrebbe essere stato spostato, rinominato o eliminato.
         <location filename="../../app/ui/canvas/rectangle.py" line="81"/>
         <source>Translate</source>
         <translation>Traduci</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="36"/>
+        <source>No Data</source>
+        <translation>Nessun dato</translation>
+    </message>
+</context>
+<context>
+    <name>ArtisticEditController</name>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="54"/>
+        <source>The selected box has no recognized source text.</source>
+        <translation>Il riquadro selezionato non contiene testo originale riconosciuto.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="58"/>
+        <source>The selected box has no translation yet.</source>
+        <translation>Il riquadro selezionato non ha ancora una traduzione.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="170"/>
+        <source>Select exactly one box on the page.</source>
+        <translation>Seleziona un solo riquadro sulla pagina.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="174"/>
+        <source>Paint the area to edit with the cleanup brush.</source>
+        <translation>Dipingi l'area da modificare con il pennello di pulizia.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="180"/>
+        <source>Artistic Edit currently requires single-page mode.</source>
+        <translation>La modifica artistica richiede attualmente la modalità pagina singola.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="184"/>
+        <source>Open a comic page first.</source>
+        <translation>Apri prima una pagina del fumetto.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="191"/>
+        <source>Configure a FLUX Python executable in Artistic Edit settings or LOCAL_COMIC_TRANSLATE_FLUX_PYTHON.</source>
+        <translation>Configura l'eseguibile Python per FLUX nelle impostazioni di modifica artistica o tramite LOCAL_COMIC_TRANSLATE_FLUX_PYTHON.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="207"/>
+        <source>Select FLUX Python executable</source>
+        <translation>Seleziona l'eseguibile Python per FLUX</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="209"/>
+        <source>Python executable (python.exe);;All files (*)</source>
+        <translation>Eseguibile Python (python.exe);;Tutti i file (*)</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="215"/>
+        <source>The selected Python executable does not exist.</source>
+        <translation>L'eseguibile Python selezionato non esiste.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="223"/>
+        <source>FLUX Python selected. Enter a prompt and choose an edit area.</source>
+        <translation>Python per FLUX selezionato. Inserisci un'istruzione e scegli un'area da modificare.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="229"/>
+        <source>Select exactly one OCR text box first.</source>
+        <translation>Seleziona prima un solo riquadro di testo OCR.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="260"/>
+        <source>Paint an area before generating.</source>
+        <translation>Dipingi un'area prima di generare.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="264"/>
+        <source>Select exactly one box before generating.</source>
+        <translation>Seleziona un solo riquadro prima di generare.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="278"/>
+        <source>The selected LoRA is no longer available; refresh the list.</source>
+        <translation>La LoRA selezionata non è più disponibile; aggiorna l'elenco.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="297"/>
+        <source>Enter an edit prompt first.</source>
+        <translation>Inserisci prima un'istruzione di modifica.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="302"/>
+        <source>Whole-page Artistic Edit</source>
+        <translation>Modifica artistica dell'intera pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="304"/>
+        <source>A whole-page generation is slower and may alter unrelated artwork. Continue?</source>
+        <translation>La generazione dell'intera pagina è più lenta e può alterare altre parti del disegno. Continuare?</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="316"/>
+        <source>The current page could not be read.</source>
+        <translation>Impossibile leggere la pagina corrente.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="332"/>
+        <source>No valid FLUX Python executable is configured.</source>
+        <translation>Non è configurato un eseguibile Python valido per FLUX.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="386"/>
+        <source>Starting FLUX worker…</source>
+        <translation>Avvio del processo FLUX…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="432"/>
+        <source>Importing PyTorch and Diffusers…</source>
+        <translation>Importazione di PyTorch e Diffusers…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="435"/>
+        <source>Loading {model} BF16 weights…</source>
+        <translation>Caricamento dei pesi BF16 di {model}…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="440"/>
+        <source>Configuring {device}…</source>
+        <translation>Configurazione di {device}…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="483"/>
+        <source>FLUX model unloaded.</source>
+        <translation>Modello FLUX rimosso dalla memoria.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="508"/>
+        <source>Preview ready.</source>
+        <translation>Anteprima pronta.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="514"/>
+        <source>The preview belongs to another page. Return and regenerate it.</source>
+        <translation>L'anteprima appartiene a un'altra pagina. Torna a quella pagina e rigenerala.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="517"/>
+        <source>The page can no longer be read.</source>
+        <translation>La pagina non è più leggibile.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="521"/>
+        <source>The page geometry changed. Regenerate the preview.</source>
+        <translation>La geometria della pagina è cambiata. Rigenera l'anteprima.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="523"/>
+        <source>The source pixels changed. Regenerate before applying.</source>
+        <translation>I pixel originali sono cambiati. Rigenera prima di applicare.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="532"/>
+        <source>None</source>
+        <translation>Nessuna</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="535"/>
+        <source>Model: {model} | Precision: BF16 | LoRA: {lora} | Seed: {seed} | Steps: {steps} | Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution
+Prompt: {prompt}</source>
+        <translation>Modello: {model} | Precisione: BF16 | LoRA: {lora} | Seme: {seed} | Passaggi: {steps} | Tempo: {elapsed:.1f}s | Elaborato al {percent}% della risoluzione
+Istruzione: {prompt}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="583"/>
+        <source>The current page has no undo history.</source>
+        <translation>La pagina corrente non ha una cronologia di annullamento.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="607"/>
+        <location filename="../../app/controllers/artistic_edit.py" line="611"/>
+        <source>Artistic edit</source>
+        <translation>Modifica artistica</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="623"/>
+        <source>Artistic edit applied. Use Undo to reverse it.</source>
+        <translation>Modifica artistica applicata. Usa Annulla per ripristinare l'immagine.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="630"/>
+        <source>Cancelling Artistic Edit…</source>
+        <translation>Annullamento della modifica artistica…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="635"/>
+        <source>Artistic Edit cancelled.</source>
+        <translation>Modifica artistica annullata.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="648"/>
+        <source>Artistic Edit failed.</source>
+        <translation>Modifica artistica non riuscita.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="656"/>
+        <source>The FLUX model is not loaded.</source>
+        <translation>Il modello FLUX non è caricato.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="660"/>
+        <source>Unloading FLUX model…</source>
+        <translation>Rimozione del modello FLUX dalla memoria…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="671"/>
+        <source>There are no artistic edits to revert on this page.</source>
+        <translation>Non ci sono modifiche artistiche da ripristinare su questa pagina.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="680"/>
+        <source>Revert artistic edits</source>
+        <translation>Ripristina modifiche artistiche</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="696"/>
+        <source>Could not scan LoRAs: %1</source>
+        <translation>Impossibile cercare le LoRA: %1</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="435"/>
+        <source>Preparing {model} (BF16) runtime…</source>
+        <translation>Preparazione dell'ambiente {model} (BF16)…</translation>
+    </message>
+    <message>
+        <source>Cloud Artistic Edit</source>
+        <translation>Modifica artistica nel cloud</translation>
+    </message>
+    <message>
+        <source>Configure a Black Forest Labs API key in Settings &gt; Provider APIs.</source>
+        <translation>Configura una chiave API Black Forest Labs in Impostazioni &gt; API dei fornitori.</translation>
+    </message>
+    <message>
+        <source>Waiting for Black Forest Labs…</source>
+        <translation>In attesa di Black Forest Labs…</translation>
+    </message>
+    <message>
+        <source>Provider: Black Forest Labs | Model: {model} | Seed: {seed} | Elapsed: {elapsed:.1f}s | Prompt: {prompt}</source>
+        <translation>Fornitore: Black Forest Labs | Modello: {model} | Seed: {seed} | Tempo: {elapsed:.1f}s | Istruzione: {prompt}</translation>
+    </message>
+    <message>
+        <source>Send the selected area and surrounding context (or the whole page if selected) to Black Forest Labs? This is a paid request under your provider account. Content restrictions apply. Cancel stops waiting but may not stop billing. Continue?</source>
+        <translation>Inviare l’area selezionata e il contesto (o l’intera pagina, se selezionata) a Black Forest Labs? La richiesta è a pagamento sul tuo account del fornitore. Si applicano restrizioni sui contenuti. Annullare interrompe l’attesa, ma potrebbe non evitare l’addebito. Continuare?</translation>
+    </message>
+</context>
+<context>
+    <name>ArtisticEditPanel</name>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="67"/>
+        <source>Describe the local image edit…</source>
+        <translation>Descrivi la modifica locale dell'immagine…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="74"/>
+        <source>Use selected translation</source>
+        <translation>Usa traduzione selezionata</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="76"/>
+        <source>Artistic lettering</source>
+        <translation>Lettering artistico</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="77"/>
+        <source>Empty speech bubble</source>
+        <translation>Fumetto vuoto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="86"/>
+        <source>Generate Preview</source>
+        <translation>Genera anteprima</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="96"/>
+        <source>Select FLUX Python…</source>
+        <translation>Seleziona Python per FLUX…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="111"/>
+        <source>4B · Apache 2.0 · ~13 GB VRAM</source>
+        <translation>4B · Apache 2.0 · ~13 GB di VRAM</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="114"/>
+        <source>9B · Non-commercial · gated · ~29 GB VRAM</source>
+        <translation>9B · Non commerciale · Accesso limitato · ~29 GB di VRAM</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="116"/>
+        <source>Model</source>
+        <translation>Modello</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="123"/>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="426"/>
+        <source>None</source>
+        <translation>Nessuna</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="133"/>
+        <source>LoRA / strength</source>
+        <translation>LoRA / intensità</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="140"/>
+        <source>Selected box</source>
+        <translation>Riquadro selezionato</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="141"/>
+        <source>Painted area</source>
+        <translation>Area dipinta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="142"/>
+        <source>Whole page</source>
+        <translation>Intera pagina</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="144"/>
+        <source>Refresh</source>
+        <translation>Aggiorna</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="145"/>
+        <source>Refresh compatible LoRAs</source>
+        <translation>Aggiorna LoRA compatibili</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="147"/>
+        <source>Folder</source>
+        <translation>Cartella</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="148"/>
+        <source>Open the compatible LoRA folder</source>
+        <translation>Apri la cartella delle LoRA compatibili</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="155"/>
+        <source>Area</source>
+        <translation>Area</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="161"/>
+        <source>Extra room on each side of the selected box for larger lettering. Uses original page pixels, regardless of zoom. Start with 32–64 px. Artwork inside this margin can also change; check the preview. 0 keeps the original box boundary.</source>
+        <translation>Spazio aggiuntivo su ogni lato del riquadro per scritte più grandi. Usa i pixel originali, indipendentemente dallo zoom. Inizia con 32–64 px. Anche il disegno nel margine può cambiare: controlla l'anteprima. 0 mantiene il limite originale.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="166"/>
+        <source>Edit margin</source>
+        <translation>Margine di modifica</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="172"/>
+        <source>Advanced…</source>
+        <translation>Avanzate…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="190"/>
+        <source>Integer from 0 to 9223372036854775807</source>
+        <translation>Intero da 0 a 9223372036854775807</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="191"/>
+        <source>Random each run</source>
+        <translation>Casuale a ogni esecuzione</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="194"/>
+        <source>Seed</source>
+        <translation>Seme</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="199"/>
+        <source>Steps</source>
+        <translation>Passaggi</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="206"/>
+        <source>Surrounding artwork shown to FLUX as context. To keep lettering beyond the selected box, increase Edit margin.</source>
+        <translation>Disegno circostante mostrato a FLUX come contesto. Per mantenere le scritte oltre il riquadro, aumenta il margine di modifica.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="209"/>
+        <source>Context</source>
+        <translation>Contesto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="216"/>
+        <source>Feather</source>
+        <translation>Sfumatura</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="222"/>
+        <source>Max side</source>
+        <translation>Lato massimo</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="229"/>
+        <source>Distilled FLUX.2 Klein checkpoints may ignore guidance.</source>
+        <translation>I modelli distillati FLUX.2 Klein potrebbero ignorare la guida.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="231"/>
+        <source>Guidance</source>
+        <translation>Guida</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="234"/>
+        <source>Single GPU 0</source>
+        <translation>Solo GPU 0</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="235"/>
+        <source>Single GPU 1</source>
+        <translation>Solo GPU 1</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="236"/>
+        <source>Model CPU offload</source>
+        <translation>Scaricamento del modello su CPU</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="237"/>
+        <source>Sequential CPU offload</source>
+        <translation>Scaricamento sequenziale su CPU</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="238"/>
+        <source>Balanced multi-GPU (experimental)</source>
+        <translation>Multi-GPU bilanciato (sperimentale)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="239"/>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="243"/>
+        <source>Device</source>
+        <translation>Dispositivo</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="250"/>
+        <source>Physical CUDA device used by Model/Sequential CPU offload. Single-GPU and Balanced policies ignore this value.</source>
+        <translation>Dispositivo CUDA fisico usato per lo scaricamento del modello o sequenziale su CPU. Le modalità GPU singola e bilanciata ignorano questo valore.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="254"/>
+        <source>Offload GPU</source>
+        <translation>GPU per lo scaricamento</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="261"/>
+        <source>Cancel</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="263"/>
+        <source>Unload Model</source>
+        <translation>Rimuovi modello dalla memoria</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="268"/>
+        <source>Revert Artistic Edits</source>
+        <translation>Ripristina modifiche artistiche</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="376"/>
+        <source>Seed must be at most 9223372036854775807.</source>
+        <translation>Il seme non può superare 9223372036854775807.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="430"/>
+        <source>%1 (metadata warning)</source>
+        <translation>%1 (avviso sui metadati)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="483"/>
+        <source>An Artistic Edit is already running.</source>
+        <translation>Una modifica artistica è già in corso.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="485"/>
+        <source>Open a page and select an edit area.</source>
+        <translation>Apri una pagina e seleziona un'area da modificare.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="487"/>
+        <source>Enter an editing prompt first.</source>
+        <translation>Inserisci prima un'istruzione di modifica.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="489"/>
+        <source>Process the selected area with FLUX.2 Klein.</source>
+        <translation>Elabora l'area selezionata con FLUX.2 Klein.</translation>
+    </message>
+    <message>
+        <source>Local Diffusers</source>
+        <translation>Diffusers locale</translation>
+    </message>
+    <message>
+        <source>BFL seeds must be at most 4294967295.</source>
+        <translation>I seed BFL non devono superare 4294967295.</translation>
+    </message>
+    <message>
+        <source>Cloud editing uploads the selected area plus context and incurs provider charges. Configure the key in Provider APIs. Local LoRAs and GPU controls are unavailable.</source>
+        <translation>La modifica cloud carica l’area selezionata e il contesto e comporta costi del fornitore. Configura la chiave in API dei fornitori. I LoRA locali e i controlli GPU non sono disponibili.</translation>
+    </message>
+</context>
+<context>
+    <name>ArtisticEditPreviewDialog</name>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="65"/>
+        <source>Artistic Edit Preview</source>
+        <translation>Anteprima della modifica artistica</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="73"/>
+        <source>Before</source>
+        <translation>Prima</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="74"/>
+        <source>After</source>
+        <translation>Dopo</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="102"/>
+        <source>Fit</source>
+        <translation>Adatta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="103"/>
+        <source>Regenerate Same Seed</source>
+        <translation>Rigenera con lo stesso seme</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="104"/>
+        <source>Regenerate New Seed</source>
+        <translation>Rigenera con un nuovo seme</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="105"/>
+        <source>Discard</source>
+        <translation>Scarta</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/artistic_edit_preview.py" line="106"/>
+        <source>Apply</source>
+        <translation>Applica</translation>
+    </message>
+</context>
+<context>
+    <name>MBigView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="339"/>
+        <source>No Data</source>
+        <translation>Nessun dato</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFilePushButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="92"/>
+        <source>Click to browser file</source>
+        <translation>Fai clic per scegliere un file</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFileToolButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="160"/>
+        <source>Click to browser file</source>
+        <translation>Fai clic per scegliere un file</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFolderPushButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="439"/>
+        <source>Click to browser folder</source>
+        <translation>Fai clic per scegliere una cartella</translation>
+    </message>
+</context>
+<context>
+    <name>MClickBrowserFolderToolButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="492"/>
+        <source>Click to browser folder</source>
+        <translation>Fai clic per scegliere una cartella</translation>
+    </message>
+</context>
+<context>
+    <name>MClickSaveFileToolButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="227"/>
+        <source>Click to save file</source>
+        <translation>Fai clic per salvare il file</translation>
+    </message>
+</context>
+<context>
+    <name>MColorChart</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/color_palette.py" line="38"/>
+        <source>Click to Copy Color</source>
+        <translation>Fai clic per copiare il colore</translation>
+    </message>
+</context>
+<context>
+    <name>MComboBox</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/combo_box.py" line="84"/>
+        <source>Please Select</source>
+        <translation>Seleziona un'opzione</translation>
+    </message>
+</context>
+<context>
+    <name>MDragFileButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="319"/>
+        <source>Click to browser file</source>
+        <translation>Fai clic per scegliere un file</translation>
+    </message>
+</context>
+<context>
+    <name>MDragFolderButton</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="549"/>
+        <source>Click or drag folder here</source>
+        <translation>Fai clic o trascina una cartella qui</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/browser.py" line="552"/>
+        <source>Click to browser folder or drag folder here</source>
+        <translation>Scegli una cartella o trascinala qui</translation>
+    </message>
+</context>
+<context>
+    <name>MFontComboBox</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/combo_box.py" line="200"/>
+        <source>Please Select</source>
+        <translation>Seleziona un'opzione</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/combo_box.py" line="268"/>
+        <source>Font</source>
+        <translation>Carattere</translation>
+    </message>
+</context>
+<context>
+    <name>MHeaderView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="56"/>
+        <source>Select All</source>
+        <translation>Seleziona tutto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="57"/>
+        <source>Select None</source>
+        <translation>Deseleziona tutto</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="58"/>
+        <source>Select Invert</source>
+        <translation>Inverti selezione</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/header_view.py" line="68"/>
+        <source>Fit Size</source>
+        <translation>Adatta dimensioni</translation>
+    </message>
+</context>
+<context>
+    <name>MLineEdit</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="158"/>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="191"/>
+        <source>Enter key word to search...</source>
+        <translation>Inserisci una parola da cercare...</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="172"/>
+        <source>Error Detail Information</source>
+        <translation>Dettagli dell'errore</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="182"/>
+        <source>Error information will be here...</source>
+        <translation>Le informazioni sull'errore appariranno qui...</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="201"/>
+        <source>Click button to browser files</source>
+        <translation>Fai clic per scegliere i file</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="211"/>
+        <source>Click button to set save file</source>
+        <translation>Fai clic per scegliere il file di destinazione</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/line_edit.py" line="220"/>
+        <source>Click button to browser folder</source>
+        <translation>Fai clic per scegliere una cartella</translation>
+    </message>
+</context>
+<context>
+    <name>MListView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="393"/>
+        <source>No Data</source>
+        <translation>Nessun dato</translation>
+    </message>
+</context>
+<context>
+    <name>MTableView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="216"/>
+        <source>No Data</source>
+        <translation>Nessun dato</translation>
+    </message>
+</context>
+<context>
+    <name>MTreeView</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/item_view.py" line="309"/>
+        <source>No Data</source>
+        <translation>Nessun dato</translation>
+    </message>
+</context>
+<context>
+    <name>PatchCommands</name>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="127"/>
+        <source>Inpaint</source>
+        <translation>Riempimento immagine</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="129"/>
+        <source>Artistic edit</source>
+        <translation>Modifica artistica</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="130"/>
+        <source>Patch edit</source>
+        <translation>Modifica ritocco</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="229"/>
+        <source>Revert all patches</source>
+        <translation>Ripristina tutti i ritocchi</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="231"/>
+        <source>Revert inpainting</source>
+        <translation>Ripristina riempimento</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="233"/>
+        <source>Revert artistic edits</source>
+        <translation>Ripristina modifiche artistiche</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/commands/inpaint.py" line="235"/>
+        <source>Revert patches</source>
+        <translation>Ripristina ritocchi</translation>
+    </message>
+</context>
+<context>
+    <name>SearchableMenuBase</name>
+    <message>
+        <location filename="../../app/ui/dayu_widgets/menu.py" line="434"/>
+        <location filename="../../app/ui/dayu_widgets/menu.py" line="435"/>
+        <source>Search Action...</source>
+        <translation>Cerca azione...</translation>
+    </message>
+</context>
+<context>
+    <name>LocalRepairPanel</name>
+    <message>
+        <source>Restore brush</source>
+        <translation>Pennello di ripristino</translation>
+    </message>
+    <message>
+        <source>Brush back the original page pixels in a small area. Original text is restored too. Uses the brush size slider.</source>
+        <translation>Ripristina i pixel originali in una piccola area, incluso il testo originale. Usa il cursore della dimensione del pennello.</translation>
+    </message>
+    <message>
+        <source>Pick color</source>
+        <translation>Campiona colore</translation>
+    </message>
+    <message>
+        <source>Click an intact background area to sample its color.</source>
+        <translation>Fai clic su un'area intatta dello sfondo per campionarne il colore.</translation>
+    </message>
+    <message>
+        <source>Fill mask with sampled color</source>
+        <translation>Riempi maschera con il colore campionato</translation>
+    </message>
+    <message>
+        <source>Fill the painted or segmented mask on this page, without AI inpainting or extra mask expansion.</source>
+        <translation>Riempie la maschera dipinta o segmentata di questa pagina, senza inpainting IA né espansione aggiuntiva della maschera.</translation>
+    </message>
+<message>
+        <source>Clone brush</source>
+        <translation>Pennello clone</translation>
+    </message>
+<message>
+        <source>Set the brush size, then Alt-click to capture a fixed sample. Paint to repeat that sample. Dashed cyan marks the source; the solid circle follows the brush. Alt-click again after changing size.</source>
+        <translation>Imposta la dimensione del pennello, poi fai Alt-clic per acquisire un campione fisso. Dipingi per ripeterlo. Il cerchio ciano tratteggiato indica la sorgente; quello continuo segue il pennello. Ripeti Alt-clic dopo aver cambiato dimensione.</translation>
+    </message>
+<message>
+        <source>Sample original</source>
+        <translation>Campiona originale</translation>
+    </message>
+<message>
+        <source>Sample the page before cleanup patches. Turn off to sample the edited page. Alt-click again after changing this option.</source>
+        <translation>Usa la pagina prima delle correzioni di pulizia. Disattiva per usare la pagina modificata. Ripeti Alt-clic dopo aver cambiato questa opzione.</translation>
+    </message>
+<message>
+        <source>Soft edge</source>
+        <translation>Bordo morbido</translation>
+    </message>
+</context>
+<context>
+    <name>LocalRepairController</name>
+    <message>
+        <source>Wait for processing to finish before repairing the page.</source>
+        <translation>Attendi la fine dell'elaborazione prima di correggere la pagina.</translation>
+    </message>
+    <message>
+        <source>The original page image is unavailable.</source>
+        <translation>L'immagine originale della pagina non è disponibile.</translation>
+    </message>
+    <message>
+        <source>Restore area</source>
+        <translation>Ripristina area</translation>
+    </message>
+    <message>
+        <source>Pick a background color first.</source>
+        <translation>Campiona prima un colore di sfondo.</translation>
+    </message>
+    <message>
+        <source>Paint or segment the area to fill first.</source>
+        <translation>Dipingi o segmenta prima l'area da riempire.</translation>
+    </message>
+    <message>
+        <source>Sampled color fill</source>
+        <translation>Riempimento con colore campionato</translation>
+    </message>
+</context>
+<context>
+    <name>CloneBrushController</name>
+<message>
+        <source>Clone brush</source>
+        <translation>Pennello clone</translation>
+    </message>
+<message>
+        <source>The clone source image is unavailable.</source>
+        <translation>L'immagine sorgente per la clonazione non è disponibile.</translation>
+    </message>
+<message>
+        <source>Alt-click a clean area on this page to set the clone source.</source>
+        <translation>Fai Alt-clic su un'area pulita di questa pagina per impostare la sorgente.</translation>
     </message>
 </context>
 </TS>

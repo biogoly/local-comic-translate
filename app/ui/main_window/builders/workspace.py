@@ -1,5 +1,4 @@
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtCore import QSettings
 from PySide6.QtGui import QIntValidator
 
 from app.ui.dayu_widgets import dayu_theme
@@ -11,6 +10,8 @@ from app.ui.dayu_widgets.divider import MDivider
 from app.ui.dayu_widgets.line_edit import MLineEdit
 from app.ui.dayu_widgets.loading import MLoading
 from app.ui.dayu_widgets.menu import MMenu
+from app.ui.artistic_edit_panel import ArtisticEditPanel
+from app.ui.local_repair_panel import LocalRepairPanel
 from app.ui.dayu_widgets.progress_bar import MProgressBar
 from app.ui.dayu_widgets.push_button import MPushButton
 from app.ui.dayu_widgets.radio_button import MRadioButton
@@ -19,6 +20,7 @@ from app.ui.dayu_widgets.text_edit import MTextEdit
 from app.ui.dayu_widgets.tool_button import MToolButton
 from app.ui.search_replace_panel import SearchReplacePanel
 from app.ui.main_window.constants import supported_source_languages, supported_target_languages
+from modules.utils.settings import app_settings
 
 
 class WorkspaceMixin:
@@ -220,7 +222,7 @@ class WorkspaceMixin:
 
         main_text_settings_layout = QtWidgets.QHBoxLayout()
 
-        settings = QSettings("ComicLabs", "ComicTranslate")
+        settings = app_settings()
         settings.beginGroup("text_rendering")
         dflt_clr = settings.value("color", "#000000")
         dflt_outline_check = settings.value("outline", True, type=bool)
@@ -405,6 +407,7 @@ class WorkspaceMixin:
 
         inp_tools_lay.addWidget(self.brush_button)
         inp_tools_lay.addWidget(self.eraser_button)
+        self.local_repair_panel = LocalRepairPanel(tool_layout=inp_tools_lay)
         inp_tools_lay.addWidget(self.clear_brush_strokes_button)
         inp_tools_lay.addWidget(self.apply_inpaint_button)
         inp_tools_lay.addWidget(self.revert_inpaint_button)
@@ -426,6 +429,16 @@ class WorkspaceMixin:
         tools_layout.addWidget(inp_div)
         tools_layout.addLayout(inp_tools_lay)
         tools_layout.addWidget(self.brush_eraser_slider)
+
+        self.tool_buttons["restore"] = self.local_repair_panel.restore
+        self.tool_buttons["color_pick"] = self.local_repair_panel.pick
+        self.tool_buttons["clone"] = self.local_repair_panel.clone
+        tools_layout.addWidget(self.local_repair_panel)
+
+        artistic_edit_div = MDivider(self.tr("Artistic Edit (FLUX.2 Klein)"))
+        tools_layout.addWidget(artistic_edit_div)
+        self.artistic_edit_panel = ArtisticEditPanel()
+        tools_layout.addWidget(self.artistic_edit_panel)
         tools_layout.addStretch()
         tools_widget.setLayout(tools_layout)
 

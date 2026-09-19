@@ -17,6 +17,15 @@ from .builders import MainWindowBuildersMixin
 from .frame import EdgeResizer
 from .tools import ToolStateMixin
 
+THEME_PRESETS = {
+    "Dark": ("dark", MTheme.yellow),
+    "Light": ("light", MTheme.blue),
+    "Midnight": ("midnight", "#3aaed8"),
+    "Parchment": ("parchment", "#b86f47"),
+    "Lavender": ("lavender", "#8760a8"),
+    "Mint": ("mint", "#397f68"),
+}
+
 if sys.platform == "win32":
     WM_NCHITTEST = 0x0084
     HTCLIENT = 1
@@ -410,26 +419,23 @@ class ComicTranslateUI(
     def _apply_title_bar_style(self, theme: str) -> None:
         if not hasattr(self, "title_bar"):
             return
-        light = (theme == self.settings_page.ui.tr("Light")) if hasattr(self, "settings_page") else False
-        if light:
-            self.title_bar.apply_style(bg="#f0f0f0", fg="#1a1a1a", hover="rgba(0,0,0,25)")
-        else:
-            self.title_bar.apply_style(bg="#2b2b2b", fg="#e8e8e8", hover="rgba(255,255,255,30)")
+        bg = dayu_theme.background_selected_color if dayu_theme.is_dark else dayu_theme.header_color
+        hover = "rgba(255,255,255,30)" if dayu_theme.is_dark else "rgba(0,0,0,25)"
+        self.title_bar.apply_style(bg=bg, fg=dayu_theme.title_color, hover=hover)
 
     def apply_theme(self, theme: str):
-        if theme == self.settings_page.ui.tr("Light"):
-            dayu_theme.set_primary_color(MTheme.blue)
-            dayu_theme.set_theme("light")
-            is_dark = False
-        else:
-            dayu_theme.set_primary_color(MTheme.yellow)
-            dayu_theme.set_theme("dark")
-            is_dark = True
+        canonical_theme = self.settings_page.ui.value_mappings.get(theme, theme)
+        theme_key, accent = THEME_PRESETS.get(canonical_theme, THEME_PRESETS["Dark"])
+        dayu_theme.set_primary_color(accent)
+        dayu_theme.set_theme(theme_key)
 
         dayu_theme.apply(self)
         self._apply_title_bar_style(theme)
 
+        if hasattr(self, "artistic_edit_panel"):
+            self.artistic_edit_panel.apply_theme()
+
         if self.startup_home:
-            self.startup_home.apply_theme(is_dark)
+            self.startup_home.apply_theme(dayu_theme.is_dark)
 
         self.repaint()

@@ -32,7 +32,7 @@ class GPTTranslation(BaseLLMTranslation):
         self.model_name = model_name
         credentials = settings.get_credentials(settings.ui.tr('Open AI GPT'))
         self.api_key = credentials.get('api_key', '')
-        self.model = MODEL_MAP.get(self.model_name)
+        self.model = (credentials.get('model') or MODEL_MAP.get(self.model_name))
     
     def _perform_translation(self, user_prompt: str, system_prompt: str, image: np.ndarray) -> str:
         """
@@ -51,7 +51,7 @@ class GPTTranslation(BaseLLMTranslation):
             "Authorization": f"Bearer {self.api_key}"
         }
         
-        if self.supports_images and self.img_as_llm_input:
+        if self.supports_images and self.img_as_llm_input and image is not None:
             # Use the base class method to encode the image
             encoded_image, mime_type = self.encode_image(image)
             

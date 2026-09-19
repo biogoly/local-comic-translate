@@ -4,6 +4,7 @@ import logging
 from typing import TYPE_CHECKING
 from modules.translation.processor import Translator
 from modules.utils.translator_utils import set_upper_case
+from modules.utils.manual_regions import has_manual_translation
 from modules.utils.language_utils import to_canonical_language_name
 from pipeline.webtoon_utils import filter_and_convert_visible_blocks, restore_original_block_coordinates
 from .cache_manager import CacheManager
@@ -106,18 +107,19 @@ class TranslationHandler:
                     
                     set_upper_case([blk], upper_case)
             else:
+                blocks = [blk for blk in self.main_page.blk_list if not has_manual_translation(blk)]
                 # For full page translation, check if we can use cached results
-                if self.cache_manager._can_serve_all_blocks_from_translation_cache(translation_cache_key, self.main_page.blk_list):
+                if self.cache_manager._can_serve_all_blocks_from_translation_cache(translation_cache_key, blocks):
                     # All blocks can be served from cache with matching source text
-                    self.cache_manager._apply_cached_translations_to_blocks(translation_cache_key, self.main_page.blk_list)
-                    logger.info(f"Using cached translation results for all {len(self.main_page.blk_list)} blocks")
+                    self.cache_manager._apply_cached_translations_to_blocks(translation_cache_key, blocks)
+                    logger.info("Using cached translation results for %d unfinished blocks", len(blocks))
                 else:
                     # Need to run translation and cache results
-                    translator.translate(self.main_page.blk_list, image, extra_context)
-                    self.cache_manager._cache_translation_results(translation_cache_key, self.main_page.blk_list)
-                    logger.info("Translation completed and cached for %d blocks", len(self.main_page.blk_list))
+                    translator.translate(blocks, image, extra_context)
+                    self.cache_manager._cache_translation_results(translation_cache_key, blocks)
+                    logger.info("Translation completed and cached for %d blocks", len(blocks))
                 
-                set_upper_case(self.main_page.blk_list, upper_case)
+                set_upper_case(blocks, upper_case)
 
     def translate_webtoon_visible_area(self, single_block=False):
         """Perform translation on the visible area in webtoon mode."""
@@ -157,12 +159,17 @@ class TranslationHandler:
         upper_case = settings_page.ui.uppercase_checkbox.isChecked()
         
         translator = Translator(self.main_page, source_lang, target_lang)
-        translator.translate(visible_blocks, visible_image, extra_context)
-        
-        # Translation is set, now restore original coordinates
-        restore_original_block_coordinates(visible_blocks)
+        blocks = visible_blocks if single_block else [
+            blk for blk in visible_blocks if not has_manual_translation(blk)
+        ]
+        try:
+            if blocks:
+                translator.translate(blocks, visible_image, extra_context)
+        finally:
+            # Translation is set, now restore original coordinates.
+            restore_original_block_coordinates(visible_blocks)
         
         # Apply upper case if needed
-        set_upper_case(visible_blocks, upper_case)
+        set_upper_case(blocks, upper_case)
         
         logger.info(f"Translation completed for {len(visible_blocks)} blocks in visible area")

@@ -22,6 +22,8 @@ class MSizeGrip(QtWidgets.QSizeGrip):
 
 
 class MTextEdit(QtWidgets.QTextEdit):
+    editingFinished = QtCore.Signal()
+
     def __init__(self, parent=None):
         super(MTextEdit, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.SubWindow)
@@ -45,3 +47,10 @@ class MTextEdit(QtWidgets.QTextEdit):
         """Show the size grip on bottom right. User can use it to resize MTextEdit"""
         self._size_grip.setVisible(True)
         return self
+
+    def focusOutEvent(self, event):
+        # QTextEdit has no editingFinished signal. Emit one after the base class
+        # has completed the focus transition so IME commit text is available to
+        # application-level persistence handlers.
+        super(MTextEdit, self).focusOutEvent(event)
+        self.editingFinished.emit()

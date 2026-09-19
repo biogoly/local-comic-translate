@@ -60,6 +60,12 @@ class PatchManager:
                 }
                 if patch_data.get('patch_id') is not None:
                     prop['patch_id'] = patch_data['patch_id']
+                # Carry optional typing through to the scene item so patch
+                # kinds stay visible in diagnostics and item data.
+                if patch_data.get('kind') is not None:
+                    prop['kind'] = patch_data['kind']
+                if patch_data.get('metadata'):
+                    prop['metadata'] = patch_data['metadata']
                 
                 # Always convert from bbox even if scene_pos is available
                 # scene pos data may be stale if an image has been deleted

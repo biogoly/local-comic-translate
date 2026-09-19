@@ -18,6 +18,7 @@ from .drawing_manager import DrawingManager
 from .webtoons.webtoon_manager import LazyWebtoonManager
 from .interaction_manager import InteractionManager
 from .event_handler import EventHandler
+from .brush_cursor import BrushCursorOverlay
 
 
 class ImageViewer(QGraphicsView):
@@ -86,6 +87,7 @@ class ImageViewer(QGraphicsView):
         # Box drawing state
         self.start_point: QPointF = None
         self.current_rect: MoveableRectItem = None
+        self.brush_cursor_overlay = BrushCursorOverlay(self)
 
     # Properties to maintain public API
     @property
@@ -195,6 +197,10 @@ class ImageViewer(QGraphicsView):
         self.zoom += np.log(applied_factor) / np.log(self.ZOOM_FACTOR)
         if self.webtoon_mode:
             self.webtoon_manager.on_scroll()
+        self.brush_cursor_overlay.refresh()
+        repair = getattr(self, 'repair_controller', None)
+        if repair is not None:
+            repair.clone.refresh_cursor()
         return True
 
     def zoom_in(self) -> bool:
@@ -212,18 +218,22 @@ class ImageViewer(QGraphicsView):
             self.webtoon_manager.on_scroll()
 
     def set_tool(self, tool: str):
+        repair = getattr(self, "repair_controller", None)
+        if repair is not None:
+            repair.cancel()
+            repair.panel.clone_options.setVisible(tool == 'clone')
         self.current_tool = tool
         if tool == 'pan':
             self.setDragMode(QGraphicsView.ScrollHandDrag)
-        elif tool in ['brush', 'eraser']:
+        elif tool in ['brush', 'eraser', 'restore', 'clone']:
             self.setDragMode(QGraphicsView.NoDrag)
-            if tool == 'brush':
-                cursor = self.drawing_manager.brush_cursor
-            else:
-                cursor =  self.drawing_manager.eraser_cursor
-            self.setCursor(cursor)
+            self.setCursor(Qt.CrossCursor)
+        elif tool == 'color_pick':
+            self.setDragMode(QGraphicsView.NoDrag)
+            self.setCursor(Qt.CrossCursor)
         else:
             self.setDragMode(QGraphicsView.NoDrag)
+        self.brush_cursor_overlay.refresh()
 
     @property
     def brush_size(self):
@@ -264,12 +274,14 @@ class ImageViewer(QGraphicsView):
         return self.event_handler.handle_viewport_event(event)
 
     def set_br_er_size(self, size, scaled_size):
-        if self.current_tool == 'brush':
-            self.drawing_manager.set_brush_size(size, scaled_size)
-            self.setCursor(self.drawing_manager.brush_cursor)
+        if self.current_tool in {'brush', 'restore', 'clone'}:
+            self.drawing_manager.brush_size = size
         elif self.current_tool == 'eraser':
-            self.drawing_manager.set_eraser_size(size, scaled_size)
-            self.setCursor(self.drawing_manager.eraser_cursor)
+            self.drawing_manager.eraser_size = size
+        self.brush_cursor_overlay.refresh()
+        repair = getattr(self, 'repair_controller', None)
+        if repair is not None:
+            repair.clone.refresh_cursor()
 
     def constrain_point(self, point: QPointF) -> QPointF:
         if self.webtoon_mode:
@@ -326,10 +338,14 @@ class ImageViewer(QGraphicsView):
             # Rectangles and brush paths are editing guides, never comic art.
             # Hide them only while flattening the page so text-box borders and
             # cleanup strokes cannot leak into a saved image.
+            repair = getattr(self, 'repair_controller', None)
+            transient_items = repair.transient_items() if repair is not None else []
+            transient_items.append(self.brush_cursor_overlay.item)
             editor_items = [
                 item
                 for item in self._scene.items()
                 if isinstance(item, (MoveableRectItem, QGraphicsPathItem))
+                or item in transient_items
             ]
             editor_visibility = [(item, item.isVisible()) for item in editor_items]
             for item, _was_visible in editor_visibility:
@@ -412,7 +428,11 @@ class ImageViewer(QGraphicsView):
         self.setPhoto(pixmap, fit=fit)
 
     def clear_scene(self):
-        self.webtoon_manager.clear() 
+        self.brush_cursor_overlay.clear()
+        repair = getattr(self, "repair_controller", None)
+        if repair is not None:
+            repair.reset_page()
+        self.webtoon_manager.clear()
         self._scene.clear()
         self.rectangles.clear()
         self.text_items.clear()
@@ -422,6 +442,10 @@ class ImageViewer(QGraphicsView):
         self._scene.addItem(self.photo)
 
     def setPhoto(self, pixmap: QtGui.QPixmap = None, fit: bool = True):
+        self.brush_cursor_overlay.hide()
+        repair = getattr(self, "repair_controller", None)
+        if repair is not None:
+            repair.reset_page()
         if pixmap and not pixmap.isNull():
             self.empty = False
             self.photo.setPixmap(pixmap)

@@ -3,8 +3,16 @@ import os
 import uuid
 
 import imkit as imk
-from PySide6.QtCore import QPointF
+from PySide6.QtCore import QCoreApplication, QPointF
 from PySide6.QtGui import QUndoCommand
+
+from app.projects.patch_metadata import (
+    PATCH_KIND_FLUX2_EDIT,
+    PATCH_KIND_INPAINT,
+    normalize_patch_kind,
+    patch_matches_kind,
+    sanitize_patch_metadata,
+)
 
 from .base import PatchCommandBase
 
@@ -62,15 +70,19 @@ def _register_with_webtoon_patch_manager(viewer, item, prop: dict) -> None:
         page_items.append(item)
 
 class PatchInsertCommand(QUndoCommand, PatchCommandBase):
-    """Insert one inpainting pass as a fully undoable patch group."""
+    """Insert one patch group (inpaint pass or artistic edit) as an undo step."""
 
-    def __init__(self, ct, patches, file_path, display=True):
-        super().__init__("Inpaint")
+    def __init__(self, ct, patches, file_path, display=True, kind=None, text=None, metadata=None):
+        # ``kind=None`` keeps records legacy-shaped (no kind field); callers
+        # that opt in store an explicit kind on every generated patch record.
+        self.kind = None if kind is None else normalize_patch_kind(kind)
+        super().__init__(text or self._default_text(self.kind))
         self.ct = ct
         self.viewer = ct.image_viewer
         self.scene = self.viewer._scene
         self.file_path = file_path
         self.display_hint = bool(display)
+        self.metadata = sanitize_patch_metadata(metadata)
         self._first_redo = True
         self._owned_patch_ids: set[str] | None = None
 
@@ -103,7 +115,19 @@ class PatchInsertCommand(QUndoCommand, PatchCommandBase):
                 prop["scene_pos"] = patch["scene_pos"]
             if "page_index" in patch:
                 prop["page_index"] = patch["page_index"]
+            if self.kind is not None:
+                prop["kind"] = self.kind
+            if self.metadata:
+                prop["metadata"] = dict(self.metadata)
             self.properties_list.append(prop)
+
+    @staticmethod
+    def _default_text(kind):
+        if kind is None or kind == PATCH_KIND_INPAINT:
+            return QCoreApplication.translate("PatchCommands", "Inpaint")
+        if kind == PATCH_KIND_FLUX2_EDIT:
+            return QCoreApplication.translate("PatchCommands", "Artistic edit")
+        return QCoreApplication.translate("PatchCommands", "Patch edit")
 
     def _should_draw(self) -> bool:
         return _page_is_visible(self.ct, self.file_path) or (
@@ -116,7 +140,10 @@ class PatchInsertCommand(QUndoCommand, PatchCommandBase):
             self._owned_patch_ids = set()
             existing_content = list(patches_list)
             for prop in self.properties_list:
-                if any(_same_patch_content(existing, prop) for existing in existing_content):
+                # Instance identity (patch_id when available) keeps two
+                # visually identical patches from deduplicating each other;
+                # legacy records without ids still fall back to content.
+                if any(_same_patch_instance(existing, prop) for existing in existing_content):
                     continue
                 self._owned_patch_ids.add(prop["patch_id"])
                 existing_content.append(prop)
@@ -187,17 +214,39 @@ class PatchInsertCommand(QUndoCommand, PatchCommandBase):
 
 
 class PatchClearCommand(QUndoCommand, PatchCommandBase):
-    """Remove every inpainting patch from one page, with undo restoration."""
+    """Remove one kind of patch from a page, with undo restoration.
 
-    def __init__(self, ct, file_path: str):
-        super().__init__("Revert inpainting")
+    ``kind=None`` keeps the historical "revert everything" behavior. The
+    Revert Inpainting action passes ``kind="inpaint"`` so accepted artistic
+    edits are never removed by it (legacy patches without a kind count as
+    inpaint).
+    """
+
+    def __init__(self, ct, file_path: str, kind=None, text=None):
+        self.kind = None if kind is None else normalize_patch_kind(kind)
+        if text is None:
+            if self.kind is None:
+                text = QCoreApplication.translate("PatchCommands", "Revert all patches")
+            elif self.kind == PATCH_KIND_INPAINT:
+                text = QCoreApplication.translate("PatchCommands", "Revert inpainting")
+            elif self.kind == PATCH_KIND_FLUX2_EDIT:
+                text = QCoreApplication.translate("PatchCommands", "Revert artistic edits")
+            else:
+                text = QCoreApplication.translate("PatchCommands", "Revert patches")
+        super().__init__(text)
         self.ct = ct
         self.viewer = ct.image_viewer
         self.scene = self.viewer._scene
         self.file_path = file_path
-        self.properties_list = [
-            dict(patch) for patch in ct.image_patches.get(file_path, [])
+        # Remember each captured patch's original list position so undo can
+        # restore the canonical compositing order relative to patches of
+        # other kinds that stayed in the list.
+        self.captured = [
+            (index, dict(patch))
+            for index, patch in enumerate(ct.image_patches.get(file_path, []))
+            if self.kind is None or patch_matches_kind(patch, self.kind)
         ]
+        self.properties_list = [properties for _index, properties in self.captured]
 
     def redo(self):
         for properties in self.properties_list:
@@ -220,11 +269,39 @@ class PatchClearCommand(QUndoCommand, PatchCommandBase):
             if not any(_same_patch_instance(patch, saved) for saved in captured)
         ]
 
+    def _restore_visual_order(self) -> None:
+        """Match equal-Z scene stacking to the persisted patch-list order."""
+        ordered_items = []
+        for properties in self.ct.image_patches.get(self.file_path, []):
+            prop = _display_properties(self.ct, self.file_path, properties)
+            item = self.find_matching_item(self.scene, prop)
+            if item is not None:
+                ordered_items.append(item)
+
+        # Patch items intentionally share z=0.5. Qt otherwise places a newly
+        # restored item above its untouched siblings, even when its record was
+        # reinserted at an earlier list position. Re-add the page's items in
+        # canonical bottom-to-top order. Keep Python references throughout so
+        # removing an item never releases it before it is returned to the scene.
+        for item in ordered_items:
+            self.scene.removeItem(item)
+        for item in ordered_items:
+            self.scene.addItem(item)
+        self.scene.update()
+
     def undo(self):
         patches = self.ct.image_patches.setdefault(self.file_path, [])
-        for properties in self.properties_list:
-            if not any(_same_patch_instance(existing, properties) for existing in patches):
-                patches.append(dict(properties))
+        captured_props = [properties for _index, properties in self.captured]
+        restored = [
+            patch
+            for patch in patches
+            if not any(_same_patch_instance(patch, saved) for saved in captured_props)
+        ]
+        # Re-insert at the original indices (ascending) so a filtered revert
+        # restores the exact pre-clear order around the untouched kinds.
+        for index, properties in self.captured:
+            restored.insert(min(index, len(restored)), dict(properties))
+        patches[:] = restored
 
         if not _page_is_visible(self.ct, self.file_path):
             return
@@ -250,3 +327,4 @@ class PatchClearCommand(QUndoCommand, PatchCommandBase):
                 item = self.create_patch_item(prop, self.viewer)
             _register_with_webtoon_patch_manager(self.viewer, item, prop)
 
+        self._restore_visual_order()

@@ -30,18 +30,6 @@ class Messages:
         )
 
     @staticmethod
-    def show_not_logged_in_error(parent):
-        MMessage.error(
-            text=QCoreApplication.translate(
-                "Messages",
-                "Please sign in or sign up via Settings > Account to continue."
-            ),
-            parent=parent,
-            duration=None,
-            closable=True
-        )
-
-    @staticmethod
     def show_translator_language_not_supported(parent):
         MMessage.error(
             text=QCoreApplication.translate(
@@ -67,55 +55,10 @@ class Messages:
 
     @staticmethod
     def show_insufficient_credits_error(parent, details: str = None):
-        """
-        Show an error message when the user has insufficient credits.
-        
-        Args:
-            parent: parent widget
-            details: optional detailed message from backend
-        """
-        msg = QtWidgets.QMessageBox(parent)
-        msg.setIcon(QtWidgets.QMessageBox.Warning)
-        msg.setWindowTitle(QCoreApplication.translate("Messages", "Insufficient Credits"))
-        msg.setText(QCoreApplication.translate(
-            "Messages", 
-            "Insufficient credits to perform this action.\nGo to Settings > Account to buy more credits."
-        ))
-        
-        if details:
-            msg.setDetailedText(details)
-
-        buy_btn = msg.addButton(
-            QCoreApplication.translate("AccountPage", "Buy Credits"),
-            QtWidgets.QMessageBox.ButtonRole.ActionRole,
-        )
-        ok_btn = msg.addButton(
-            QCoreApplication.translate("Messages", "OK"),
-            QtWidgets.QMessageBox.ButtonRole.AcceptRole,
-        )
-        msg.setDefaultButton(ok_btn)
-        msg.exec()
-
-        if msg.clickedButton() == buy_btn:
-            settings_page = getattr(parent, "settings_page", None)
-            if settings_page is not None and hasattr(settings_page, "start_buy_credits_flow"):
-                settings_page.start_buy_credits_flow()
-
-    @staticmethod
-    def show_custom_not_configured_error(parent):
-        """
-        Show an error message when Custom is selected without proper configuration.
-        Guides users to use the Credits system instead.
-        """
-        MMessage.error(
-            text=QCoreApplication.translate(
-                "Messages",
-                "Custom requires advanced API configuration. Most users should use the Credits system instead.\n"
-                "Please sign in via Settings > Account to use credits, or configure Custom API settings in Settings > Advanced."
-            ),
-            parent=parent,
-            duration=None,
-            closable=True
+        Messages.show_error_with_copy(
+            parent, QCoreApplication.translate("Messages", "Provider APIs"),
+            QCoreApplication.translate("Messages", "Check your provider's billing and API limits."),
+            detailed_text=details,
         )
 
     @staticmethod

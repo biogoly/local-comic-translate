@@ -2,6 +2,7 @@ import numpy as np
 from typing import Any
 
 from modules.utils.textblock import TextBlock
+from modules.detection.heuristic_lines import annotate_blocks_with_heuristic_lines
 from modules.utils.language_utils import language_codes, \
     get_lang_code_for_script, get_ocr_bucket_for_script, \
     get_dominant_page_script, is_supported_script, normalize_script
@@ -60,6 +61,15 @@ class OCRProcessor:
         """
 
         self._set_source_language(blk_list)
+
+        # Drawing a rectangle bypasses DetectionEngine.create_text_blocks(),
+        # which normally prepares individual lines and their reading direction.
+        # Use the same preparation before local OCR, including on mixed pages
+        # where PP-OCR would otherwise treat each unprepared paragraph as a line.
+        if self.ocr_key == 'Default':
+            missing_lines = [blk for blk in blk_list if not getattr(blk, 'lines', None)]
+            if missing_lines:
+                annotate_blocks_with_heuristic_lines(img, missing_lines)
 
         if self.source_lang_english == 'Auto':
             return self._process_auto(img, blk_list)
