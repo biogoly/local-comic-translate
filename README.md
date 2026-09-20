@@ -1,6 +1,6 @@
 # Local Comic Translate
 
-English | [한국어](docs/README_ko.md) | [Français](docs/README_fr.md) | [简体中文](docs/README_zh-CN.md)
+English | [한국어](docs/README_ko.md) | [Français](docs/README_fr.md) | [简体中文](docs/README_zh-CN.md) | [Español](docs/README_es.md)
 
 <img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate interface">
 
@@ -8,7 +8,7 @@ Local Comic Translate is a community fork of [Comic Translate](https://github.co
 
 The inherited OCR pipeline supports English, Korean, Japanese, French, Simplified and Traditional Chinese, Russian, German, Dutch, Spanish, and Italian as source languages, with those and additional languages available as translation targets.
 
-This fork is under active development. The changes described below currently require running from source; the downloads on the upstream Comic Translate website do not include them. The translated README files also still describe the upstream project and may not yet reflect the fork-specific features.
+This fork is under active development. The changes described below currently require running from source; the downloads on the upstream Comic Translate website do not include them. The language links above provide translations of this fork's current documentation. Settings and button labels are kept in English in these guides so they can be matched across interface languages.
 
 ## Latest update — 0.1.0
 
@@ -90,7 +90,7 @@ API reference: [BFL image editing](https://docs.bfl.ai/flux_2/flux2_image_editin
 
 - Six themes: **Dark**, **Light**, **Midnight**, **Parchment**, **Lavender**, and **Mint**. Artistic Edit buttons have theme-aware backgrounds, readable labels, and visible borders.
 - Updated startup splash and fork branding.
-- The interface offers English, Korean, French, Simplified Chinese, Russian, Japanese, German, Spanish, and Italian. New-feature translations are included in all nine Qt catalogs, including the additional Turkish catalog (not currently offered by the language selector). Coverage checks validate placeholders and compiled catalogs; this is separate from the older translated README files.
+- The interface offers English, Korean, French, Simplified Chinese, Russian, Japanese, German, Spanish, and Italian. New-feature translations are included in all nine Qt catalogs, including the additional Turkish catalog (not currently offered by the language selector). Coverage checks validate placeholders and compiled catalogs; interface languages are independent of the README translations linked above.
 - The fork uses its own settings, application-data paths, and application identity to avoid interference from a separately installed upstream version. Legacy data migration is read-only with respect to the old profile.
 - Automatic startup update checks are disabled, and the account/subscription sales UI is removed. Manual **Check for Updates** now targets this fork's GitHub releases rather than upstream.
 
@@ -270,7 +270,6 @@ The release checks include manual-region OCR and preservation, local/API provide
 - Vision input requires a genuinely multimodal model, a compatible server, and (when applicable) the matching projector file.
 - Local generation quality and speed depend heavily on model choice, context size, and available RAM/VRAM.
 - Artistic Edit currently requires single-page mode; it is not a book-wide automatic stage or a webtoon multi-page editor. Generated lettering must be checked for spelling and unwanted artwork changes before applying it.
-- The other-language README files have not yet been updated with fork-specific documentation.
 
 ## Comic samples from the upstream project
 
