@@ -88,7 +88,7 @@ This fork is under active development. The changes described below currently req
 API reference: [BFL image editing](https://docs.bfl.ai/flux_2/flux2_image_editing). Cloud integration has automated mocked transport/controller coverage, and live Flux and LLM API requests have been confirmed during development. This is not a guarantee for every provider or model; account access, content policies, and charges still depend on your chosen service.
 
 Artistic Edit Example 1
-<img width="3836" height="2088" alt="flux2-example-1" src="https://github.com/user-attachments/assets/dabc5d6c-7a2f-44f1-9f2f-b6c6893ff7a6" />
+<img width="3261" height="1980" alt="flux2-example-1 5" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
 
 Artistic Edit Example 2
 <img width="3271" height="2069" alt="flux2-example-2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
