@@ -2,7 +2,8 @@
 
 English | [한국어](docs/README_ko.md) | [Français](docs/README_fr.md) | [简体中文](docs/README_zh-CN.md) | [Español](docs/README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate interface">
+<img width="1641" height="1001" alt="pepper-and-carrot-1" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
+ 
 
 Local Comic Translate is a community fork of [Comic Translate](https://github.com/ogkalu2/comic-translate) focused on private, local translation and a safer hands-on desktop editing workflow. It keeps the upstream application's detection, OCR, inpainting, rendering, project, archive, and webtoon features while adding managed `llama.cpp` translation, FLUX.2 Klein artistic editing, optional direct provider APIs, and substantial editing and reliability improvements. No upstream account, subscription, or translation credits are required.
 
@@ -85,6 +86,16 @@ This fork is under active development. The changes described below currently req
 - Cancel stops waiting for a cloud result; it cannot guarantee cancellation of the provider's job or charges. Failed or uncertain submissions are never automatically resubmitted. After a timeout, check the provider dashboard before retrying. Content restrictions can differ from local models.
 
 API reference: [BFL image editing](https://docs.bfl.ai/flux_2/flux2_image_editing). Cloud integration has automated mocked transport/controller coverage, and live Flux and LLM API requests have been confirmed during development. This is not a guarantee for every provider or model; account access, content policies, and charges still depend on your chosen service.
+
+Artistic Edit Example 1
+<img width="3836" height="2088" alt="flux2-example-1" src="https://github.com/user-attachments/assets/dabc5d6c-7a2f-44f1-9f2f-b6c6893ff7a6" />
+
+Artistic Edit Example 2
+<img width="3271" height="2069" alt="flux2-example-2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+
+Artistic Edit Example 3
+<img width="3273" height="1990" alt="Flux2-example-3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
+
 
 ### Desktop appearance, languages, and fork isolation
 
