@@ -2,7 +2,7 @@
 
 [English](../README.md) | [한국어](README_ko.md) | Français | [简体中文](README_zh-CN.md) | [Español](README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Interface de Comic Translate">
+<img width="1641" height="1001" alt="Interface de Comic Translate" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate est un fork communautaire de [Comic Translate](https://github.com/ogkalu2/comic-translate), axé sur la traduction locale et confidentielle ainsi que sur un travail de retouche manuelle plus sûr dans une application de bureau. Il conserve les fonctions de détection, d’OCR, d’inpainting, de rendu, de gestion des projets et des archives, et de prise en charge des webtoons de l’application d’origine. Il y ajoute la traduction avec `llama.cpp` géré par l’application, la retouche artistique avec FLUX.2 Klein, des API directes de fournisseurs en option, ainsi que de nombreuses améliorations de l’édition et de la fiabilité. Aucun compte, abonnement ni crédit de traduction du service d’origine n’est nécessaire.
 
@@ -85,6 +85,18 @@ Ce fork est en développement actif. Les modifications décrites ci-dessous néc
 - Cancel arrête l’attente du résultat cloud ; il ne garantit ni l’annulation de la tâche chez le fournisseur ni celle de la facturation. Les envois échoués ou dont le résultat est incertain ne sont jamais relancés automatiquement. Après un dépassement de délai, consultez le tableau de bord du fournisseur avant de réessayer. Les restrictions de contenu peuvent différer de celles des modèles locaux.
 
 Documentation de l’API : [retouche d’images BFL](https://docs.bfl.ai/flux_2/flux2_image_editing). L’intégration cloud est couverte par des tests automatisés simulant les communications et les contrôleurs ; de véritables requêtes aux API Flux et LLM ont également été validées pendant le développement. Cela ne constitue pas une garantie pour chaque fournisseur ou modèle : l’accès au compte, les règles de contenu et les frais dépendent toujours du service choisi.
+
+Exemple de retouche artistique 1
+
+<img width="3261" height="1980" alt="Exemple de retouche artistique 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+Exemple de retouche artistique 2
+
+<img width="3271" height="2069" alt="Exemple de retouche artistique 2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+
+Exemple de retouche artistique 3
+
+<img width="3273" height="1990" alt="Exemple de retouche artistique 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
 
 ### Apparence, langues et séparation du fork
 

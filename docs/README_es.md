@@ -2,7 +2,7 @@
 
 [English](../README.md) | [한국어](README_ko.md) | [Français](README_fr.md) | [简体中文](README_zh-CN.md) | Español
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Interfaz de Comic Translate">
+<img width="1641" height="1001" alt="Interfaz de Comic Translate" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate es una bifurcación comunitaria de [Comic Translate](https://github.com/ogkalu2/comic-translate) centrada en la traducción privada y local, y en un flujo de edición de escritorio más seguro y supervisado. Conserva las funciones del proyecto original de detección, OCR, relleno de imágenes (inpainting), renderizado, proyectos, archivos comprimidos y webtoons, y añade traducción con `llama.cpp` gestionado por la aplicación, edición artística con FLUX.2 Klein, APIs directas de proveedores opcionales y mejoras importantes de edición y fiabilidad. No requiere una cuenta, suscripción ni créditos de traducción del servicio del proyecto original.
 
@@ -85,6 +85,18 @@ Esta bifurcación está en desarrollo activo. Los cambios descritos a continuaci
 - Cancel deja de esperar el resultado en la nube; no garantiza cancelar el trabajo ni los cargos del proveedor. Las solicitudes fallidas o de resultado incierto nunca se vuelven a enviar automáticamente. Tras un tiempo de espera agotado, revisa el panel del proveedor antes de reintentar. Las restricciones de contenido pueden diferir de las de los modelos locales.
 
 Referencia de la API: [edición de imágenes de BFL](https://docs.bfl.ai/flux_2/flux2_image_editing). La integración en la nube cuenta con pruebas automatizadas de transporte y controladores simulados, y durante el desarrollo se ha confirmado el funcionamiento de solicitudes reales a las APIs de Flux y LLM. Esto no garantiza el funcionamiento de todos los proveedores o modelos; el acceso de la cuenta, las políticas de contenido y los cargos dependen del servicio elegido.
+
+Ejemplo de edición artística 1
+
+<img width="3261" height="1980" alt="Ejemplo de edición artística 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+Ejemplo de edición artística 2
+
+<img width="3271" height="2069" alt="Ejemplo de edición artística 2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+
+Ejemplo de edición artística 3
+
+<img width="3273" height="1990" alt="Ejemplo de edición artística 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
 
 ### Apariencia del escritorio, idiomas y aislamiento de la bifurcación
 

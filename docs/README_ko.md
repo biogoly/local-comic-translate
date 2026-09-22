@@ -2,7 +2,7 @@
 
 [English](../README.md) | 한국어 | [Français](README_fr.md) | [简体中文](README_zh-CN.md) | [Español](README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate 인터페이스">
+<img width="1641" height="1001" alt="Comic Translate 인터페이스" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate는 [Comic Translate](https://github.com/ogkalu2/comic-translate)의 커뮤니티 포크로, 개인정보를 보호하는 로컬 번역과 더 안전하게 직접 편집할 수 있는 데스크톱 작업 흐름에 중점을 둡니다. 원본 애플리케이션의 감지, OCR, 인페인팅, 렌더링, 프로젝트, 압축 파일, 웹툰 기능을 유지하면서 관리형 `llama.cpp` 번역, FLUX.2 Klein 아트 편집, 선택적으로 사용할 수 있는 제공업체 직접 API, 다양한 편집 및 안정성 개선을 추가했습니다. 원본 서비스의 계정이나 구독, 번역 크레딧은 필요하지 않습니다.
 
@@ -85,6 +85,18 @@ Local Comic Translate는 [Comic Translate](https://github.com/ogkalu2/comic-tran
 - 취소는 클라우드 결과를 기다리는 동작을 중지합니다. 제공업체의 작업이나 요금 청구까지 취소된다고 보장하지는 않습니다. 실패했거나 성공 여부가 불확실한 요청은 자동으로 다시 전송하지 않습니다. 시간 초과가 발생하면 재시도하기 전에 제공업체 대시보드를 확인하세요. 콘텐츠 제한은 로컬 모델과 다를 수 있습니다.
 
 API 참고 문서: [BFL 이미지 편집](https://docs.bfl.ai/flux_2/flux2_image_editing). 클라우드 연동에는 전송 및 컨트롤러를 모의 구현한 자동화 테스트가 있으며, 개발 중 실제 Flux 및 LLM API 요청도 확인했습니다. 이것이 모든 제공업체나 모델에서의 동작을 보장하지는 않습니다. 계정 접근 권한, 콘텐츠 정책, 요금은 선택한 서비스에 따라 달라집니다.
+
+아트 편집 예시 1
+
+<img width="3261" height="1980" alt="아트 편집 예시 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+아트 편집 예시 2
+
+<img width="3271" height="2069" alt="아트 편집 예시 2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+
+아트 편집 예시 3
+
+<img width="3273" height="1990" alt="아트 편집 예시 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
 
 ### 데스크톱 외관, 언어, 포크 격리
 

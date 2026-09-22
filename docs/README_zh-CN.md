@@ -2,7 +2,7 @@
 
 [English](../README.md) | [한국어](README_ko.md) | [Français](README_fr.md) | 简体中文 | [Español](README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate 界面">
+<img width="1641" height="1001" alt="Comic Translate 界面" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate 是 [Comic Translate](https://github.com/ogkalu2/comic-translate) 的社区分支，专注于保护隐私的本地翻译，以及更安全、便于手动操作的桌面编辑流程。它保留了上游应用的检测、OCR、图像修复、渲染、项目、压缩包和条漫功能，同时加入了托管式 `llama.cpp` 翻译、FLUX.2 Klein 艺术编辑、可选的服务商直连 API，并大幅改进了编辑体验和可靠性。无需上游账号、订阅或翻译点数。
 
@@ -85,6 +85,18 @@ Local Comic Translate 是 [Comic Translate](https://github.com/ogkalu2/comic-tra
 - Cancel 会停止等待云端结果，但无法保证取消服务商的任务或费用。失败或状态不确定的提交绝不会自动重新提交。超时后，请先检查服务商控制台，再决定是否重试。云端内容限制可能与本地模型不同。
 
 API 参考：[BFL 图像编辑](https://docs.bfl.ai/flux_2/flux2_image_editing)。云端集成具备使用模拟对象的传输层与控制器自动化测试覆盖，开发期间也已验证真实的 Flux 和 LLM API 请求。这并不保证所有服务商或模型都可用；账号访问权限、内容政策和收费仍取决于所选服务。
+
+艺术编辑示例 1
+
+<img width="3261" height="1980" alt="艺术编辑示例 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+艺术编辑示例 2
+
+<img width="3271" height="2069" alt="艺术编辑示例 2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+
+艺术编辑示例 3
+
+<img width="3273" height="1990" alt="艺术编辑示例 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
 
 ### 桌面外观、语言与分支隔离
 
