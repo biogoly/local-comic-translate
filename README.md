@@ -91,7 +91,7 @@ Artistic Edit Example 1
 <img width="3261" height="1980" alt="flux2-example-1 5" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
 
 Artistic Edit Example 2
-<img width="3271" height="2069" alt="flux2-example-2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+<img width="3261" height="1996" alt="flux2-example-2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
 
 Artistic Edit Example 3
 <img width="3273" height="1990" alt="Flux2-example-3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
