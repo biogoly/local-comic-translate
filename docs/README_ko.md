@@ -92,7 +92,7 @@ API 참고 문서: [BFL 이미지 편집](https://docs.bfl.ai/flux_2/flux2_image
 
 아트 편집 예시 2
 
-<img width="3271" height="2069" alt="아트 편집 예시 2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+<img width="3261" height="1996" alt="아트 편집 예시 2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
 
 아트 편집 예시 3
 

@@ -92,7 +92,7 @@ Exemple de retouche artistique 1
 
 Exemple de retouche artistique 2
 
-<img width="3271" height="2069" alt="Exemple de retouche artistique 2" src="https://github.com/user-attachments/assets/ba29d9fd-8c12-4d2c-8c8f-8854104e088e" />
+<img width="3261" height="1996" alt="Exemple de retouche artistique 2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
 
 Exemple de retouche artistique 3
 
