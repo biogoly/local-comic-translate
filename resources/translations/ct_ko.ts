@@ -85,6 +85,14 @@
 <context>
     <name>ComicTranslate</name>
     <message>
+        <source>Portuguese (Portugal)</source>
+        <translation>포르투갈어(포르투갈)</translation>
+    </message>
+    <message>
+        <source>Portuguese (Brazil)</source>
+        <translation>포르투갈어(브라질)</translation>
+    </message>
+    <message>
         <location filename="../../controller.py" line="565"/>
         <location filename="../../controller.py" line="575"/>
         <source>Error</source>
@@ -763,9 +771,22 @@ It may have been moved, renamed, or deleted.
         <source>English</source>
         <translation>영어</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
+        <source>Artistic Edit</source>
+        <translation>아트 편집</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
+    <message>
+        <source>Portuguese (Portugal)</source>
+        <translation>포르투갈어(포르투갈)</translation>
+    </message>
+    <message>
+        <source>Portuguese (Brazil)</source>
+        <translation>포르투갈어(브라질)</translation>
+    </message>
     <message>
         <location filename="../../app/ui/main_window/window.py" line="100"/>
         <source>Auto</source>
@@ -1547,6 +1568,11 @@ It may have been moved, renamed, or deleted.
 이동되었거나 이름이 바뀌었거나 삭제되었을 수 있습니다.
 
 {path}</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
+        <source>Artistic Edit</source>
+        <translation>아트 편집</translation>
     </message>
 </context>
 <context>
@@ -3551,6 +3577,11 @@ back on the Image (for further editing)</source>
         <source>Artistic Edit (FLUX.2 Klein)</source>
         <translation>아트 편집 (FLUX.2 Klein)</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
+        <source>Artistic Edit</source>
+        <translation>아트 편집</translation>
+    </message>
 </context>
 <context>
     <name>_ProjectDetailsPopup</name>
@@ -4504,6 +4535,115 @@ Prompt: {prompt}</source>
         <source>Send the selected area and surrounding context (or the whole page if selected) to Black Forest Labs? This is a paid request under your provider account. Content restrictions apply. Cancel stops waiting but may not stop billing. Continue?</source>
         <translation>선택 영역과 주변 컨텍스트(전체 페이지 선택 시 전체 페이지)를 Black Forest Labs로 전송할까요? 본인의 제공업체 계정에 요금이 청구되는 요청입니다. 콘텐츠 제한이 적용됩니다. 취소하면 대기는 중단되지만 요금 청구는 중단되지 않을 수 있습니다. 계속할까요?</translation>
     </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="587"/>
+        <source>Connecting to ComfyUI…</source>
+        <translation>ComfyUI에 연결 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="1112"/>
+        <source>Stopping ComfyUI…</source>
+        <translation>ComfyUI 중지 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="586"/>
+        <source>Starting ComfyUI…</source>
+        <translation>ComfyUI 시작 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="588"/>
+        <source>Uploading edit area…</source>
+        <translation>편집 영역 업로드 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="589"/>
+        <source>Submitting ComfyUI edit…</source>
+        <translation>ComfyUI에 편집 요청 전송 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="590"/>
+        <source>Waiting for ComfyUI generation…</source>
+        <translation>ComfyUI 생성 대기 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="591"/>
+        <source>Fetching ComfyUI preview…</source>
+        <translation>ComfyUI 미리 보기 가져오는 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="829"/>
+        <source>This preview belongs to a closed or replaced project. Regenerate it.</source>
+        <translation>이 미리 보기는 닫혔거나 다른 프로젝트로 교체된 프로젝트에 속합니다. 다시 생성하세요.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="831"/>
+        <source>The page undo history changed. Regenerate the preview.</source>
+        <translation>페이지의 실행 취소 기록이 변경되었습니다. 미리 보기를 다시 생성하세요.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="1131"/>
+        <source>ComfyUI stopped.</source>
+        <translation>ComfyUI가 중지되었습니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="623"/>
+        <source>Stopped waiting. ComfyUI may still be computing this request.</source>
+        <translation>대기를 종료했습니다. ComfyUI가 이 요청을 아직 처리 중일 수 있습니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="813"/>
+        <source>The result does not belong to this request.</source>
+        <translation>이 결과는 이 요청에 해당하지 않습니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="1046"/>
+        <source>Disconnected. The external ComfyUI server remains running.</source>
+        <translation>연결이 끊어졌습니다. 외부 ComfyUI 서버는 계속 실행됩니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="277"/>
+        <source>Configure a local ComfyUI server and model profile first.</source>
+        <translation>먼저 로컬 ComfyUI 서버와 모델 프로필을 설정하세요.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="281"/>
+        <source>Configure ComfyUI before generating.</source>
+        <translation>생성하기 전에 ComfyUI를 설정하세요.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="628"/>
+        <source>ComfyUI stopped without a result.</source>
+        <translation>ComfyUI가 결과 없이 중지되었습니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="872"/>
+        <source>Backend: ComfyUI | Model: {model} | Checkpoint: {checkpoint} | LoRA: {lora} | Seed: {seed} | Steps: {steps} | Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution
+Prompt: {prompt}</source>
+        <translation>처리 엔진: ComfyUI | 모델: {model} | 체크포인트: {checkpoint} | LoRA: {lora} | 시드: {seed} | 단계: {steps} | 경과 시간: {elapsed:.1f}s | {percent}% 해상도로 처리됨
+지시문: {prompt}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="274"/>
+        <source>{model} | {checkpoint} | LoRA: {lora}</source>
+        <translation>{model} | {checkpoint} | LoRA: {lora}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="589"/>
+        <source>Connection lost; checking the same ComfyUI edit…</source>
+        <translation>연결이 끊어져 동일한 ComfyUI 편집 요청을 확인 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="876"/>
+        <source>Backend: ComfyUI | Model: {model} | Checkpoint: {checkpoint} | LoRA: {lora} | Seed: {seed} | Steps: {steps} | CFG: {cfg} | Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution
+Prompt: {prompt}</source>
+        <translation>처리 엔진: ComfyUI | 모델: {model} | 체크포인트: {checkpoint} | LoRA: {lora} | 시드: {seed} | 단계: {steps} | CFG: {cfg} | 경과 시간: {elapsed:.1f}s | {percent}% 해상도로 처리됨
+지시문: {prompt}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="278"/>
+        <source>{model} (experimental)</source>
+        <translation>{model} (실험적)</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4769,6 +4909,41 @@ Prompt: {prompt}</source>
     <message>
         <source>Cloud editing uploads the selected area plus context and incurs provider charges. Configure the key in Provider APIs. Local LoRAs and GPU controls are unavailable.</source>
         <translation>클라우드 편집은 선택 영역과 주변 컨텍스트를 업로드하며 제공업체 요금이 발생합니다. 제공업체 API에서 키를 설정하세요. 로컬 LoRA와 GPU 설정은 사용할 수 없습니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="72"/>
+        <source>Local ComfyUI</source>
+        <translation>로컬 ComfyUI</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="118"/>
+        <source>Configure ComfyUI…</source>
+        <translation>ComfyUI 설정…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="382"/>
+        <source>Disconnect</source>
+        <translation>연결 끊기</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="382"/>
+        <source>Stop ComfyUI</source>
+        <translation>ComfyUI 중지</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="235"/>
+        <source>Surrounding artwork shown to the editing model as context. To keep lettering beyond the selected box, increase Edit margin.</source>
+        <translation>편집 모델에 문맥으로 제공되는 주변 그림입니다. 선택한 상자 밖의 글자도 유지하려면 편집 여백을 늘리세요.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="408"/>
+        <source>Qwen Image 2.1 CFG guidance. The experimental profile starts at 25 steps and CFG 1.0.</source>
+        <translation>Qwen Image 2.1 CFG 가이던스입니다. 실험적 프로필의 초기 설정은 25단계, CFG 1.0입니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="592"/>
+        <source>Process the selected area with the configured ComfyUI model.</source>
+        <translation>설정된 ComfyUI 모델로 선택한 영역을 처리합니다.</translation>
     </message>
 </context>
 <context>
@@ -5127,6 +5302,218 @@ Prompt: {prompt}</source>
 <message>
         <source>Alt-click a clean area on this page to set the clone source.</source>
         <translation>이 페이지의 깨끗한 영역을 Alt+클릭하여 복제 원본을 설정하세요.</translation>
+    </message>
+</context>
+<context>
+    <name>ComfyUISettingsDialog</name>
+    <message>
+        <source>Checkpoint preset</source>
+        <translation>체크포인트 프리셋</translation>
+    </message>
+    <message>
+        <source>Custom / native checkpoint</source>
+        <translation>사용자 지정 / 네이티브 체크포인트</translation>
+    </message>
+    <message>
+        <source>Klein 9B INT8 (prequantized)</source>
+        <translation>Klein 9B INT8 (사전 양자화)</translation>
+    </message>
+    <message>
+        <source>Selects existing INT8 model files; no conversion or download. The text encoder uses mixed FP8 precision.</source>
+        <translation>기존 INT8 모델 파일을 선택합니다. 변환하거나 다운로드하지 않습니다. 텍스트 인코더는 FP8 혼합 정밀도를 사용합니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="61"/>
+        <source>Configure ComfyUI</source>
+        <translation>ComfyUI 설정</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="69"/>
+        <source>Connect to a local ComfyUI server or start an existing installation. Models and custom nodes are never installed automatically.</source>
+        <translation>로컬 ComfyUI 서버에 연결하거나 기존 설치를 시작합니다. 모델과 사용자 지정 노드는 자동으로 설치되지 않습니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="80"/>
+        <source>Connect to running server</source>
+        <translation>실행 중인 서버에 연결</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="81"/>
+        <source>Start selected installation</source>
+        <translation>선택한 설치 시작</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="83"/>
+        <source>Connection</source>
+        <translation>연결</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="85"/>
+        <source>Local server URL</source>
+        <translation>로컬 서버 URL</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="87"/>
+        <source>Portable installation folder</source>
+        <translation>포터블 설치 폴더</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="89"/>
+        <source>Python executable (optional)</source>
+        <translation>Python 실행 파일(선택 사항)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="93"/>
+        <source>GPU index</source>
+        <translation>GPU 번호</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="95"/>
+        <source>Default memory manager</source>
+        <translation>기본 메모리 관리자</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="96"/>
+        <source>Disable execution cache</source>
+        <translation>실행 캐시 비활성화</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="98"/>
+        <source>Memory policy</source>
+        <translation>메모리 정책</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="100"/>
+        <source>FLUX.2 Klein 4B distilled (experimental)</source>
+        <translation>FLUX.2 Klein 4B 증류 모델(실험적)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="103"/>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="104"/>
+        <source>Changing model size does not change the filenames below. Select matching diffusion, encoder, and VAE files. Untested combinations are experimental.</source>
+        <translation>모델 크기를 변경해도 아래 파일 이름은 변경되지 않습니다. 호환되는 확산 모델, 인코더, VAE 파일을 선택하세요. 검증되지 않은 조합은 실험적입니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="113"/>
+        <source>Diffusion model</source>
+        <translation>확산 모델</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="114"/>
+        <source>Text encoder</source>
+        <translation>텍스트 인코더</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="115"/>
+        <source>VAE</source>
+        <translation>VAE</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="117"/>
+        <source>ComfyUI LoRA (optional)</source>
+        <translation>ComfyUI LoRA(선택 사항)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="122"/>
+        <source>LoRA strength</source>
+        <translation>LoRA 강도</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="124"/>
+        <source>Select the local file represented by that ComfyUI LoRA name</source>
+        <translation>해당 ComfyUI LoRA 이름에 대응하는 로컬 파일을 선택하세요</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="125"/>
+        <source>LoRA verification file</source>
+        <translation>LoRA 검증 파일</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="126"/>
+        <source>Native safetensors profiles use the checkpoint's actual format. A new LoRA needs its matching local file for architecture and checksum verification. Attached servers retain uploaded and generated images in their own folders.</source>
+        <translation>네이티브 safetensors 프로필은 체크포인트의 실제 형식을 사용합니다. 새 LoRA는 구조와 체크섬을 검증하기 위해 대응하는 로컬 파일이 필요합니다. 연결된 서버는 업로드한 이미지와 생성한 이미지를 자체 폴더에 보관합니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="136"/>
+        <source>Test Connection / Refresh Models</source>
+        <translation>연결 테스트 / 모델 새로 고침</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="161"/>
+        <source>Browse…</source>
+        <translation>찾아보기…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="224"/>
+        <source>Checking ComfyUI…</source>
+        <translation>ComfyUI 확인 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="224"/>
+        <source>Validating settings…</source>
+        <translation>설정 검증 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="269"/>
+        <source>Cancelling connection check…</source>
+        <translation>연결 확인 취소 중…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="164"/>
+        <source>Select folder</source>
+        <translation>폴더 선택</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="166"/>
+        <source>Select file</source>
+        <translation>파일 선택</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="205"/>
+        <source>Select the matching local LoRA file before saving this adapter.</source>
+        <translation>이 어댑터를 저장하기 전에 대응하는 로컬 LoRA 파일을 선택하세요.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="263"/>
+        <source>Connected to ComfyUI {version}. Select the matching model files.</source>
+        <translation>ComfyUI {version}에 연결되었습니다. 대응하는 모델 파일을 선택하세요.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="104"/>
+        <source>Qwen Image 2.1 INT8 (experimental)</source>
+        <translation>Qwen Image 2.1 INT8 (실험적)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="105"/>
+        <source>Selects existing INT8 model files; no conversion or download. Each preset uses its matching text encoder and VAE.</source>
+        <translation>기존 INT8 모델 파일을 선택하며, 변환하거나 다운로드하지 않습니다. 각 프리셋은 해당 모델에 맞는 텍스트 인코더와 VAE를 사용합니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="113"/>
+        <source>Qwen Image 2.1 (experimental)</source>
+        <translation>Qwen Image 2.1 (실험적)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="116"/>
+        <source>Changing the model does not change the filenames below. Select matching diffusion, encoder, and VAE files. Untested combinations are experimental.</source>
+        <translation>모델을 변경해도 아래 파일 이름은 바뀌지 않습니다. 서로 호환되는 확산 모델, 인코더, VAE 파일을 선택하세요. 검증되지 않은 조합은 실험적입니다.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="139"/>
+        <source>Qwen Image 2.1 editing and LoRAs are experimental. Use only Qwen Image 2.1 model-only adapters; text-encoder adapters are not supported.</source>
+        <translation>Qwen Image 2.1 편집 및 LoRA는 실험적 기능입니다. Qwen Image 2.1 모델 전용 어댑터만 사용하세요. 텍스트 인코더 어댑터는 지원되지 않습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsJob</name>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
+        <source>The LoRA file changed during verification. Select it again and retry.</source>
+        <translation>검증 중에 LoRA 파일이 변경되었습니다. 파일을 다시 선택하고 재시도하세요.</translation>
     </message>
 </context>
 </TS>

@@ -563,6 +563,9 @@ class FakeProcess(QObject):
     def waitForFinished(self, _timeout):
         return True
 
+    def waitForStarted(self, _timeout):
+        return self._state == QProcess.ProcessState.Running
+
     def kill(self):
         self._state = QProcess.ProcessState.NotRunning
 
@@ -616,6 +619,43 @@ class FluxWorkerClientTests(unittest.TestCase):
             self.client.start(DevicePolicy.CPU)
         self.assertFalse(self.client.process.environment.contains("PYTHONPATH"))
         self.assertFalse(self.client.process.environment.contains("PYTHONHOME"))
+
+    def test_frozen_worker_rejects_application_as_python(self):
+        with patch.object(sys, "frozen", True, create=True):
+            with self.assertRaisesRegex(RuntimeError, "separate FLUX Python"):
+                self.client.start(DevicePolicy.CPU)
+        self.assertFalse(self.client.is_running())
+
+    def test_frozen_worker_spawns_shipped_source_before_restoring_dll_state(self):
+        source_root = self.root / "flux-worker"
+        external_python = self.root / "external-python.exe"
+        external_python.touch()
+        client = FluxWorkerClient(
+            self.root, python_executable=external_python, process_factory=FakeProcess,
+        )
+        events = []
+        from contextlib import contextmanager
+
+        @contextmanager
+        def dll_context():
+            events.append("clear")
+            yield
+            self.assertTrue(client.is_running())
+            events.append("restore")
+
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch("modules.artistic_edit.worker_client.worker_source_root", return_value=source_root),
+            patch("modules.artistic_edit.worker_client.external_process_environment", dll_context),
+            patch("modules.artistic_edit.worker_client.sanitized_external_environment", return_value={"SAFE": "1"}),
+            patch.object(client.process, "waitForStarted", wraps=client.process.waitForStarted) as wait,
+        ):
+            client.start(DevicePolicy.CPU)
+        self.assertEqual(events, ["clear", "restore"])
+        wait.assert_called_once_with(5000)
+        self.assertEqual(client.process.working_directory, str(source_root))
+        self.assertEqual(client.process.environment.value("PYTHONDONTWRITEBYTECODE"), "1")
+        self.assertEqual(client.process.environment.value("SAFE"), "1")
 
     def test_mismatched_or_late_results_are_ignored(self):
         active_id = str(uuid4())

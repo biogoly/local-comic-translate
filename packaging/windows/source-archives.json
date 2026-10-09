@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "complete_corresponding_source_review": false,
+  "archives": [
+    {"filename": "qtbase-everywhere-src-6.11.2.zip", "url": "https://download.qt.io/archive/qt/6.11/6.11.2/submodules/qtbase-everywhere-src-6.11.2.zip", "sha256": "8f8c16703a8170b235361aacdf0ec97d2445ae4e3e3d127eb1576f498269ef79", "checksum_origin": "publisher .sha256"},
+    {"filename": "qtsvg-everywhere-src-6.11.2.zip", "url": "https://download.qt.io/archive/qt/6.11/6.11.2/submodules/qtsvg-everywhere-src-6.11.2.zip", "sha256": "e07133da0145d8ca87da5567a97c8fc2efd19a41c681d01bfec2ebac772f679c", "checksum_origin": "publisher .sha256"},
+    {"filename": "qtimageformats-everywhere-src-6.11.2.zip", "url": "https://download.qt.io/archive/qt/6.11/6.11.2/submodules/qtimageformats-everywhere-src-6.11.2.zip", "sha256": "a303149d7b9f087d788135e9733fdac8e4cec694e5afc04bf33e10a516b33282", "checksum_origin": "publisher .sha256"},
+    {"filename": "pyside-setup-everywhere-src-6.11.2.zip", "url": "https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-6.11.2-src/pyside-setup-everywhere-src-6.11.2.zip", "sha256": "c0fdd62b91a1d36d5ee2e1fb71050a32fbc93fcdeef0fdcb41d29afaaf00d9b5", "checksum_origin": "publisher .sha256"},
+    {"filename": "shapely-2.1.2.tar.gz", "url": "https://files.pythonhosted.org/packages/4d/bc/0989043118a27cccb4e906a46b7565ce36ca7b57f5a18b78f4f1b0f72d9d/shapely-2.1.2.tar.gz", "sha256": "2ed4ecb28320a433db18a5bf029986aa8afcfd740745e78847e330d5d94922a9", "checksum_origin": "PyPI release metadata"},
+    {"filename": "geos-3.13.1.tar.bz2", "url": "https://download.osgeo.org/geos/geos-3.13.1.tar.bz2", "sha256": "df2c50503295f325e7c8d7b783aca8ba4773919cde984193850cf9e361dfd28c", "checksum_origin": "locally calculated from official HTTPS download; not independently publisher-verified"}
+  ]
+}

@@ -10,6 +10,7 @@ from PySide6.QtGui import QUndoStack
 from PySide6.QtWidgets import QApplication
 
 from app.projects.patch_metadata import (
+    PATCH_KIND_ARTISTIC_EDIT,
     MAX_METADATA_STRING_LENGTH,
     PATCH_KIND_FLUX2_EDIT,
     PATCH_KIND_INPAINT,
@@ -203,6 +204,29 @@ class ArtisticEditUndoTests(unittest.TestCase):
 
         self.stack.undo()
         self.assertEqual(self._record_ids(), ["inp-1", "flux-1"])
+
+    def test_neutral_artistic_revert_includes_qwen_and_legacy_flux(self):
+        self._push_inpaint((255, 0, 0), (0, 0, 10, 10), patch_id="inp")
+        self._push_artistic((0, 255, 0), (10, 10, 10, 10), patch_id="flux")
+        self.stack.push(PatchInsertCommand(
+            self.controller, [self._patch((0, 0, 255), (20, 20, 10, 10), "qwen")],
+            self.file_path, kind=PATCH_KIND_ARTISTIC_EDIT,
+            metadata={"model_key": "qwen-image-2.1"},
+        ))
+        self.assertEqual(self.stack.undoText(), "Artistic edit")
+        self.assertFalse(patch_matches_kind({"kind": PATCH_KIND_ARTISTIC_EDIT}, PATCH_KIND_INPAINT))
+        self.assertFalse(patch_matches_kind({"kind": "future_kind"}, PATCH_KIND_ARTISTIC_EDIT))
+        self.stack.push(PatchClearCommand(self.controller, self.file_path, kind=PATCH_KIND_INPAINT))
+        self.assertEqual(self._record_ids(), ["flux", "qwen"])
+        self.stack.undo()
+        self.stack.push(PatchClearCommand(self.controller, self.file_path, kind=PATCH_KIND_ARTISTIC_EDIT))
+        self.assertEqual(self.stack.undoText(), "Revert artistic edits")
+        self.assertEqual(self._record_ids(), ["inp"])
+        self.stack.undo()
+        self.assertEqual(self._record_ids(), ["inp", "flux", "qwen"])
+        self.assertEqual(self._pixel(21, 21), (0, 0, 255))
+        self.stack.redo()
+        self.assertEqual(self._record_ids(), ["inp"])
 
     def test_visually_identical_patches_remain_distinct_by_patch_id(self):
         bbox = (10, 10, 10, 10)

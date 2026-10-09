@@ -2,15 +2,27 @@
 
 [English](../README.md) | [한국어](README_ko.md) | Français | [简体中文](README_zh-CN.md) | [Español](README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Interface de Comic Translate">
+<img width="1641" height="1001" alt="Interface de Comic Translate" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate est un fork communautaire de [Comic Translate](https://github.com/ogkalu2/comic-translate), axé sur la traduction locale et confidentielle ainsi que sur un travail de retouche manuelle plus sûr dans une application de bureau. Il conserve les fonctions de détection, d’OCR, d’inpainting, de rendu, de gestion des projets et des archives, et de prise en charge des webtoons de l’application d’origine. Il y ajoute la traduction avec `llama.cpp` géré par l’application, la retouche artistique avec FLUX.2 Klein, des API directes de fournisseurs en option, ainsi que de nombreuses améliorations de l’édition et de la fiabilité. Aucun compte, abonnement ni crédit de traduction du service d’origine n’est nécessaire.
 
-Le pipeline OCR hérité prend en charge l’anglais, le coréen, le japonais, le français, le chinois simplifié et traditionnel, le russe, l’allemand, le néerlandais, l’espagnol et l’italien comme langues sources. La traduction est possible vers ces langues et d’autres encore.
+Le pipeline OCR prend en charge l’anglais, le coréen, le japonais, le français, le chinois simplifié et traditionnel, le russe, l’allemand, le néerlandais, l’espagnol, l’italien, le portugais (Portugal et Brésil) et le vietnamien comme langues sources. La traduction est possible vers ces langues et d’autres encore.
 
-Ce fork est en développement actif. Les modifications décrites ci-dessous nécessitent actuellement une exécution à partir du code source ; les téléchargements du site de Comic Translate d’origine ne les incluent pas. Les liens de langue ci-dessus donnent accès aux traductions de la documentation actuelle de ce fork. Les libellés des réglages et des boutons sont conservés en anglais dans ces guides pour permettre de les repérer quelle que soit la langue de l’interface.
+Avec la source **Vietnamese** et le moteur OCR **Default**, l’application utilise un modèle communautaire de reconnaissance du vietnamien au format ONNX, distinct et téléchargé à la demande (environ 60 Mo). **Auto** continue de sélectionner le moteur selon le système d’écriture : choisissez donc explicitement **Vietnamese**. La qualité sur les bandes dessinées reste expérimentale : les essais actuels portent uniquement sur des images synthétiques de texte imprimé ; de vraies pages de bande dessinée doivent encore être testées. Les autres moteurs OCR et backends restent inchangés. Consultez le [guide des langues prises en charge](LANGUAGE_SUPPORT.md) (en anglais).
 
-## Dernière mise à jour — 0.1.0
+Ce fork est en développement actif. Utilisez le code source à jour ou une compilation bêta de ce fork correspondant à la version décrite ; les téléchargements du site de Comic Translate d’origine n’incluent pas ces modifications. Les liens de langue ci-dessus donnent accès aux traductions de la documentation actuelle de ce fork. Les libellés des réglages et des boutons sont conservés en anglais dans ces guides pour permettre de les repérer quelle que soit la langue de l’interface.
+
+## Backend ComfyUI facultatif
+
+Dans **Artistic Edit**, choisissez **Local ComfyUI > Configure ComfyUI…** pour vous connecter à un serveur local ou démarrer en arrière-plan une installation portable Windows existante. Utilisez **Test Connection / Refresh Models**, puis sélectionnez les fichiers compatibles du modèle Klein distillé, de son encodeur de texte et de son VAE. ComfyUI utilise son propre Python, ses modèles et ses LoRA ; rien n’est installé ni téléchargé automatiquement. L’aperçu, Apply et Undo sont conservés, et les backends Diffusers et API restent disponibles.
+
+La configuration testée utilise Klein 9B INT8 natif avec un encodeur en précision mixte FP8. Les profils 4B sont expérimentaux ; GGUF et les machines disposant de moins de mémoire restent à valider. Le mode géré isole les données et la base de données ; se déconnecter d’un serveur externe ne l’arrête pas. Consultez le [guide de configuration](COMFYUI_BACKEND.md) et les [résultats de validation](COMFYUI_RUNTIME_VALIDATION.md) (en anglais).
+
+**Qwen Image 2.1** est également disponible comme alternative expérimentale à Klein. Son profil INT8 utilise des fichiers de modèle, d’encodeur et de VAE déjà installés et prend en charge des LoRA Qwen 2.1 validés qui modifient uniquement le modèle, avec une intensité réglable ; les adaptateurs de l’encodeur de texte ne sont pas pris en charge. Les réglages initiaux sont de 25 étapes et un CFG de 1,0. Le chargement et l’application des LoRA ont été testés, sans garantie d’amélioration du lettrage artistique ; les machines disposant de moins de mémoire restent à valider. Consultez la [configuration de Qwen et ses limites](COMFYUI_BACKEND.md#experimental-qwen-image-21) (en anglais).
+
+## Dernière mise à jour — 0.1.0b2
+
+La bêta 2 ajoute le backend ComfyUI, Qwen Image 2.1 avec des LoRA et les nouvelles options de portugais et de vietnamien. Consultez les [notes de la bêta 2](RELEASE_NOTES_0.1.0b2.md) (en anglais) pour les changements, la validation et les limites du paquet.
 
 - **Artistic Edit :** FLUX.2 Klein 4B/9B en local avec des LoRA compatibles, ou l’API Black Forest Labs, avec aperçu avant application, annulation et conservation des retouches dans le projet.
 - **Choix du moteur de traduction :** conservez vos réglages de llama-server local tout en passant à OpenAI, Gemini, Claude ou Deepseek avec vos propres clés API.
@@ -86,6 +98,18 @@ Ce fork est en développement actif. Les modifications décrites ci-dessous néc
 
 Documentation de l’API : [retouche d’images BFL](https://docs.bfl.ai/flux_2/flux2_image_editing). L’intégration cloud est couverte par des tests automatisés simulant les communications et les contrôleurs ; de véritables requêtes aux API Flux et LLM ont également été validées pendant le développement. Cela ne constitue pas une garantie pour chaque fournisseur ou modèle : l’accès au compte, les règles de contenu et les frais dépendent toujours du service choisi.
 
+Exemple de retouche artistique 1
+
+<img width="3261" height="1980" alt="Exemple de retouche artistique 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+Exemple de retouche artistique 2
+
+<img width="3261" height="1996" alt="Exemple de retouche artistique 2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
+
+Exemple de retouche artistique 3
+
+<img width="3273" height="1990" alt="Exemple de retouche artistique 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
+
 ### Apparence, langues et séparation du fork
 
 - Six thèmes : **Dark**, **Light**, **Midnight**, **Parchment**, **Lavender** et **Mint**. Les boutons d’Artistic Edit ont un fond adapté au thème, des libellés lisibles et des bordures visibles.
@@ -119,6 +143,12 @@ Vous pouvez aussi tracer une zone oubliée et choisir **OCR**, puis **Translate*
 Le détecteur conserve volontairement aussi bien le texte des bulles que le texte libre. Cela évite de perdre des zones OCR valides en mode manuel, mais signifie aussi que **Translate All** peut effacer par inpainting des titres artistiques, des panneaux, des onomatopées ou d’autres lettrages faisant partie du dessin. Une vérification manuelle avant le nettoyage est recommandée lorsque la préservation du dessin est importante.
 
 ## Installation
+
+Le [guide de création du paquet Windows](../packaging/windows/README.md) propose
+une procédure expérimentale pour une **bêta Windows x64**. Elle produit un ZIP
+portable avec les dépendances Python/Qt/ONNX de l’éditeur principal ; les modèles
+et environnements LLM locaux et FLUX restent séparés. Les binaires bêta doivent
+être testés avant toute publication publique.
 
 ### Prérequis
 
@@ -264,7 +294,7 @@ Les vérifications de publication couvrent l’OCR et la conservation des zones 
 
 ## Limites actuelles
 
-- Ce fork est encore jeune et disponible uniquement sous forme de code source ; les essais sur un large éventail de langues, de modèles, de mises en page et de systèmes d’exploitation sont toujours en cours.
+- Ce fork est encore jeune. Utilisez le code source à jour ou une bêta de la version correspondante ; les essais sur un large éventail de langues, de modèles, de mises en page et de systèmes d’exploitation sont toujours en cours. Une compilation bêta locale ne signifie pas que la diffusion publique des binaires a été autorisée.
 - Le mode automatique ne distingue pas toujours les dialogues du lettrage qui appartient au dessin. Utilisez le mode Manual lorsque la préservation du dessin est importante.
 - La détection, l’OCR, la traduction, la segmentation et l’inpainting peuvent tous nécessiter des corrections humaines sur les pages difficiles.
 - L’envoi d’images nécessite un véritable modèle multimodal, un serveur compatible et, le cas échéant, le fichier de projecteur correspondant.

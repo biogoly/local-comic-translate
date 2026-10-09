@@ -1,0 +1,68 @@
+Local Comic Translate - Windows x64 beta
+
+1. Extract the ENTIRE ZIP to a normal folder. Do not run from inside the ZIP.
+2. Run LocalComicTranslate.exe. Keep _internal next to the executable.
+3. Python is included for the editor. No Python, uv or CUDA Toolkit install is
+   needed for ordinary editing, ONNX processing or provider API connections.
+
+This beta is unsigned. Windows may show an unknown-publisher/SmartScreen warning.
+Verify the download came from biogoly/local-comic-translate and compare its
+SHA-256 checksum. Do not disable antivirus or Windows security globally.
+
+FIRST USE
+Detection, OCR, cleanup models and fonts download as needed; internet access is
+required for those first downloads. They are not in this ZIP. Compatible NVIDIA
+drivers are required for GPU acceleration; CPU processing remains available.
+Not every operation uses the GPU (Japanese mobile OCR currently uses CPU).
+
+TRANSLATION
+Settings > Tools > Translator selects Local LLM or a direct provider API.
+For local translation, configure your separate llama-server executable and GGUF
+model in Settings > LLMs, or connect an existing OpenAI-compatible local server.
+For cloud translation, enter your own API key in Settings > Provider APIs.
+Cloud processing sends content to that provider and may incur charges.
+
+Portuguese (Portugal), Portuguese (Brazil), and Vietnamese are available as
+source languages. For Vietnamese local OCR, explicitly select Vietnamese and
+Default OCR; Auto identifies scripts and does not select the Vietnamese model.
+Its separate, checksum-verified OCR assets download on first use (about 60 MB).
+Vietnamese comic OCR remains experimental. See _internal/docs/LANGUAGE_SUPPORT.md
+for language, dialect, font, and validation details.
+
+ARTISTIC EDIT
+The Black Forest Labs API needs your own key, but no local FLUX installation.
+Local FLUX is optional and still needs Git and a separate Python 3.12 environment with
+the included _internal/requirements-flux.txt dependencies and cached model
+weights. Select that environment's python.exe using Select FLUX Python...
+Do not select LocalComicTranslate.exe as the FLUX Python executable.
+Packaged LoRAs belong in:
+  %LOCALAPPDATA%/LocalComicTranslate/models/loras/flux2-klein/4b/
+  %LOCALAPPDATA%/LocalComicTranslate/models/loras/flux2-klein/9b/
+No llama.cpp, FLUX/GGUF weights, LoRAs or API keys are bundled.
+
+Alternatively, choose Local ComfyUI > Configure ComfyUI to connect a local
+server or start an EXISTING Windows portable ComfyUI installation in the
+background. It uses that installation's Python and models, not the editor's
+embedded Python. Nothing is installed or downloaded automatically. Use Test
+Connection / Refresh Models and select matching distilled Klein or experimental
+Qwen Image 2.1 model, encoder, and VAE files. ComfyUI LoRAs are selected separately
+from the Diffusers folder and must match the selected model family. Qwen supports
+verified Qwen Image 2.1 model-only LoRAs, not text-encoder adapters. Choose the
+adapter's appropriate sampling settings; steps are not changed from its filename.
+See _internal/docs/COMFYUI_BACKEND.md for setup and qualification limits.
+
+DATA AND TROUBLESHOOTING
+The ZIP is a portable distribution, not a portable user profile: settings are
+stored in this fork's normal Windows settings, and models/logs in
+%LOCALAPPDATA%/LocalComicTranslate. A source installation of THIS FORK shares
+that profile. Upstream Comic Translate has a separate identity.
+Back up .ctpr projects before beta testing. Extract updates into a NEW folder.
+Close any other source or packaged instance of this fork before beta testing.
+Startup and runtime diagnostics: %LOCALAPPDATA%/LocalComicTranslate/logs/desktop.log
+Review logs before sharing; they may contain local paths or processed text.
+Compressed CBR/RAR files need WinRAR/UnRAR or compatible 7-Zip tooling on PATH.
+CBZ/ZIP, CB7/7z, images and PDF do not need an external archive executable.
+
+The _internal directory contains README translations, LICENSE, bundled package
+licenses, THIRD_PARTY_NOTICES.md and BUILD-INFO.json. No installer, file
+associations, code signing or automatic beta updater is included yet.

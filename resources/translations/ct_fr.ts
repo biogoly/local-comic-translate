@@ -85,6 +85,14 @@
 <context>
     <name>ComicTranslate</name>
     <message>
+        <source>Portuguese (Portugal)</source>
+        <translation>Portugais (Portugal)</translation>
+    </message>
+    <message>
+        <source>Portuguese (Brazil)</source>
+        <translation>Portugais (Brésil)</translation>
+    </message>
+    <message>
         <location filename="../../controller.py" line="565"/>
         <location filename="../../controller.py" line="575"/>
         <source>Error</source>
@@ -762,9 +770,22 @@ Il a peut-être été déplacé, renommé ou supprimé.
         <source>English</source>
         <translation>Anglais</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
+        <source>Artistic Edit</source>
+        <translation>Retouche artistique</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
+    <message>
+        <source>Portuguese (Portugal)</source>
+        <translation>Portugais (Portugal)</translation>
+    </message>
+    <message>
+        <source>Portuguese (Brazil)</source>
+        <translation>Portugais (Brésil)</translation>
+    </message>
     <message>
         <location filename="../../app/ui/main_window/window.py" line="100"/>
         <source>Auto</source>
@@ -1545,6 +1566,11 @@ It may have been moved, renamed, or deleted.
 Il a peut-être été déplacé, renommé ou supprimé.
 
 {path}</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
+        <source>Artistic Edit</source>
+        <translation>Retouche artistique</translation>
     </message>
 </context>
 <context>
@@ -3548,6 +3574,11 @@ back on the Image (for further editing)</source>
         <source>Artistic Edit (FLUX.2 Klein)</source>
         <translation>Retouche artistique (FLUX.2 Klein)</translation>
     </message>
+    <message>
+        <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
+        <source>Artistic Edit</source>
+        <translation>Retouche artistique</translation>
+    </message>
 </context>
 <context>
     <name>_ProjectDetailsPopup</name>
@@ -4501,6 +4532,115 @@ Consigne : {prompt}</translation>
         <source>Send the selected area and surrounding context (or the whole page if selected) to Black Forest Labs? This is a paid request under your provider account. Content restrictions apply. Cancel stops waiting but may not stop billing. Continue?</source>
         <translation>Envoyer la zone sélectionnée et son contexte (ou la page entière si choisie) à Black Forest Labs ? Cette requête est payante sur votre compte fournisseur. Des restrictions de contenu s’appliquent. Annuler arrête l’attente, mais pas nécessairement la facturation. Continuer ?</translation>
     </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="587"/>
+        <source>Connecting to ComfyUI…</source>
+        <translation>Connexion à ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="1112"/>
+        <source>Stopping ComfyUI…</source>
+        <translation>Arrêt de ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="586"/>
+        <source>Starting ComfyUI…</source>
+        <translation>Démarrage de ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="588"/>
+        <source>Uploading edit area…</source>
+        <translation>Envoi de la zone à modifier…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="589"/>
+        <source>Submitting ComfyUI edit…</source>
+        <translation>Envoi de la modification à ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="590"/>
+        <source>Waiting for ComfyUI generation…</source>
+        <translation>En attente de la génération par ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="591"/>
+        <source>Fetching ComfyUI preview…</source>
+        <translation>Récupération de l’aperçu ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="829"/>
+        <source>This preview belongs to a closed or replaced project. Regenerate it.</source>
+        <translation>Cet aperçu appartient à un projet fermé ou remplacé. Régénérez-le.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="831"/>
+        <source>The page undo history changed. Regenerate the preview.</source>
+        <translation>L’historique d’annulation de la page a changé. Régénérez l’aperçu.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="1131"/>
+        <source>ComfyUI stopped.</source>
+        <translation>ComfyUI est arrêté.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="623"/>
+        <source>Stopped waiting. ComfyUI may still be computing this request.</source>
+        <translation>L’attente est terminée. ComfyUI traite peut-être encore cette demande.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="813"/>
+        <source>The result does not belong to this request.</source>
+        <translation>Le résultat ne correspond pas à cette demande.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="1046"/>
+        <source>Disconnected. The external ComfyUI server remains running.</source>
+        <translation>Déconnecté. Le serveur ComfyUI externe reste en cours d’exécution.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="277"/>
+        <source>Configure a local ComfyUI server and model profile first.</source>
+        <translation>Configurez d’abord un serveur ComfyUI local et un profil de modèle.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="281"/>
+        <source>Configure ComfyUI before generating.</source>
+        <translation>Configurez ComfyUI avant de lancer la génération.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="628"/>
+        <source>ComfyUI stopped without a result.</source>
+        <translation>ComfyUI s’est arrêté sans produire de résultat.</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="872"/>
+        <source>Backend: ComfyUI | Model: {model} | Checkpoint: {checkpoint} | LoRA: {lora} | Seed: {seed} | Steps: {steps} | Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution
+Prompt: {prompt}</source>
+        <translation>Moteur : ComfyUI | Modèle : {model} | Point de contrôle : {checkpoint} | LoRA : {lora} | Graine : {seed} | Étapes : {steps} | Durée : {elapsed:.1f}s | Traitement à {percent}% de la résolution
+Instruction : {prompt}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="274"/>
+        <source>{model} | {checkpoint} | LoRA: {lora}</source>
+        <translation>{model} | {checkpoint} | LoRA : {lora}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="589"/>
+        <source>Connection lost; checking the same ComfyUI edit…</source>
+        <translation>Connexion perdue ; vérification de la même modification ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="876"/>
+        <source>Backend: ComfyUI | Model: {model} | Checkpoint: {checkpoint} | LoRA: {lora} | Seed: {seed} | Steps: {steps} | CFG: {cfg} | Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution
+Prompt: {prompt}</source>
+        <translation>Moteur : ComfyUI | Modèle : {model} | Point de contrôle : {checkpoint} | LoRA : {lora} | Graine : {seed} | Étapes : {steps} | CFG: {cfg} | Durée : {elapsed:.1f}s | Traitement à {percent}% de la résolution
+Instruction : {prompt}</translation>
+    </message>
+    <message>
+        <location filename="../../app/controllers/artistic_edit.py" line="278"/>
+        <source>{model} (experimental)</source>
+        <translation>{model} (expérimental)</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4766,6 +4906,41 @@ Consigne : {prompt}</translation>
     <message>
         <source>Cloud editing uploads the selected area plus context and incurs provider charges. Configure the key in Provider APIs. Local LoRAs and GPU controls are unavailable.</source>
         <translation>La retouche cloud téléverse la zone sélectionnée et son contexte et entraîne des frais du fournisseur. Configurez la clé dans API des fournisseurs. Les LoRA locaux et les réglages GPU sont indisponibles.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="72"/>
+        <source>Local ComfyUI</source>
+        <translation>ComfyUI local</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="118"/>
+        <source>Configure ComfyUI…</source>
+        <translation>Configurer ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="382"/>
+        <source>Disconnect</source>
+        <translation>Déconnecter</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="382"/>
+        <source>Stop ComfyUI</source>
+        <translation>Arrêter ComfyUI</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="235"/>
+        <source>Surrounding artwork shown to the editing model as context. To keep lettering beyond the selected box, increase Edit margin.</source>
+        <translation>Illustration environnante présentée au modèle de retouche comme contexte. Pour conserver le lettrage au-delà du cadre sélectionné, augmentez la Marge de retouche.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="408"/>
+        <source>Qwen Image 2.1 CFG guidance. The experimental profile starts at 25 steps and CFG 1.0.</source>
+        <translation>Guidage CFG de Qwen Image 2.1. Le profil expérimental démarre avec 25 étapes et un CFG de 1,0.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/artistic_edit_panel.py" line="592"/>
+        <source>Process the selected area with the configured ComfyUI model.</source>
+        <translation>Traiter la zone sélectionnée avec le modèle ComfyUI configuré.</translation>
     </message>
 </context>
 <context>
@@ -5124,6 +5299,218 @@ Consigne : {prompt}</translation>
 <message>
         <source>Alt-click a clean area on this page to set the clone source.</source>
         <translation>Faites Alt-clic sur une zone intacte de cette page pour définir la source de duplication.</translation>
+    </message>
+</context>
+<context>
+    <name>ComfyUISettingsDialog</name>
+    <message>
+        <source>Checkpoint preset</source>
+        <translation>Préréglage du checkpoint</translation>
+    </message>
+    <message>
+        <source>Custom / native checkpoint</source>
+        <translation>Personnalisé / checkpoint natif</translation>
+    </message>
+    <message>
+        <source>Klein 9B INT8 (prequantized)</source>
+        <translation>Klein 9B INT8 (préquantifié)</translation>
+    </message>
+    <message>
+        <source>Selects existing INT8 model files; no conversion or download. The text encoder uses mixed FP8 precision.</source>
+        <translation>Sélectionne des fichiers de modèle INT8 existants, sans conversion ni téléchargement. L’encodeur de texte utilise une précision mixte FP8.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="61"/>
+        <source>Configure ComfyUI</source>
+        <translation>Configurer ComfyUI</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="69"/>
+        <source>Connect to a local ComfyUI server or start an existing installation. Models and custom nodes are never installed automatically.</source>
+        <translation>Connectez-vous à un serveur ComfyUI local ou démarrez une installation existante. Les modèles et les nœuds personnalisés ne sont jamais installés automatiquement.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="80"/>
+        <source>Connect to running server</source>
+        <translation>Se connecter à un serveur en cours d’exécution</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="81"/>
+        <source>Start selected installation</source>
+        <translation>Démarrer l’installation sélectionnée</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="83"/>
+        <source>Connection</source>
+        <translation>Connexion</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="85"/>
+        <source>Local server URL</source>
+        <translation>URL du serveur local</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="87"/>
+        <source>Portable installation folder</source>
+        <translation>Dossier de l’installation portable</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="89"/>
+        <source>Python executable (optional)</source>
+        <translation>Exécutable Python (facultatif)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="93"/>
+        <source>GPU index</source>
+        <translation>Indice du GPU</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="95"/>
+        <source>Default memory manager</source>
+        <translation>Gestionnaire de mémoire par défaut</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="96"/>
+        <source>Disable execution cache</source>
+        <translation>Désactiver le cache d’exécution</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="98"/>
+        <source>Memory policy</source>
+        <translation>Politique de mémoire</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="100"/>
+        <source>FLUX.2 Klein 4B distilled (experimental)</source>
+        <translation>FLUX.2 Klein 4B distillé (expérimental)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="103"/>
+        <source>Model</source>
+        <translation>Modèle</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="104"/>
+        <source>Changing model size does not change the filenames below. Select matching diffusion, encoder, and VAE files. Untested combinations are experimental.</source>
+        <translation>Changer la taille du modèle ne modifie pas les noms de fichiers ci-dessous. Sélectionnez des fichiers compatibles pour le modèle de diffusion, l’encodeur et le VAE. Les combinaisons non testées sont expérimentales.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="113"/>
+        <source>Diffusion model</source>
+        <translation>Modèle de diffusion</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="114"/>
+        <source>Text encoder</source>
+        <translation>Encodeur de texte</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="115"/>
+        <source>VAE</source>
+        <translation>VAE</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="117"/>
+        <source>ComfyUI LoRA (optional)</source>
+        <translation>LoRA ComfyUI (facultatif)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="122"/>
+        <source>LoRA strength</source>
+        <translation>Intensité du LoRA</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="124"/>
+        <source>Select the local file represented by that ComfyUI LoRA name</source>
+        <translation>Sélectionnez le fichier local correspondant à ce nom de LoRA dans ComfyUI</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="125"/>
+        <source>LoRA verification file</source>
+        <translation>Fichier de vérification du LoRA</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="126"/>
+        <source>Native safetensors profiles use the checkpoint's actual format. A new LoRA needs its matching local file for architecture and checksum verification. Attached servers retain uploaded and generated images in their own folders.</source>
+        <translation>Les profils safetensors natifs utilisent le format réel du point de contrôle. Un nouveau LoRA nécessite le fichier local correspondant pour vérifier son architecture et sa somme de contrôle. Les serveurs connectés conservent les images envoyées et générées dans leurs propres dossiers.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="136"/>
+        <source>Test Connection / Refresh Models</source>
+        <translation>Tester la connexion / Actualiser les modèles</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="161"/>
+        <source>Browse…</source>
+        <translation>Parcourir…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="224"/>
+        <source>Checking ComfyUI…</source>
+        <translation>Vérification de ComfyUI…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="224"/>
+        <source>Validating settings…</source>
+        <translation>Validation des paramètres…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="269"/>
+        <source>Cancelling connection check…</source>
+        <translation>Annulation de la vérification de connexion…</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="164"/>
+        <source>Select folder</source>
+        <translation>Sélectionner un dossier</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="166"/>
+        <source>Select file</source>
+        <translation>Sélectionner un fichier</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="205"/>
+        <source>Select the matching local LoRA file before saving this adapter.</source>
+        <translation>Sélectionnez le fichier LoRA local correspondant avant d’enregistrer cet adaptateur.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="263"/>
+        <source>Connected to ComfyUI {version}. Select the matching model files.</source>
+        <translation>Connecté à ComfyUI {version}. Sélectionnez les fichiers de modèle correspondants.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="104"/>
+        <source>Qwen Image 2.1 INT8 (experimental)</source>
+        <translation>Qwen Image 2.1 INT8 (expérimental)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="105"/>
+        <source>Selects existing INT8 model files; no conversion or download. Each preset uses its matching text encoder and VAE.</source>
+        <translation>Sélectionne des fichiers de modèle INT8 existants, sans conversion ni téléchargement. Chaque préréglage utilise l’encodeur de texte et le VAE correspondants.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="113"/>
+        <source>Qwen Image 2.1 (experimental)</source>
+        <translation>Qwen Image 2.1 (expérimental)</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="116"/>
+        <source>Changing the model does not change the filenames below. Select matching diffusion, encoder, and VAE files. Untested combinations are experimental.</source>
+        <translation>Changer de modèle ne modifie pas les noms de fichiers ci-dessous. Sélectionnez des fichiers de diffusion, d’encodeur et de VAE compatibles. Les combinaisons non testées sont expérimentales.</translation>
+    </message>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="139"/>
+        <source>Qwen Image 2.1 editing and LoRAs are experimental. Use only Qwen Image 2.1 model-only adapters; text-encoder adapters are not supported.</source>
+        <translation>La retouche et les LoRA de Qwen Image 2.1 sont expérimentaux. Utilisez uniquement des adaptateurs Qwen Image 2.1 ciblant le modèle seul ; les adaptateurs de l’encodeur de texte ne sont pas pris en charge.</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsJob</name>
+    <message>
+        <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
+        <source>The LoRA file changed during verification. Select it again and retry.</source>
+        <translation>Le fichier LoRA a été modifié pendant la vérification. Sélectionnez-le à nouveau et réessayez.</translation>
     </message>
 </context>
 </TS>

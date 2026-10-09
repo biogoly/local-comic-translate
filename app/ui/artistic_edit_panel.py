@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from app.ui.dayu_widgets import dayu_theme
+from modules.artistic_edit.comfy_config import ComfyModelProfile, QWEN_IMAGE_21_MODEL_KEY
 from modules.artistic_edit.contracts import (
     DevicePolicy,
     ModelKey,
@@ -15,7 +16,7 @@ from modules.artistic_edit.contracts import (
 @dataclass(frozen=True)
 class ArtisticEditOptions:
     prompt: str
-    model_key: ModelKey
+    model_key: ModelKey | str
     selection_mode: SelectionMode
     lora_index: int
     lora_scale: float
@@ -38,6 +39,7 @@ class ArtisticEditPanel(QtWidgets.QWidget):
     use_selected_translation_requested = QtCore.Signal()
     generate_requested = QtCore.Signal()
     configure_runtime_requested = QtCore.Signal()
+    configure_comfyui_requested = QtCore.Signal()
     cancel_requested = QtCore.Signal()
     unload_requested = QtCore.Signal()
     revert_requested = QtCore.Signal()
@@ -53,6 +55,9 @@ class ArtisticEditPanel(QtWidgets.QWidget):
         self._context_available = False
         self._context_reason = ""
         self._busy = False
+        self._comfy_profile = ComfyModelProfile()
+        self._sampling_context = ("local", "klein")
+        self._sampling_values = {}
         self._build_ui()
         self.apply_theme()
         self.prompt_edit.textChanged.connect(self._refresh_generate_button)
@@ -68,6 +73,7 @@ class ArtisticEditPanel(QtWidgets.QWidget):
         self.backend_combo = QtWidgets.QComboBox()
         self.backend_combo.addItem(self.tr("Local Diffusers"), "local")
         self.backend_combo.addItem("Black Forest Labs API", "bfl")
+        self.backend_combo.addItem(self.tr("Local ComfyUI"), "comfyui")
         layout.addWidget(self.backend_combo)
         self.cloud_notice = QtWidgets.QLabel(self.tr(
             "Cloud editing uploads the selected area plus context and incurs provider charges. "
@@ -113,6 +119,14 @@ class ArtisticEditPanel(QtWidgets.QWidget):
         self.configure_runtime_button.hide()
         layout.addWidget(self.configure_runtime_button)
 
+        self.configure_comfyui_button = QtWidgets.QPushButton(self.tr("Configure ComfyUI…"))
+        self.configure_comfyui_button.hide()
+        layout.addWidget(self.configure_comfyui_button)
+        self.comfyui_summary = QtWidgets.QLabel()
+        self.comfyui_summary.setWordWrap(True)
+        self.comfyui_summary.hide()
+        layout.addWidget(self.comfyui_summary)
+
         self.progress_bar = QtWidgets.QProgressBar()
         self.progress_bar.setRange(0, 100)
         self.progress_bar.hide()
@@ -129,6 +143,7 @@ class ArtisticEditPanel(QtWidgets.QWidget):
             self.tr("9B · Non-commercial · gated · ~29 GB VRAM"), ModelKey.KLEIN_9B.value
         )
         model_form.addRow(self.tr("Model"), self.model_combo)
+        self._model_label = model_form.labelForField(self.model_combo)
 
         lora_widget = QtWidgets.QWidget()
         lora_row = QtWidgets.QHBoxLayout(lora_widget)
@@ -218,7 +233,7 @@ class ArtisticEditPanel(QtWidgets.QWidget):
         self.context_spin.setSuffix(" %")
         self.context_spin.setValue(15)
         self.context_spin.setToolTip(self.tr(
-            "Surrounding artwork shown to FLUX as context. "
+            "Surrounding artwork shown to the editing model as context. "
             "To keep lettering beyond the selected box, increase Edit margin."
         ))
         advanced_form.addRow(self.tr("Context"), self.context_spin)
@@ -302,6 +317,7 @@ class ArtisticEditPanel(QtWidgets.QWidget):
             self.offload_gpu_spin,
             self.generate_button,
             self.configure_runtime_button,
+            self.configure_comfyui_button,
             self.cancel_button,
             self.unload_button,
             self.revert_button,
@@ -329,6 +345,7 @@ class ArtisticEditPanel(QtWidgets.QWidget):
         self.use_translation_button.clicked.connect(self.use_selected_translation_requested)
         self.generate_button.clicked.connect(self.generate_requested)
         self.configure_runtime_button.clicked.connect(self.configure_runtime_requested)
+        self.configure_comfyui_button.clicked.connect(self.configure_comfyui_requested)
         self.cancel_button.clicked.connect(self.cancel_requested)
         self.unload_button.clicked.connect(self.unload_requested)
         self.revert_button.clicked.connect(self.revert_requested)
@@ -340,19 +357,64 @@ class ArtisticEditPanel(QtWidgets.QWidget):
 
     def _update_backend(self, *_args) -> None:
         cloud = self.backend_combo.currentData() == "bfl"
+        comfy = self.backend_combo.currentData() == "comfyui"
         self.cloud_notice.setVisible(cloud)
+        self.configure_comfyui_button.setVisible(comfy)
+        self.comfyui_summary.setVisible(comfy and bool(self.comfyui_summary.text()))
+        if comfy:
+            self.configure_runtime_button.hide()
         self.prompt_edit.setPlaceholderText(
             self.tr("Enter an editing prompt first.") if cloud else self.tr("Describe the local image edit…")
         )
         for widget in (self.lora_combo, self.refresh_lora_button, self.open_lora_button,
-                       self.device_combo, self.steps_spin, self.guidance_spin):
-            widget.setEnabled(not cloud)
+                       self.device_combo):
+            widget.setEnabled(not cloud and not comfy)
+        self.model_combo.setEnabled(not comfy)
+        self.model_combo.setVisible(not comfy)
+        self._model_label.setVisible(not comfy)
+        self.unload_button.setText(self.tr("Disconnect") if comfy else self.tr("Unload Model"))
         self.unload_button.setEnabled(not cloud and not self._busy)
         self._update_offload_gpu_enabled()
         self._on_lora_changed()
         for i, label in enumerate(self._local_model_labels):
-            self.model_combo.setItemText(i, ("4B" if i == 0 else "9B") if cloud else label)
+            self.model_combo.setItemText(i, ("4B" if i == 0 else "9B") if cloud or comfy else label)
+        self._update_sampling_controls()
         self._refresh_generate_button()
+
+    def set_comfyui_profile(self, profile: ComfyModelProfile) -> None:
+        self._comfy_profile = profile
+        self._update_sampling_controls()
+
+    def _update_sampling_controls(self) -> None:
+        backend = self.backend_combo.currentData()
+        comfy = backend == "comfyui"
+        profile = self._comfy_profile
+        qwen = comfy and profile.model_key == QWEN_IMAGE_21_MODEL_KEY
+        context = (backend, profile.model_key if comfy else "klein")
+        if context != self._sampling_context:
+            self._sampling_values[self._sampling_context] = (
+                self.steps_spin.value(), self.guidance_spin.value(),
+            )
+            defaults = (profile.default_steps, profile.default_cfg) if comfy else (4, 1.0)
+            steps, guidance = self._sampling_values.get(context, defaults)
+            self.steps_spin.setMaximum(100 if qwen else 20)
+            self.steps_spin.setValue(steps)
+            self.guidance_spin.setValue(guidance)
+            self._sampling_context = context
+        self.steps_spin.setEnabled(backend != "bfl")
+        self.guidance_spin.setEnabled(backend == "local" or qwen)
+        if comfy and not qwen:
+            self.guidance_spin.setValue(1.0)
+        self.guidance_spin.setToolTip(self.tr(
+            "Qwen Image 2.1 CFG guidance. The experimental profile starts at 25 steps and CFG 1.0."
+        ) if qwen else self.tr("Distilled FLUX.2 Klein checkpoints may ignore guidance."))
+
+    def set_comfyui_summary(self, text: str, *, managed: bool = False) -> None:
+        self.comfyui_summary.setText(text)
+        comfy = self.backend_combo.currentData() == "comfyui"
+        self.comfyui_summary.setVisible(comfy and bool(text))
+        if comfy:
+            self.unload_button.setText(self.tr("Stop ComfyUI") if managed else self.tr("Disconnect"))
 
     def apply_theme(self) -> None:
         """Give this panel's actions a restrained outline without changing global UI."""
@@ -413,7 +475,8 @@ class ArtisticEditPanel(QtWidgets.QWidget):
         return ArtisticEditOptions(
             backend=self.backend_combo.currentData(),
             prompt=self.prompt_edit.toPlainText().strip(),
-            model_key=ModelKey(self.model_combo.currentData()),
+            model_key=(self._comfy_profile.model_key if self.backend_combo.currentData() == "comfyui"
+                       else ModelKey(self.model_combo.currentData())),
             selection_mode=SelectionMode(self.area_combo.currentData()),
             lora_index=self.lora_combo.currentIndex() - 1 if self.backend_combo.currentData() == 'local' else -1,
             lora_scale=float(self.lora_strength.value()),
@@ -494,7 +557,8 @@ class ArtisticEditPanel(QtWidgets.QWidget):
     def set_busy(self, busy: bool, status: str = "") -> None:
         self._busy = bool(busy)
         self.backend_combo.setEnabled(not self._busy)
-        self.unload_button.setEnabled(not self._busy and self.backend_combo.currentData() == 'local')
+        self.configure_comfyui_button.setEnabled(not self._busy)
+        self.unload_button.setEnabled(not self._busy and self.backend_combo.currentData() in {'local', 'comfyui'})
         self.cancel_button.setEnabled(self._busy)
         self.progress_bar.setVisible(self._busy)
         if self._busy:
@@ -525,5 +589,7 @@ class ArtisticEditPanel(QtWidgets.QWidget):
         elif not has_prompt:
             tooltip = self.tr("Enter an editing prompt first.")
         else:
-            tooltip = self.tr("Process the selected area with FLUX.2 Klein.")
+            tooltip = (self.tr("Process the selected area with the configured ComfyUI model.")
+                       if self.backend_combo.currentData() == "comfyui"
+                       else self.tr("Process the selected area with FLUX.2 Klein."))
         self.generate_button.setToolTip(tooltip)

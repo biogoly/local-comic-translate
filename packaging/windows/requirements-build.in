@@ -1,0 +1,4 @@
+# Resolve from the repository root with uv pip compile; commit the resulting lock.
+-r ../../requirements.txt
+packaging==26.3
+pyinstaller==6.22.3

@@ -48,7 +48,11 @@ class DeepLTranslation(TraditionalTranslation):
             
         return blk_list 
     
-    def preprocess_source_language_code(self, lang_code: str) -> str:
+    def preprocess_source_language_code(self, lang_code: str | None) -> str | None:
+        if not lang_code:
+            return None  # DeepL auto-detects when the SDK omits source_lang.
+        if lang_code.lower() in {"pt", "pt-br", "pt-pt"}:
+            return 'PT'  # Source Portuguese has no regional variants in DeepL.
         if 'zh' in lang_code.lower():
             return 'ZH'
         return lang_code.upper()

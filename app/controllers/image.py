@@ -394,6 +394,9 @@ class ImageStateController:
 
 
     def clear_state(self):
+        artistic = getattr(self.main, "artistic_edit_ctrl", None)
+        if artistic is not None:
+            artistic.invalidate_project()
         # Clear existing image data
         self.main.setWindowTitle("Project1.ctpr[*]")
         self._close_transient_skip_notice()

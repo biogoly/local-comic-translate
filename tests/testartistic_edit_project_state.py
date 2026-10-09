@@ -166,6 +166,17 @@ class ProjectStateV2TypedPatchTests(unittest.TestCase):
             [self.legacy_patch["hash"], self.inpaint_patch["hash"], self.flux_patch["hash"]],
         )
 
+    def test_neutral_qwen_patch_survives_project_reload(self):
+        self.flux_patch["kind"] = "artistic_edit"
+        self.flux_patch["metadata"] = {
+            "backend": "comfyui", "model_key": "qwen-image-2.1",
+            "workflow_id": "qwen-image-2.1-edit-v1", "steps": 25, "guidance": 1.0,
+        }
+        patches = self._save_and_reload()
+        self.assertEqual(patches[2]["kind"], "artistic_edit")
+        self.assertEqual(patches[2]["metadata"], self.flux_patch["metadata"])
+        self.assertTrue(ensure_path_materialized(patches[2]["png_path"]))
+
     def test_png_blobs_materialize_lazily_and_match_original_bytes(self):
         patches = self._save_and_reload()
         originals = [self.legacy_patch, self.inpaint_patch, self.flux_patch]

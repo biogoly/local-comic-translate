@@ -231,7 +231,7 @@ class PatchProperties(TypedDict):
     patch_id: NotRequired[str]
     scene_pos: NotRequired[list]
     page_index: NotRequired[int]
-    kind: NotRequired[str]      # "inpaint" (default) | "flux2_edit"
+    kind: NotRequired[str]      # "inpaint" (default) | "flux2_edit" | "artistic_edit"
     metadata: NotRequired[dict]  # sanitized, msgpack-safe edit metadata
 
 class PatchCommandBase:

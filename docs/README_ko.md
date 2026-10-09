@@ -2,15 +2,27 @@
 
 [English](../README.md) | 한국어 | [Français](README_fr.md) | [简体中文](README_zh-CN.md) | [Español](README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate 인터페이스">
+<img width="1641" height="1001" alt="Comic Translate 인터페이스" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate는 [Comic Translate](https://github.com/ogkalu2/comic-translate)의 커뮤니티 포크로, 개인정보를 보호하는 로컬 번역과 더 안전하게 직접 편집할 수 있는 데스크톱 작업 흐름에 중점을 둡니다. 원본 애플리케이션의 감지, OCR, 인페인팅, 렌더링, 프로젝트, 압축 파일, 웹툰 기능을 유지하면서 관리형 `llama.cpp` 번역, FLUX.2 Klein 아트 편집, 선택적으로 사용할 수 있는 제공업체 직접 API, 다양한 편집 및 안정성 개선을 추가했습니다. 원본 서비스의 계정이나 구독, 번역 크레딧은 필요하지 않습니다.
 
-원본에서 이어받은 OCR 파이프라인은 영어, 한국어, 일본어, 프랑스어, 중국어 간체 및 번체, 러시아어, 독일어, 네덜란드어, 스페인어, 이탈리아어를 원문 언어로 지원하며, 이 언어들을 포함한 더 많은 언어를 번역 대상 언어로 사용할 수 있습니다.
+OCR 파이프라인은 영어, 한국어, 일본어, 프랑스어, 중국어 간체 및 번체, 러시아어, 독일어, 네덜란드어, 스페인어, 이탈리아어, 포르투갈어(포르투갈 및 브라질), 베트남어를 원문 언어로 지원하며, 이 언어들을 포함한 더 많은 언어를 번역 대상 언어로 사용할 수 있습니다.
 
-이 포크는 활발히 개발 중입니다. 아래에 설명된 변경 사항을 사용하려면 현재는 소스 코드에서 실행해야 하며, 원본 Comic Translate 웹사이트의 다운로드에는 이 변경 사항이 포함되어 있지 않습니다. 위의 언어 링크에서 이 포크의 최신 문서를 번역한 내용을 볼 수 있습니다. 인터페이스 언어가 달라도 해당 항목을 찾을 수 있도록, 이 안내서의 설정 및 버튼 이름은 영어로 표기합니다.
+원문 언어를 **Vietnamese**, OCR 엔진을 **Default**로 선택하면 별도의 커뮤니티 베트남어 인식 모델(ONNX 형식, 약 60 MB)을 필요할 때 다운로드하여 사용합니다. **Auto**는 계속 문자 체계를 기준으로 엔진을 선택하므로 베트남어에는 **Vietnamese**를 명시적으로 선택하세요. 만화에서의 인식 품질은 아직 실험 단계입니다. 현재 검증은 인쇄체 텍스트로 만든 합성 이미지에 한정되며, 실제 만화 페이지에서는 추가 테스트가 필요합니다. 다른 OCR 엔진과 백엔드는 변경되지 않습니다. 자세한 내용은 [언어 지원 안내](LANGUAGE_SUPPORT.md)(영문)를 참고하세요.
 
-## 최신 업데이트 — 0.1.0
+이 포크는 활발히 개발 중입니다. 최신 소스 코드 또는 설명된 버전에 해당하는 이 포크의 베타 빌드를 사용하세요. 원본 Comic Translate 웹사이트의 다운로드에는 이 변경 사항이 포함되어 있지 않습니다. 위의 언어 링크에서 이 포크의 최신 문서를 번역한 내용을 볼 수 있습니다. 인터페이스 언어가 달라도 해당 항목을 찾을 수 있도록, 이 안내서의 설정 및 버튼 이름은 영어로 표기합니다.
+
+## 선택적 ComfyUI 백엔드
+
+**Artistic Edit**에서 **Local ComfyUI > Configure ComfyUI…**를 선택하면 로컬 서버에 연결하거나 기존 Windows 포터블 설치를 백그라운드에서 시작할 수 있습니다. **Test Connection / Refresh Models**로 목록을 불러온 뒤 증류형 Klein 모델과 그에 맞는 텍스트 인코더 및 VAE 파일을 선택하세요. ComfyUI는 자체 Python, 모델, LoRA를 사용하며 자동 설치나 다운로드를 수행하지 않습니다. 미리보기, Apply, Undo 작업 흐름과 기존 Diffusers 및 API 백엔드는 그대로 유지됩니다.
+
+실제 검증한 구성은 네이티브 INT8 Klein 9B와 혼합 FP8 인코더입니다. 4B 프로필은 실험적이며, GGUF와 메모리가 적은 하드웨어는 추가 검증이 필요합니다. 관리형 실행은 데이터와 데이터베이스를 분리하며, 외부 서버 연결을 끊어도 해당 서버를 종료하지 않습니다. 자세한 내용은 [설정 안내](COMFYUI_BACKEND.md)와 [검증 기록](COMFYUI_RUNTIME_VALIDATION.md)(영문)을 참고하세요.
+
+**Qwen Image 2.1**도 Klein의 실험적 대안으로 사용할 수 있습니다. INT8 프로필은 이미 설치된 모델, 인코더, VAE 파일을 사용하며, 모델만 수정하는 검증된 Qwen 2.1 LoRA와 강도 조절을 지원합니다. 텍스트 인코더 어댑터는 지원하지 않습니다. 초기 설정은 25단계와 CFG 1.0입니다. LoRA의 로드 및 적용은 검증했지만 아트 레터링 품질 향상을 보장하지는 않으며, 메모리가 적은 하드웨어는 추가 검증이 필요합니다. 자세한 내용은 [Qwen 설정 및 제한 사항](COMFYUI_BACKEND.md#experimental-qwen-image-21)(영문)을 참고하세요.
+
+## 최신 업데이트 — 0.1.0b2
+
+베타 2에는 ComfyUI 백엔드, LoRA를 지원하는 Qwen Image 2.1, 새로운 포르투갈어 및 베트남어 옵션이 포함됩니다. 변경 사항, 검증 내용 및 패키지 제한 사항은 [베타 2 릴리스 노트](RELEASE_NOTES_0.1.0b2.md)(영문)를 참고하세요.
 
 - **Artistic Edit:** 호환되는 LoRA와 함께 로컬 FLUX.2 Klein 4B/9B를 사용하거나 Black Forest Labs API를 사용할 수 있습니다. 적용 전에 미리보기를 확인하며, 실행 취소와 프로젝트 저장을 지원합니다.
 - **번역 백엔드 선택:** 로컬 llama-server 설정을 유지한 채 본인의 API 키로 OpenAI, Gemini, Claude, Deepseek로 전환할 수 있습니다.
@@ -86,6 +98,18 @@ Local Comic Translate는 [Comic Translate](https://github.com/ogkalu2/comic-tran
 
 API 참고 문서: [BFL 이미지 편집](https://docs.bfl.ai/flux_2/flux2_image_editing). 클라우드 연동에는 전송 및 컨트롤러를 모의 구현한 자동화 테스트가 있으며, 개발 중 실제 Flux 및 LLM API 요청도 확인했습니다. 이것이 모든 제공업체나 모델에서의 동작을 보장하지는 않습니다. 계정 접근 권한, 콘텐츠 정책, 요금은 선택한 서비스에 따라 달라집니다.
 
+아트 편집 예시 1
+
+<img width="3261" height="1980" alt="아트 편집 예시 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+아트 편집 예시 2
+
+<img width="3261" height="1996" alt="아트 편집 예시 2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
+
+아트 편집 예시 3
+
+<img width="3273" height="1990" alt="아트 편집 예시 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
+
 ### 데스크톱 외관, 언어, 포크 격리
 
 - **Dark**, **Light**, **Midnight**, **Parchment**, **Lavender**, **Mint**의 여섯 가지 테마를 제공합니다. Artistic Edit 버튼은 테마에 맞는 배경, 읽기 쉬운 레이블, 선명한 테두리를 사용합니다.
@@ -119,6 +143,11 @@ API 참고 문서: [BFL 이미지 편집](https://docs.bfl.ai/flux_2/flux2_image
 감지기는 말풍선 안의 텍스트와 말풍선 밖의 텍스트를 의도적으로 모두 유지합니다. 덕분에 수동 모드에서 유효한 OCR 영역이 누락되지 않지만, **Translate All**을 실행하면 장식적인 제목, 표지판, 효과음, 그 밖에 그림의 일부인 글자에도 인페인팅이 적용될 수 있습니다. 그림 보존이 중요하다면 정리 전에 수동으로 검토하는 것을 권장합니다.
 
 ## 설치
+
+[Windows 패키징 안내서](../packaging/windows/README.md)에 실험적인 **Windows x64 베타**
+빌드 절차가 있습니다. 기본 편집기의 Python/Qt/ONNX 의존성이 포함된 포터블 ZIP을
+만들며, 로컬 LLM과 FLUX의 모델 및 실행 환경은 별도로 준비해야 합니다. 베타 실행
+파일은 공개 배포 전에 테스트가 필요합니다.
 
 ### 요구 사항
 
@@ -264,7 +293,7 @@ uv run python resources/translations/check_translations.py
 
 ## 현재 제한 사항
 
-- 이 포크는 아직 초기 단계이며 소스 코드에서만 실행할 수 있습니다. 다양한 언어, 모델, 레이아웃, 운영 체제 전반에 대한 광범위한 테스트는 진행 중입니다.
+- 이 포크는 아직 초기 단계입니다. 최신 소스 코드 또는 해당 버전의 베타를 사용하세요. 다양한 언어, 모델, 레이아웃, 운영 체제 전반에 대한 광범위한 테스트는 진행 중입니다. 로컬 베타 빌드가 있다고 해서 바이너리의 공개 배포가 승인되었다는 뜻은 아닙니다.
 - 자동 모드는 대사와 그림의 일부인 글자를 항상 구분할 수는 없습니다. 원본 보존이 중요하다면 Manual 모드를 사용하세요.
 - 복잡한 페이지에서는 감지, OCR, 번역, 분할, 인페인팅 모두 사람이 수정해야 할 수 있습니다.
 - 시각 입력에는 실제로 멀티모달을 지원하는 모델, 호환 서버, 그리고 해당되는 경우 모델에 맞는 프로젝터 파일이 필요합니다.

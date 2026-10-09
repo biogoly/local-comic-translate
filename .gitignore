@@ -29,3 +29,8 @@ demo_*.py
 benchmarks/
 
 scripts
+
+# Windows package build outputs (never include models or user settings)
+/build/
+/dist/
+/release-artifacts/

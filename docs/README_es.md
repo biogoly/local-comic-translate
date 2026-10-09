@@ -2,15 +2,27 @@
 
 [English](../README.md) | [한국어](README_ko.md) | [Français](README_fr.md) | [简体中文](README_zh-CN.md) | Español
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Interfaz de Comic Translate">
+<img width="1641" height="1001" alt="Interfaz de Comic Translate" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate es una bifurcación comunitaria de [Comic Translate](https://github.com/ogkalu2/comic-translate) centrada en la traducción privada y local, y en un flujo de edición de escritorio más seguro y supervisado. Conserva las funciones del proyecto original de detección, OCR, relleno de imágenes (inpainting), renderizado, proyectos, archivos comprimidos y webtoons, y añade traducción con `llama.cpp` gestionado por la aplicación, edición artística con FLUX.2 Klein, APIs directas de proveedores opcionales y mejoras importantes de edición y fiabilidad. No requiere una cuenta, suscripción ni créditos de traducción del servicio del proyecto original.
 
-El sistema de OCR heredado admite inglés, coreano, japonés, francés, chino simplificado y tradicional, ruso, alemán, neerlandés, español e italiano como idiomas de origen; estos y otros idiomas están disponibles como destinos de traducción.
+El sistema de OCR admite inglés, coreano, japonés, francés, chino simplificado y tradicional, ruso, alemán, neerlandés, español, italiano, portugués (Portugal y Brasil) y vietnamita como idiomas de origen; estos y otros idiomas están disponibles como destinos de traducción.
 
-Esta bifurcación está en desarrollo activo. Los cambios descritos a continuación requieren actualmente ejecutar la aplicación desde el código fuente; las descargas del sitio web del proyecto original Comic Translate no los incluyen. Los enlaces de idiomas de arriba ofrecen traducciones de la documentación actual de esta bifurcación. Los nombres de ajustes y botones se mantienen en inglés en estas guías para poder identificarlos entre los distintos idiomas de la interfaz.
+Al seleccionar **Vietnamese** como idioma de origen y **Default** como motor OCR, la aplicación utiliza un modelo comunitario independiente de reconocimiento de vietnamita en formato ONNX, que se descarga cuando se necesita (unos 60 MB). **Auto** sigue seleccionando el motor según el sistema de escritura, así que elige **Vietnamese** explícitamente. La calidad en cómics sigue siendo experimental: las pruebas actuales solo incluyen imágenes sintéticas de texto impreso; aún falta probar páginas de cómics reales. Los demás motores OCR y backends no cambian. Consulta la [guía de idiomas compatibles](LANGUAGE_SUPPORT.md) (en inglés).
 
-## Última actualización — 0.1.0
+Esta bifurcación está en desarrollo activo. Usa el código fuente actualizado o una compilación beta de esta bifurcación que corresponda a la versión descrita; las descargas del sitio web del proyecto original Comic Translate no incluyen estos cambios. Los enlaces de idiomas de arriba ofrecen traducciones de la documentación actual de esta bifurcación. Los nombres de ajustes y botones se mantienen en inglés en estas guías para poder identificarlos entre los distintos idiomas de la interfaz.
+
+## Backend opcional ComfyUI
+
+En **Artistic Edit**, selecciona **Local ComfyUI > Configure ComfyUI…** para conectarte a un servidor local o iniciar en segundo plano una instalación portátil existente de Windows. Usa **Test Connection / Refresh Models** y elige archivos compatibles del modelo Klein destilado, su codificador de texto y su VAE. ComfyUI utiliza su propio Python, modelos y LoRAs; no se instala ni descarga nada automáticamente. Se conservan la vista previa, Apply y Undo, y los backends Diffusers y API siguen disponibles.
+
+La configuración probada es Klein 9B INT8 nativo con un codificador de precisión mixta FP8. Los perfiles 4B son experimentales; GGUF y los equipos con menos memoria aún requieren validación. El modo gestionado aísla los datos y la base de datos; desconectarse de un servidor externo no lo detiene. Consulta la [guía de configuración](COMFYUI_BACKEND.md) y los [resultados de validación](COMFYUI_RUNTIME_VALIDATION.md) (en inglés).
+
+**Qwen Image 2.1** también está disponible como alternativa experimental a Klein. Su perfil INT8 utiliza archivos de modelo, codificador y VAE ya instalados y admite LoRAs de Qwen 2.1 validados que solo modifican el modelo, con intensidad ajustable; no se admiten adaptadores del codificador de texto. Los valores iniciales son 25 pasos y CFG 1,0. La carga y aplicación de LoRAs se han probado, pero no se garantiza una mejora de la rotulación artística; los equipos con menos memoria aún requieren validación. Consulta la [configuración de Qwen y sus limitaciones](COMFYUI_BACKEND.md#experimental-qwen-image-21) (en inglés).
+
+## Última actualización — 0.1.0b2
+
+La beta 2 incorpora el backend ComfyUI, Qwen Image 2.1 con LoRAs y las nuevas opciones de portugués y vietnamita. Consulta las [notas de la beta 2](RELEASE_NOTES_0.1.0b2.md) (en inglés) para conocer los cambios, la validación y las limitaciones del paquete.
 
 - **Artistic Edit:** FLUX.2 Klein 4B/9B local con LoRAs compatibles, o la API de Black Forest Labs, con vista previa antes de aplicar los cambios, posibilidad de deshacerlos y conservación de las ediciones en el proyecto.
 - **Elección del motor de traducción:** conserva los ajustes de llama-server local mientras cambias a OpenAI, Gemini, Claude o Deepseek con tus propias claves de API.
@@ -86,6 +98,18 @@ Esta bifurcación está en desarrollo activo. Los cambios descritos a continuaci
 
 Referencia de la API: [edición de imágenes de BFL](https://docs.bfl.ai/flux_2/flux2_image_editing). La integración en la nube cuenta con pruebas automatizadas de transporte y controladores simulados, y durante el desarrollo se ha confirmado el funcionamiento de solicitudes reales a las APIs de Flux y LLM. Esto no garantiza el funcionamiento de todos los proveedores o modelos; el acceso de la cuenta, las políticas de contenido y los cargos dependen del servicio elegido.
 
+Ejemplo de edición artística 1
+
+<img width="3261" height="1980" alt="Ejemplo de edición artística 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+Ejemplo de edición artística 2
+
+<img width="3261" height="1996" alt="Ejemplo de edición artística 2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
+
+Ejemplo de edición artística 3
+
+<img width="3273" height="1990" alt="Ejemplo de edición artística 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
+
 ### Apariencia del escritorio, idiomas y aislamiento de la bifurcación
 
 - Seis temas: **Dark**, **Light**, **Midnight**, **Parchment**, **Lavender** y **Mint**. Los botones de Artistic Edit tienen fondos adaptados al tema, etiquetas legibles y bordes visibles.
@@ -119,6 +143,12 @@ También puedes dibujar una región que se haya omitido y elegir **OCR** y despu
 El detector conserva intencionadamente tanto el texto de bocadillos como el texto situado fuera de ellos. Esto evita perder regiones válidas de OCR en el modo manual, pero también significa que **Translate All** puede borrar mediante inpainting títulos artísticos, carteles, onomatopeyas u otras letras que formen parte del dibujo. Se recomienda revisar manualmente las regiones antes de limpiarlas cuando sea importante preservar la ilustración.
 
 ## Instalación
+
+La [guía de empaquetado para Windows](../packaging/windows/README.md) incluye un
+procedimiento experimental para crear una **beta de Windows x64**. Genera un ZIP
+portátil con las dependencias Python/Qt/ONNX del editor principal; los modelos y
+entornos de ejecución de LLM locales y FLUX siguen siendo independientes. Los
+binarios beta requieren pruebas antes de una publicación pública.
 
 ### Requisitos
 
@@ -264,7 +294,7 @@ Las comprobaciones de publicación incluyen OCR y conservación de regiones manu
 
 ## Limitaciones actuales
 
-- Esta bifurcación está en una fase inicial y solo se distribuye como código fuente; continúan las pruebas amplias con distintos idiomas, modelos, diseños de página y sistemas operativos.
+- Esta bifurcación está en una fase inicial. Usa el código fuente actualizado o una beta de la versión correspondiente; continúan las pruebas amplias con distintos idiomas, modelos, diseños de página y sistemas operativos. Las compilaciones beta locales no implican que se haya autorizado una distribución pública de los binarios.
 - El modo automático no siempre distingue los diálogos de la rotulación que forma parte del dibujo. Utiliza el modo Manual cuando sea importante preservar la ilustración.
 - La detección, el OCR, la traducción, la segmentación y el inpainting pueden requerir corrección humana en páginas difíciles.
 - La entrada visual requiere un modelo realmente multimodal, un servidor compatible y, cuando corresponda, el archivo de proyector adecuado.

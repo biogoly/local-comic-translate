@@ -17,6 +17,9 @@ supported_source_languages = [
     "Dutch",
     "Spanish",
     "Italian",
+    "Portuguese",
+    "Brazilian Portuguese",
+    "Vietnamese",
 ]
 
 supported_target_languages = [

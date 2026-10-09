@@ -10,6 +10,11 @@ from uuid import uuid4
 
 from PySide6.QtCore import QObject, QProcess, QProcessEnvironment, Signal
 
+from modules.utils.external_process import (
+    external_process_environment,
+    sanitized_external_environment,
+)
+
 from .contracts import (
     ArtisticEditRequest,
     ArtisticEditResult,
@@ -22,6 +27,7 @@ from .contracts import (
     message_matches_request,
     parse_protocol_line,
 )
+from .runtime_paths import is_application_executable, is_frozen_app, worker_source_root
 
 
 class FluxWorkerClient(QObject):
@@ -92,6 +98,12 @@ class FluxWorkerClient(QObject):
             raise FileNotFoundError(
                 f"Artistic Edit Python executable does not exist: {self.python_executable}"
             )
+        if is_application_executable(self.python_executable):
+            raise RuntimeError(
+                "Configure a separate FLUX Python executable in Artistic Edit settings. "
+                "The packaged application is not a Python interpreter."
+            )
+        source_root = worker_source_root()
 
         self._stdout_buffer.clear()
         self._stderr_tail.clear()
@@ -100,8 +112,13 @@ class FluxWorkerClient(QObject):
         self._startup_policy = policy
         self._expected_shutdown = False
 
-        environment = QProcessEnvironment.systemEnvironment()
+        environment = QProcessEnvironment()
+        for name, value in sanitized_external_environment(dict(os.environ)).items():
+            environment.insert(name, value)
         environment.insert("PYTHONUNBUFFERED", "1")
+        # A packaged install may be read-only; the worker never needs bytecode
+        # caches alongside its shipped source files.
+        environment.insert("PYTHONDONTWRITEBYTECODE", "1")
         # The FLUX runtime is deliberately isolated from the main application.
         # Inheriting either of these variables can make the worker import torch,
         # diffusers, or compiled extensions from the app environment instead of
@@ -126,8 +143,7 @@ class FluxWorkerClient(QObject):
             environment.remove("CUDA_VISIBLE_DEVICES")
         self.process.setProcessEnvironment(environment)
 
-        repository_root = Path(__file__).resolve().parents[2]
-        self.process.setWorkingDirectory(str(repository_root))
+        self.process.setWorkingDirectory(str(source_root))
         arguments = [
             "-u",
             "-m",
@@ -153,7 +169,13 @@ class FluxWorkerClient(QObject):
 
             self._process_modifier = hide_console
             self.process.setCreateProcessArgumentsModifier(hide_console)
-        self.process.start()
+        with external_process_environment():
+            self.process.start()
+            # Qt can defer CreateProcess until the event loop resumes. Spawn
+            # the external interpreter before restoring the frozen GUI's DLL
+            # search path, otherwise its Torch/CUDA imports may use our DLLs.
+            if is_frozen_app() and not self.process.waitForStarted(5000):
+                raise RuntimeError("Could not start the configured FLUX Python executable.")
 
     def _on_started(self) -> None:
         request_id = str(uuid4())

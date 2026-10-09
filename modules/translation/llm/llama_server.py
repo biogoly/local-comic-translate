@@ -17,6 +17,11 @@ import time
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
+from modules.utils.external_process import (
+    external_process_environment,
+    sanitized_external_environment,
+)
+
 
 logger = logging.getLogger(__name__)
 MANAGED_MODEL_ALIAS = "local-comic-translate"
@@ -110,11 +115,14 @@ class LlamaServerRuntime:
             }
             if os.name == "nt":
                 popen_kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+                if getattr(sys, "frozen", False):
+                    popen_kwargs["env"] = sanitized_external_environment(os.environ)
 
             logger.info("Starting managed llama-server on 127.0.0.1:%s", port)
             self._output_tail.clear()
             try:
-                self._process = subprocess.Popen(command, **popen_kwargs)
+                with external_process_environment():
+                    self._process = subprocess.Popen(command, **popen_kwargs)
             except OSError as exc:
                 self._process = None
                 raise RuntimeError(f"Could not start llama-server: {exc}") from exc

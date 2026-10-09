@@ -173,6 +173,8 @@ class OCRFactory:
             'Italian': 'latin',
             'German': 'latin',
             'Dutch': 'latin',
+            'Portuguese': 'latin',
+            'Brazilian Portuguese': 'latin',
         }
 
         # Language-specific factory functions (for Default model)
@@ -180,6 +182,7 @@ class OCRFactory:
             **script_factories,
             **{lang: script_factories[bucket] for lang, bucket in language_to_bucket.items()},
             'English': make_english,
+            'Vietnamese': cls._create_vietnamese_ocr,
         }
 
         # Check if we have a specific model factory
@@ -192,6 +195,16 @@ class OCRFactory:
         
         return 
     
+    @staticmethod
+    def _create_vietnamese_ocr(settings) -> OCREngine:
+        # This separately qualified ONNX model has the Vietnamese tone alphabet.
+        # Auto remains script-based; select Vietnamese explicitly for this model.
+        from .vietnamese import VietnameseOCREngine
+        engine = VietnameseOCREngine()
+        engine.initialize(device=resolve_device(settings.is_gpu_enabled(), 'onnx'),
+                          use_text_lines=True)
+        return engine
+
     @staticmethod
     def _create_microsoft_ocr(settings) -> OCREngine:
         credentials = settings.get_credentials(settings.ui.tr("Microsoft Azure"))

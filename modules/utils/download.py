@@ -75,6 +75,7 @@ class ModelID(Enum):
     PPOCR_V5_REC_SERVER = "ppocr-v5-rec-ch-server"
     PPOCR_V5_REC_MOBILE_TORCH = "ppocr-v5-rec-ch-mobile-torch"
     PPOCR_V6_REC_SMALL = "ppocr-v6-rec-ch-small"
+    PPOCR_V6_REC_VI = "ppocr-v6-rec-vietnamese"
     
     # PPOCRv5 Recognition Models - Other Languages
     PPOCR_V5_REC_EN_MOBILE = "ppocr-v5-rec-en-mobile"
@@ -612,6 +613,20 @@ def _register_defaults():
         files=['latin_PP-OCRv5_rec_mobile_infer.onnx', 'ppocrv5_latin_dict.txt'],
         sha256=['b20bd37c168a570f583afbc8cd7925603890efbcdc000a59e22c269d160b5f5a', '3c0a8a79b612653c25f765271714f71281e4e955962c153e272b7b8c1d2b13ff'],
         save_dir=os.path.join(models_base_dir, 'ocr', 'ppocr-v5-onnx')
+    ))
+
+    # Vietnamese requires a complete tone-mark alphabet, absent from the stock
+    # Latin/V6-small recognizers. Keep this matched community model/charset in
+    # its own cache; never replace the existing Latin model or dictionary.
+    ModelDownloader.register(ModelSpec(
+        id=ModelID.PPOCR_V6_REC_VI,
+        url='https://huggingface.co/truonggiabao7/ocrdoc-models/resolve/9b5346432fb84a447fdc4d780a7741126b446b0f/',
+        files=['recognition.onnx', 'charset.txt'],
+        sha256=[
+            '767305d37d06728fe9578ff8132595ce23f66139df5e2937fd4131bd1dc34f12',
+            '5d801bf60472c4c1b184b6b6843aa2c754d8daf1429247e07658ee0bd79ab448',
+        ],
+        save_dir=os.path.join(models_base_dir, 'ocr', 'ppocr-v6-vietnamese')
     ))
 
     # PPOCRv5 Recognition Models - East Slavic (Russian)

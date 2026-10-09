@@ -3,6 +3,7 @@ from pathlib import Path
 from types import SimpleNamespace
 import tempfile
 import unittest
+from unittest.mock import patch
 from uuid import uuid4
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -120,6 +121,32 @@ class ArtisticEditControllerTests(unittest.TestCase):
 
     def _mark_window_update(self):
         self.window_modified_updates += 1
+
+    def test_packaged_application_never_uses_itself_as_optional_python(self):
+        import sys
+
+        settings = SimpleNamespace(value=lambda *_args: "")
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.dict(os.environ, {"LOCAL_COMIC_TRANSLATE_FLUX_PYTHON": ""}),
+            patch("app.controllers.artistic_edit.app_settings", return_value=settings),
+            patch("app.controllers.artistic_edit.importlib.util.find_spec") as find_spec,
+        ):
+            self.assertIsNone(self.controller.configured_worker_python())
+            find_spec.assert_not_called()
+            with patch.dict(os.environ, {"LOCAL_COMIC_TRANSLATE_FLUX_PYTHON": sys.executable}):
+                self.assertIsNone(self.controller.configured_worker_python())
+
+    def test_packaged_application_keeps_explicit_external_python(self):
+        import sys
+
+        external_python = Path(self.temporary.name) / "external-python.exe"
+        external_python.touch()
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.dict(os.environ, {"LOCAL_COMIC_TRANSLATE_FLUX_PYTHON": str(external_python)}),
+        ):
+            self.assertEqual(self.controller.configured_worker_python(), str(external_python))
 
     def _session(self):
         prepared = prepare_edit(

@@ -174,7 +174,7 @@ class WorkspaceMixin:
 
         s_combo_text_layout = QtWidgets.QVBoxLayout()
         self.s_combo = MComboBox().medium()
-        self.s_combo.addItems([self.tr(lang) for lang in supported_source_languages])
+        self.s_combo.addItems([self.reverse_lang_mapping[lang] for lang in supported_source_languages])
         self.s_combo.setToolTip(self.tr("Source Language"))
         s_combo_text_layout.addWidget(self.s_combo)
         self.s_text_edit = MTextEdit()
@@ -184,7 +184,7 @@ class WorkspaceMixin:
 
         t_combo_text_layout = QtWidgets.QVBoxLayout()
         self.t_combo = MComboBox().medium()
-        self.t_combo.addItems([self.tr(lang) for lang in supported_target_languages])
+        self.t_combo.addItems([self.reverse_lang_mapping[lang] for lang in supported_target_languages])
         self.t_combo.setToolTip(self.tr("Target Language"))
         t_combo_text_layout.addWidget(self.t_combo)
         self.t_text_edit = MTextEdit()
@@ -435,7 +435,7 @@ class WorkspaceMixin:
         self.tool_buttons["clone"] = self.local_repair_panel.clone
         tools_layout.addWidget(self.local_repair_panel)
 
-        artistic_edit_div = MDivider(self.tr("Artistic Edit (FLUX.2 Klein)"))
+        artistic_edit_div = MDivider(self.tr("Artistic Edit"))
         tools_layout.addWidget(artistic_edit_div)
         self.artistic_edit_panel = ArtisticEditPanel()
         tools_layout.addWidget(self.artistic_edit_panel)

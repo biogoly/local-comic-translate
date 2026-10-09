@@ -1,0 +1,182 @@
+[
+  {
+    "component": "openimageio",
+    "version": "3.0.9.1",
+    "url": "https://github.com/AcademySoftwareFoundation/OpenImageIO/archive/v3.0.9.1.tar.gz",
+    "filename": "openimageio-3.0.9.1.tar.gz",
+    "sha256": "bbc5db069b7d8e4e2fccf994d55a262953057745a5e398e44a2e5235a8736d1d",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 2,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "openexr",
+    "version": "3.4.2",
+    "url": "https://github.com/AcademySoftwareFoundation/openexr/archive/v3.4.2.tar.gz",
+    "filename": "openexr-3.4.2.tar.gz",
+    "sha256": "d7d38eb6a63ea8ba0f301d0ad6a80094032d488e9e6c525b35236d20a9ae3ef2",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 3,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "imath",
+    "version": "3.2.2",
+    "url": "https://github.com/AcademySoftwareFoundation/Imath/archive/v3.2.2.tar.gz",
+    "filename": "imath-3.2.2.tar.gz",
+    "sha256": "b4275d83fb95521510e389b8d13af10298ed5bed1c8e13efd961d91b1105e462",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 2,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "opencolorio",
+    "version": "2.4.2",
+    "url": "https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/v2.4.2.tar.gz",
+    "filename": "opencolorio-2.4.2.tar.gz",
+    "sha256": "2d8f2c47c40476d6e8cea9d878f6601d04f6d5642b47018eaafa9e9f833f3690",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 6,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "libjpeg-turbo",
+    "version": "3.1.2",
+    "url": "https://github.com/libjpeg-turbo/libjpeg-turbo/archive/3.1.2.tar.gz",
+    "filename": "libjpeg-turbo-3.1.2.tar.gz",
+    "sha256": "560f6338b547544c4f9721b18d8b87685d433ec78b3c644c70d77adad22c55e6",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 4,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "expat",
+    "version": "2.7.3",
+    "url": "https://github.com/libexpat/libexpat/archive/R_2_7_3.tar.gz",
+    "filename": "expat-2.7.3.tar.gz",
+    "sha256": "7c853a76f7c2a562c3edfd84ca47e487d9eff3966786191dfb60cc441daf82d6",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 2,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "liblzma",
+    "version": "5.8.1",
+    "url": "https://github.com/tukaani-project/xz/archive/v5.8.1.tar.gz",
+    "filename": "liblzma-5.8.1.tar.gz",
+    "sha256": "bdbc23fbf9098843357e71e49685724fda2c320c29cb1b25fd90505f14bb0b3d",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 6,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "libpng",
+    "version": "1.6.50",
+    "url": "https://github.com/pnggroup/libpng/archive/v1.6.50.tar.gz",
+    "filename": "libpng-1.6.50.tar.gz",
+    "sha256": "71158e53cfdf2877bc99bcab33641d78df3f48e6e0daad030afe9cb8c031aa46",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 6,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "openjph",
+    "version": "0.24.4",
+    "url": "https://github.com/aous72/OpenJPH/archive/0.24.4.tar.gz",
+    "filename": "openjph-0.24.4.tar.gz",
+    "sha256": "4013c7ea698fb40cc1659372e4a01cb937121ab353d0dcc395dc2f7b365b9d22",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 1,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "tiff",
+    "version": "4.7.1",
+    "url": "https://gitlab.com/libtiff/libtiff/-/archive/v4.7.1/libtiff-v4.7.1.tar.gz",
+    "filename": "tiff-4.7.1.tar.gz",
+    "sha256": "6ab956415ddb6cae497faad18398ff0fd056d17d8bf7b5921cc194c55b0191fc",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 2,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "yaml-cpp",
+    "version": "0.8.0",
+    "url": "https://github.com/jbeder/yaml-cpp/archive/0.8.0.tar.gz",
+    "filename": "yaml-cpp-0.8.0.tar.gz",
+    "sha256": "fbe74bbdcee21d656715688706da3c8becfd946d92cd44705cc6098bb23b3a16",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 3,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "zlib",
+    "version": "1.3.1",
+    "url": "https://github.com/madler/zlib/archive/v1.3.1.tar.gz",
+    "filename": "zlib-1.3.1.tar.gz",
+    "sha256": "17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 2,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "zstd",
+    "version": "1.5.7",
+    "url": "https://github.com/facebook/zstd/archive/v1.5.7.tar.gz",
+    "filename": "zstd-1.5.7.tar.gz",
+    "sha256": "37d7284556b20954e56e1ca85b80226768902e2edabd3b649e9e72c0c9012ee3",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 3,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "bzip2",
+    "version": "1.0.8",
+    "url": "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz",
+    "filename": "bzip2-1.0.8.tar.gz",
+    "sha256": "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 1,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "libdeflate",
+    "version": "1.22",
+    "url": "https://github.com/ebiggers/libdeflate/archive/v1.22.tar.gz",
+    "filename": "libdeflate-1.22.tar.gz",
+    "sha256": "7f343c7bf2ba46e774d8a632bf073235e1fd27723ef0a12a90f8947b7fe851d6",
+    "vcpkg_sha512_verified": false,
+    "notice_count": 1,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "fmt",
+    "version": "11.0.2",
+    "url": "https://github.com/fmtlib/fmt/archive/11.0.2.tar.gz",
+    "filename": "fmt-11.0.2.tar.gz",
+    "sha256": "6cb1e6d37bdcb756dbbe59be438790db409cdb4868c66e888d5df9f13f7c027f",
+    "vcpkg_sha512_verified": false,
+    "notice_count": 1,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "eigen3",
+    "version": "3.4.0",
+    "url": "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz",
+    "filename": "eigen3-3.4.0.tar.gz",
+    "sha256": "8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72",
+    "vcpkg_sha512_verified": false,
+    "notice_count": 9,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  },
+  {
+    "component": "stduuid",
+    "version": "1.2.3",
+    "url": "https://github.com/mariusbancila/stduuid/archive/v1.2.3.tar.gz",
+    "filename": "stduuid-1.2.3.tar.gz",
+    "sha256": "b1176597e789531c38481acbbed2a6894ad419aab0979c10410d59eb0ebf40d3",
+    "vcpkg_sha512_verified": true,
+    "notice_count": 1,
+    "wheel_build_correspondence": "inferred from tagged build recipe; not independently confirmed by wheel publisher"
+  }
+]

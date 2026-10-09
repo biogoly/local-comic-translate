@@ -7,6 +7,7 @@ from PySide6.QtCore import QCoreApplication, QPointF
 from PySide6.QtGui import QUndoCommand
 
 from app.projects.patch_metadata import (
+    PATCH_KIND_ARTISTIC_EDIT,
     PATCH_KIND_FLUX2_EDIT,
     PATCH_KIND_INPAINT,
     normalize_patch_kind,
@@ -125,7 +126,7 @@ class PatchInsertCommand(QUndoCommand, PatchCommandBase):
     def _default_text(kind):
         if kind is None or kind == PATCH_KIND_INPAINT:
             return QCoreApplication.translate("PatchCommands", "Inpaint")
-        if kind == PATCH_KIND_FLUX2_EDIT:
+        if kind in {PATCH_KIND_FLUX2_EDIT, PATCH_KIND_ARTISTIC_EDIT}:
             return QCoreApplication.translate("PatchCommands", "Artistic edit")
         return QCoreApplication.translate("PatchCommands", "Patch edit")
 
@@ -229,7 +230,7 @@ class PatchClearCommand(QUndoCommand, PatchCommandBase):
                 text = QCoreApplication.translate("PatchCommands", "Revert all patches")
             elif self.kind == PATCH_KIND_INPAINT:
                 text = QCoreApplication.translate("PatchCommands", "Revert inpainting")
-            elif self.kind == PATCH_KIND_FLUX2_EDIT:
+            elif self.kind in {PATCH_KIND_FLUX2_EDIT, PATCH_KIND_ARTISTIC_EDIT}:
                 text = QCoreApplication.translate("PatchCommands", "Revert artistic edits")
             else:
                 text = QCoreApplication.translate("PatchCommands", "Revert patches")

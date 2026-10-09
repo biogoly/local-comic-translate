@@ -2,19 +2,23 @@
 
 English | [한국어](docs/README_ko.md) | [Français](docs/README_fr.md) | [简体中文](docs/README_zh-CN.md) | [Español](docs/README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate interface">
+<img width="1641" height="1001" alt="Comic Translate interface" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate is a community fork of [Comic Translate](https://github.com/ogkalu2/comic-translate) focused on private, local translation and a safer hands-on desktop editing workflow. It keeps the upstream application's detection, OCR, inpainting, rendering, project, archive, and webtoon features while adding managed `llama.cpp` translation, FLUX.2 Klein artistic editing, optional direct provider APIs, and substantial editing and reliability improvements. No upstream account, subscription, or translation credits are required.
 
-The inherited OCR pipeline supports English, Korean, Japanese, French, Simplified and Traditional Chinese, Russian, German, Dutch, Spanish, and Italian as source languages, with those and additional languages available as translation targets.
+The OCR pipeline supports English, Korean, Japanese, French, Simplified and Traditional Chinese, Russian, German, Dutch, Spanish, Italian, and Portuguese (Portugal/Brazil) as source languages, with those and additional languages available as translation targets. Vietnamese is also selectable as a source, using a separate local recognizer with a complete Vietnamese alphabet; comic-page accuracy is still being evaluated. See [language setup and validation](docs/LANGUAGE_SUPPORT.md).
 
-This fork is under active development. The changes described below currently require running from source; the downloads on the upstream Comic Translate website do not include them. The language links above provide translations of this fork's current documentation. Settings and button labels are kept in English in these guides so they can be matched across interface languages.
+This fork is under active development. Run the current source or a matching fork beta package; downloads on the upstream Comic Translate website do not include these changes. The language links above provide translations of this fork's current documentation. Settings and button labels are kept in English in these guides so they can be matched across interface languages.
 
-## Latest update — 0.1.0
+## Latest update — 0.1.0b2
+
+See the [beta 2 release notes](docs/RELEASE_NOTES_0.1.0b2.md) for testing guidance and current limitations.
 
 - **Artistic Edit:** local FLUX.2 Klein 4B/9B with compatible LoRAs, or the Black Forest Labs API, using a preview-before-apply workflow with undo and project persistence.
+- **Optional ComfyUI backend:** reuse an existing local server or Windows portable installation, including qualified native INT8 Klein 9B and experimental Qwen Image 2.1 with validated model-only LoRAs. Diffusers and provider APIs remain available.
 - **Your choice of translation backend:** retain local llama-server settings while switching to OpenAI, Gemini, Claude, or Deepseek with your own API keys.
 - **Better manual workflow:** OCR works directly on hand-drawn regions; completed manual translations and their formatting survive later whole-page processing; source and target language choices persist between pages.
+- **Portuguese and Vietnamese:** explicit source-language choices, Portugal/Brazil dialect instructions for local/cloud LLMs, and a separate Vietnamese OCR model downloaded only when needed. Existing translation targets and saved project identifiers remain compatible.
 - **Localized cleanup:** restore original pixels with a brush, clone a fixed sample of color and texture, or fill a mask with a sampled background color.
 - **Desktop polish:** Midnight, Parchment, Lavender, and Mint themes alongside Light/Dark, clearer Artistic Edit controls, refreshed splash artwork, and updated GUI language catalogs.
 - **Independent fork identity:** separate settings and application data, with upstream update prompts and paid-service routing removed.
@@ -46,6 +50,7 @@ This fork is under active development. The changes described below currently req
 
 - A practical page-by-page workflow for reviewing detected regions before anything is erased.
 - Both source and target language selections remain in effect when moving between pages in Manual mode. An explicit **Auto** source-language selection also persists until changed.
+- For Vietnamese, select **Vietnamese** explicitly and use **Default** OCR to load its dedicated recognizer (about 60 MB on first use). **Auto** still routes Latin-script text to the existing Latin model, which cannot read the full Vietnamese accent set. Portuguese uses the unchanged Latin model. Interface language is independent of comic source/target language; see [supported-language details](docs/LANGUAGE_SUPPORT.md).
 - Right-click **OCR** works on a hand-drawn region without first running whole-page Detect. Local OCR prepares missing line boundaries, and an explicit region OCR action retries that region rather than returning an old cached reading or processing unrelated boxes.
 - Whole-page Detect retains hand-drawn regions and suppresses duplicate detections of the same text. Later Recognize/Translate operations preserve their completed source/target text; Segment and Render retain their existing text layers and word-level formatting instead of deleting or duplicating them.
 - Preserving a manual text layer does not bypass background cleanup: its region still participates in segmentation and cleaning. Untranslated manual regions continue through the normal workflow.
@@ -72,19 +77,34 @@ This fork is under active development. The changes described below currently req
 ### FLUX.2 Klein artistic editing
 
 - An optional, isolated Diffusers worker can edit a selected text box, a painted area, or a whole page with FLUX.2 Klein 4B or 9B.
-- The editor uses the model's native BF16 precision with configurable GPU or CPU-offload policies.
+- The Diffusers backend uses the model's native BF16 precision with configurable GPU or CPU-offload policies.
 - Compatible LoRAs can be selected from `models/loras/flux2-klein`, with per-edit strength control and model-size validation.
 - **Use selected translation** can build an **Artistic lettering** prompt, or an **Empty speech bubble** prompt for placing editable text afterward.
 - **Context padding** supplies surrounding artwork to the model; **Edit margin** expands the area allowed to change around a selected box so longer translated lettering is not clipped to its original bounds. Review the preview before applying an expanded edit.
 - Generated results appear in a Before/After preview and are applied as non-destructive, undoable project patches.
 - The FLUX worker is persistent, while model or device-policy changes intentionally reload it.
 - CPU-offload policies expose the physical GPU index, which is useful when another local model already occupies one card.
+- The optional **Local ComfyUI** backend connects to an existing local server or starts an existing Windows portable installation in the background. It reuses ComfyUI's native checkpoints, memory manager, and compatible LoRAs, with the same preview, Apply, and undo workflow. No ComfyUI packages or models are installed automatically.
+- ComfyUI's initial real-model qualification is a native INT8 Klein 9B checkpoint with a mixed-FP8 encoder. 4B mappings are experimental; GGUF/custom-node profiles and lower-memory hardware still need qualification. This is separate from the unchanged BF16 Diffusers worker. See the [ComfyUI setup guide](docs/COMFYUI_BACKEND.md) and [validation record](docs/COMFYUI_RUNTIME_VALIDATION.md).
+- **Experimental Qwen Image 2.1** is available through Local ComfyUI as an alternative to Klein. Its INT8 preset selects existing Qwen 2.1 model/encoder/VAE files; it uses the same selection, preview, Apply, and undo workflow. Starts at 25 steps / CFG 1.0 and supports validated model-only Qwen 2.1 LoRAs with adjustable strength. Lower-memory hardware still needs qualification. See the [Qwen setup and limits](docs/COMFYUI_BACKEND.md#experimental-qwen-image-21).
 - An optional **Black Forest Labs API** backend supports hosted Klein 4B and 9B without a local FLUX environment or GPU. Configure its key in **Settings > Provider APIs**, then select the backend at the top of Artistic Edit. **Local Diffusers** remains the default each launch.
 - Cloud edits share the same selection, context, edit margin, preview, Apply, and undo workflow. Each generation (including regeneration) asks permission to upload the selected area plus context, or the whole page when selected. A preview is already a paid generation, even if discarded.
 - Local LoRAs, steps, guidance, and GPU controls are unavailable for this hosted backend. Cloud processing is capped below 4 megapixels; outputs are validated before being restored to page coordinates and confined to the edit mask.
 - Cancel stops waiting for a cloud result; it cannot guarantee cancellation of the provider's job or charges. Failed or uncertain submissions are never automatically resubmitted. After a timeout, check the provider dashboard before retrying. Content restrictions can differ from local models.
 
 API reference: [BFL image editing](https://docs.bfl.ai/flux_2/flux2_image_editing). Cloud integration has automated mocked transport/controller coverage, and live Flux and LLM API requests have been confirmed during development. This is not a guarantee for every provider or model; account access, content policies, and charges still depend on your chosen service.
+
+Artistic Edit Example 1
+
+<img width="3261" height="1980" alt="Artistic Edit Example 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+Artistic Edit Example 2
+
+<img width="3261" height="1996" alt="Artistic Edit Example 2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
+
+Artistic Edit Example 3
+
+<img width="3273" height="1990" alt="Artistic Edit Example 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
 
 ### Desktop appearance, languages, and fork isolation
 
@@ -119,6 +139,11 @@ You can also draw a missed region and right-click **OCR**, then **Translate**, w
 The detector intentionally keeps both speech-bubble text and free-floating text. This prevents manual mode from losing valid OCR regions, but it also means **Translate All** can inpaint artistic titles, signs, sound effects, or other lettering that is part of the art. Manual review before cleaning is the recommended approach when preserving artwork matters.
 
 ## Installation
+
+An experimental **Windows x64 beta** build recipe is available in the
+[Windows packaging guide](packaging/windows/README.md). It creates a portable ZIP
+with the main editor's Python/Qt/ONNX dependencies included; local LLM and FLUX
+models/runtimes remain separate. Beta binaries require testing before a public release.
 
 ### Requirements
 
@@ -264,7 +289,7 @@ The release checks include manual-region OCR and preservation, local/API provide
 
 ## Current limitations
 
-- This is an early source-only fork; broad testing across languages, models, layouts, and operating systems is still in progress.
+- This is an early fork with source builds and Windows beta packages; broad testing across languages, models, layouts, and operating systems is still in progress. Public binary distribution remains subject to the packaging release review.
 - Automatic mode cannot always distinguish dialogue from lettering that belongs to the artwork. Use Manual mode when preservation is important.
 - Detection, OCR, translation, segmentation, and inpainting can all require human correction on difficult pages.
 - Vision input requires a genuinely multimodal model, a compatible server, and (when applicable) the matching projector file.

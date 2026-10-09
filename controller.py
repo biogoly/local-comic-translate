@@ -890,11 +890,14 @@ class ComicTranslate(ComicTranslateUI):
             super().keyPressEvent(event)
 
     def closeEvent(self, event):
+        artistic = getattr(self, "artistic_edit_ctrl", None)
         try:
             self.text_ctrl._commit_pending_text_command()
         except Exception:
             pass
-        if not getattr(self, "_skip_close_prompt", False):
+        close_revision = (self._dirty_revision, getattr(artistic, "_project_epoch", None))
+        close_approved = getattr(self, "_artistic_close_approval", None) == close_revision
+        if not getattr(self, "_skip_close_prompt", False) and not close_approved:
             if self.has_unsaved_changes():
                 msg_box = QtWidgets.QMessageBox(self)
                 msg_box.setIcon(QtWidgets.QMessageBox.Question)
@@ -914,10 +917,21 @@ class ComicTranslate(ComicTranslateUI):
                     event.ignore()
                     return
                 if clicked == cancel_btn or clicked is None:
+                    self._artistic_close_approval = None
+                    if artistic is not None:
+                        artistic.cancel_close()
                     event.ignore()
                     return
         else:
             self._skip_close_prompt = False
+
+        if artistic is not None and not artistic.prepare_close():
+            # A resource shutdown may finish asynchronously. Reuse the close
+            # decision only while this same project's edit revision is unchanged.
+            self._artistic_close_approval = close_revision
+            event.ignore()
+            return
+        self._artistic_close_approval = None
 
         self.project_ctrl.shutdown_autosave(clear_recovery=True)
         self.shutdown()

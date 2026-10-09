@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+packaging/windows/licenses/Qt/*.txt text eol=lf
+packaging/windows/licenses/source-notices/** -text -whitespace
+packaging/windows/licenses/photoshop-native-notices/** -text -whitespace
+packaging/windows/licenses/photoshop-submodules/** -text -whitespace

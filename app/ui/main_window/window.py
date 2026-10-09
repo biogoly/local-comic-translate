@@ -105,6 +105,30 @@ class ComicTranslateUI(
         self.grabGesture(QtCore.Qt.GestureType.PanGesture)
         self.grabGesture(QtCore.Qt.GestureType.PinchGesture)
 
+        self._init_language_mappings()
+
+        self.button_to_alignment = {
+            0: QtCore.Qt.AlignmentFlag.AlignLeft,
+            1: QtCore.Qt.AlignmentFlag.AlignCenter,
+            2: QtCore.Qt.AlignmentFlag.AlignRight,
+        }
+
+        self._init_ui()
+        self._settings_resize_preview = QtWidgets.QLabel(self._center_stack)
+        self._settings_resize_preview.setAttribute(
+            QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents, True
+        )
+        self._settings_resize_preview.setScaledContents(True)
+        self._settings_resize_preview.setStyleSheet("background-color: #323232;")
+        self._settings_resize_preview.hide()
+        self._settings_resize_active = False
+        self._settings_resize_settle_timer = QtCore.QTimer(self)
+        self._settings_resize_settle_timer.setSingleShot(True)
+        self._settings_resize_settle_timer.setInterval(120)
+        self._settings_resize_settle_timer.timeout.connect(self._finish_settings_resize_preview)
+
+    def _init_language_mappings(self):
+        """Map display labels to stable saved identifiers, including old labels."""
         self.lang_mapping = {
             self.tr("Auto"): "Auto",
             self.tr("English"): "English",
@@ -135,28 +159,13 @@ class ComicTranslateUI(
             self.tr("Persian"): "Persian",
             self.tr("Romanian"): "Romanian",
             self.tr("Mongolian"): "Mongolian",
+            # Keep the historical names above as readable aliases for projects.
+            # Insert explicit dialect labels last so new UI selections use them
+            # without changing the canonical identifiers stored on disk.
+            self.tr("Portuguese (Portugal)"): "Portuguese",
+            self.tr("Portuguese (Brazil)"): "Brazilian Portuguese",
         }
         self.reverse_lang_mapping = {v: k for k, v in self.lang_mapping.items()}
-
-        self.button_to_alignment = {
-            0: QtCore.Qt.AlignmentFlag.AlignLeft,
-            1: QtCore.Qt.AlignmentFlag.AlignCenter,
-            2: QtCore.Qt.AlignmentFlag.AlignRight,
-        }
-
-        self._init_ui()
-        self._settings_resize_preview = QtWidgets.QLabel(self._center_stack)
-        self._settings_resize_preview.setAttribute(
-            QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents, True
-        )
-        self._settings_resize_preview.setScaledContents(True)
-        self._settings_resize_preview.setStyleSheet("background-color: #323232;")
-        self._settings_resize_preview.hide()
-        self._settings_resize_active = False
-        self._settings_resize_settle_timer = QtCore.QTimer(self)
-        self._settings_resize_settle_timer.setSingleShot(True)
-        self._settings_resize_settle_timer.setInterval(120)
-        self._settings_resize_settle_timer.timeout.connect(self._finish_settings_resize_preview)
 
     def _init_ui(self):
         outer_widget = QtWidgets.QWidget(self)

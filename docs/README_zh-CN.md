@@ -2,15 +2,27 @@
 
 [English](../README.md) | [한국어](README_ko.md) | [Français](README_fr.md) | 简体中文 | [Español](README_es.md)
 
-<img src="https://i.imgur.com/QUVK6mK.png" alt="Comic Translate 界面">
+<img width="1641" height="1001" alt="Comic Translate 界面" src="https://github.com/user-attachments/assets/4cc8c044-b8b4-4773-8c6d-ad7a84cdaca1" />
 
 Local Comic Translate 是 [Comic Translate](https://github.com/ogkalu2/comic-translate) 的社区分支，专注于保护隐私的本地翻译，以及更安全、便于手动操作的桌面编辑流程。它保留了上游应用的检测、OCR、图像修复、渲染、项目、压缩包和条漫功能，同时加入了托管式 `llama.cpp` 翻译、FLUX.2 Klein 艺术编辑、可选的服务商直连 API，并大幅改进了编辑体验和可靠性。无需上游账号、订阅或翻译点数。
 
-沿用的 OCR 流程支持英语、韩语、日语、法语、简体中文、繁体中文、俄语、德语、荷兰语、西班牙语和意大利语作为源语言；翻译目标语言包含上述语言以及更多语言。
+OCR 流程支持英语、韩语、日语、法语、简体中文、繁体中文、俄语、德语、荷兰语、西班牙语、意大利语、葡萄牙语（葡萄牙和巴西）及越南语作为源语言；翻译目标语言包含上述语言以及更多语言。
 
-此分支正在积极开发中。下文介绍的改动目前需要从源码运行；上游 Comic Translate 网站提供的下载版本不包含这些改动。上方的语言链接提供了本分支当前文档的译文。这些指南中的设置和按钮名称保留为英文，便于在不同界面语言中对应查找。
+将源语言设为 **Vietnamese**、OCR 引擎设为 **Default** 时，应用会使用独立的社区越南语识别模型（ONNX 格式，约 60 MB），并在需要时下载。**Auto** 仍按文字系统选择引擎，因此处理越南语时请明确选择 **Vietnamese**。漫画识别质量仍处于实验阶段：目前仅使用合成的印刷体文字图片进行了验证，真实漫画页面尚需测试。其他 OCR 引擎和后端保持不变。详情请参阅[语言支持指南](LANGUAGE_SUPPORT.md)（英文）。
 
-## 最新更新 — 0.1.0
+此分支正在积极开发中。请使用最新源码，或与所述版本对应的本分支测试版；上游 Comic Translate 网站提供的下载版本不包含这些改动。上方的语言链接提供了本分支当前文档的译文。这些指南中的设置和按钮名称保留为英文，便于在不同界面语言中对应查找。
+
+## 可选的 ComfyUI 后端
+
+在 **Artistic Edit** 中选择 **Local ComfyUI > Configure ComfyUI…**，即可连接本地服务器，或在后台启动已有的 Windows 便携版安装。点击 **Test Connection / Refresh Models**，然后选择相互匹配的蒸馏版 Klein 模型、文本编码器和 VAE 文件。ComfyUI 使用自己的 Python、模型和 LoRA，不会自动安装或下载任何内容。原有的预览、Apply、Undo 流程以及 Diffusers 和 API 后端均保留。
+
+目前实际验证的是原生 INT8 Klein 9B 与混合 FP8 编码器组合。4B 配置仍属实验性；GGUF 和低内存硬件尚待验证。托管启动会隔离数据和数据库；断开外部服务器连接不会将其关闭。详情请参阅[配置指南](COMFYUI_BACKEND.md)和[验证记录](COMFYUI_RUNTIME_VALIDATION.md)（英文）。
+
+**Qwen Image 2.1** 也可作为 Klein 的实验性替代方案。其 INT8 配置使用已安装的模型、编码器和 VAE 文件，并支持经过验证、仅修改模型的 Qwen 2.1 LoRA，可调节强度；不支持文本编码器适配器。初始设置为 25 步、CFG 1.0。LoRA 的加载和应用已通过测试，但并不保证能提升艺术字效果；低内存硬件仍需进一步验证。详情请参阅 [Qwen 配置与限制](COMFYUI_BACKEND.md#experimental-qwen-image-21)（英文）。
+
+## 最新更新 — 0.1.0b2
+
+测试版 2 加入了 ComfyUI 后端、支持 LoRA 的 Qwen Image 2.1，以及新的葡萄牙语和越南语选项。有关改动、验证结果和安装包限制，请参阅[测试版 2 发布说明](RELEASE_NOTES_0.1.0b2.md)（英文）。
 
 - **Artistic Edit:** 使用本地 FLUX.2 Klein 4B/9B 及兼容的 LoRA，或使用 Black Forest Labs API；采用先预览再应用的流程，支持撤销，并随项目保存。
 - **翻译后端自由选择：** 使用自己的 API 密钥切换到 OpenAI、Gemini、Claude 或 Deepseek，同时保留本地 llama-server 设置。
@@ -86,6 +98,18 @@ Local Comic Translate 是 [Comic Translate](https://github.com/ogkalu2/comic-tra
 
 API 参考：[BFL 图像编辑](https://docs.bfl.ai/flux_2/flux2_image_editing)。云端集成具备使用模拟对象的传输层与控制器自动化测试覆盖，开发期间也已验证真实的 Flux 和 LLM API 请求。这并不保证所有服务商或模型都可用；账号访问权限、内容政策和收费仍取决于所选服务。
 
+艺术编辑示例 1
+
+<img width="3261" height="1980" alt="艺术编辑示例 1" src="https://github.com/user-attachments/assets/32da6bac-01ef-4ed4-a5f0-5fd08772ceec" />
+
+艺术编辑示例 2
+
+<img width="3261" height="1996" alt="艺术编辑示例 2" src="https://github.com/user-attachments/assets/3b2bfbed-c0f9-43c1-959a-68cb8bcba001" />
+
+艺术编辑示例 3
+
+<img width="3273" height="1990" alt="艺术编辑示例 3" src="https://github.com/user-attachments/assets/99f4f497-87b1-405e-a5d4-06dec5b45840" />
+
 ### 桌面外观、语言与分支隔离
 
 - 提供六种主题：**Dark**、**Light**、**Midnight**、**Parchment**、**Lavender** 和 **Mint**。Artistic Edit 按钮的背景会适应主题，文字清晰可读，边框易于辨认。
@@ -119,6 +143,10 @@ API 参考：[BFL 图像编辑](https://docs.bfl.ai/flux_2/flux2_image_editing)�
 检测器有意保留气泡内文字和气泡外的独立文字。这样可以避免手动模式丢失有效的 OCR 区域，但也意味着 **Translate All** 可能对艺术标题、招牌、拟声词或其他属于画面的文字进行图像修复。如果重视保留原画，建议在清理前进行手动检查。
 
 ## 安装
+
+[Windows 打包指南](../packaging/windows/README.md)提供了实验性的 **Windows x64 beta**
+构建流程。它会生成包含主编辑器 Python/Qt/ONNX 依赖的便携 ZIP 包；本地 LLM 和
+FLUX 的模型及运行环境仍需单独准备。Beta 二进制包需要经过测试后才能公开发布。
 
 ### 环境要求
 
@@ -264,7 +292,7 @@ uv run python resources/translations/check_translations.py
 
 ## 当前限制
 
-- 这是一个仍处于早期阶段、仅提供源码运行方式的分支；针对不同语言、模型、版式和操作系统的广泛测试仍在进行中。
+- 此分支仍处于早期阶段。请使用最新源码或对应版本的测试版；针对不同语言、模型、版式和操作系统的广泛测试仍在进行中。能够构建本地测试版并不代表其二进制文件已获准公开分发。
 - 自动模式无法始终区分对白与属于画面的文字。当保留原画很重要时，请使用 Manual 模式。
 - 对于复杂页面，检测、OCR、翻译、分割和图像修复均可能需要人工纠正。
 - 视觉输入需要真正支持多模态的模型、兼容的服务器，以及适用时所需的匹配投影器文件。

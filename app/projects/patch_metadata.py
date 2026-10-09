@@ -7,7 +7,9 @@ patch record can carry:
 
 * ``kind`` — which subsystem produced the patch. ``"inpaint"`` for cleanup
   patches (legacy patches without a kind behave exactly like inpaint) and
-  ``"flux2_edit"`` for accepted FLUX.2 Klein artistic edits.
+  ``"flux2_edit"`` for accepted FLUX.2 Klein artistic edits, or
+  ``"artistic_edit"`` for other model families. Revert Artistic Edits includes
+  both; existing project records are not migrated or renamed.
 * ``metadata`` — a small msgpack-safe dictionary describing the edit
   (prompt, model key, seed, checksums, ...). Only primitive values are
   persisted; unknown keys survive so future producers stay compatible.
@@ -23,6 +25,7 @@ from collections.abc import Mapping, Sequence
 
 PATCH_KIND_INPAINT = "inpaint"
 PATCH_KIND_FLUX2_EDIT = "flux2_edit"
+PATCH_KIND_ARTISTIC_EDIT = "artistic_edit"
 
 #: Maximum persisted length of a single metadata string value.
 MAX_METADATA_STRING_LENGTH = 2048
@@ -55,10 +58,15 @@ def patch_kind(patch) -> str:
 def patch_matches_kind(patch, kind) -> bool:
     """True when ``patch`` belongs to ``kind``.
 
-    Legacy patches without a ``kind`` field match inpaint. Patches carrying
-    an unknown kind match nothing, so kind-scoped reverts leave them alone.
+    Legacy patches without a ``kind`` field match inpaint. The neutral
+    artistic-edit filter includes legacy FLUX edits too. Unknown kinds only
+    match their own exact kind, so known-kind reverts leave them alone.
     """
-    return patch_kind(patch) == normalize_patch_kind(kind)
+    requested = normalize_patch_kind(kind)
+    actual = patch_kind(patch)
+    if requested == PATCH_KIND_ARTISTIC_EDIT:
+        return actual in {PATCH_KIND_ARTISTIC_EDIT, PATCH_KIND_FLUX2_EDIT}
+    return actual == requested
 
 
 def _sanitize_scalar(value):

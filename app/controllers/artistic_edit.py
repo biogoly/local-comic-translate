@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from collections.abc import Mapping
 import importlib.util
 import os
 from pathlib import Path
@@ -14,7 +15,7 @@ import numpy as np
 from PIL import Image
 from PySide6 import QtCore, QtGui, QtWidgets
 
-from app.projects.patch_metadata import PATCH_KIND_FLUX2_EDIT, patch_matches_kind
+from app.projects.patch_metadata import PATCH_KIND_ARTISTIC_EDIT, PATCH_KIND_FLUX2_EDIT, patch_matches_kind
 from app.ui.commands.inpaint import PatchClearCommand, PatchInsertCommand
 from app.ui.dialogs.artistic_edit_preview import ArtisticEditPreviewDialog
 from app.ui.dayu_widgets.message import MMessage
@@ -37,8 +38,18 @@ from modules.artistic_edit.image_ops import (
     sha256_pixels,
 )
 from modules.artistic_edit.lora_registry import LoraEntry, LoraRegistry, RegistryError
+from modules.artistic_edit.runtime_paths import (
+    is_application_executable,
+    is_frozen_app,
+    lora_root,
+)
 from modules.artistic_edit.worker_client import FluxWorkerClient
 from modules.artistic_edit.bfl_client import BflEditJob
+from modules.artistic_edit.backend_contracts import RasterEditSpec, ComfyGenerationSpec
+from modules.artistic_edit.comfy_config import (
+    ComfySettings, QWEN_IMAGE_21_MODEL_KEY, load_comfy_settings, save_comfy_settings,
+)
+from modules.artistic_edit.comfy_job import ComfyEditJob
 from modules.utils.settings import app_settings
 
 
@@ -92,13 +103,32 @@ class ArtisticEditSession:
     page_index: int
     selection_mode: SelectionMode
     prepared: PreparedEdit
-    request: ArtisticEditRequest
+    request: ArtisticEditRequest | RasterEditSpec
     request_dir: Path
     lora_name: str | None
     feather_radius: float
     cuda_device_index: int = 0
     patch: ComposedPatch | None = None
     backend: str = 'local'
+    comfy_spec: ComfyGenerationSpec | None = None
+    execution_metadata: dict | None = None
+    project_epoch: int | None = None
+    undo_stack: object | None = None
+    accept_result: bool = True
+    temp_root: Path | None = None
+
+
+class _ComfyStopJob(QtCore.QThread):
+    def __init__(self, runtime, parent=None):
+        super().__init__(parent)
+        self.runtime = runtime
+        self.error = ""
+
+    def run(self):
+        try:
+            self.runtime.shutdown()
+        except Exception as exc:
+            self.error = str(exc)
 
 
 class ArtisticEditController(QtCore.QObject):
@@ -110,12 +140,20 @@ class ArtisticEditController(QtCore.QObject):
         *,
         worker_factory: Callable[..., FluxWorkerClient] = FluxWorkerClient,
         preview_factory: Callable[..., ArtisticEditPreviewDialog] = ArtisticEditPreviewDialog,
+        comfy_job_factory=ComfyEditJob,
     ) -> None:
         super().__init__(main if isinstance(main, QtCore.QObject) else None)
         self.main = main
         self.panel = main.artistic_edit_panel
         self.worker_factory = worker_factory
         self.preview_factory = preview_factory
+        self.comfy_job_factory = comfy_job_factory
+        self._comfy_job = None
+        self._comfy_outcome = None
+        self._comfy_runtime = None
+        self._comfy_stop_job = None
+        self._project_epoch = 0
+        self._close_pending = False
         self.worker: FluxWorkerClient | None = None
         self._bfl_job = None
         self._closing = False
@@ -125,9 +163,7 @@ class ArtisticEditController(QtCore.QObject):
         self._awaiting_worker_ready = False
         self._session: ArtisticEditSession | None = None
         self._loras: list[LoraEntry] = []
-        repository_root = Path(__file__).resolve().parents[2]
-        lora_root = repository_root / "models" / "loras" / "flux2-klein"
-        self.lora_registry = LoraRegistry(lora_root)
+        self.lora_registry = LoraRegistry(lora_root())
         self.refresh_loras()
         self.update_availability()
 
@@ -136,6 +172,7 @@ class ArtisticEditController(QtCore.QObject):
         panel.use_selected_translation_requested.connect(self.use_selected_translation)
         panel.generate_requested.connect(self.generate_preview)
         panel.configure_runtime_requested.connect(self.select_worker_python)
+        panel.configure_comfyui_requested.connect(self.configure_comfyui)
         panel.cancel_requested.connect(self.cancel)
         panel.unload_requested.connect(self.unload)
         panel.revert_requested.connect(self.revert_artistic_edits)
@@ -143,7 +180,49 @@ class ArtisticEditController(QtCore.QObject):
         panel.open_lora_folder_requested.connect(self.open_lora_folder)
         panel.model_combo.currentIndexChanged.connect(self.refresh_loras)
         panel.area_combo.currentIndexChanged.connect(self.update_availability)
-        panel.backend_combo.currentIndexChanged.connect(self.update_availability)
+        panel.backend_combo.currentIndexChanged.connect(self._on_backend_changed)
+
+    def _on_backend_changed(self, *_args):
+        if self._session is not None and self._session.backend != self.panel.backend_combo.currentData():
+            self._session.accept_result = False
+            self.cancel()
+        self.update_availability()
+
+    def _get_comfy_runtime(self):
+        if self._comfy_runtime is None:
+            from modules.artistic_edit.comfy_runtime import ComfyRuntime
+            from modules.utils.paths import get_user_data_dir
+            self._comfy_runtime = ComfyRuntime(Path(get_user_data_dir()) / "artistic_edit" / "comfyui")
+        return self._comfy_runtime
+
+    def configure_comfyui(self):
+        if self.panel.is_busy():
+            return
+        from app.ui.dialogs.comfyui_settings import ComfyUISettingsDialog
+        try:
+            settings = app_settings()
+            try:
+                config = load_comfy_settings(settings)
+            except ValueError:
+                config = ComfySettings()
+            dialog = ComfyUISettingsDialog(config, self._get_comfy_runtime(), self.main)
+            if dialog.exec() == QtWidgets.QDialog.Accepted:
+                save_comfy_settings(settings, dialog.config)
+            self.update_availability()
+        except Exception as exc:
+            self._warning(str(exc))
+
+    def invalidate_project(self):
+        """Retire result acceptance before the page/undo stores are replaced."""
+        self._project_epoch += 1
+        session = self._session
+        if session is not None:
+            session.accept_result = False
+            if self.panel.is_busy():
+                self.cancel()
+            else:
+                self._discard_session_files(session)
+                self._session = None
 
     def _current_page(self) -> tuple[str, int] | None:
         index = int(getattr(self.main, "curr_img_idx", -1))
@@ -159,8 +238,15 @@ class ArtisticEditController(QtCore.QObject):
             configured = str(settings.value(FLUX_PYTHON_SETTING, "") or "").strip()
         if configured:
             candidate = Path(configured).expanduser().resolve(strict=False)
-            return str(candidate) if candidate.is_file() else None
+            return (
+                str(candidate)
+                if candidate.is_file() and not is_application_executable(candidate)
+                else None
+            )
         # A source/dev environment may already contain the optional runtime.
+        # sys.executable points to the GUI, not Python, in a packaged build.
+        if is_frozen_app():
+            return None
         if importlib.util.find_spec("torch") and importlib.util.find_spec("diffusers"):
             candidate = Path(sys.executable).resolve(strict=False)
             return str(candidate) if candidate.is_file() else None
@@ -180,6 +266,28 @@ class ArtisticEditController(QtCore.QObject):
         return True, ""
 
     def update_availability(self, *_args) -> None:
+        backend = self.panel.backend_combo.currentData()
+        if backend == "comfyui":
+            try:
+                settings = app_settings()
+                configured = settings.value("artistic_edit/comfyui/configured", False, type=bool)
+                config = load_comfy_settings(settings)
+                self.panel.set_comfyui_profile(config.profile)
+                self.panel.set_comfyui_summary(
+                    self.tr("{model} | {checkpoint} | LoRA: {lora}").format(
+                        model=(self.tr("{model} (experimental)").format(model=config.profile.model_key)
+                               if config.profile.experimental else config.profile.model_key),
+                        checkpoint=config.profile.diffusion_model,
+                        lora=config.lora.name if config.lora else self.tr("None"),
+                    ) if configured else self.tr("Configure a local ComfyUI server and model profile first."),
+                    managed=config.connection.mode == "managed",
+                )
+                if not configured:
+                    self.panel.set_context_available(False, self.tr("Configure ComfyUI before generating."))
+                    return
+            except Exception as exc:
+                self.panel.set_context_available(False, str(exc))
+                return
         if getattr(self.main, "webtoon_mode", False):
             self.panel.set_context_available(
                 False, self.tr("Artistic Edit currently requires single-page mode.")
@@ -188,7 +296,7 @@ class ArtisticEditController(QtCore.QObject):
         if self._current_page() is None or not self.main.image_viewer.hasPhoto():
             self.panel.set_context_available(False, self.tr("Open a comic page first."))
             return
-        python_path = self.configured_worker_python() if self.panel.backend_combo.currentData() == "local" else "cloud"
+        python_path = self.configured_worker_python() if backend == "local" else "external"
         if python_path is None:
             self.panel.set_context_available(
                 False,
@@ -338,6 +446,7 @@ class ArtisticEditController(QtCore.QObject):
             return
         request_dir: Path | None = None
         try:
+            comfy_config = load_comfy_settings(app_settings()) if options.backend == "comfyui" else None
             selection_bbox, edit_mask = self._capture_selection(options.selection_mode, page)
             prepared = prepare_edit(
                 page,
@@ -347,8 +456,10 @@ class ArtisticEditController(QtCore.QObject):
                 context_ratio=options.context_ratio,
                 maximum_model_size=((min(options.maximum_side, 1984),) * 2 if options.backend == 'bfl' else (options.maximum_side, options.maximum_side)),
             )
-            lora, lora_name = self._selected_lora(options)
-            python_path = self.configured_worker_python() if options.backend == "local" else "cloud"
+            lora, lora_name = self._selected_lora(options) if options.backend == "local" else (None, None)
+            if comfy_config is not None and comfy_config.lora is not None:
+                lora_name = comfy_config.lora.name
+            python_path = self.configured_worker_python() if options.backend == "local" else "external"
             if python_path is None:
                 raise RuntimeError(self.tr("No valid FLUX Python executable is configured."))
 
@@ -365,21 +476,27 @@ class ArtisticEditController(QtCore.QObject):
                 if options.random_seed
                 else options.seed
             )
-            model = DEFAULT_MODEL_SPECS[options.model_key]
-            request = ArtisticEditRequest(
-                request_id=request_id,
-                input_path=str(input_path.resolve()),
-                output_path=str(output_path.resolve()),
-                prompt=options.prompt,
-                width=prepared.model_input.shape[1],
-                height=prepared.model_input.shape[0],
-                steps=options.steps,
-                guidance=options.guidance,
-                seed=seed,
-                model=model,
-                lora=lora,
-                device_policy=options.device_policy,
+            raster_fields = dict(
+                request_id=request_id, input_path=str(input_path.resolve()),
+                output_path=str(output_path.resolve()), prompt=options.prompt,
+                width=prepared.model_input.shape[1], height=prepared.model_input.shape[0],
+                steps=options.steps, seed=seed,
             )
+            if comfy_config is not None:
+                request = RasterEditSpec(**raster_fields)
+                comfy_spec = ComfyGenerationSpec(
+                    raster=request, connection=comfy_config.connection,
+                    profile=comfy_config.profile, lora=comfy_config.lora,
+                    job_token=str(uuid4()), client_id=str(uuid4()),
+                    cfg=(options.guidance if comfy_config.profile.model_key == QWEN_IMAGE_21_MODEL_KEY else 1.0),
+                )
+            else:
+                request = ArtisticEditRequest(
+                    **raster_fields, guidance=options.guidance,
+                    model=DEFAULT_MODEL_SPECS[options.model_key], lora=lora,
+                    device_policy=options.device_policy,
+                )
+                comfy_spec = None
         except Exception as exc:
             if request_dir is not None:
                 shutil.rmtree(request_dir, ignore_errors=True)
@@ -404,7 +521,14 @@ class ArtisticEditController(QtCore.QObject):
                 if options.device_policy == DevicePolicy.SINGLE_GPU_0
                 else options.cuda_device_index
             ),
+            comfy_spec=comfy_spec,
+            project_epoch=self._project_epoch,
+            undo_stack=self.main.undo_stacks.get(page_path),
+            temp_root=Path(self.main.temp_dir).resolve(),
         )
+        if options.backend == "comfyui":
+            self._dispatch_comfy_request()
+            return
         if options.backend == "bfl":
             self.panel.set_busy(True, self.tr("Waiting for Black Forest Labs…"))
             try:
@@ -427,6 +551,136 @@ class ArtisticEditController(QtCore.QObject):
         except Exception as exc:
             self._generation_failed(str(exc))
 
+    def _dispatch_comfy_request(self):
+        session = self._session
+        if session is None or session.comfy_spec is None:
+            return
+        self.panel.set_busy(True, self.tr("Connecting to ComfyUI…"))
+        self._comfy_outcome = None
+        self._comfy_session = session
+        try:
+            job = self.comfy_job_factory(session.comfy_spec, self, runtime=self._get_comfy_runtime())
+            self._comfy_job = job
+            job.event.connect(self._on_comfy_event, QtCore.Qt.QueuedConnection)
+            job.finished.connect(self._on_comfy_finished, QtCore.Qt.QueuedConnection)
+            job.start()
+        except Exception as exc:
+            self._comfy_job = None
+            self._comfy_session = None
+            self._generation_failed(str(exc), code="comfyui")
+
+    @QtCore.Slot(object)
+    def _on_comfy_event(self, event):
+        session = getattr(self, "_comfy_session", None)
+        if session is None or session.comfy_spec is None:
+            return
+        spec = session.comfy_spec
+        if event.request_id != spec.raster.request_id or event.job_token != spec.job_token:
+            return
+        if self._comfy_outcome is not None:
+            return
+        if event.kind in {"completed", "cancelled", "failed"}:
+            self._comfy_outcome = event
+            return
+        if self._closing or self._session is not session or not session.accept_result:
+            return
+        if event.kind == "status":
+            statuses = {
+                "Starting ComfyUI…": self.tr("Starting ComfyUI…"),
+                "Connecting to ComfyUI…": self.tr("Connecting to ComfyUI…"),
+                "Uploading edit area…": self.tr("Uploading edit area…"),
+                "Submitting ComfyUI edit…": self.tr("Submitting ComfyUI edit…"),
+                "Waiting for ComfyUI generation…": self.tr("Waiting for ComfyUI generation…"),
+                "Connection lost; checking the same ComfyUI edit…": self.tr("Connection lost; checking the same ComfyUI edit…"),
+                "Fetching ComfyUI preview…": self.tr("Fetching ComfyUI preview…"),
+            }
+            self.panel.set_status(statuses.get(str(event.payload), str(event.payload)))
+
+    @QtCore.Slot()
+    def _on_comfy_finished(self):
+        job = self._comfy_job
+        if job is None or (self.sender() is not None and self.sender() is not job):
+            return
+        session = self._comfy_session
+        outcome = self._comfy_outcome
+        self._comfy_job = None
+        self._comfy_session = None
+        self._comfy_outcome = None
+        job.deleteLater()
+        if self._close_pending:
+            self._discard_session_files(session)
+            if self._session is session:
+                self._session = None
+            self.panel.set_busy(False)
+            QtCore.QTimer.singleShot(0, self.main.close)
+            return
+        if self._closing or self._session is not session:
+            self._discard_session_files(session)
+            return
+        if not session.accept_result or (outcome is not None and outcome.kind == "cancelled"):
+            payload = outcome.payload if outcome is not None and outcome.kind == "cancelled" else {}
+            continues = bool(payload.get("server_may_continue", False)) if isinstance(payload, Mapping) else False
+            self._discard_session_files(session)
+            self._session = None
+            self.panel.set_busy(False)
+            self.update_availability()
+            self.panel.set_status(self.tr("Stopped waiting. ComfyUI may still be computing this request.") if continues else self.tr("Artistic Edit cancelled."))
+            return
+        if outcome is None or outcome.kind == "failed":
+            payload = outcome.payload if outcome is not None else {}
+            self._generation_failed(
+                str(payload.get("message", self.tr("ComfyUI stopped without a result."))),
+                code=str(payload.get("code", "comfyui")),
+            )
+            return
+        completion = outcome.payload
+        session.execution_metadata = dict(completion.metadata)
+        self._on_result(completion.result)
+
+    def _regenerate_comfy(self, session, seed):
+        current, reason = self._source_is_current(session)
+        if not current:
+            self._warning(reason)
+            self._discard_session_files(session)
+            self._session = None
+            return
+        request_dir = Path(self.main.temp_dir) / "artistic_edit" / str(uuid4())
+        try:
+            request_dir.mkdir(parents=True, exist_ok=False)
+            input_path = request_dir / "input.png"
+            Image.fromarray(session.prepared.model_input, mode="RGB").save(input_path)
+            raster = replace(session.request, request_id=request_dir.name,
+                             input_path=str(input_path.resolve()),
+                             output_path=str((request_dir / "output.png").resolve()), seed=seed)
+            spec = replace(session.comfy_spec, raster=raster, job_token=str(uuid4()), client_id=str(uuid4()))
+            new_session = replace(session, request=raster, request_dir=request_dir,
+                                  comfy_spec=spec, patch=None, execution_metadata=None)
+        except Exception as exc:
+            shutil.rmtree(request_dir, ignore_errors=True)
+            self._generation_failed(str(exc), code="comfyui")
+            return
+        self._discard_session_files(session)
+        self._session = new_session
+        self._dispatch_comfy_request()
+
+    def _worker_callback_is_current(self):
+        sender = self.sender()
+        if sender is not None and sender is not self.worker:
+            return False
+        return not self._closing and (
+            self._session is not None and self._session.backend == "local" and self._session.accept_result
+        )
+
+    @QtCore.Slot(str)
+    def _on_worker_loading(self, text):
+        if self._worker_callback_is_current():
+            self._on_loading(text)
+
+    @QtCore.Slot(int, int)
+    def _on_worker_progress(self, step, total):
+        if self._worker_callback_is_current():
+            self.panel.set_progress(step, total)
+
     def _new_worker(
         self,
         python_path: str,
@@ -446,8 +700,8 @@ class ArtisticEditController(QtCore.QObject):
             parent=self,
         )
         worker.ready.connect(self._on_worker_ready)
-        worker.loading.connect(self._on_loading)
-        worker.progress.connect(self.panel.set_progress)
+        worker.loading.connect(self._on_worker_loading)
+        worker.progress.connect(self._on_worker_progress)
         worker.result.connect(self._on_result)
         worker.cancelled.connect(self._on_cancelled)
         worker.error.connect(self._on_worker_error)
@@ -500,8 +754,9 @@ class ArtisticEditController(QtCore.QObject):
             or self._worker_policy != policy
             or self._worker_cuda_device_index != effective_device_index
         ):
-            self.worker.close()
+            previous_worker = self.worker
             self.worker = None
+            previous_worker.close()
         worker = self.worker or self._new_worker(
             python_path,
             policy,
@@ -515,11 +770,13 @@ class ArtisticEditController(QtCore.QObject):
         worker.start(policy)
 
     def _on_worker_ready(self, _capabilities: dict) -> None:
+        if self.sender() is not None and self.sender() is not self.worker:
+            return
         if not self._awaiting_worker_ready:
-            if _capabilities.get("loaded_model", object()) is None:
+            if self._session is None and self.panel.backend_combo.currentData() == "local" and _capabilities.get("loaded_model", object()) is None:
                 self.panel.set_status(self.tr("FLUX model unloaded."))
             return
-        if self._session is None or self.worker is None:
+        if self._session is None or self.worker is None or self._session.backend != "local" or not self._session.accept_result:
             return
         self._awaiting_worker_ready = False
         try:
@@ -529,6 +786,10 @@ class ArtisticEditController(QtCore.QObject):
 
     @QtCore.Slot(str)
     def _on_bfl_error(self, message):
+        if self.sender() is not None and self.sender() is not self._bfl_job:
+            return
+        if self._session is None or self._session.backend != "bfl":
+            return
         self._release_bfl_job()
         if not self._closing:
             self._generation_failed(message, code="bfl_api")
@@ -545,9 +806,15 @@ class ArtisticEditController(QtCore.QObject):
         session = self._session
         if session is None or result.request_id != session.request.request_id:
             return
+        if not session.accept_result:
+            self._on_cancelled(result.request_id)
+            return
         if session.backend == "bfl":
             self._release_bfl_job()
         try:
+            result.validate_path(session.request_dir)
+            if Path(result.output_path).resolve() != Path(session.request.output_path).resolve():
+                raise ValueError(self.tr("The result does not belong to this request."))
             with Image.open(result.output_path) as image:
                 generated = np.asarray(image.convert("RGB"))
             session.patch = compose_generated_patch(
@@ -562,6 +829,10 @@ class ArtisticEditController(QtCore.QObject):
         self._show_preview(result)
 
     def _source_is_current(self, session: ArtisticEditSession) -> tuple[bool, str]:
+        if not session.accept_result or (session.project_epoch is not None and session.project_epoch != self._project_epoch):
+            return False, self.tr("This preview belongs to a closed or replaced project. Regenerate it.")
+        if session.undo_stack is not None and self.main.undo_stacks.get(session.page_path) is not session.undo_stack:
+            return False, self.tr("The page undo history changed. Regenerate the preview.")
         current = self._current_page()
         if current is None or current[0] != session.page_path or current[1] != session.page_index:
             return False, self.tr("The preview belongs to another page. Return and regenerate it.")
@@ -581,7 +852,7 @@ class ArtisticEditController(QtCore.QObject):
         if session is None or session.patch is None:
             return
         current, reason = self._source_is_current(session)
-        model = session.request.model
+        model = session.request.model if session.backend != "comfyui" else None
         lora = session.lora_name or self.tr("None")
         percent = int(round(session.prepared.working_scale * 100))
         summary = self.tr(
@@ -589,7 +860,7 @@ class ArtisticEditController(QtCore.QObject):
             "Seed: {seed} | Steps: {steps} | "
             "Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution\nPrompt: {prompt}"
         ).format(
-            model=model.key.value,
+            model=model.key.value if model is not None else session.comfy_spec.profile.model_key,
             lora=lora,
             seed=result.seed,
             steps=session.request.steps,
@@ -600,6 +871,15 @@ class ArtisticEditController(QtCore.QObject):
         if session.backend == "bfl":
             summary = self.tr("Provider: Black Forest Labs | Model: {model} | Seed: {seed} | Elapsed: {elapsed:.1f}s | Prompt: {prompt}").format(
                 model=model.key.value, seed=result.seed, elapsed=result.elapsed_seconds, prompt=session.request.prompt)
+        elif session.backend == "comfyui":
+            metadata = session.execution_metadata or {}
+            summary = self.tr(
+                "Backend: ComfyUI | Model: {model} | Checkpoint: {checkpoint} | LoRA: {lora} | "
+                "Seed: {seed} | Steps: {steps} | CFG: {cfg} | Elapsed: {elapsed:.1f}s | Processed at {percent}% resolution\nPrompt: {prompt}"
+            ).format(model=session.comfy_spec.profile.model_key,
+                     checkpoint=metadata.get("model_source", session.comfy_spec.profile.diffusion_model),
+                     lora=lora, seed=result.seed, steps=session.request.steps, cfg=session.comfy_spec.cfg,
+                     elapsed=result.elapsed_seconds, percent=percent, prompt=session.request.prompt)
         dialog = self.preview_factory(
             session.prepared.source_crop,
             preview_after_image(session.prepared, session.patch),
@@ -620,11 +900,17 @@ class ArtisticEditController(QtCore.QObject):
             return
         if decision == ArtisticEditPreviewDialog.REGENERATE_SAME_SEED:
             seed = session.request.seed
+            if session.backend == "comfyui":
+                self._regenerate_comfy(session, seed)
+                return
             self._discard_session_files()
             self._session = None
             self.generate_preview(seed_override=seed, confirm_whole_page=False)
             return
         if decision == ArtisticEditPreviewDialog.REGENERATE_NEW_SEED:
+            if session.backend == "comfyui":
+                self._regenerate_comfy(session, secrets.randbelow(2**63))
+                return
             self._discard_session_files()
             self._session = None
             self.generate_preview(seed_override=secrets.randbelow(2**32 if session.backend == 'bfl' else 2**63), confirm_whole_page=False)
@@ -633,6 +919,10 @@ class ArtisticEditController(QtCore.QObject):
         self._session = None
 
     def _apply_session(self, session: ArtisticEditSession) -> None:
+        current, reason = self._source_is_current(session)
+        if not current:
+            self._warning(reason)
+            return
         patch = session.patch
         stack = self.main.undo_stacks.get(session.page_path)
         if patch is None or stack is None:
@@ -642,25 +932,35 @@ class ArtisticEditController(QtCore.QObject):
         metadata = {
             "backend": session.backend,
             "prompt": request.prompt,
-            "model_key": request.model.key.value,
-            "model_source": request.model.source if session.backend == "local" else "https://api.bfl.ai",
+            "model_key": session.comfy_spec.profile.model_key if session.backend == "comfyui" else request.model.key.value,
+            "model_source": (session.comfy_spec.profile.diffusion_model if session.backend == "comfyui"
+                             else request.model.source if session.backend == "local" else "https://api.bfl.ai"),
             "cuda_device_index": session.cuda_device_index if session.backend == 'local' else None,
             "seed": request.seed,
-            "steps": request.steps if session.backend == "local" else None,
-            "guidance": request.guidance if session.backend == "local" else None,
+            "steps": request.steps if session.backend in {"local", "comfyui"} else None,
+            "guidance": (session.comfy_spec.cfg if session.backend == "comfyui"
+                         else request.guidance if session.backend == "local" else None),
             "lora_name": session.lora_name,
-            "lora_sha256": request.lora.sha256 if request.lora else None,
-            "lora_scale": request.lora.scale if request.lora else None,
+            "lora_sha256": (session.comfy_spec.lora.sha256 if session.comfy_spec.lora else None) if session.backend == "comfyui" else request.lora.sha256 if request.lora else None,
+            "lora_scale": (session.comfy_spec.lora.scale if session.comfy_spec.lora else None) if session.backend == "comfyui" else request.lora.scale if request.lora else None,
             "selection_mode": session.selection_mode.value,
             "source_crop_sha256": session.prepared.source_hash,
             "working_scale": session.prepared.working_scale,
         }
+        if session.backend == "comfyui":
+            # Execution details are client-produced primitive provenance, not URLs/credentials.
+            metadata.update(session.execution_metadata or {})
+            metadata["backend"] = "comfyui"
+            metadata["selection_mode"] = session.selection_mode.value
+            metadata["source_crop_sha256"] = session.prepared.source_hash
         command = PatchInsertCommand(
             self.main,
             [{"bbox": list(patch.bbox), "image": patch.image}],
             session.page_path,
             display=True,
-            kind=PATCH_KIND_FLUX2_EDIT,
+            kind=(PATCH_KIND_ARTISTIC_EDIT if session.backend == "comfyui"
+                  and session.comfy_spec.profile.model_key == QWEN_IMAGE_21_MODEL_KEY
+                  else PATCH_KIND_FLUX2_EDIT),
             text=self.tr("Artistic edit"),
             metadata=metadata,
         )
@@ -682,9 +982,21 @@ class ArtisticEditController(QtCore.QObject):
         self._session = None
 
     def cancel(self) -> None:
+        if self._session is not None:
+            self._session.accept_result = False
+        if self._comfy_job is not None:
+            self._comfy_job.cancel()
+            self.panel.set_status(self.tr("Cancelling Artistic Edit…"))
+            return
         if self._bfl_job is not None and self._bfl_job.isRunning():
             self._bfl_job.cancel()
             self.panel.set_status(self.tr("Cancelling Artistic Edit…"))
+            return
+        if self._awaiting_worker_ready and self._session is not None and self._session.backend == "local":
+            # No generate command exists yet, so the worker cannot acknowledge a
+            # generation cancellation. Retire the pending dispatch locally.
+            self._awaiting_worker_ready = False
+            self._on_cancelled(self._session.request.request_id)
             return
         try:
             if self.worker is not None and self.worker.cancel():
@@ -697,20 +1009,25 @@ class ArtisticEditController(QtCore.QObject):
             return
         if self._session is None or _request_id != self._session.request.request_id:
             return
-        self._release_bfl_job()
+        if self._session.backend == "bfl":
+            self._release_bfl_job()
         self.panel.set_busy(False, self.tr("Artistic Edit cancelled."))
         self._discard_session_files()
         self._session = None
         self.update_availability()
 
     def _on_worker_error(self, code: str, message: str, details: str) -> None:
-        if self._session is not None and self._session.backend == "bfl":
+        if self._session is None or self._session.backend != "local":
+            return
+        if self.sender() is not None and self.sender() is not self.worker:
             return
         text = f"{message}\n\n{details}" if details else message
         self._generation_failed(text, code=code)
 
     def _on_worker_crashed(self, message: str) -> None:
-        if self._session is not None and self._session.backend == "bfl":
+        if self._session is None or self._session.backend != "local":
+            return
+        if self.sender() is not None and self.sender() is not self.worker:
             return
         self._generation_failed(message, code="worker_crashed")
 
@@ -722,6 +1039,19 @@ class ArtisticEditController(QtCore.QObject):
         self._warning(f"{code}: {message}")
 
     def unload(self) -> None:
+        if self.panel.backend_combo.currentData() == "comfyui":
+            try:
+                managed = load_comfy_settings(app_settings()).connection.mode == "managed"
+            except ValueError as exc:
+                self._warning(str(exc))
+                return
+            if managed and self._comfy_runtime is not None and self._comfy_runtime.is_running():
+                self._stop_comfy_runtime()
+            else:
+                if self._comfy_runtime is not None and not managed:
+                    self._comfy_runtime.disconnect()
+                self.panel.set_status(self.tr("Disconnected. The external ComfyUI server remains running."))
+            return
         if self.worker is None or not self.worker.is_running():
             self.panel.set_status(self.tr("The FLUX model is not loaded."))
             return
@@ -737,7 +1067,7 @@ class ArtisticEditController(QtCore.QObject):
             return
         file_path, _ = current
         patches = self.main.image_patches.get(file_path, [])
-        if not any(patch_matches_kind(patch, PATCH_KIND_FLUX2_EDIT) for patch in patches):
+        if not any(patch_matches_kind(patch, PATCH_KIND_ARTISTIC_EDIT) for patch in patches):
             self._warning(self.tr("There are no artistic edits to revert on this page."))
             return
         stack = self.main.undo_stacks.get(file_path)
@@ -746,7 +1076,7 @@ class ArtisticEditController(QtCore.QObject):
                 PatchClearCommand(
                     self.main,
                     file_path,
-                    kind=PATCH_KIND_FLUX2_EDIT,
+                    kind=PATCH_KIND_ARTISTIC_EDIT,
                     text=self.tr("Revert artistic edits"),
                 )
             )
@@ -771,20 +1101,83 @@ class ArtisticEditController(QtCore.QObject):
         folder.mkdir(parents=True, exist_ok=True)
         QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(str(folder)))
 
-    def _discard_session_files(self) -> None:
-        session = self._session
+    def _discard_session_files(self, session=None) -> None:
+        session = session if session is not None else self._session
         if session is None:
             return
         try:
             request_dir = session.request_dir.resolve(strict=False)
-            temp_root = (Path(self.main.temp_dir) / "artistic_edit").resolve(strict=False)
+            temp_root = ((session.temp_root or Path(self.main.temp_dir)) / "artistic_edit").resolve(strict=False)
             request_dir.relative_to(temp_root)
         except (ValueError, OSError):
             return
         shutil.rmtree(request_dir, ignore_errors=True)
 
+    def _stop_comfy_runtime(self):
+        if self._comfy_stop_job is not None:
+            return
+        self.panel.set_busy(True, self.tr("Stopping ComfyUI…"))
+        self._comfy_stop_job = _ComfyStopJob(self._comfy_runtime, self)
+        self._comfy_stop_job.finished.connect(self._on_comfy_stopped, QtCore.Qt.QueuedConnection)
+        self._comfy_stop_job.start()
+
+    @QtCore.Slot()
+    def _on_comfy_stopped(self):
+        job = self._comfy_stop_job
+        if job is None:
+            return
+        self._comfy_stop_job = None
+        error = job.error
+        job.deleteLater()
+        self.panel.set_busy(False)
+        self.update_availability()
+        if error:
+            self.cancel_close()
+            self._warning(error)
+        else:
+            self.panel.set_status(self.tr("ComfyUI stopped."))
+            if self._close_pending:
+                QtCore.QTimer.singleShot(0, self.main.close)
+
+    def prepare_close(self) -> bool:
+        """Finish Comfy cancellation/owned-process shutdown before temp files disappear."""
+        if self._comfy_job is not None:
+            self._close_pending = True
+            self.cancel()
+            return False
+        if self._comfy_stop_job is not None:
+            self._close_pending = True
+            return False
+        if self._comfy_runtime is not None and self._comfy_runtime.is_running():
+            self._close_pending = True
+            self._stop_comfy_runtime()
+            return False
+        self._close_pending = False
+        return True
+
+    def cancel_close(self):
+        self._close_pending = False
+        self.main._artistic_close_approval = None
+
     def shutdown(self) -> None:
         self._closing = True
+        if self._comfy_job is not None:
+            self._comfy_job.cancel()
+            # Normal window close uses prepare_close asynchronously. This is an
+            # emergency/aboutToQuit fallback; HTTP stages have bounded timeouts.
+            self._comfy_job.wait()
+            self._comfy_job.deleteLater()
+            self._comfy_job = None
+        if self._comfy_stop_job is not None:
+            self._comfy_stop_job.wait()
+            self._comfy_stop_job.deleteLater()
+            self._comfy_stop_job = None
+        if self._comfy_runtime is not None:
+            try:
+                self._comfy_runtime.shutdown()
+            except Exception as exc:
+                # Never terminate someone else's work to make shutdown succeed.
+                print(f"ComfyUI runtime was left running: {exc}")
         if self._bfl_job is not None:
             self._bfl_job.cancel()
             self._bfl_job.wait()  # Network calls have bounded connect/read timeouts.

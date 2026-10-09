@@ -122,6 +122,14 @@ class LLMTranslation(TranslationEngine):
         Returns:
             Formatted system prompt
         """
+        # Keep project/settings identifiers stable while making the requested
+        # Portuguese variety unambiguous for every local and cloud LLM backend.
+        prompt_language_names = {
+            "Portuguese": "European Portuguese (Portugal)",
+            "Brazilian Portuguese": "Brazilian Portuguese (Brazil)",
+        }
+        source_lang = prompt_language_names.get(source_lang, source_lang)
+        target_lang = prompt_language_names.get(target_lang, target_lang)
         return f"""You are an expert translator who translates {source_lang} to {target_lang}. You pay attention to style, formality, idioms, slang etc and try to convey it in the way a {target_lang} speaker would understand.
         BE MORE NATURAL. NEVER USE 당신, 그녀, 그 or its Japanese equivalents.
         Specifically, you will be translating text OCR'd from a comic. The OCR is not perfect and as such you may receive text with typos or other mistakes.
@@ -129,4 +137,3 @@ class LLMTranslation(TranslationEngine):
         - If it's already in {target_lang} or looks like gibberish, OUTPUT IT AS IT IS instead
         - DO NOT give explanations
         Do Your Best! I'm really counting on you."""
-    

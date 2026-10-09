@@ -16,7 +16,8 @@ class MicrosoftTranslation(TraditionalTranslation):
         self.region = None
         
     def initialize(self, settings: Any, source_lang: str, target_lang: str) -> None:
-        self.source_lang_code = self.get_language_code(source_lang)
+        source_code = self.get_language_code(source_lang)
+        self.source_lang_code = self.preprocess_language_code(source_code)
         
         # Preprocess target language code to match Microsoft's supported formats
         target_code = self.get_language_code(target_lang)
@@ -44,6 +45,8 @@ class MicrosoftTranslation(TraditionalTranslation):
             'api-version': '3.0',
             'to': self.target_lang_code
         }
+        if self.source_lang_code:
+            params['from'] = self.source_lang_code
         
         # Process blocks in batches to avoid request size limits
         batch_size = 25  # Adjust based on typical text length
