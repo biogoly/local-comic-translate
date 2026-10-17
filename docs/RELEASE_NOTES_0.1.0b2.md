@@ -45,9 +45,3 @@ and [language support](LANGUAGE_SUPPORT.md) for details.
   settings, API keys, llama.cpp, ComfyUI, and the optional Diffusers environment
   are not. Keep your existing runtime installations.
 
-## Distribution status
-
-This beta is prepared for local testing. The current native-library redistribution
-review has unresolved items; source publication and a passing build do not clear
-public binary distribution. See the [release review](../packaging/windows/RELEASE_REVIEW.md).
-Build-specific test results and source commit are recorded alongside the ZIP.
