@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 from typing import List, Dict, Tuple
 
 from PySide6 import QtWidgets, QtCore, QtGui
@@ -218,6 +219,9 @@ class ImageViewer(QGraphicsView):
             self.webtoon_manager.on_scroll()
 
     def set_tool(self, tool: str):
+        protection = getattr(self, "protection_controller", None)
+        if protection is not None:
+            protection.cancel()
         repair = getattr(self, "repair_controller", None)
         if repair is not None:
             repair.cancel()
@@ -225,7 +229,7 @@ class ImageViewer(QGraphicsView):
         self.current_tool = tool
         if tool == 'pan':
             self.setDragMode(QGraphicsView.ScrollHandDrag)
-        elif tool in ['brush', 'eraser', 'restore', 'clone']:
+        elif tool in ['brush', 'eraser', 'restore', 'clone', 'protect_pixels', 'unprotect_pixels']:
             self.setDragMode(QGraphicsView.NoDrag)
             self.setCursor(Qt.CrossCursor)
         elif tool == 'color_pick':
@@ -274,7 +278,7 @@ class ImageViewer(QGraphicsView):
         return self.event_handler.handle_viewport_event(event)
 
     def set_br_er_size(self, size, scaled_size):
-        if self.current_tool in {'brush', 'restore', 'clone'}:
+        if self.current_tool in {'brush', 'restore', 'clone', 'protect_pixels', 'unprotect_pixels'}:
             self.drawing_manager.brush_size = size
         elif self.current_tool == 'eraser':
             self.drawing_manager.eraser_size = size
@@ -340,6 +344,9 @@ class ImageViewer(QGraphicsView):
             # cleanup strokes cannot leak into a saved image.
             repair = getattr(self, 'repair_controller', None)
             transient_items = repair.transient_items() if repair is not None else []
+            protection = getattr(self, 'protection_controller', None)
+            if protection is not None:
+                transient_items.extend(protection.transient_items())
             transient_items.append(self.brush_cursor_overlay.item)
             editor_items = [
                 item
@@ -429,6 +436,9 @@ class ImageViewer(QGraphicsView):
 
     def clear_scene(self):
         self.brush_cursor_overlay.clear()
+        protection = getattr(self, "protection_controller", None)
+        if protection is not None:
+            protection.reset_page()
         repair = getattr(self, "repair_controller", None)
         if repair is not None:
             repair.reset_page()
@@ -443,6 +453,9 @@ class ImageViewer(QGraphicsView):
 
     def setPhoto(self, pixmap: QtGui.QPixmap = None, fit: bool = True):
         self.brush_cursor_overlay.hide()
+        protection = getattr(self, "protection_controller", None)
+        if protection is not None:
+            protection.reset_page()
         repair = getattr(self, "repair_controller", None)
         if repair is not None:
             repair.reset_page()
@@ -455,6 +468,8 @@ class ImageViewer(QGraphicsView):
             self.empty = True
             self.photo.setPixmap(QtGui.QPixmap())
         self.zoom = 0
+        if protection is not None:
+            protection.refresh_overlay()
 
     def get_mask_for_inpainting(self):
         mask = self.drawing_manager.generate_mask_from_strokes()
@@ -506,6 +521,12 @@ class ImageViewer(QGraphicsView):
             underline=properties.underline,
             direction=properties.direction,
         )
+        item.region_id = properties.region_id
+        item.layout_preferences = copy.deepcopy(properties.layout_preferences)
+        if properties.document_font:
+            document_font = QtGui.QFont()
+            if document_font.fromString(properties.document_font):
+                item.document().setDefaultFont(document_font)
         
         # Apply width if specified
         if properties.width is not None:
@@ -524,10 +545,17 @@ class ImageViewer(QGraphicsView):
         item.setScale(properties.scale)
 
         item.set_vertical(bool(properties.vertical))
-        item.set_color(properties.text_color)
+        if item.vertical and item.layout and properties.layout_preferences.get('bound_height'):
+            item.layout.set_max_size(properties.width, properties.layout_preferences['bound_height'])
+        # Restore the fallback color without overwriting rich-text word colors.
+        item.setDefaultTextColor(properties.text_color)
             
         # Set selection outlines
         item.selection_outlines = properties.selection_outlines.copy()
+        item.set_lettering_transform(properties.lettering_transform)
+        # Layout changes may reset the origin; restore the saved pivot last.
+        if properties.transform_origin is not None:
+            item.setTransformOriginPoint(QPointF(*properties.transform_origin))
         
         # Update the item
         item.update()
@@ -588,11 +616,13 @@ class ImageViewer(QGraphicsView):
 
     def scene_to_page_coordinates(self, scene_pos: QPointF) -> Tuple[int, QPointF]:
         if self.webtoon_mode:
-            return self.webtoon_manager.layout_manager.scene_to_page_coordinates(scene_pos)
+            manager = self.webtoon_manager
+            index = manager.layout_manager.get_page_at_position(scene_pos.y())
+            return index, manager.coordinate_converter.scene_to_page_local_position(scene_pos, index)
 
     def page_to_scene_coordinates(self, page_index: int, local_pos: QPointF) -> QPointF:
         if self.webtoon_mode:
-            return self.webtoon_manager.layout_manager.page_to_scene_coordinates(page_index, local_pos)
+            return self.webtoon_manager.coordinate_converter.page_local_to_scene_position(local_pos, page_index)
 
     def get_visible_area_image(self, paint_all=False, include_patches=True) -> Tuple[np.ndarray, list]:
         if self.webtoon_mode:
@@ -607,7 +637,8 @@ class ImageViewer(QGraphicsView):
         for item in self._scene.items():
             if isinstance(item, MoveableRectItem):
                 rectangles_state.append({
-                    'rect': (item.pos().x(), item.pos().y(), item.boundingRect().width(), item.boundingRect().height()),
+                    'rect': (item.pos().x(), item.pos().y(), item.rect().width(), item.rect().height()),
+                    'region_id': getattr(item, 'region_id', None),
                     'rotation': item.rotation(),
                     'transform_origin': (item.transformOriginPoint().x(), item.transformOriginPoint().y())
                 })
@@ -646,8 +677,10 @@ class ImageViewer(QGraphicsView):
         for data in state['rectangles']:
             x, y, w, h = data['rect']
             origin = QPointF(*data.get('transform_origin', (0,0))) if 'transform_origin' in data else None
-            self.add_rectangle(QRectF(0,0,w,h), QPointF(x,y), data.get('rotation', 0), origin)
+            rect = self.add_rectangle(QRectF(0,0,w,h), QPointF(x,y), data.get('rotation', 0), origin)
+            rect.region_id = data.get('region_id')
 
-        for data in state.get('text_items_state', []):
-            # Use the new add_text_item function for consistency
+        # Saved scene.items() order is top-first; Qt puts newly added siblings
+        # above existing ones, so reconstruct from the bottom of that stack.
+        for data in reversed(state.get('text_items_state', [])):
             self.add_text_item(data)

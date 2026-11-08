@@ -14,6 +14,7 @@ from app.projects.patch_metadata import (
     patch_matches_kind,
     sanitize_patch_metadata,
 )
+from modules.repair.protection import PixelProtectionError, get_protection, protect_patches
 
 from .base import PatchCommandBase
 
@@ -86,6 +87,21 @@ class PatchInsertCommand(QUndoCommand, PatchCommandBase):
         self.metadata = sanitize_patch_metadata(metadata)
         self._first_redo = True
         self._owned_patch_ids: set[str] | None = None
+
+        # Clip only a newly generated write. Redo replays these frozen RGB
+        # patches even if the protection selection has subsequently changed.
+        protection = get_protection(ct, file_path)
+        if protection is not None:
+            getter = getattr(getattr(ct, "image_ctrl", None), "get_composited_page_image", None)
+            if callable(getter):
+                current = getter(file_path)
+            elif not self.viewer.webtoon_mode and _page_is_visible(ct, file_path):
+                current = self.viewer.get_image_array(paint_all=False, include_patches=True)
+            else:
+                current = None
+            if current is None:
+                raise PixelProtectionError("Cannot read the current page to preserve protected pixels.")
+            patches = protect_patches(current, patches, protection)
 
         self.properties_list = []
         for idx, patch in enumerate(patches):

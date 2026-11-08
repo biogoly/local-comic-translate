@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import os
 import re
 import struct
@@ -95,6 +96,16 @@ def _read_single_psd(path: str) -> tuple[np.ndarray, list[dict[str, Any]], PsdIm
     if context.is_app_export:
         for patch_layer in _patch_layers(document):
             _blend_image_layer(rgb_image, patch_layer)
+        raster_lettering = _raster_lettering_layers(document)
+        for layer in reversed(raster_lettering):
+            _blend_image_layer(rgb_image, layer)
+        if raster_lettering:
+            warning = QtCore.QCoreApplication.translate(
+                "Messages",
+                "Curved or perspective lettering in this PSD was imported as background pixels. "
+                "Other text remains editable above it. Use the original project to edit its text and shape.",
+            )
+            context = PsdImportContext(True, '\n'.join(filter(None, (context.warning, warning))))
 
     text_items_state: list[dict[str, Any]] = []
     for layer in _text_layers(document, flat_layers):
@@ -102,6 +113,8 @@ def _read_single_psd(path: str) -> tuple[np.ndarray, list[dict[str, Any]], PsdIm
             imported = _import_text_layer(layer)
         except Exception:
             logger.exception("Failed to import text layer: %s", getattr(layer, "name", "<unnamed>"))
+            if str(getattr(layer, 'name', '')).endswith('(transformed)'):
+                raise
             imported = None
         if imported is not None:
             text_items_state.append(imported)
@@ -205,6 +218,15 @@ def _patch_layers(document: Any) -> list[Any]:
         for layer in _walk_layers(patch_group.layers, _group_types())
         if _is_image_layer(layer) and bool(getattr(layer, "is_visible", True))
     ]
+
+
+def _raster_lettering_layers(document: Any) -> list[Any]:
+    group = _find_group_by_name(getattr(document, "layers", []), "Editable Text")
+    if group is None or not bool(getattr(group, 'is_visible', True)):
+        return []
+    return [layer for layer in _walk_layers(group.layers, _group_types())
+            if _is_image_layer(layer) and bool(getattr(layer, 'is_visible', True))
+            and str(getattr(layer, 'name', '')).endswith(('(rasterized perspective)', '(rasterized curved)'))]
 
 
 def _find_group_by_name(layers: list[Any], name: str) -> Any | None:
@@ -510,7 +532,7 @@ def _import_text_layer(layer: Any) -> dict[str, Any] | None:
     scale_y = _as_float(getattr(layer, "scale_y", None), scale_x)
     scale = scale_x if abs(scale_x - scale_y) < 1e-3 else (scale_x + scale_y) / 2.0
 
-    return {
+    state = {
         "text": html,
         "font_family": primary["font_family"],
         "font_size": primary["font_size"],
@@ -533,6 +555,61 @@ def _import_text_layer(layer: Any) -> dict[str, Any] | None:
         "vertical": _is_vertical(layer),
         "selection_outlines": outlines,
     }
+    if str(getattr(layer, 'name', '')).endswith('(transformed)'):
+        _restore_affine_lettering(layer, state, margin)
+    return state
+
+
+def _restore_affine_lettering(layer: Any, state: dict[str, Any], margin: float) -> None:
+    """Recover Qt's centered stretch/skew followed by existing rotation/scale.
+
+    Qt composes its base transform with item rotation as B*R. RQ decomposition
+    keeps B upper triangular, so the five-parameter editor can represent the
+    original affine mapping without averaging different horizontal/vertical scales.
+    """
+    from app.ui.canvas.save_renderer import ImageSaveRenderer
+    from app.ui.canvas.text.lettering_transform import lettering_qtransform
+    from modules.utils.lettering_transform import normalize_lettering_transform
+
+    values = list(layer.transform())
+    if len(values) != 6 or not all(math.isfinite(float(v)) for v in values):
+        raise ValueError('Invalid affine lettering transform in PSD.')
+    a, c, b, d, tx, ty = map(float, values)
+    sy = math.hypot(c, d)
+    determinant = a * d - b * c
+    if sy <= 1e-8 or determinant <= 1e-8:
+        raise ValueError('Unsupported reflected or singular lettering transform in PSD.')
+    angle = math.atan2(c, d)
+    sx = determinant / sy
+    shear = a * math.sin(angle) + b * math.cos(angle)
+    # Build the untransformed rich-text item to use its actual current layout.
+    state.update(rotation=0.0, scale=1.0, transform_origin=(0.0, 0.0))
+    item = ImageSaveRenderer.create_text_item(state)
+    rect = item.boundingRect()
+    if rect.width() <= 0 or rect.height() <= 0:
+        raise ValueError('Invalid lettering bounds in PSD.')
+    normalized_shear = shear
+    lower = max(sx / 4.0, sy / 4.0, abs(normalized_shear), 1e-8)
+    upper = min(sx / 0.25, sy / 0.25)
+    if lower > upper + 1e-6:
+        raise ValueError('The PSD lettering transform is outside supported editing limits.')
+    uniform = min(max(1.0, lower), upper)
+    settings = normalize_lettering_transform({
+        'scale_x': min(4.0, max(.25, sx / uniform)),
+        'scale_y': min(4.0, max(.25, sy / uniform)),
+        'skew_x': min(45.0, max(-45.0, math.degrees(math.atan(normalized_shear / uniform)))),
+        'perspective_x': 0.0, 'perspective_y': 0.0,
+    })
+    base = lettering_qtransform(rect, settings)
+    # PSD starts its text coordinates at the document margin, whereas Qt's
+    # local item starts at (0,0). Undo that mapped margin before the base offset.
+    state.update(
+        lettering_transform=settings,
+        rotation=math.degrees(angle), scale=uniform,
+        position=(tx - a * margin - b * margin - base.dx(),
+                  ty - c * margin - d * margin - base.dy()),
+        transform_origin=(0.0, 0.0),
+    )
 
 
 def _read_style_runs(layer: Any, text_u16_len: int) -> list[dict[str, Any]]:

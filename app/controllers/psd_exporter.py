@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import os
 import re
 import struct
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 import imkit as imk
 import numpy as np
 from app.controllers.psd_support import photoshopapi as psapi
-from PySide6 import QtCore, QtGui
+from PySide6 import QtCore, QtGui, QtWidgets
 
 from app.ui.canvas.text.text_item_properties import TextItemProperties
 from app.path_materialization import ensure_path_materialized
@@ -99,6 +100,8 @@ def _write_page_psd(page: PsdPageData, out_path: str) -> None:
 			text_layer = _build_text_layer(text_state, idx)
 		except Exception:
 			logger.exception("Failed to build text layer %d", idx)
+			if text_state.get('lettering_transform'):
+				raise
 			text_layer = None
 		if text_layer is not None:
 			text_group.add_layer(doc, text_layer)
@@ -174,6 +177,14 @@ def _build_patch_layer(patch: dict[str, Any], index: int) -> Any | None:
 
 def _build_text_layer(state: dict[str, Any], index: int) -> Any | None:
 	props = TextItemProperties.from_dict(state)
+	settings = props.lettering_transform
+	if settings.get('arc_angle', 0):
+		return _build_raster_lettering_layer(state, index, 'curved')
+	if settings.get('perspective_x', 0) or settings.get('perspective_y', 0):
+		return _build_perspective_lettering_layer(state, index)
+	# A Qt rotation around the text center also translates the layer origin.
+	# Preserve that full transform in editable PSD text and its round trip.
+	use_affine = bool(settings) or abs(_float_or_default(props.rotation, 0.0)) > 1e-6
 	plain_text, style_runs, paragraph_runs, doc_margin = _extract_text_runs(props)
 	if not plain_text:
 		logger.warning("Text %d: empty plain_text, skipping", index)
@@ -200,7 +211,7 @@ def _build_text_layer(state: dict[str, Any], index: int) -> Any | None:
 
 	# TextLayer position_x/position_y use top-left coordinates (no center offset)
 	layer = psapi.TextLayer_8bit(
-		layer_name=f"Text {index}",
+		layer_name=f"Text {index} (transformed)" if use_affine else f"Text {index}",
 		text=plain_text,
 		font=base_font,
 		font_size=float(props.font_size),
@@ -229,9 +240,80 @@ def _build_text_layer(state: dict[str, Any], index: int) -> Any | None:
 	_apply_paragraph_styles(layer, paragraph_runs, props)
 	# Apply text direction after style/paragraph edits.
 	_apply_text_direction(layer, props)
-	_apply_text_rotation(layer, props)
+	if use_affine:
+		# The six TySh values represent a genuine editable affine transform.
+		# Map the document margin through the complete Qt item transform, including
+		# its existing rotation/scale/origin, rather than adding it in page space.
+		from app.ui.canvas.save_renderer import ImageSaveRenderer
+		item = ImageSaveRenderer.create_text_item(state)
+		transform = item.sceneTransform()
+		anchor = transform.map(QtCore.QPointF(doc_margin, doc_margin))
+		layer.set_transform([transform.m11(), transform.m12(), transform.m21(),
+		                     transform.m22(), anchor.x(), anchor.y()])
 
 	return layer
+
+
+def _render_raster_lettering(state: dict[str, Any]) -> tuple[np.ndarray, int, int]:
+	"""Render only this real editable item onto transparent pixels for PSD.
+
+	The project retains its rich-text source. Photoshop's text transform supports
+	6 affine values, so curved/projective items need an identified image layer.
+	"""
+	from app.ui.canvas.save_renderer import ImageSaveRenderer
+	item = ImageSaveRenderer.create_text_item(state)
+	padding = max((float(outline.width) for outline in item.selection_outlines), default=0.0) + 2.0
+	local_bounds = item.boundingRect().adjusted(-padding, -padding, padding, padding)
+	transform = item.sceneTransform()
+	for point in (local_bounds.topLeft(), local_bounds.topRight(),
+	              local_bounds.bottomLeft(), local_bounds.bottomRight()):
+		denominator = transform.m13() * point.x() + transform.m23() * point.y() + transform.m33()
+		if not math.isfinite(denominator) or denominator <= 1e-5:
+			raise ValueError('Perspective lettering outline crosses the projection limit. Reduce the outline or perspective.')
+	bounds = item.mapToScene(local_bounds).boundingRect()
+	x, y = math.floor(bounds.left()), math.floor(bounds.top())
+	w, h = math.ceil(bounds.right()) - x, math.ceil(bounds.bottom()) - y
+	# This native ImageLayer constructor truncates center coordinates to integers.
+	# Even dimensions keep the requested integer top-left exact at negative edges.
+	w += w % 2
+	h += h % 2
+	if w <= 0 or h <= 0 or w > 30000 or h > 30000 or w * h > 32_000_000:
+		raise ValueError('Lettering exceeds the supported PSD raster size.')
+	scene = QtWidgets.QGraphicsScene()
+	scene.addItem(item)
+	scene.setSceneRect(QtCore.QRectF(x, y, w, h))
+	image = QtGui.QImage(w * 2, h * 2, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
+	image.fill(QtCore.Qt.GlobalColor.transparent)
+	painter = QtGui.QPainter(image)
+	painter.setRenderHints(QtGui.QPainter.RenderHint.Antialiasing |
+	                       QtGui.QPainter.RenderHint.TextAntialiasing |
+	                       QtGui.QPainter.RenderHint.SmoothPixmapTransform)
+	try:
+		scene.render(painter, QtCore.QRectF(0, 0, w * 2, h * 2), QtCore.QRectF(x, y, w, h))
+	finally:
+		painter.end()
+	image = image.scaled(w, h, QtCore.Qt.AspectRatioMode.IgnoreAspectRatio,
+	                     QtCore.Qt.TransformationMode.SmoothTransformation)
+	image = image.convertToFormat(QtGui.QImage.Format.Format_RGBA8888)
+	rgba = np.frombuffer(image.bits(), np.uint8).reshape(h, image.bytesPerLine())[:, :w * 4]
+	return rgba.reshape(h, w, 4).copy(), x, y
+
+
+def _render_perspective_lettering(state: dict[str, Any]) -> tuple[np.ndarray, int, int]:
+	"""Compatibility wrapper for the original perspective-only raster helper."""
+	return _render_raster_lettering(state)
+
+
+def _build_raster_lettering_layer(state: dict[str, Any], index: int, effect: str) -> Any:
+	rgba, x, y = _render_raster_lettering(state)
+	h, w = rgba.shape[:2]
+	return psapi.ImageLayer_8bit(_to_psapi_image_data(rgba),
+		f"Text {index} (rasterized {effect})", width=w, height=h,
+		pos_x=x + w / 2.0, pos_y=y + h / 2.0)
+
+
+def _build_perspective_lettering_layer(state: dict[str, Any], index: int) -> Any:
+	return _build_raster_lettering_layer(state, index, 'perspective')
 
 
 def _extract_text_runs(props: TextItemProperties) -> tuple[str, list[TextStyleRun], list[ParagraphStyleRun], float]:
@@ -249,6 +331,10 @@ def _extract_text_runs(props: TextItemProperties) -> tuple[str, list[TextStyleRu
 
 	doc = QtGui.QTextDocument()
 	doc.setHtml(html_value)
+	if props.document_font:
+		document_font = QtGui.QFont()
+		if document_font.fromString(props.document_font):
+			doc.setDefaultFont(document_font)
 	doc_margin = doc.documentMargin()
 
 	plain_text = doc.toPlainText().replace("\u2028", "\n").replace("\u2029", "\n").replace("\r\n", "\n").replace("\r", "\n")
@@ -762,26 +848,6 @@ def _apply_text_direction(layer: Any, props: TextItemProperties) -> None:
 						set_srcd(i, dir_value)
 					except Exception:
 						pass
-
-
-def _apply_text_rotation(layer: Any, props: TextItemProperties) -> None:
-	rotation = _float_or_default(getattr(props, "rotation", 0.0), 0.0)
-	if abs(rotation) < 1e-6:
-		return
-
-	if _set_if_exists(layer, "set_rotation_angle", rotation):
-		return
-	if _set_if_exists(layer, "set_rotation", rotation):
-		return
-
-	# Some bindings expose this as a writable property instead of a setter.
-	try:
-		setattr(layer, "rotation_angle", rotation)
-		return
-	except Exception:
-		pass
-
-	logger.debug("Text layer rotation %.3f was not applied: no compatible API found.", rotation)
 
 
 def _float_or_default(value: Any, default: float) -> float:

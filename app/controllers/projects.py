@@ -1396,6 +1396,19 @@ class ProjectController:
                 on_success()
 
         def _on_load_error(error_tuple):
+            from app.projects.translation_profile import reset_translation_project
+            reset_translation_project(self.main)
+            from app.projects.lettering_styles import reset_lettering_project
+            reset_lettering_project(self.main)
+            styles = getattr(self.main, 'lettering_styles_ctrl', None)
+            if styles is not None:
+                styles.reset_for_project()
+            transform = getattr(self.main, 'lettering_transform_ctrl', None)
+            if transform is not None:
+                transform.reset_for_project()
+            context = getattr(self.main, "translation_context_ctrl", None)
+            if context is not None:
+                context.reset_for_project()
             self.main.default_error_handler(error_tuple)
             exctype, value, _ = error_tuple
             self.main.project_file = None
@@ -1420,6 +1433,15 @@ class ProjectController:
     
     def load_state_to_ui(self, saved_ctx: str):
         self.main.settings_page.ui.extra_context.setPlainText(saved_ctx)
+        styles = getattr(self.main, 'lettering_styles_ctrl', None)
+        if styles is not None:
+            styles.reset_for_project()
+        transform = getattr(self.main, 'lettering_transform_ctrl', None)
+        if transform is not None:
+            transform.reset_for_project()
+        context = getattr(self.main, "translation_context_ctrl", None)
+        if context is not None:
+            context.reset_for_project()
 
     def save_main_page_settings(self):
         settings = app_settings()
@@ -1502,6 +1524,12 @@ class ProjectController:
         self.main.block_font_color_button.setStyleSheet(f"background-color: {color}; border: none; border-radius: 5px;")
         self.main.block_font_color_button.setProperty('selected_color', color)
         self.main.settings_page.ui.uppercase_checkbox.setChecked(settings.value('upper_case', False, type=bool))
+        auto_bubble_fit = getattr(self.main.settings_page.ui, 'auto_bubble_fit_checkbox', None)
+        bubble_padding = getattr(self.main.settings_page.ui, 'auto_bubble_padding_spinbox', None)
+        if auto_bubble_fit is not None:
+            auto_bubble_fit.setChecked(settings.value('auto_bubble_fit', False, type=bool))
+        if bubble_padding is not None:
+            bubble_padding.setValue(settings.value('bubble_padding', 8, type=int))
         self.main.outline_checkbox.setChecked(settings.value('outline', True, type=bool))
 
         self.main.line_spacing_dropdown.setCurrentText(settings.value('line_spacing', '1.0'))

@@ -775,6 +775,18 @@ Taşınmış, yeniden adlandırılmış veya silinmiş olabilir.
         <source>Artistic Edit</source>
         <translation>Sanatsal düzenleme</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Çeviri bağlamı</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Yazı stilleri</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Metin şekli</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -1572,6 +1584,18 @@ Taşınmış, yeniden adlandırılmış veya silinmiş olabilir.
         <source>Artistic Edit</source>
         <translation>Sanatsal düzenleme</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Çeviri bağlamı</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Yazı stilleri</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Metin şekli</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -1914,6 +1938,14 @@ Taşınmış, yeniden adlandırılmış veya silinmiş olabilir.
         <source>Top K:</source>
         <translation>Top K:</translation>
     </message>
+    <message>
+        <source>Provide text-box coordinates (experimental)</source>
+        <translation>Metin kutusu koordinatlarını gönder (deneysel)</translation>
+    </message>
+    <message>
+        <source>Send text-box positions with the page image. Requires image input and a vision-capable model; improvement is not guaranteed.</source>
+        <translation>Metin kutularının konumlarını sayfa görüntüsüyle birlikte gönderir. Görüntü girişi ve görüntüleri anlayabilen bir model gerektirir; sonuçların iyileşeceği garanti edilmez.</translation>
+    </message>
 </context>
 <context>
     <name>Messages</name>
@@ -2122,6 +2154,22 @@ Lütfen internet bağlantınızı kontrol edin.</translation>
     <message>
         <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
         <translation>Ayarlar &gt; Sağlayıcı API’leri bölümünde API anahtarını ve gerekli alanları yapılandırın: {provider}</translation>
+    </message>
+    <message>
+        <source>Page already contains rendered text; use manual Render to add missing regions.</source>
+        <translation>Sayfada zaten oluşturulmuş metin var; eksik bölgeleri eklemek için elle metin oluşturmayı kullanın.</translation>
+    </message>
+    <message>
+        <source>Existing Rendered Text</source>
+        <translation>Mevcut oluşturulmuş metin</translation>
+    </message>
+    <message>
+        <source>Perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit the perspective lettering.</source>
+        <translation>Bu PSD içindeki perspektifli yazı, arka plan pikselleri olarak içe aktarıldı. Diğer metinler bunun üzerinde düzenlenebilir kalır. Perspektifli yazıyı düzenlemek için özgün projeyi kullanın.</translation>
+    </message>
+    <message>
+        <source>Curved or perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit its text and shape.</source>
+        <translation>Bu PSD’deki kavisli veya perspektifli metin, arka plan pikselleri olarak içe aktarıldı. Diğer metinler üstte düzenlenebilir olarak kalır. Bu metinleri ve şekillerini düzenlemek için özgün projeyi kullanın.</translation>
     </message>
 </context>
 <context>
@@ -3199,6 +3247,18 @@ Başlamak için bir proje açın veya oluşturun.</translation>
         <source>Render Text in UpperCase</source>
         <translation>Metni Büyük Harflerle Renderla</translation>
     </message>
+    <message>
+        <source>Fit to bubble when rendering</source>
+        <translation>Metni oluştururken balona sığdır</translation>
+    </message>
+    <message>
+        <source>Bubble padding:</source>
+        <translation>Balon iç boşluğu:</translation>
+    </message>
+    <message>
+        <source>Fit newly rendered text to speech-bubble interiors, with Box fallback. Existing lettering is preserved; other regions continue through processing.</source>
+        <translation>Yeni oluşturulan metni konuşma balonunun içine sığdırır; gerekirse Kutu sığdırmasını kullanır. Mevcut yazılar korunur; diğer bölgeler işlenmeye devam eder.</translation>
+    </message>
 </context>
 <context>
     <name>ToolsPage</name>
@@ -3578,6 +3638,18 @@ back on the Image (for further editing)</source>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
         <source>Artistic Edit</source>
         <translation>Sanatsal düzenleme</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Çeviri bağlamı</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Yazı stilleri</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Metin şekli</translation>
     </message>
 </context>
 <context>
@@ -4641,6 +4713,42 @@ Prompt: {prompt}</source>
         <source>{model} (experimental)</source>
         <translation>{model} (deneysel)</translation>
     </message>
+    <message>
+        <source>Artwork protection changed. Regenerate the preview.</source>
+        <translation>Çizim koruması değişti. Önizlemeyi yeniden oluşturun.</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (provider API; sends the writable edit area).</source>
+        <translation>OCR: {engine} (sağlayıcı API’si; düzenlenebilir alanı gönderir).</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (local).</source>
+        <translation>OCR: {engine} (yerel).</translation>
+    </message>
+    <message>
+        <source>Checks use the translation target language. Pixels outside the writable area and protected pixels are excluded.</source>
+        <translation>Kontrol, çevirinin hedef dilini kullanır. Düzenlenebilir alanın dışındaki pikseller ve korunan pikseller hariç tutulur.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>Yazı kontrolü kullanılamıyor: {error}</translation>
+    </message>
+    <message>
+        <source>A previous lettering check is still finishing.</source>
+        <translation>Önceki yazı kontrolü henüz tamamlanmadı.</translation>
+    </message>
+    <message>
+        <source>The preview changed. Run Check lettering again.</source>
+        <translation>Önizleme değişti. «Yazıyı kontrol et» seçeneğini yeniden çalıştırın.</translation>
+    </message>
+    <message>
+        <source>OCR check failed ({error_type}). Check your OCR settings and try again.</source>
+        <translation>OCR kontrolü başarısız oldu ({error_type}). OCR ayarlarınızı kontrol edip yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>Candidate {number}</source>
+        <translation>Seçenek {number}</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4985,6 +5093,102 @@ Prompt: {prompt}</source>
         <source>Apply</source>
         <translation>Uygula</translation>
     </message>
+    <message>
+        <source>Check lettering</source>
+        <translation>Yazıyı kontrol et</translation>
+    </message>
+    <message>
+        <source>Lettering details</source>
+        <translation>Yazı ayrıntıları</translation>
+    </message>
+    <message>
+        <source>Stylized lettering can confuse OCR. Review the image before applying.</source>
+        <translation>Stilize yazılar OCR’ı yanıltabilir. Uygulamadan önce görüntüyü inceleyin.</translation>
+    </message>
+    <message>
+        <source>Lettering check details</source>
+        <translation>Yazı kontrolü ayrıntıları</translation>
+    </message>
+    <message>
+        <source>Not checked yet.</source>
+        <translation>Henüz kontrol edilmedi.</translation>
+    </message>
+    <message>
+        <source>Use selected translation with Artistic lettering to supply exact wording. Editing that prompt clears the lettering check.</source>
+        <translation>Tam metni belirtmek için «Sanatsal yazı» ile «Seçili çeviriyi kullan» seçeneğini kullanın. Bu istemi düzenlemek yazı kontrolünü devre dışı bırakır.</translation>
+    </message>
+    <message>
+        <source>Requested wording:</source>
+        <translation>İstenen metin:</translation>
+    </message>
+    <message>
+        <source>OCR reading:</source>
+        <translation>OCR okuması:</translation>
+    </message>
+    <message>
+        <source>(no text)</source>
+        <translation>(metin yok)</translation>
+    </message>
+    <message>
+        <source>Differences:</source>
+        <translation>Farklılıklar:</translation>
+    </message>
+    <message>
+        <source>Not read by OCR: {expected}</source>
+        <translation>OCR’ın okuyamadığı metin: {expected}</translation>
+    </message>
+    <message>
+        <source>Extra OCR text: {recognized}</source>
+        <translation>Fazladan OCR metni: {recognized}</translation>
+    </message>
+    <message>
+        <source>Requested: {expected} | OCR: {recognized}</source>
+        <translation>İstenen: {expected} | OCR: {recognized}</translation>
+    </message>
+    <message>
+        <source>Checking lettering…</source>
+        <translation>Yazı kontrol ediliyor…</translation>
+    </message>
+    <message>
+        <source>OCR text matches the requested wording.</source>
+        <translation>OCR metni istenen metinle eşleşiyor.</translation>
+    </message>
+    <message>
+        <source>Possible lettering differences</source>
+        <translation>Yazıda olası farklılıklar</translation>
+    </message>
+    <message>
+        <source>OCR could not read enough text to compare.</source>
+        <translation>OCR karşılaştırma için yeterli metin okuyamadı.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>Yazı kontrolü kullanılamıyor: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>Seçenek</translation>
+    </message>
+    <message>
+        <source>Compare with</source>
+        <translation>Şununla karşılaştır</translation>
+    </message>
+    <message>
+        <source>Generate alternative</source>
+        <translation>Alternatif oluştur</translation>
+    </message>
+    <message>
+        <source>Two candidates are already available.</source>
+        <translation>İki seçenek zaten mevcut.</translation>
+    </message>
+    <message>
+        <source>The preview is stale. Generate a fresh preview to compare alternatives.</source>
+        <translation>Önizleme güncel değil. Alternatifleri karşılaştırmak için yeni bir önizleme oluşturun.</translation>
+    </message>
+    <message>
+        <source>Generate a second candidate to compare.</source>
+        <translation>Karşılaştırmak için ikinci bir seçenek oluşturun.</translation>
+    </message>
 </context>
 <context>
     <name>MBigView</name>
@@ -5258,6 +5462,78 @@ Prompt: {prompt}</source>
         <source>Soft edge</source>
         <translation>Yumuşak kenar</translation>
     </message>
+    <message>
+        <source>Fill method</source>
+        <translation>Dolgu yöntemi</translation>
+    </message>
+    <message>
+        <source>Solid</source>
+        <translation>Düz renk</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>Gradyan</translation>
+    </message>
+    <message>
+        <source>Preview gradient fill…</source>
+        <translation>Gradyan dolgusunu önizle…</translation>
+    </message>
+    <message>
+        <source>Sample clean points around one masked background area, then preview a smooth gradient before applying it.</source>
+        <translation>Maskelenmiş tek bir arka plan alanının çevresindeki temiz noktalardan örnek alın, ardından uygulamadan önce düzgün gradyanı önizleyin.</translation>
+    </message>
+    <message>
+        <source>Heal (experimental)</source>
+        <translation>Onarım (deneysel)</translation>
+    </message>
+    <message>
+        <source>Protect artwork</source>
+        <translation>Çizimi koru</translation>
+    </message>
+    <message>
+        <source>Paint areas that cleanup and artistic edits must leave unchanged.</source>
+        <translation>Temizleme ve sanatsal düzenlemelerin değiştirmemesi gereken alanları boyayın.</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>Koru</translation>
+    </message>
+    <message>
+        <source>Protect brush</source>
+        <translation>Koruma fırçası</translation>
+    </message>
+    <message>
+        <source>Brush over artwork to protect its pixels. Uses the brush size slider. Each stroke can be undone.</source>
+        <translation>Piksellerini korumak için çizimin üzerini fırçalayın. Fırça boyutu kaydırıcısını kullanır. Her fırça darbesi geri alınabilir.</translation>
+    </message>
+    <message>
+        <source>Unprotect</source>
+        <translation>Korumayı kaldır</translation>
+    </message>
+    <message>
+        <source>Unprotect brush</source>
+        <translation>Koruma kaldırma fırçası</translation>
+    </message>
+    <message>
+        <source>Brush over protected pixels to allow editing again. This does not erase artwork.</source>
+        <translation>Yeniden düzenlemeye izin vermek için korunan piksellerin üzerini fırçalayın. Bu işlem çizimi silmez.</translation>
+    </message>
+    <message>
+        <source>Show protected pixels</source>
+        <translation>Korunan pikselleri göster</translation>
+    </message>
+    <message>
+        <source>Purple marks protected artwork. This overlay is never exported.</source>
+        <translation>Mor renk, korunan çizim alanlarını gösterir. Bu katman hiçbir zaman dışa aktarılmaz.</translation>
+    </message>
+    <message>
+        <source>Preview Heal…</source>
+        <translation>Onarım önizlemesi…</translation>
+    </message>
+    <message>
+        <source>Use a fixed clone sample and a picked background color to preview one small masked repair. The mask must fit inside the sample.</source>
+        <translation>Sabit bir klon örneği ve seçilen arka plan rengiyle küçük bir maskeli onarımı önizleyin. Maske örneğin içine sığmalıdır.</translation>
+    </message>
 </context>
 <context>
     <name>LocalRepairController</name>
@@ -5284,6 +5560,26 @@ Prompt: {prompt}</source>
     <message>
         <source>Sampled color fill</source>
         <translation>Seçilen renkle doldurma</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new gradient preview before applying the repair.</source>
+        <translation>Sayfa veya maske değişti. Onarımı uygulamadan önce yeni bir gradyan önizlemesi açın.</translation>
+    </message>
+    <message>
+        <source>Sampled gradient fill</source>
+        <translation>Örneklerden gradyan dolgusu</translation>
+    </message>
+    <message>
+        <source>Alt-click a clean area with Clone to capture a sample first.</source>
+        <translation>Önce Klon aracıyla temiz bir alana Alt-tıklayarak örnek alın.</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new repair preview before applying.</source>
+        <translation>Sayfa veya maske değişti. Uygulamadan önce yeni bir onarım önizlemesi açın.</translation>
+    </message>
+    <message>
+        <source>Heal repair</source>
+        <translation>Onarım</translation>
     </message>
 </context>
 <context>
@@ -5511,6 +5807,1552 @@ Prompt: {prompt}</source>
         <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
         <source>The LoRA file changed during verification. Select it again and retry.</source>
         <translation>LoRA dosyası doğrulama sırasında değişti. Dosyayı yeniden seçip tekrar deneyin.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitDialog</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>Metni sığdır</translation>
+    </message>
+    <message>
+        <source>Preview text layout inside the fitting area. Artwork and cleanup masks are unchanged.</source>
+        <translation>Sığdırma alanındaki metin düzenini önizleyin. Görsel ve temizleme maskeleri değişmez.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Genişlik</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Yükseklik</translation>
+    </message>
+    <message>
+        <source>Fitting area: width × height</source>
+        <translation>Sığdırma alanı: genişlik × yükseklik</translation>
+    </message>
+    <message>
+        <source>Minimum font size</source>
+        <translation>En küçük yazı tipi boyutu</translation>
+    </message>
+    <message>
+        <source>Maximum font size</source>
+        <translation>En büyük yazı tipi boyutu</translation>
+    </message>
+    <message>
+        <source>Keep manual line breaks</source>
+        <translation>Elle eklenen satır sonlarını koru</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Mevcut</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Dengeli</translation>
+    </message>
+    <message>
+        <source>Larger text</source>
+        <translation>Daha büyük metin</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Düzen</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Minimum font size must not exceed maximum font size.</source>
+        <translation>En küçük yazı tipi boyutu, en büyük boyutu aşamaz.</translation>
+    </message>
+    <message>
+        <source>Fits within the area.</source>
+        <translation>Alana sığıyor.</translation>
+    </message>
+    <message>
+        <source>Does not fit. Enlarge the area or shorten the text.</source>
+        <translation>Alana sığmıyor. Alanı genişletin veya metni kısaltın.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>Metin, okunabilir en küçük boyutun altında.</translation>
+    </message>
+    <message>
+        <source>Font size: {size} — {status}</source>
+        <translation>Yazı tipi boyutu: {size} — {status}</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>Kutu</translation>
+    </message>
+    <message>
+        <source>Bubble interior</source>
+        <translation>Balon içi</translation>
+    </message>
+    <message>
+        <source>Fit mode</source>
+        <translation>Sığdırma modu</translation>
+    </message>
+    <message>
+        <source>Estimate from original</source>
+        <translation>Orijinalden tahmin et</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Dikdörtgen</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>Elips</translation>
+    </message>
+    <message>
+        <source>Boundary</source>
+        <translation>Sınır</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>Sol</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>Üst</translation>
+    </message>
+    <message>
+        <source>Boundary origin: X × Y</source>
+        <translation>Sınır başlangıcı: X × Y</translation>
+    </message>
+    <message>
+        <source>Padding</source>
+        <translation>İç boşluk</translation>
+    </message>
+    <message>
+        <source>Estimated interior. Check the boundary before applying.</source>
+        <translation>İç alan tahmin edildi. Uygulamadan önce sınırı kontrol edin.</translation>
+    </message>
+    <message>
+        <source>Manual boundary.</source>
+        <translation>Elle belirlenen sınır.</translation>
+    </message>
+    <message>
+        <source>Bubble fitting requires unrotated horizontal text at normal scale. Using Box.</source>
+        <translation>Balona sığdırma, döndürülmemiş ve normal ölçekte yatay metin gerektirir. Kutu modu kullanılıyor.</translation>
+    </message>
+    <message>
+        <source>Original image unavailable or its dimensions changed. Using Box.</source>
+        <translation>Orijinal görüntü kullanılamıyor veya boyutları değişmiş. Kutu modu kullanılıyor.</translation>
+    </message>
+    <message>
+        <source>Padding leaves no usable interior. Using Box.</source>
+        <translation>İç boşluk nedeniyle kullanılabilir iç alan kalmıyor. Kutu modu kullanılıyor.</translation>
+    </message>
+    <message>
+        <source>Fitting area is too large. Using Box.</source>
+        <translation>Sığdırma alanı çok büyük. Kutu modu kullanılıyor.</translation>
+    </message>
+    <message>
+        <source>No reliable enclosed interior was found. Using Box. Try Rectangle or Ellipse.</source>
+        <translation>Güvenilir bir kapalı iç alan bulunamadı. Kutu modu kullanılıyor. Dikdörtgen veya Elips seçeneğini deneyin.</translation>
+    </message>
+    <message>
+        <source>The boundary is outside the page or has no usable area. Using Box.</source>
+        <translation>Sınır sayfanın dışında veya kullanılabilir bir alan içermiyor. Kutu modu kullanılıyor.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitController</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>Metni sığdır</translation>
+    </message>
+    <message>
+        <source>Text overflows the fitting area.</source>
+        <translation>Metin sığdırma alanından taşıyor.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>Metin, okunabilir en küçük boyutun altında.</translation>
+    </message>
+    <message>
+        <source>The text or page changed. Open Fit Text again to make a new preview.</source>
+        <translation>Metin veya sayfa değişti. Yeni bir önizleme oluşturmak için Metni sığdır penceresini yeniden açın.</translation>
+    </message>
+    <message>
+        <source>Fit Text requires a text item contained within one page.</source>
+        <translation>Metni sığdır özelliği, tamamen tek bir sayfa içinde kalan bir metin öğesi gerektirir.</translation>
+    </message>
+    <message>
+        <source>Wait for page processing to finish before fitting text.</source>
+        <translation>Metni sığdırmadan önce sayfa işleminin tamamlanmasını bekleyin.</translation>
+    </message>
+    <message>
+        <source>Reset text shape to fit.</source>
+        <translation>Sığdırmak için metin şeklini sıfırlayın.</translation>
+    </message>
+    <message>
+        <source>Fit Text is unavailable for transformed lettering. Reset the lettering transform first.</source>
+        <translation>Dönüştürülmüş yazı için Metni Sığdır kullanılamaz. Önce yazı dönüşümünü sıfırlayın.</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewPanel</name>
+    <message>
+        <source>Review</source>
+        <translation>İnceleme</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>Tüm sayfalar</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Geçerli sayfa</translation>
+    </message>
+    <message>
+        <source>Review scope</source>
+        <translation>İnceleme kapsamı</translation>
+    </message>
+    <message>
+        <source>All issues</source>
+        <translation>Tüm sorunlar</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR eksik</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>Çeviri eksik</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>Taşma</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>Küçük metin</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>Başarısız işlem</translation>
+    </message>
+    <message>
+        <source>Awaiting review</source>
+        <translation>İnceleme bekliyor</translation>
+    </message>
+    <message>
+        <source>Issue filter</source>
+        <translation>Sorun filtresi</translation>
+    </message>
+    <message>
+        <source>Review issues</source>
+        <translation>İncelenecek sorunlar</translation>
+    </message>
+    <message>
+        <source>No issues in this view.</source>
+        <translation>Bu görünümde sorun yok.</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>Önceki</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>Sonraki</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Kaynak</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Çeviri</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Düzen</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>Temizleme</translation>
+    </message>
+    <message>
+        <source>Review stage</source>
+        <translation>İnceleme aşaması</translation>
+    </message>
+    <message>
+        <source>Mark reviewed</source>
+        <translation>İncelemeyi onayla</translation>
+    </message>
+    <message>
+        <source>Ignore issue</source>
+        <translation>Sorunu yok say</translation>
+    </message>
+    <message>
+        <source>Keep source</source>
+        <translation>Kaynağı koru</translation>
+    </message>
+    <message>
+        <source>Keep translation</source>
+        <translation>Çeviriyi koru</translation>
+    </message>
+    <message>
+        <source>Keep layout</source>
+        <translation>Düzeni koru</translation>
+    </message>
+    <message>
+        <source>Skip automatic cleanup</source>
+        <translation>Otomatik temizlemeyi atla</translation>
+    </message>
+    <message>
+        <source>Fit Text</source>
+        <translation>Metni sığdır</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>Rapor</translation>
+    </message>
+    <message>
+        <source>Pages: {pages} · Regions: {regions} · Issues: {issues}</source>
+        <translation>Sayfalar: {pages} · Bölgeler: {regions} · Sorunlar: {issues}</translation>
+    </message>
+    <message>
+        <source>Page-wide operations keep protected stages. Direct edits remain allowed.</source>
+        <translation>Sayfa genelindeki işlemler korunan aşamaları muhafaza eder. Doğrudan düzenlemelere izin verilmeye devam edilir.</translation>
+    </message>
+    <message>
+        <source>Uncertain OCR</source>
+        <translation>Belirsiz OCR sonuçları</translation>
+    </message>
+    <message>
+        <source>Retry OCR…</source>
+        <translation>OCR’yi yeniden çalıştır…</translation>
+    </message>
+    <message>
+        <source>Lowest line score {score} ({model})</source>
+        <translation>En düşük satır puanı: {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest word score {score} ({model})</source>
+        <translation>En düşük sözcük puanı: {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest sequence score {score} ({model})</source>
+        <translation>En düşük dizi puanı: {score} ({model})</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewController</name>
+    <message>
+        <source>Change review state</source>
+        <translation>İnceleme durumunu değiştir</translation>
+    </message>
+    <message>
+        <source>Apply reviewed text</source>
+        <translation>İncelenen metni uygula</translation>
+    </message>
+    <message>
+        <source>Checking text layouts…</source>
+        <translation>Metin düzenleri denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Detect text regions to start reviewing.</source>
+        <translation>İncelemeye başlamak için metin bölgelerini algılayın.</translation>
+    </message>
+    <message>
+        <source>Bubble outlines are checked when their page is open.</source>
+        <translation>Balon sınırları, ilgili sayfa açıkken denetlenir.</translation>
+    </message>
+    <message>
+        <source>Awaiting review: {stage}</source>
+        <translation>İnceleme bekliyor: {stage}</translation>
+    </message>
+    <message>
+        <source>The page is not ready. Try selecting the issue again.</source>
+        <translation>Sayfa hazır değil. Sorunu yeniden seçmeyi deneyin.</translation>
+    </message>
+    <message>
+        <source>This region has changed. Refresh the review list.</source>
+        <translation>Bu bölge değişti. İnceleme listesini yenileyin.</translation>
+    </message>
+    <message>
+        <source>The original page is unavailable for this preview.</source>
+        <translation>Bu önizleme için özgün sayfa kullanılamıyor.</translation>
+    </message>
+    <message>
+        <source>Review replacement</source>
+        <translation>Değişikliği incele</translation>
+    </message>
+    <message>
+        <source>Current text</source>
+        <translation>Geçerli metin</translation>
+    </message>
+    <message>
+        <source>Proposed text</source>
+        <translation>Önerilen metin</translation>
+    </message>
+    <message>
+        <source>Apply keeps the protection and existing lettering geometry. Use Clean and Render for missing lettering.</source>
+        <translation>Uygulama, korumayı ve mevcut yazı geometrisini korur. Eksik yazılar için Temizle ve Render Et işlemlerini kullanın.</translation>
+    </message>
+    <message>
+        <source>This region changed while the preview was open. Run the action again.</source>
+        <translation>Önizleme açıkken bu bölge değişti. İşlemi yeniden çalıştırın.</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR eksik</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>Çeviri eksik</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>Taşma</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>Küçük metin</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>Başarısız işlem</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Kaynak</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Çeviri</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Düzen</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>Temizleme</translation>
+    </message>
+    <message>
+        <source>Retry OCR</source>
+        <translation>OCR’yi yeniden çalıştır</translation>
+    </message>
+    <message>
+        <source>Local recognizer</source>
+        <translation>Yerel OCR motoru</translation>
+    </message>
+    <message>
+        <source>Missing model files will be downloaded when you continue.</source>
+        <translation>Devam ettiğinizde eksik model dosyaları indirilecek.</translation>
+    </message>
+    <message>
+        <source>No alternative local recognizer is available for this source language.</source>
+        <translation>Bu kaynak dil için başka bir yerel OCR motoru bulunmuyor.</translation>
+    </message>
+    <message>
+        <source>Select a text region first.</source>
+        <translation>Önce bir metin bölgesi seçin.</translation>
+    </message>
+    <message>
+        <source>The recognizer returned no text.</source>
+        <translation>OCR motoru herhangi bir metin tanıyamadı.</translation>
+    </message>
+    <message>
+        <source>Apply replaces the source text for this region.</source>
+        <translation>«Uygula» düğmesi bu bölgenin kaynak metnini değiştirir.</translation>
+    </message>
+</context>
+<context>
+    <name>ContextEntryDialog</name>
+    <message>
+        <source>Glossary entry</source>
+        <translation>Sözlük girdisi</translation>
+    </message>
+    <message>
+        <source>Character</source>
+        <translation>Karakter</translation>
+    </message>
+    <message>
+        <source>One alias per line</source>
+        <translation>Her satıra bir diğer ad</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>Kaynak terim</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>İsim</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>Tercih edilen çeviri</translation>
+    </message>
+    <message>
+        <source>Aliases</source>
+        <translation>Diğer adlar</translation>
+    </message>
+    <message>
+        <source>Source language</source>
+        <translation>Kaynak dil</translation>
+    </message>
+    <message>
+        <source>Target language</source>
+        <translation>Hedef dil</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Otomatik</translation>
+    </message>
+    <message>
+        <source>Whole word</source>
+        <translation>Tam sözcük</translation>
+    </message>
+    <message>
+        <source>Substring</source>
+        <translation>Alt dize</translation>
+    </message>
+    <message>
+        <source>Matching rule</source>
+        <translation>Eşleştirme kuralı</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Notlar</translation>
+    </message>
+    <message>
+        <source>Voice and formality notes</source>
+        <translation>Üslup ve resmiyet notları</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>Etkin</translation>
+    </message>
+    <message>
+        <source>Approved for translation</source>
+        <translation>Çeviri için onaylandı</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>Herhangi bir dil</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation.</source>
+        <translation>Bir kaynak terim ve tercih edilen çeviriyi girin.</translation>
+    </message>
+    <message>
+        <source>Enter a character name.</source>
+        <translation>Bir karakter adı girin.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextController</name>
+    <message>
+        <source>Choose an LLM translator to suggest a summary.</source>
+        <translation>Özet önerisi almak için bir LLM çevirmeni seçin.</translation>
+    </message>
+    <message>
+        <source>In Review, mark a translation reviewed for this source and target language pair.</source>
+        <translation>İnceleme bölümünde bu kaynak ve hedef dil çifti için bir çeviriyi incelenmiş olarak işaretleyin.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit or shorten the story summary to fit approved translations.</source>
+        <translation>Onaylanmış çevirilerin sığması için bağlam belirteci sınırını artırın veya hikâye özetini kısaltın.</translation>
+    </message>
+    <message>
+        <source>Check the selected translator’s connection settings.</source>
+        <translation>Seçili çevirmenin bağlantı ayarlarını kontrol edin.</translation>
+    </message>
+    <message>
+        <source>The model returned an unusable summary.</source>
+        <translation>Model kullanılamayan bir özet döndürdü.</translation>
+    </message>
+    <message>
+        <source>The summary request failed. Check the translator settings and try again.</source>
+        <translation>Özet isteği başarısız oldu. Çevirmen ayarlarını kontrol edip yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>The project or summary inputs changed. Open the suggestion again.</source>
+        <translation>Proje veya özet girdileri değişti. Öneriyi yeniden açın.</translation>
+    </message>
+    <message>
+        <source>Change translation context</source>
+        <translation>Çeviri bağlamını değiştir</translation>
+    </message>
+    <message>
+        <source>Select a text region to preview its request.</source>
+        <translation>İsteğini önizlemek için bir metin bölgesi seçin.</translation>
+    </message>
+    <message>
+        <source>The current page has no text regions to preview.</source>
+        <translation>Geçerli sayfada önizlenecek metin bölgesi yok.</translation>
+    </message>
+    <message>
+        <source>Cannot build request preview: {error}</source>
+        <translation>İstek önizlemesi oluşturulamıyor: {error}</translation>
+    </message>
+    <message>
+        <source>Choose an LLM translator to suggest glossary terms.</source>
+        <translation>Terim sözlüğü için öneri almak üzere bir LLM çevirmeni seçin.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit to fit approved translations.</source>
+        <translation>Onaylanmış çevirilerin sığması için bağlam token sınırını artırın.</translation>
+    </message>
+    <message>
+        <source>The model returned unusable glossary suggestions.</source>
+        <translation>Model, terim sözlüğünde kullanılamayacak öneriler döndürdü.</translation>
+    </message>
+    <message>
+        <source>The glossary request failed. Check the translator settings and try again.</source>
+        <translation>Terim önerisi isteği başarısız oldu. Çevirmen ayarlarını denetleyip yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>The project or glossary inputs changed. Open the suggestion again.</source>
+        <translation>Proje veya terim önerileri için kullanılan girdiler değişti. Önerileri yeniden açın.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextDialog</name>
+    <message>
+        <source>Suggest story summary…</source>
+        <translation>Hikâye özeti öner…</translation>
+    </message>
+    <message>
+        <source>Include approved translations from earlier pages</source>
+        <translation>Önceki sayfalardaki onaylanmış çevirileri dahil et</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Çeviri bağlamı</translation>
+    </message>
+    <message>
+        <source>Glossary</source>
+        <translation>Terim sözlüğü</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>Karakterler</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>Kaynak terim</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>İsim</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>Tercih edilen çeviri</translation>
+    </message>
+    <message>
+        <source>Language pair</source>
+        <translation>Dil çifti</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Durum</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Ekle</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Düzenle</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Add selected source/translation</source>
+        <translation>Seçili kaynak metni/çeviriyi ekle</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>Konuşan</translation>
+    </message>
+    <message>
+        <source>Assign selected region</source>
+        <translation>Seçili bölgeye ata</translation>
+    </message>
+    <message>
+        <source>Project notes</source>
+        <translation>Proje notları</translation>
+    </message>
+    <message>
+        <source>Setting, tone, terminology guidance, and other context for this work.</source>
+        <translation>Bu eserin ortamı, üslubu, terminoloji yönergeleri ve diğer bağlam bilgileri.</translation>
+    </message>
+    <message>
+        <source>Story summary</source>
+        <translation>Hikâye özeti</translation>
+    </message>
+    <message>
+        <source>Context token limit</source>
+        <translation>Bağlam token sınırı</translation>
+    </message>
+    <message>
+        <source>Uses a conservative estimate. Required context that exceeds the available budget must be shortened.</source>
+        <translation>Temkinli bir tahmin kullanılır. Kullanılabilir bütçeyi aşan gerekli bağlam kısaltılmalıdır.</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Notlar</translation>
+    </message>
+    <message>
+        <source>Request preview</source>
+        <translation>İstek önizlemesi</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Geçerli sayfa</translation>
+    </message>
+    <message>
+        <source>Selected region</source>
+        <translation>Seçili bölge</translation>
+    </message>
+    <message>
+        <source>Preview scope</source>
+        <translation>Önizleme kapsamı</translation>
+    </message>
+    <message>
+        <source>Build preview</source>
+        <translation>Önizleme oluştur</translation>
+    </message>
+    <message>
+        <source>Undo context</source>
+        <translation>Bağlamı geri al</translation>
+    </message>
+    <message>
+        <source>Redo context</source>
+        <translation>Bağlamı yinele</translation>
+    </message>
+    <message>
+        <source>Revert draft</source>
+        <translation>Taslağı geri al</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Changes apply to this project. The existing LLM context setting also remains in use.</source>
+        <translation>Değişiklikler bu projeye uygulanır. Mevcut LLM bağlam ayarı da kullanılmaya devam eder.</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>Herhangi bir dil</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>Devre dışı</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation>Onaylandı</translation>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation>Taslak</translation>
+    </message>
+    <message>
+        <source>No speaker</source>
+        <translation>Konuşan yok</translation>
+    </message>
+    <message>
+        <source>Selected region: {text}</source>
+        <translation>Seçili bölge: {text}</translation>
+    </message>
+    <message>
+        <source>Select a text region on the page to assign a speaker.</source>
+        <translation>Konuşan kişiyi atamak için sayfada bir metin bölgesi seçin.</translation>
+    </message>
+    <message>
+        <source>Approved glossary entries, assigned character notes, and project notes guide LLM translation.</source>
+        <translation>Onaylı sözlük girdileri, atanmış karakter notları ve proje notları LLM çevirisine yön verir.</translation>
+    </message>
+    <message>
+        <source>This translator does not support structured LLM context. Project entries remain editable for use with an LLM.</source>
+        <translation>Bu çevirici yapılandırılmış LLM bağlamını desteklemiyor. Proje girdileri bir LLM ile kullanılmak üzere düzenlenebilir.</translation>
+    </message>
+    <message>
+        <source>Unapplied changes. Apply to use them for translation.</source>
+        <translation>Uygulanmamış değişiklikler var. Çeviride kullanmak için uygulayın.</translation>
+    </message>
+    <message>
+        <source>No unapplied changes.</source>
+        <translation>Uygulanmamış değişiklik yok.</translation>
+    </message>
+    <message>
+        <source>Suggest glossary terms…</source>
+        <translation>Terim sözlüğü için terim öner…</translation>
+    </message>
+</context>
+<context>
+    <name>GradientRepairDialog</name>
+    <message>
+        <source>Gradient repair</source>
+        <translation>Gradyan onarımı</translation>
+    </message>
+    <message>
+        <source>Repair one smooth background area at a time. Click at least four clean spots around the entire mask, away from text and borders. Six or more samples improve reliability.</source>
+        <translation>Her seferinde tek bir düzgün arka plan alanını onarın. Yazı ve kenarlardan uzakta, tüm maskenin çevresinde en az dört temiz noktaya tıklayın. Altı veya daha fazla örnek güvenilirliği artırır.</translation>
+    </message>
+    <message>
+        <source>Sample from</source>
+        <translation>Örnek kaynağı</translation>
+    </message>
+    <message>
+        <source>Edited page</source>
+        <translation>Düzenlenmiş sayfa</translation>
+    </message>
+    <message>
+        <source>Original page</source>
+        <translation>Orijinal sayfa</translation>
+    </message>
+    <message>
+        <source>Changing the source clears samples. Preview pixels are never used as samples.</source>
+        <translation>Kaynağı değiştirmek örnekleri temizler. Önizleme pikselleri hiçbir zaman örnek olarak kullanılmaz.</translation>
+    </message>
+    <message>
+        <source>Show mask</source>
+        <translation>Maskeyi göster</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>Onarım alanına sığdır</translation>
+    </message>
+    <message>
+        <source>Fit page</source>
+        <translation>Sayfaya sığdır</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>Uzaklaştır</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>Yakınlaştır</translation>
+    </message>
+    <message>
+        <source>Sample background</source>
+        <translation>Arka plandan örnek al</translation>
+    </message>
+    <message>
+        <source>Repair preview</source>
+        <translation>Onarım önizlemesi</translation>
+    </message>
+    <message>
+        <source>Remove last sample</source>
+        <translation>Son örneği kaldır</translation>
+    </message>
+    <message>
+        <source>Clear samples</source>
+        <translation>Örnekleri temizle</translation>
+    </message>
+    <message>
+        <source>Generate preview</source>
+        <translation>Önizleme oluştur</translation>
+    </message>
+    <message>
+        <source>Drag to pan; use the mouse wheel to zoom. Only pixels inside the painted mask will change.</source>
+        <translation>Görünümü kaydırmak için sürükleyin, yakınlaştırmak için fare tekerleğini kullanın. Yalnızca boyanmış maskenin içindeki pikseller değişir.</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Samples: {count}</source>
+        <translation>Örnekler: {count}</translation>
+    </message>
+    <message>
+        <source>Click inside the page image.</source>
+        <translation>Sayfa görüntüsünün içine tıklayın.</translation>
+    </message>
+    <message>
+        <source>Choose a clean spot outside the painted mask.</source>
+        <translation>Boyanmış maskenin dışında temiz bir nokta seçin.</translation>
+    </message>
+    <message>
+        <source>That pixel is already sampled. Choose another clean spot.</source>
+        <translation>Bu pikselden zaten örnek alındı. Başka bir temiz nokta seçin.</translation>
+    </message>
+    <message>
+        <source>Use at most 64 samples. Remove a sample before adding another.</source>
+        <translation>En fazla 64 örnek kullanılabilir. Yeni bir örnek eklemeden önce birini kaldırın.</translation>
+    </message>
+    <message>
+        <source>Choose at least four distinct clean spots around the repair.</source>
+        <translation>Onarım alanının çevresinde birbirinden farklı en az dört temiz nokta seçin.</translation>
+    </message>
+    <message>
+        <source>Spread samples in both directions; do not place them along one line.</source>
+        <translation>Örnekleri tek bir çizgi üzerine değil, her iki yöne dağıtın.</translation>
+    </message>
+    <message>
+        <source>Place clean samples around all sides of the painted mask.</source>
+        <translation>Boyanmış maskenin tüm taraflarına temiz örnekler yerleştirin.</translation>
+    </message>
+    <message>
+        <source>The samples do not describe a smooth background. Remove spots on text or borders, or add more clean samples.</source>
+        <translation>Örnekler düzgün bir arka planı temsil etmiyor. Yazı veya kenarlar üzerindeki noktaları kaldırın ya da daha fazla temiz örnek ekleyin.</translation>
+    </message>
+    <message>
+        <source>Cannot build this repair from the image, mask, and samples.</source>
+        <translation>Görüntü, maske ve örneklerden bu onarım oluşturulamıyor.</translation>
+    </message>
+    <message>
+        <source>The preview would not change any pixels.</source>
+        <translation>Önizleme hiçbir pikseli değiştirmeyecek.</translation>
+    </message>
+    <message>
+        <source>Preview ready: {used} of {total} samples used.</source>
+        <translation>Önizleme hazır: {total} örnekten {used} tanesi kullanıldı.</translation>
+    </message>
+    <message>
+        <source>Ready to generate a preview.</source>
+        <translation>Önizleme oluşturmaya hazır.</translation>
+    </message>
+    <message>
+        <source>Generating preview…</source>
+        <translation>Önizleme oluşturuluyor…</translation>
+    </message>
+    <message>
+        <source>Preview unavailable: {reason}</source>
+        <translation>Önizleme kullanılamıyor: {reason}</translation>
+    </message>
+    <message>
+        <source>Unable to generate preview: {error}</source>
+        <translation>Önizleme oluşturulamadı: {error}</translation>
+    </message>
+    <message>
+        <source>Shift-drag to sample a line of background color.</source>
+        <translation>Bir çizgi boyunca arka plan renginden örnek almak için Shift tuşunu basılı tutarak sürükleyin.</translation>
+    </message>
+</context>
+<context>
+    <name>HealRepairDialog</name>
+    <message>
+        <source>Experimental Heal preview</source>
+        <translation>Onarım önizlemesi (deneysel)</translation>
+    </message>
+    <message>
+        <source>Compare one fixed clone sample with a color-adjusted copy. This prototype preserves sampled texture and shifts its color toward your picked color. It does not reconstruct detail or borrow nearby pixels.</source>
+        <translation>Sabit bir klon örneğini rengi ayarlanmış kopyasıyla karşılaştırın. Bu prototip örneklenen dokuyu korur ve rengini seçtiğiniz renge yaklaştırır. Ayrıntıları yeniden oluşturmaz veya yakındaki pikselleri kullanmaz.</translation>
+    </message>
+    <message>
+        <source>The entire painted mask must fit inside one sample centered on the mask. Use a larger clean clone sample or a smaller mask. Only painted, unprotected pixels can change; texture will not be tiled.</source>
+        <translation>Boyanan maskenin tamamı, maskenin merkezine yerleştirilen tek bir örneğe sığmalıdır. Daha büyük temiz bir klon örneği veya daha küçük bir maske kullanın. Yalnızca boyanan, korunmayan pikseller değişebilir; doku döşenerek tekrarlanmaz.</translation>
+    </message>
+    <message>
+        <source>Picked target color: RGB {0}</source>
+        <translation>Seçilen hedef renk: RGB {0}</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>Onarım alanına sığdır</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>Uzaklaştır</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>Yakınlaştır</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Geçerli sayfa</translation>
+    </message>
+    <message>
+        <source>Ordinary Clone</source>
+        <translation>Normal klonlama</translation>
+    </message>
+    <message>
+        <source>Heal preview</source>
+        <translation>Onarım önizlemesi</translation>
+    </message>
+    <message>
+        <source>Color adjustment</source>
+        <translation>Renk ayarı</translation>
+    </message>
+    <message>
+        <source>Apply Heal</source>
+        <translation>Onarımı uygula</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>This preview would not change any pixels.</source>
+        <translation>Bu önizleme hiçbir pikseli değiştirmez.</translation>
+    </message>
+    <message>
+        <source>Preview ready. Compare the texture and color before applying.</source>
+        <translation>Önizleme hazır. Uygulamadan önce dokuyu ve rengi karşılaştırın.</translation>
+    </message>
+    <message>
+        <source>The mask extends beyond the clean clone sample. Cancel and use a larger clean sample or a smaller mask.</source>
+        <translation>Maske temiz klon örneğinin dışına taşıyor. İptal edip daha büyük temiz bir örnek veya daha küçük bir maske kullanın.</translation>
+    </message>
+    <message>
+        <source>All masked pixels are protected. No repair can be applied.</source>
+        <translation>Maskelenen tüm pikseller korunuyor. Onarım uygulanamaz.</translation>
+    </message>
+    <message>
+        <source>Paint a repair mask before opening Heal preview.</source>
+        <translation>Onarım önizlemesini açmadan önce bir onarım maskesi boyayın.</translation>
+    </message>
+    <message>
+        <source>The repair inputs are invalid. Cancel and sample again.</source>
+        <translation>Onarım girdileri geçersiz. İptal edip yeniden örnek alın.</translation>
+    </message>
+    <message>
+        <source>Could not generate the preview. No changes were applied.</source>
+        <translation>Önizleme oluşturulamadı. Hiçbir değişiklik uygulanmadı.</translation>
+    </message>
+</context>
+<context>
+    <name>PixelProtectionController</name>
+    <message>
+        <source>Protect artwork</source>
+        <translation>Çizimi koru</translation>
+    </message>
+    <message>
+        <source>Unprotect artwork</source>
+        <translation>Çizim korumasını kaldır</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesController</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Yazı stilleri</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before applying a lettering style.</source>
+        <translation>Yazı stilini uygulamadan önce işlemin tamamlanmasını bekleyin.</translation>
+    </message>
+    <message>
+        <source>Open a page before editing project lettering styles.</source>
+        <translation>Projenin yazı stillerini düzenlemeden önce bir sayfa açın.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one current page to apply a style.</source>
+        <translation>Stil uygulamak için geçerli sayfadaki metin kutularını seçin.</translation>
+    </message>
+    <message>
+        <source>Select one copy of each text region before applying a style.</source>
+        <translation>Stil uygulamadan önce her metin bölgesinin yalnızca bir kopyasını seçin.</translation>
+    </message>
+    <message>
+        <source>The page, lettering or presets changed. Open a new style preview.</source>
+        <translation>Sayfa, yazı veya ön ayarlar değişti. Yeni bir stil önizlemesi açın.</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesDialog</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Yazı stilleri</translation>
+    </message>
+    <message>
+        <source>Save lettering from a selected text box as a named project style. Choose which properties to apply; word emphasis is preserved unless you select Bold, Italic or Underline.</source>
+        <translation>Seçili metin kutusunun biçimini adlandırılmış bir proje stili olarak kaydedin. Uygulanacak özellikleri seçin; Kalın, İtalik veya Altı çizili seçilmedikçe sözcük vurguları korunur.</translation>
+    </message>
+    <message>
+        <source>Project styles</source>
+        <translation>Proje stilleri</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>Stil adı</translation>
+    </message>
+    <message>
+        <source>Dialogue, narration, sound effects…</source>
+        <translation>Diyalog, anlatım, ses efektleri…</translation>
+    </message>
+    <message>
+        <source>Save from previewed text box</source>
+        <translation>Önizlenen metin kutusundan kaydet</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the text box chosen in Preview text box.</source>
+        <translation>“Önizlenecek metin kutusu” alanında seçilen kutudan yeni bir stil oluşturur.</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>Yeniden adlandır</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>Stili sil</translation>
+    </message>
+    <message>
+        <source>Replace style from previewed text box</source>
+        <translation>Stili önizlenen metin kutusuyla değiştir</translation>
+    </message>
+    <message>
+        <source>Properties to apply</source>
+        <translation>Uygulanacak özellikler</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>Yazı Tipi</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>Yazı tipi boyutu</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>Metin rengi</translation>
+    </message>
+    <message>
+        <source>Outline</source>
+        <translation>Dış Çizgi</translation>
+    </message>
+    <message>
+        <source>Line spacing</source>
+        <translation>Satır aralığı</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>Hizalama</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>Kalın</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>İtalik</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Altı Çizili</translation>
+    </message>
+    <message>
+        <source>Preview text box</source>
+        <translation>Önizlenecek metin kutusu</translation>
+    </message>
+    <message>
+        <source>{0}: {1}</source>
+        <translation>{0}: {1}</translation>
+    </message>
+    <message>
+        <source>{0} selected text boxes</source>
+        <translation>{0} metin kutusu seçili</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>Önizlemeyi sığdır</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Mevcut</translation>
+    </message>
+    <message>
+        <source>Styled</source>
+        <translation>Stil uygulanmış</translation>
+    </message>
+    <message>
+        <source>Preview uses a neutral background. Inspect text fit after changing font or size.</source>
+        <translation>Önizleme nötr bir arka plan kullanır. Yazı tipini veya boyutunu değiştirdikten sonra metnin sığıp sığmadığını kontrol edin.</translation>
+    </message>
+    <message>
+        <source>Apply despite these font warnings</source>
+        <translation>Bu yazı tipi uyarılarına rağmen uygula</translation>
+    </message>
+    <message>
+        <source>Save presets only</source>
+        <translation>Yalnızca ön ayarları kaydet</translation>
+    </message>
+    <message>
+        <source>Apply to selection</source>
+        <translation>Seçime uygula</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Changes to presets are saved only when you choose Save presets only or Apply to selection.</source>
+        <translation>Ön ayar değişiklikleri yalnızca “Yalnızca ön ayarları kaydet” veya “Seçime uygula” seçildiğinde kaydedilir.</translation>
+    </message>
+    <message>
+        <source>Enter a style name.</source>
+        <translation>Bir stil adı girin.</translation>
+    </message>
+    <message>
+        <source>A style with this name already exists. Choose another name.</source>
+        <translation>Bu ada sahip bir stil zaten var. Başka bir ad seçin.</translation>
+    </message>
+    <message>
+        <source>Could not capture this text style. No preset was added.</source>
+        <translation>Bu metin stili alınamadı. Ön ayar eklenmedi.</translation>
+    </message>
+    <message>
+        <source>Ready to apply this style to {0} text boxes.</source>
+        <translation>Bu stil {0} metin kutusuna uygulanmaya hazır.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still rename or delete project presets.</source>
+        <translation>Stil almak veya uygulamak için aynı sayfadaki metin kutularını seçin. Proje ön ayarlarını yine de yeniden adlandırabilir veya silebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, or enter a name and save the previewed text box as a new style.</source>
+        <translation>Bir proje stili seçin veya bir ad girip önizlenen metin kutusunu yeni stil olarak kaydedin.</translation>
+    </message>
+    <message>
+        <source>Choose at least one property to apply.</source>
+        <translation>Uygulamak için en az bir özellik seçin.</translation>
+    </message>
+    <message>
+        <source>Could not build the style preview. No changes were applied.</source>
+        <translation>Stil önizlemesi oluşturulamadı. Hiçbir değişiklik uygulanmadı.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" is unavailable. A fallback font will be used.</source>
+        <translation>Metin kutusu {0}: “{1}” yazı tipi kullanılamıyor. Yedek yazı tipi kullanılacak.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" lacks these characters: {2}. Fallback glyphs may differ.</source>
+        <translation>Metin kutusu {0}: “{1}” yazı tipinde şu karakterler yok: {2}. Yedek glifler farklı görünebilir.</translation>
+    </message>
+    <message>
+        <source>Reuse a project style or change emphasis directly. Bold, Italic and Underline affect whole selected text boxes; Keep existing preserves individual-word formatting.</source>
+        <translation>Bir proje stilini yeniden kullanın veya vurguyu doğrudan değiştirin. Kalın, İtalik ve Altı çizili, seçili metin kutularının tamamına uygulanır; Mevcut biçimi koru, sözcüklerin ayrı biçimlendirmesini korur.</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the current text box and your emphasis choices.</source>
+        <translation>Geçerli metin kutusundan ve seçtiğiniz vurgu ayarlarından yeni bir stil oluşturur.</translation>
+    </message>
+    <message>
+        <source>Replaces the selected preset with the current text box style and your emphasis choices.</source>
+        <translation>Seçili ön ayarı, geçerli metin kutusunun stili ve seçtiğiniz vurgu ayarlarıyla değiştirir.</translation>
+    </message>
+    <message>
+        <source>Keep existing</source>
+        <translation>Mevcut biçimi koru</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Kapalı</translation>
+    </message>
+    <message>
+        <source>Use preset</source>
+        <translation>Ön ayarı kullan</translation>
+    </message>
+    <message>
+        <source>On and Off change this emphasis for each entire selected box. Keep existing preserves word-level formatting. Use preset copies the saved value.</source>
+        <translation>Açık ve Kapalı, seçili her kutunun tamamındaki bu vurguyu değiştirir. Mevcut biçimi koru, sözcüklerin ayrı biçimlendirmesini korur. Ön ayarı kullan, kaydedilmiş değeri uygular.</translation>
+    </message>
+    <message>
+        <source>Ready to apply formatting to {0} text boxes.</source>
+        <translation>{0} metin kutusuna biçimlendirme uygulanmaya hazır.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, save a new style, or set Bold, Italic or Underline to On or Off.</source>
+        <translation>Bir proje stili seçin, yeni bir stil kaydedin veya Kalın, İtalik ya da Altı çizili ayarını Açık veya Kapalı yapın.</translation>
+    </message>
+    <message>
+        <source>Import presets…</source>
+        <translation>Ön ayarları içe aktar…</translation>
+    </message>
+    <message>
+        <source>Export presets…</source>
+        <translation>Ön ayarları dışa aktar…</translation>
+    </message>
+    <message>
+        <source>Lettering presets (*.json)</source>
+        <translation>Yazı stili ön ayarları (*.json)</translation>
+    </message>
+    <message>
+        <source>Export all presets in this list to a file.</source>
+        <translation>Bu listedeki tüm ön ayarları bir dosyaya aktarır.</translation>
+    </message>
+    <message>
+        <source>Existing presets are kept. Name conflicts receive a numbered suffix.</source>
+        <translation>Mevcut ön ayarlar korunur. Ad çakışırsa içe aktarılan ön ayarın adının sonuna bir sayı eklenir.</translation>
+    </message>
+    <message>
+        <source>Imported: {0}. Renamed: {1}. Skipped duplicates: {2}.</source>
+        <translation>İçe aktarılan: {0}. Yeniden adlandırılan: {1}. Atlanan kopya: {2}.</translation>
+    </message>
+    <message>
+        <source>Exported {0} presets.</source>
+        <translation>{0} ön ayar dışa aktarıldı.</translation>
+    </message>
+    <message>
+        <source>Could not read the preset file.</source>
+        <translation>Ön ayar dosyası okunamadı.</translation>
+    </message>
+    <message>
+        <source>Could not write the preset file.</source>
+        <translation>Ön ayar dosyası yazılamadı.</translation>
+    </message>
+    <message>
+        <source>The preset file is too large.</source>
+        <translation>Ön ayar dosyası çok büyük.</translation>
+    </message>
+    <message>
+        <source>This file is not a lettering preset library.</source>
+        <translation>Bu dosya bir yazı stili ön ayar kitaplığı değil.</translation>
+    </message>
+    <message>
+        <source>This preset file version is unsupported.</source>
+        <translation>Ön ayar dosyasının bu sürümü desteklenmiyor.</translation>
+    </message>
+    <message>
+        <source>The preset file contains invalid styles.</source>
+        <translation>Ön ayar dosyasında geçersiz stiller var.</translation>
+    </message>
+    <message>
+        <source>The import would exceed the project limit of 100 presets.</source>
+        <translation>İçe aktarılırsa proje başına 100 ön ayar sınırı aşılacak.</translation>
+    </message>
+    <message>
+        <source>The preset library is empty.</source>
+        <translation>Ön ayar kitaplığı boş.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still manage project presets.</source>
+        <translation>Bir stili kaydetmek veya uygulamak için aynı sayfadaki metin kutularını seçin. Seçim yapmadan da projenin ön ayarlarını yönetebilirsiniz.</translation>
+    </message>
+</context>
+<context>
+    <name>controller</name>
+    <message>
+        <source>Apply lettering style</source>
+        <translation>Yazı stilini uygula</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformController</name>
+    <message>
+        <source>Text shape</source>
+        <translation>Metin şekli</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before changing text shape.</source>
+        <translation>Metin şeklini değiştirmeden önce işlemin tamamlanmasını bekleyin.</translation>
+    </message>
+    <message>
+        <source>Open a page and select one text box to change its shape.</source>
+        <translation>Bir sayfa açın ve şeklini değiştirmek için bir metin kutusu seçin.</translation>
+    </message>
+    <message>
+        <source>Select one text box on the current page to change its shape.</source>
+        <translation>Şeklini değiştirmek için geçerli sayfada bir metin kutusu seçin.</translation>
+    </message>
+    <message>
+        <source>The page or lettering changed. Open a new text shape preview.</source>
+        <translation>Sayfa veya metin değişti. Yeni bir metin şekli önizlemesi açın.</translation>
+    </message>
+    <message>
+        <source>Transform lettering</source>
+        <translation>Yazıyı dönüştür</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformDialog</name>
+    <message>
+        <source>Text shape</source>
+        <translation>Metin şekli</translation>
+    </message>
+    <message>
+        <source>Stretch, skew or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>Metni ve sözcük düzeyindeki biçimlendirmeyi düzenlenebilir tutarak esnetin, eğin veya perspektif ekleyin.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Genişlik</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Yükseklik</translation>
+    </message>
+    <message>
+        <source>Skew</source>
+        <translation>Eğiklik</translation>
+    </message>
+    <message>
+        <source>Horizontal perspective</source>
+        <translation>Yatay perspektif</translation>
+    </message>
+    <message>
+        <source>Vertical perspective</source>
+        <translation>Dikey perspektif</translation>
+    </message>
+    <message>
+        <source>Reset distortion</source>
+        <translation>Bozulmayı sıfırla</translation>
+    </message>
+    <message>
+        <source>Width and height stretch the lettering without changing line wrapping. Use the canvas handles to resize the text box or rotate it.</source>
+        <translation>Genişlik ve yükseklik, satır sonlarını değiştirmeden yazıyı esnetir. Metin kutusunu yeniden boyutlandırmak veya döndürmek için tuval tutamaçlarını kullanın.</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Mevcut</translation>
+    </message>
+    <message>
+        <source>Transformed</source>
+        <translation>Dönüştürülmüş</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>Önizlemeyi sığdır</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Preview only. Apply creates one undoable change.</source>
+        <translation>Yalnızca önizleme. Uygula, geri alınabilir bir değişiklik oluşturur.</translation>
+    </message>
+    <message>
+        <source>PSD: perspective lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: Perspektifli yazı, etiketli bir görüntü katmanı olarak dışa aktarılır. Metnini ve şeklini düzenlemek için proje dosyasını saklayın.</translation>
+    </message>
+    <message>
+        <source>PSD: this lettering exports as an editable text layer.</source>
+        <translation>PSD: Bu yazı, düzenlenebilir bir metin katmanı olarak dışa aktarılır.</translation>
+    </message>
+    <message>
+        <source>This transform could not be previewed. Reset the distortion and try again.</source>
+        <translation>Bu dönüşüm önizlenemedi. Bozulmayı sıfırlayıp yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>Stretch, skew, curve or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>Metni ve tek tek sözcüklerin biçimlendirmesini düzenlenebilir tutarak metni uzatın, eğin, kavis verin veya perspektif ekleyin.</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>Kavis</translation>
+    </message>
+    <message>
+        <source>Positive curves arch upward; negative curves bend downward. Each line keeps its text and formatting.</source>
+        <translation>Pozitif değerler metni yukarı, negatif değerler aşağı doğru büker. Her satırın metni ve biçimlendirmesi korunur.</translation>
+    </message>
+    <message>
+        <source>Curves are available for horizontal lettering.</source>
+        <translation>Kavis, yatay metin için kullanılabilir.</translation>
+    </message>
+    <message>
+        <source>PSD: curved lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: kavisli metin, etiketlenmiş bir görüntü katmanı olarak dışa aktarılır. Metni ve şeklini düzenlemek için proje dosyasını saklayın.</translation>
+    </message>
+</context>
+<context>
+    <name>RectItemController</name>
+    <message>
+        <source>Edit lettering geometry</source>
+        <translation>Yazı geometrisini düzenle</translation>
+    </message>
+</context>
+<context>
+    <name>SummarySuggestionDialog</name>
+    <message>
+        <source>Suggest story summary</source>
+        <translation>Hikâye özeti öner</translation>
+    </message>
+    <message>
+        <source>Generate locally with {provider}.</source>
+        <translation>{provider} ile yerel olarak oluştur.</translation>
+    </message>
+    <message>
+        <source>Generate sends the displayed material to {destination} using {provider}.</source>
+        <translation>Oluştur seçildiğinde gösterilen içerik {provider} aracılığıyla {destination} adresine gönderilir.</translation>
+    </message>
+    <message>
+        <source>Approved translations ({count}) · {source} → {target}</source>
+        <translation>Onaylanmış çeviriler ({count}) · {source} → {target}</translation>
+    </message>
+    <message>
+        <source>Current summary</source>
+        <translation>Mevcut özet</translation>
+    </message>
+    <message>
+        <source>Suggested summary</source>
+        <translation>Önerilen özet</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>Oluştur</translation>
+    </message>
+    <message>
+        <source>Use suggestion</source>
+        <translation>Öneriyi kullan</translation>
+    </message>
+    <message>
+        <source>Generating suggestion…</source>
+        <translation>Öneri oluşturuluyor…</translation>
+    </message>
+</context>
+<context>
+    <name>GlossarySuggestionDialog</name>
+    <message>
+        <source>Suggest glossary terms</source>
+        <translation>Terim sözlüğü için terim öner</translation>
+    </message>
+    <message>
+        <source>Add selected terms</source>
+        <translation>Seçili terimleri ekle</translation>
+    </message>
+    <message>
+        <source>Approved example</source>
+        <translation>Onaylanmış örnek</translation>
+    </message>
+    <message>
+        <source>No new terms found in the approved translations.</source>
+        <translation>Onaylanmış çevirilerde yeni terim bulunamadı.</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation for each selected row.</source>
+        <translation>Seçili her satır için bir kaynak terim ve tercih edilen çeviriyi girin.</translation>
+    </message>
+    <message>
+        <source>A selected source term already exists in this language pair or appears twice in your selection.</source>
+        <translation>Seçili kaynak terimlerden biri bu dil çifti için zaten kayıtlı veya seçiminizde iki kez yer alıyor.</translation>
+    </message>
+    <message>
+        <source>Select terms to add to the draft glossary.</source>
+        <translation>Terim sözlüğü taslağına eklenecek terimleri seçin.</translation>
     </message>
 </context>
 </TS>

@@ -5,6 +5,7 @@ from modules.utils.textblock import TextBlock
 from .geometry import _clamp_box, _expand_box, _to_box, _offset_line, _pad_line_boxes, _union_box, _line_axis_box
 from .mask import _compute_mask_stats, _prepare_text_mask
 from .direction import _fallback_direction, _sort_lines
+from .lettering_angle import estimate_lettering_angle
 from .skew import _detect_horizontal_lines_skew_aware, _filter_noise_lines
 from .clustering import (
     _detect_lines_from_mask,
@@ -40,12 +41,16 @@ def annotate_blocks_with_heuristic_lines(
     image: np.ndarray,
     blocks: list[TextBlock],
     source_language: str | None = None,
+    *,
+    measure_lettering_angle: bool = False,
 ) -> list[TextBlock]:
     if image is None or image.size == 0 or not blocks:
         return blocks
 
     height, width = image.shape[:2]
     for block in blocks:
+        if measure_lettering_angle:
+            block.detected_lettering_angle = None
         block_source_language = source_language if source_language is not None else getattr(block, "source_lang", "")
         crop_box = _clamp_box(_expand_box(_to_box(block.xyxy), 4, 4, width, height), width, height)
         x1, y1, x2, y2 = crop_box
@@ -55,7 +60,9 @@ def annotate_blocks_with_heuristic_lines(
             continue
 
         crop = image[y1:y2, x1:x2]
-        lines, direction = _detect_lines_and_direction_in_crop(crop, block_source_language)
+        lines, direction, angle = _analyze_crop(crop, block_source_language, measure_lettering_angle)
+        if measure_lettering_angle:
+            block.detected_lettering_angle = angle
         image_lines = [_offset_line(line, x1, y1) for line in lines]
         if direction == "vertical":
             image_lines = _align_vertical_lines_to_detector_block(image_lines, _to_box(block.xyxy))
@@ -80,15 +87,20 @@ def _detect_lines_and_direction_in_crop(
     image: np.ndarray,
     source_language: str = "",
 ) -> tuple[list[list[int]], str]:
+    lines, direction, _ = _analyze_crop(image, source_language, False)
+    return lines, direction
+
+
+def _analyze_crop(image, source_language, measure_lettering_angle):
     height, width = image.shape[:2]
     if width <= 1 or height <= 1:
         box = [0, 0, max(0, width), max(0, height)]
-        return [box], _fallback_direction(box, source_language)
+        return [box], _fallback_direction(box, source_language), None
 
     text_mask = _prepare_text_mask(image)
     if text_mask is None or not bool(text_mask.any()):
         box = [0, 0, width, height]
-        return [box], _fallback_direction(box, source_language)
+        return [box], _fallback_direction(box, source_language), None
     mask_stats = _compute_mask_stats(text_mask)
 
     horizontal_lines = _detect_horizontal_lines_skew_aware(text_mask)
@@ -178,6 +190,7 @@ def _detect_lines_and_direction_in_crop(
         lines = _repair_fragmented_vertical_blocks_with_raw_support(lines, raw_vertical_lines, text_mask, mask_stats)
 
     # Filter out wrong-direction noise columns/rows (e.g. vertical noise columns in a horizontal block)
+    final_mask_stats = mask_stats
     if not mask_was_split:
         try:
             final_mask_stats = mask_stats if text_mask is mask_stats.mask else _compute_mask_stats(text_mask)
@@ -202,4 +215,7 @@ def _detect_lines_and_direction_in_crop(
         except Exception as e:
             print(f"Failed to filter wrong-direction noise lines: {e}")
 
-    return lines, direction
+    angle = None
+    if measure_lettering_angle and direction == "horizontal" and not mask_was_split:
+        angle = estimate_lettering_angle(lines, final_mask_stats.component_boxes)
+    return lines, direction, angle

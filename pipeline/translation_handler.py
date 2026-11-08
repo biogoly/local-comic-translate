@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 from modules.translation.processor import Translator
-from modules.utils.translator_utils import set_upper_case
-from modules.utils.manual_regions import has_manual_translation
+from modules.utils.region_policy import is_protected
 from modules.utils.language_utils import to_canonical_language_name
+from modules.translation.spatial import spatial_context_active
 from pipeline.webtoon_utils import filter_and_convert_visible_blocks, restore_original_block_coordinates
 from .cache_manager import CacheManager
 
@@ -14,6 +14,21 @@ if TYPE_CHECKING:
     from .main_pipeline import ComicTranslatePipeline
 
 logger = logging.getLogger(__name__)
+
+
+def refresh_kept_translation_cache(cache_manager, cache_key, blocks, *, exclude=None):
+    """Keep user-approved wording authoritative, including an empty target."""
+    for block in blocks:
+        if block is exclude or not is_protected(block, 'keep_translation'):
+            continue
+        if getattr(block, 'translation', ''):
+            cache_manager.update_translation_cache_for_block(cache_key, block)
+        else:
+            # Do not resurrect an old target when this protection is removed.
+            matched, _ = cache_manager._find_matching_translation_block_id(cache_key, block)
+            while matched is not None:
+                del cache_manager.translation_cache[cache_key][matched]
+                matched, _ = cache_manager._find_matching_translation_block_id(cache_key, block)
 
 
 class TranslationHandler:
@@ -30,146 +45,69 @@ class TranslationHandler:
         self.cache_manager = cache_manager
         self.pipeline = pipeline
 
+    def _refresh_kept_translation_cache(self, cache_key, *, exclude=None):
+        refresh_kept_translation_cache(self.cache_manager, cache_key, self.main_page.blk_list, exclude=exclude)
+
+    def prepare_job(self, single_block=False, *, visible=False):
+        """Capture GUI state before queuing a translation worker."""
+        from pipeline.translation_job import TranslationJob, eligible_translation_blocks
+        main = self.main_page
+        if not main.image_viewer.hasPhoto() or not main.blk_list:
+            return None
+        source_lang = to_canonical_language_name(main.s_combo.currentText(), main.lang_mapping)
+        target_lang = to_canonical_language_name(main.t_combo.currentText(), main.lang_mapping)
+        selected = self.pipeline.get_selected_block() if single_block else None
+        if single_block and selected is None:
+            return None
+        translator = Translator(main, source_lang, target_lang) if visible else None
+        if visible and spatial_context_active(translator.engine):
+            from pipeline.translation_geometry import capture_visible_translation
+            image, visible_blocks = capture_visible_translation(main, self.pipeline, single_block)
+            if image is None:
+                return None
+            blocks = visible_blocks if single_block else eligible_translation_blocks(visible_blocks)
+        elif visible:
+            review = getattr(main, 'review_ctrl', None)
+            owners = {block.region_id: review._live_path(block) for block in main.blk_list} if review else {}
+            image, mappings = main.image_viewer.get_visible_area_image(include_patches=False)
+            if image is None or not mappings:
+                return None
+            visible_blocks = filter_and_convert_visible_blocks(main, self.pipeline, mappings, single_block)
+            try:
+                blocks = [b.deep_copy() for b in eligible_translation_blocks(
+                    visible_blocks, single_block=selected if single_block else None)]
+            finally:
+                restore_original_block_coordinates(visible_blocks)
+            for block in blocks:
+                owner = owners.get(block.region_id)
+                if owner is not None:
+                    block._page_id = main.image_states.get(owner, {}).get('page_id')
+        else:
+            image = main.image_viewer.get_image_array(include_patches=False)
+            blocks = eligible_translation_blocks(main.blk_list, single_block=selected)
+        settings = main.settings_page
+        extra = settings.get_llm_settings()['extra_context']
+        if not blocks:
+            # Legacy entries are discarded for deliberately empty kept targets.
+            legacy_key = self.cache_manager._get_translation_cache_key(
+                image, source_lang, target_lang, settings.get_tool_selection('translator'), extra)
+            self._refresh_kept_translation_cache(legacy_key)
+            return None
+        paths = getattr(main, 'image_files', [])
+        index = getattr(main, 'curr_img_idx', -1)
+        path = paths[index] if 0 <= index < len(paths) else None
+        translator = translator or Translator(main, source_lang, target_lang)
+        return TranslationJob(main, translator, blocks, image, extra, self.cache_manager,
+            resolve_blocks=lambda: main.blk_list, path=path, require_current_page=True,
+            upper_case=settings.ui.uppercase_checkbox.isChecked())
+
     def translate_image(self, single_block=False):
-        source_lang = to_canonical_language_name(
-            self.main_page.s_combo.currentText(),
-            self.main_page.lang_mapping,
-        )
-        target_lang = to_canonical_language_name(
-            self.main_page.t_combo.currentText(),
-            self.main_page.lang_mapping,
-        )
-        if self.main_page.image_viewer.hasPhoto() and self.main_page.blk_list:
-            settings_page = self.main_page.settings_page
-            # Cache against the immutable source page. Inpainting patches change
-            # the composited viewer pixels after every manual translation and
-            # must not create a new translation-cache namespace each time.
-            image = self.main_page.image_viewer.get_image_array(include_patches=False)
-            extra_context = settings_page.get_llm_settings()['extra_context']
-            translator_key = settings_page.get_tool_selection('translator')
-
-            upper_case = settings_page.ui.uppercase_checkbox.isChecked()
-
-            translator = Translator(self.main_page, source_lang, target_lang)
-            
-            # Get translation cache key
-            translation_cache_key = self.cache_manager._get_translation_cache_key(
-                image, source_lang, target_lang, translator_key, extra_context
-            )
-            
-            if single_block:
-                blk = self.pipeline.get_selected_block()
-                if blk is None:
-                    return
-                
-                # Check if block already has translation to avoid redundant processing
-                if hasattr(blk, 'translation') and blk.translation and blk.translation.strip():
-                    return
-                
-                # Check if we have cached translation results for this image/translator/language combination
-                if self.cache_manager._is_translation_cached(translation_cache_key):
-                    # Check if block exists in cache and source text matches
-                    cached_translation = self.cache_manager._get_cached_translation_for_block(translation_cache_key, blk)
-                    if cached_translation is not None:  # Block was processed and source text matches
-                        blk.translation = cached_translation
-                        logger.info(f"Using cached translation result for block: '{cached_translation}'")
-                        set_upper_case([blk], upper_case)
-                        return
-                    else:
-                        logger.info("Block not found in cache or source text changed, processing single block...")
-                    
-                    # If we reach here, need to process the block
-                    single_block_list = [blk]
-                    translator.translate(single_block_list, image, extra_context)
-                    
-                    # Update the cache with this new result using the cache manager's method
-                    self.cache_manager.update_translation_cache_for_block(translation_cache_key, blk)
-                    
-                    logger.info(f"Processed single block and updated cache: '{blk.translation}'")
-                    set_upper_case([blk], upper_case)
-                else:
-                    # Run translation on all blocks and cache the results
-                    logger.info("No cached translation results found, running translation on entire page...")
-                    # Create a mapping between original blocks and their copies
-                    all_blocks_copy = []
-                    
-                    for original_blk in self.main_page.blk_list:
-                        copy_blk = original_blk.deep_copy()
-                        all_blocks_copy.append(copy_blk)
-                    
-                    if all_blocks_copy:  
-                        translator.translate(all_blocks_copy, image, extra_context)
-                        # Cache using the original blocks to maintain consistent IDs
-                        self.cache_manager._cache_translation_results(translation_cache_key, self.main_page.blk_list, all_blocks_copy)
-                        cached_translation = self.cache_manager._get_cached_translation_for_block(translation_cache_key, blk)
-                        blk.translation = cached_translation
-                        logger.info(f"Cached translation results and extracted translation for block: {cached_translation}")
-                    
-                    set_upper_case([blk], upper_case)
-            else:
-                blocks = [blk for blk in self.main_page.blk_list if not has_manual_translation(blk)]
-                # For full page translation, check if we can use cached results
-                if self.cache_manager._can_serve_all_blocks_from_translation_cache(translation_cache_key, blocks):
-                    # All blocks can be served from cache with matching source text
-                    self.cache_manager._apply_cached_translations_to_blocks(translation_cache_key, blocks)
-                    logger.info("Using cached translation results for %d unfinished blocks", len(blocks))
-                else:
-                    # Need to run translation and cache results
-                    translator.translate(blocks, image, extra_context)
-                    self.cache_manager._cache_translation_results(translation_cache_key, blocks)
-                    logger.info("Translation completed and cached for %d blocks", len(blocks))
-                
-                set_upper_case(blocks, upper_case)
+        """Synchronous compatibility entry point; GUI callers queue prepared jobs."""
+        job = self.prepare_job(single_block)
+        if job is not None:
+            job.run().commit()
 
     def translate_webtoon_visible_area(self, single_block=False):
-        """Perform translation on the visible area in webtoon mode."""
-        source_lang = to_canonical_language_name(
-            self.main_page.s_combo.currentText(),
-            self.main_page.lang_mapping,
-        )
-        target_lang = to_canonical_language_name(
-            self.main_page.t_combo.currentText(),
-            self.main_page.lang_mapping,
-        )
-        
-        if not (self.main_page.image_viewer.hasPhoto() and 
-                self.main_page.webtoon_mode):
-            logger.warning("translate_webtoon_visible_area called but not in webtoon mode")
-            return
-        
-        # Get the visible area image and mapping data
-        visible_image, mappings = self.main_page.image_viewer.get_visible_area_image(
-            include_patches=False
-        )
-        if visible_image is None or not mappings:
-            logger.warning("No visible area found for translation")
-            return
-        
-        # Filter blocks to only those in the visible area and convert coordinates
-        visible_blocks = filter_and_convert_visible_blocks(
-            self.main_page, self.pipeline, mappings, single_block
-        )
-        if not visible_blocks:
-            logger.info("No blocks found in visible area")
-            return
-        
-        # Perform translation on the visible image with filtered blocks
-        settings_page = self.main_page.settings_page
-        extra_context = settings_page.get_llm_settings()['extra_context']
-        upper_case = settings_page.ui.uppercase_checkbox.isChecked()
-        
-        translator = Translator(self.main_page, source_lang, target_lang)
-        blocks = visible_blocks if single_block else [
-            blk for blk in visible_blocks if not has_manual_translation(blk)
-        ]
-        try:
-            if blocks:
-                translator.translate(blocks, visible_image, extra_context)
-        finally:
-            # Translation is set, now restore original coordinates.
-            restore_original_block_coordinates(visible_blocks)
-        
-        # Apply upper case if needed
-        set_upper_case(blocks, upper_case)
-        
-        logger.info(f"Translation completed for {len(visible_blocks)} blocks in visible area")
+        job = self.prepare_job(single_block, visible=True)
+        if job is not None:
+            job.run().commit()

@@ -6,11 +6,13 @@ import imkit as imk
 
 from ..base import LLMTranslation
 from ...utils.textblock import TextBlock
-from ...utils.translator_utils import get_raw_text, set_texts_from_json
+from ..request import build_request
+from .local_response import request_valid_translation
 
 
 class BaseLLMTranslation(LLMTranslation):
     """Base class for LLM-based translation engines with shared functionality."""
+    MAX_RESPONSE_ATTEMPTS = 1
     
     def __init__(self):
         self.source_lang = None
@@ -19,6 +21,7 @@ class BaseLLMTranslation(LLMTranslation):
         self.api_url = None
         self.model = None
         self.img_as_llm_input = False
+        self.spatial_context_enabled = False
         self.temperature = None
         self.top_p = None
         self.max_tokens = None
@@ -38,6 +41,7 @@ class BaseLLMTranslation(LLMTranslation):
         self.source_lang = source_lang
         self.target_lang = target_lang
         self.img_as_llm_input = llm_settings.get('image_input_enabled', True)
+        self.spatial_context_enabled = bool(llm_settings.get('spatial_context_enabled', False))
         self.temperature = 1.0
         self.top_p = 0.95
         self.max_tokens = 5000
@@ -54,15 +58,31 @@ class BaseLLMTranslation(LLMTranslation):
         Returns:
             List of updated TextBlock objects with translations
         """
-        entire_raw_text = get_raw_text(blk_list)
-        system_prompt = self.get_system_prompt(self.source_lang, self.target_lang)
-        user_prompt = f"{extra_context}\nMake the translation sound as natural as possible.\nTranslate this:\n{entire_raw_text}"
-        
-        entire_translated_text = self._perform_translation(user_prompt, system_prompt, image)
-        set_texts_from_json(blk_list, entire_translated_text)
-            
+        if not blk_list:
+            return blk_list
+        request = build_request(self, blk_list, image, extra_context)
+        translations = self.translate_request(request)
+        by_id = request.assert_current(blk_list)
+        for index, identity in enumerate(request.region_ids):
+            by_id[identity].translation = translations[request.expected_keys[index]]
         return blk_list
+
+    def translate_request(self, request):
+        """All providers validate a whole immutable request before any apply."""
+        if not request.expected_keys:
+            return {}
+        return request_valid_translation(
+            lambda prompt: self._perform_translation(prompt, request.system_prompt, request.image),
+            request.user_prompt,
+            request.expected_keys,
+            max_attempts=self.MAX_RESPONSE_ATTEMPTS,
+            required_content_keys=request.expected_keys,
+        )
     
+    def complete_text_once(self, user_prompt: str, system_prompt: str) -> str:
+        """One text-only completion through this configured provider."""
+        return self._perform_translation(user_prompt, system_prompt, None)
+
     @abstractmethod
     def _perform_translation(self, user_prompt: str, system_prompt: str, image: np.ndarray) -> str:
         """

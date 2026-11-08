@@ -20,16 +20,15 @@ La configuración probada es Klein 9B INT8 nativo con un codificador de precisi�
 
 **Qwen Image 2.1** también está disponible como alternativa experimental a Klein. Su perfil INT8 utiliza archivos de modelo, codificador y VAE ya instalados y admite LoRAs de Qwen 2.1 validados que solo modifican el modelo, con intensidad ajustable; no se admiten adaptadores del codificador de texto. Los valores iniciales son 25 pasos y CFG 1,0. La carga y aplicación de LoRAs se han probado, pero no se garantiza una mejora de la rotulación artística; los equipos con menos memoria aún requieren validación. Consulta la [configuración de Qwen y sus limitaciones](COMFYUI_BACKEND.md#experimental-qwen-image-21) (en inglés).
 
-## Última actualización — 0.1.0b2
+## Última actualización — 0.1.0b3
 
-La beta 2 incorpora el backend ComfyUI, Qwen Image 2.1 con LoRAs y las nuevas opciones de portugués y vietnamita. Consulta las [notas de la beta 2](RELEASE_NOTES_0.1.0b2.md) (en inglés) para conocer los cambios, la validación y las limitaciones del paquete.
+La beta 3 añade herramientas de rotulación, revisión de páginas y restauración del dibujo. En Windows, el [ZIP de instalación de la beta 3](https://github.com/biogoly/local-comic-translate/releases/tag/v0.1.0b3) incluye el código fuente y un lanzador que instala las dependencias la primera vez que se ejecuta. Consulta las [notas de la beta 3](RELEASE_NOTES_0.1.0b3.md) (en inglés).
 
-- **Artistic Edit:** FLUX.2 Klein 4B/9B local con LoRAs compatibles, o la API de Black Forest Labs, con vista previa antes de aplicar los cambios, posibilidad de deshacerlos y conservación de las ediciones en el proyecto.
-- **Elección del motor de traducción:** conserva los ajustes de llama-server local mientras cambias a OpenAI, Gemini, Claude o Deepseek con tus propias claves de API.
-- **Mejor flujo de trabajo manual:** el OCR funciona directamente sobre regiones dibujadas a mano; las traducciones manuales ya completadas y su formato se conservan al procesar después la página completa; los idiomas de origen y destino se mantienen al cambiar de página.
-- **Limpieza localizada:** restaura los píxeles originales con un pincel, clona una muestra fija de color y textura, o rellena una máscara con un color de fondo muestreado.
-- **Mejoras visuales del escritorio:** temas Midnight, Parchment, Lavender y Mint, además de Light/Dark, controles de Artistic Edit más claros, una nueva imagen de inicio y catálogos de idiomas de la interfaz actualizados.
-- **Identidad independiente de la bifurcación:** ajustes y datos de aplicación separados, sin avisos de actualización ni conexión con el servicio de pago del proyecto original.
+- Con **Fit Text** puedes previsualizar los saltos de línea y el tamaño del texto dentro de un cuadro o bocadillo. El navegador **Review** ayuda a localizar texto ausente o desbordado y a repetir el OCR en una región seleccionada.
+- Utiliza el glosario del proyecto, las notas sobre personajes y las traducciones aprobadas para mantener la coherencia. Si un modelo de visión recibe la imagen de la página, las coordenadas opcionales de los cuadros de texto pueden ayudarle a distinguir palabras idénticas en viñetas distintas.
+- Guarda estilos de rotulación, aplica perspectiva o curvatura al texto editable y ajusta su inclinación a la del original.
+- Para reparar un fondo de color con **Gradient**, haz clic en píxeles limpios o mantén pulsada **Mayús** y arrastra para tomar muestras a lo largo de líneas cortas. Puedes proteger el dibujo cercano o comparar **Clone** y **Heal** en zonas con textura.
+- Compara dos vistas previas en **Artistic Edit**, comprueba con OCR si la rotulación coincide con el texto previsto y aplica la versión que prefieras. La comprobación es opcional y el cambio se puede deshacer.
 
 ## Características destacadas de esta bifurcación
 
@@ -140,15 +139,11 @@ La traducción automática sigue disponible, pero una restauración cuidadosa de
 
 También puedes dibujar una región que se haya omitido y elegir **OCR** y después **Translate** con el botón derecho, sin detectar primero el resto de la página. Su traducción completada se conserva si después ejecutas el flujo manual de página completa. En fondos de color o con textura, prueba el relleno con color muestreado, el pincel de restauración o el de clonado antes de repetir el inpainting sobre la misma zona. Utiliza Artistic Edit para la rotulación que deba formar parte del dibujo en lugar de constituir una capa de texto editable normal.
 
-El detector conserva intencionadamente tanto el texto de bocadillos como el texto situado fuera de ellos. Esto evita perder regiones válidas de OCR en el modo manual, pero también significa que **Translate All** puede borrar mediante inpainting títulos artísticos, carteles, onomatopeyas u otras letras que formen parte del dibujo. Se recomienda revisar manualmente las regiones antes de limpiarlas cuando sea importante preservar la ilustración.
+El detector encuentra tanto bocadillos como títulos, carteles y onomatopeyas. En el modo Manual, elige **Translate** con el botón derecho para actualizar el texto de la región seleccionada. Usa **Segment** para ver qué píxeles se verán afectados y revisa la máscara. Después, **Clean** elimina la rotulación anterior y **Render** coloca la traducción.
 
 ## Instalación
 
-La [guía de empaquetado para Windows](../packaging/windows/README.md) incluye un
-procedimiento experimental para crear una **beta de Windows x64**. Genera un ZIP
-portátil con las dependencias Python/Qt/ONNX del editor principal; los modelos y
-entornos de ejecución de LLM locales y FLUX siguen siendo independientes. Los
-binarios beta requieren pruebas antes de una publicación pública.
+Descarga **LCT-0.1.0b3-Windows-setup.zip** desde la [página de la beta 3](https://github.com/biogoly/local-comic-translate/releases/tag/v0.1.0b3). Extrae todo el ZIP y ejecuta el lanzador incluido para Windows. Necesitarás conexión a Internet la primera vez para que instale las dependencias del editor. Los modelos y entornos de ejecución del LLM local y de FLUX se obtienen por separado. Para crear tu propio ejecutable del editor, consulta la [guía de empaquetado para Windows](../packaging/windows/README.md).
 
 ### Requisitos
 
@@ -294,7 +289,7 @@ Las comprobaciones de publicación incluyen OCR y conservación de regiones manu
 
 ## Limitaciones actuales
 
-- Esta bifurcación está en una fase inicial. Usa el código fuente actualizado o una beta de la versión correspondiente; continúan las pruebas amplias con distintos idiomas, modelos, diseños de página y sistemas operativos. Las compilaciones beta locales no implican que se haya autorizado una distribución pública de los binarios.
+- Continúan las pruebas con distintos idiomas, modelos, diseños de página y sistemas operativos.
 - El modo automático no siempre distingue los diálogos de la rotulación que forma parte del dibujo. Utiliza el modo Manual cuando sea importante preservar la ilustración.
 - La detección, el OCR, la traducción, la segmentación y el inpainting pueden requerir corrección humana en páginas difíciles.
 - La entrada visual requiere un modelo realmente multimodal, un servidor compatible y, cuando corresponda, el archivo de proyector adecuado.

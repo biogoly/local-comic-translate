@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication
 from .hyphen_textwrap import wrap as hyphen_wrap
 from modules.utils.textblock import TextBlock
 from modules.utils.textblock import adjust_blks_size
+from modules.utils.lettering_angle import render_lettering_angle
 from modules.detection.utils.geometry import shrink_bbox
 from app.ui.canvas.text.vertical_layout import VerticalTextDocumentLayout
 from modules.utils.language_utils import get_language_code, is_no_space_lang
@@ -32,6 +33,44 @@ class TextRenderingSettings:
     underline: bool
     line_spacing: str
     direction: Qt.LayoutDirection
+    auto_bubble_fit: bool = False
+    bubble_padding: float = 8.0
+
+
+@dataclass(frozen=True)
+class WordWrapResult:
+    """Opt-in diagnostics for the existing plain-text rendering path."""
+    text: str
+    font_size: float
+    width: float
+    height: float
+    fits: bool
+    overflow_reasons: tuple[str, ...]
+
+
+def orient_new_lettering(properties, block, item_size=None) -> bool:
+    """Apply the lettering angle to a fresh layer, around its layout box center.
+
+    Existing OCR-box rotations already have a position and pivot. For a
+    separate lettering angle, center the wrapped text over the layout box.
+    A live item can supply its final document size once Qt has laid it out.
+    """
+    properties.rotation = render_lettering_angle(block)
+    if not properties.rotation or properties.rotation == block.angle:
+        return False
+    width, height = item_size if item_size is not None else (properties.width, properties.height)
+    if width is not None and height is not None:
+        x1, y1, x2, y2 = map(float, block.xyxy)
+        properties.transform_origin = (width / 2, height / 2)
+        properties.position = ((x1 + x2 - width) / 2, (y1 + y2 - height) / 2)
+    return True
+
+
+def block_for_render_area(block):
+    """Keep an independently angled layer's layout bounds separate from OCR."""
+    if render_lettering_angle(block) != block.angle:
+        return block.deep_copy()
+    return block
 
 def array_to_pil(rgb_image: np.ndarray):
     # Image is already in RGB format, just convert to PIL
@@ -272,11 +311,17 @@ def pyside_word_wrap(
     min_font_size: int = 10, 
     vertical: bool = False,
     no_space_language: bool = False,
-    return_metrics: bool = False
-) -> tuple:
+    return_metrics: bool = False,
+    return_diagnostics: bool = False,
+) -> tuple | WordWrapResult:
     
     """Break long text to multiple lines, and find the largest point size
-        so that all wrapped text fits within the box."""
+        so that all wrapped text fits within the box.
+
+    ``return_diagnostics`` exposes an impossible minimum-size fit instead of
+    treating fallback as success. It takes precedence over ``return_metrics``;
+    existing callers keep their original tuple return values.
+    """
     
     def prepare_font(font_size):
         effective_family = font_input.strip() if isinstance(font_input, str) and font_input.strip() else QApplication.font().family()
@@ -375,6 +420,15 @@ def pyside_word_wrap(
         best_text, w, h = wrap_and_size(min_font_size)
         best_size = min_font_size
 
+    if return_diagnostics:
+        rendered_w, rendered_h = eval_metrics(best_text, best_size, vertical, include_outline=False)
+        occupied_w, occupied_h = eval_metrics(best_text, best_size, vertical, include_outline=True)
+        reasons = tuple(reason for reason, exceeds in (
+            ("width", occupied_w > roi_width),
+            ("height", occupied_h > roi_height),
+        ) if exceeds)
+        return WordWrapResult(best_text, best_size, rendered_w, rendered_h, not reasons, reasons)
+
     if return_metrics:
         # Match persisted state to the text item's actual geometry.
         rendered_w, rendered_h = eval_metrics(best_text, best_size, vertical, include_outline=False)
@@ -440,7 +494,8 @@ def manual_wrap(
     alignment: Qt.AlignmentFlag, 
     direction: Qt.LayoutDirection, 
     init_font_size: int = 40, 
-    min_font_size: int = 10
+    min_font_size: int = 10,
+    page_paths=None,
 ):
     
     target_lang = main_page.lang_mapping.get(main_page.t_combo.currentText(), None)
@@ -473,7 +528,8 @@ def manual_wrap(
             is_no_space_lang(trg_lng_cd)
         )
         
-        main_page.blk_rendered.emit(translation, font_size, blk, image_path)
+        target_path = page_paths.get(blk.region_id, image_path) if page_paths else image_path
+        main_page.blk_rendered.emit(translation, font_size, blk, target_path)
 
 
 

@@ -9,6 +9,7 @@ from typing import Optional
 
 from modules.utils.download import ModelDownloader, ModelID
 from modules.ocr.base import OCREngine
+from modules.ocr.evidence import make_ocr_evidence
 from modules.utils.device import get_providers
 from modules.utils.onnx import make_session
 from modules.utils.textblock import TextBlock
@@ -285,6 +286,8 @@ class PororoOCREngineONNX(OCREngine):
                 texts = [text.strip() for _, text, _ in results if text and text.strip()]
                 blk.texts = texts
                 blk.text = ''.join(texts) if is_no_space_lang(getattr(blk, 'source_lang', '')) else ' '.join(texts)
+                blk.ocr_evidence = make_ocr_evidence(blk.text, "Pororo OCR", ModelID.PORORO_ONNX.value,
+                    line_scores=[score for _, text, score in results if text and text.strip()])
             return blk_list
 
         for blk in blk_list:
@@ -302,13 +305,17 @@ class PororoOCREngineONNX(OCREngine):
                 # run full pipeline on cropped region
                 # detection+recognition expects color or grey; keep as is
                 res = self.read(cropped)
+                scores = None
                 # res is list of (box,text,score); join texts
                 if isinstance(res, list) and len(res) > 0 and isinstance(res[0], tuple):
                     blk.text = ' '.join([r[1] for r in res])
+                    scores = [r[2] if len(r) > 2 else None for r in res if r[1].strip()]
                 elif isinstance(res, list):
                     blk.text = ' '.join(res)
                 else:
                     blk.text = ''
+                blk.ocr_evidence = make_ocr_evidence(blk.text, "Pororo OCR", ModelID.PORORO_ONNX.value,
+                                                     line_scores=scores)
             else:
                 blk.text = ''
         return blk_list

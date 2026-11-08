@@ -55,8 +55,29 @@ class TextRenderingPage(QtWidgets.QWidget):
         # Uppercase
         self.uppercase_checkbox = MCheckBox(self.tr("Render Text in UpperCase"))
 
+        self.auto_bubble_fit_checkbox = MCheckBox(self.tr("Fit to bubble when rendering"))
+        self.auto_bubble_fit_checkbox.setChecked(False)
+        self.auto_bubble_fit_checkbox.setToolTip(self.tr(
+            "Fit newly rendered text to speech-bubble interiors, with Box fallback. Existing lettering is preserved; other regions continue through processing."
+        ))
+        bubble_padding_layout = QtWidgets.QHBoxLayout()
+        bubble_padding_label = MLabel(self.tr("Bubble padding:"))
+        self.auto_bubble_padding_spinbox = MSpinBox().small()
+        self.auto_bubble_padding_spinbox.setRange(0, 200)
+        self.auto_bubble_padding_spinbox.setValue(8)
+        self.auto_bubble_padding_spinbox.setSuffix(" px")
+        self.auto_bubble_padding_spinbox.setAccessibleName(self.tr("Bubble padding:"))
+        self.auto_bubble_padding_spinbox.setEnabled(False)
+        self.auto_bubble_fit_checkbox.toggled.connect(self.auto_bubble_padding_spinbox.setEnabled)
+        bubble_padding_label.setBuddy(self.auto_bubble_padding_spinbox)
+        bubble_padding_layout.addWidget(bubble_padding_label)
+        bubble_padding_layout.addWidget(self.auto_bubble_padding_spinbox)
+        bubble_padding_layout.addStretch()
+
         layout.addWidget(self.uppercase_checkbox)
         layout.addSpacing(10)
         layout.addLayout(font_layout)
         layout.addSpacing(10)
+        layout.addWidget(self.auto_bubble_fit_checkbox)
+        layout.addLayout(bubble_padding_layout)
         layout.addStretch(1)

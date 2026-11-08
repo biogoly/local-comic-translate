@@ -2,6 +2,7 @@ import numpy as np
 
 from modules.ocr.base import OCREngine
 from modules.utils.textblock import TextBlock, adjust_text_line_coordinates
+from modules.ocr.evidence import make_ocr_evidence
 from modules.utils.download import ModelDownloader, ModelID
 from modules.utils.language_utils import is_no_space_lang
 from .pororo.models.brainOCR.utils import reformat_input
@@ -51,14 +52,20 @@ class PororoOCREngine(OCREngine):
                 for blk in blk_list:
                     lines = getattr(blk, 'lines', None) or [blk.xyxy]
                     texts = []
+                    scores = []
                     for line in lines:
                         crop = _crop_line_grey(img_cv_grey, line)
                         if crop is None or crop.size == 0:
                             continue
                         result = reader.recognize(crop, None, None, reader.opt2val)
-                        texts.extend(text.strip() for _, text, _ in result if text and text.strip())
+                        for _, text, score in result:
+                            if text and text.strip():
+                                texts.append(text.strip())
+                                scores.append(score)
                     blk.texts = texts
                     blk.text = ''.join(texts) if is_no_space_lang(getattr(blk, 'source_lang', '')) else ' '.join(texts)
+                    blk.ocr_evidence = make_ocr_evidence(blk.text, "Pororo OCR", ModelID.PORORO.value,
+                                                         line_scores=scores)
                 return blk_list
 
         for blk in blk_list:
@@ -81,6 +88,7 @@ class PororoOCREngine(OCREngine):
                 result = self.model.get_ocr_result()
                 descriptions = result.get('description', [])
                 blk.text = ' '.join(descriptions)
+                blk.ocr_evidence = make_ocr_evidence(blk.text, "Pororo OCR", ModelID.PORORO.value)
             else:
                 print('Invalid textbbox to target img')
                 blk.text = ""

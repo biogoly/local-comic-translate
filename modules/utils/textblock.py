@@ -6,6 +6,8 @@ from collections import defaultdict, deque
 from ..detection.utils.text_lines import group_items_into_lines
 from modules.detection.utils.geometry import does_rectangle_fit, is_mostly_contained
 from modules.utils.language_utils import is_no_space_lang
+from modules.utils.region_metadata import ensure_region_id, normalize_region_metadata, duplicate_region
+from modules.utils.lettering_angle import optional_lettering_angle
 
 class TextBlock(object):
     """
@@ -32,6 +34,11 @@ class TextBlock(object):
                  font_color: str|tuple = (),
                  direction: str = "",
                  is_manual: bool = False,
+                 region_id: str = "",
+                 region_metadata: dict = None,
+                 detected_lettering_angle: float | None = None,
+                 manual_lettering_angle: float | None = None,
+                 ocr_evidence: dict | None = None,
                  **kwargs) -> None:
         
         self.xyxy = text_bbox
@@ -40,12 +47,15 @@ class TextBlock(object):
         self.text_class = text_class
         self.is_manual = bool(is_manual)
         self.angle = angle
+        self.detected_lettering_angle = optional_lettering_angle(detected_lettering_angle)
+        self.manual_lettering_angle = optional_lettering_angle(manual_lettering_angle)
         self.tr_origin_point = ()
  
         self.lines = lines
         self.texts = texts if texts is not None else []
         self.skipped_small_texts = skipped_small_texts if skipped_small_texts is not None else []
         self.text = ' '.join(self.texts) if self.texts else text
+        self.ocr_evidence = copy.deepcopy(ocr_evidence)
         self.translation = translation
 
         self.line_spacing = line_spacing
@@ -59,6 +69,9 @@ class TextBlock(object):
         self.max_font_size = max_font_size
         self.font_color = font_color
         self.direction = direction
+        self.region_id = region_id
+        ensure_region_id(self)
+        self.region_metadata = normalize_region_metadata(region_metadata)
 
     @property
     def xywh(self):
@@ -96,11 +109,14 @@ class TextBlock(object):
         new_block.text_class = self.text_class
         new_block.is_manual = getattr(self, 'is_manual', False)
         new_block.angle = self.angle
+        new_block.detected_lettering_angle = getattr(self, 'detected_lettering_angle', None)
+        new_block.manual_lettering_angle = getattr(self, 'manual_lettering_angle', None)
         new_block.tr_origin_point = copy.deepcopy(self.tr_origin_point)
         new_block.lines = copy.deepcopy(self.lines)
         new_block.texts = copy.deepcopy(self.texts)
         new_block.skipped_small_texts = copy.deepcopy(self.skipped_small_texts)
         new_block.text = self.text
+        new_block.ocr_evidence = copy.deepcopy(getattr(self, "ocr_evidence", None))
         new_block.translation = self.translation
         new_block.line_spacing = self.line_spacing
         new_block.alignment = self.alignment
@@ -111,8 +127,14 @@ class TextBlock(object):
         new_block.max_font_size = self.max_font_size
         new_block.font_color = self.font_color
         new_block.direction = self.direction
+        new_block.region_id = ensure_region_id(self)
+        new_block.region_metadata = copy.deepcopy(getattr(self, 'region_metadata', normalize_region_metadata(None)))
         
         return new_block
+
+    def duplicate(self):
+        """Return a new user-owned region; deep_copy remains a same-region snapshot."""
+        return duplicate_region(self)
 
 def sort_blk_list(blk_list: List[TextBlock], right_to_left=None) -> List[TextBlock]:
     # Sort blk_list using detected block direction when available.
@@ -286,17 +308,19 @@ def adjust_blks_size(blk_list: List[TextBlock], img: np.ndarray, w_expan: int = 
         expanded_coords = adjust_text_line_coordinates(coords, w_expan, h_expan, img)
         blk.xyxy[:] = expanded_coords
 
-def lists_to_blk_list(blk_list: list[TextBlock], texts_bboxes: list, texts_string: list):  
+def lists_to_blk_list(blk_list: list[TextBlock], texts_bboxes: list, texts_string: list,
+                      *, on_text_assigned=None):
     group = list(zip(texts_bboxes, texts_string))  
 
     for blk in blk_list:
         blk_entries = []
+        included = []
         
-        for line, text in group:
-            if does_rectangle_fit(blk.xyxy, line):
-                blk_entries.append((line, text)) 
-            elif is_mostly_contained(blk.xyxy, line, 0.5):
-                blk_entries.append((line, text)) 
+        for index, (line, text) in enumerate(group):
+            if does_rectangle_fit(blk.xyxy, line) or is_mostly_contained(blk.xyxy, line, 0.5):
+                blk_entries.append((line, text))
+                if on_text_assigned is not None and text.strip():
+                    included.append(index)
 
         # Sort and join text entries
         sorted_entries = sort_textblock_rectangles(blk_entries, blk.source_lang_direction)
@@ -305,6 +329,8 @@ def lists_to_blk_list(blk_list: list[TextBlock], texts_bboxes: list, texts_strin
             blk.text = ''.join(text for bbox, text in sorted_entries)
         else:
             blk.text = ' '.join(text for bbox, text in sorted_entries)
+        if on_text_assigned is not None:
+            on_text_assigned(blk, included)
 
     return blk_list
 

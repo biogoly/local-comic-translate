@@ -11,6 +11,7 @@ from app.path_materialization import ensure_path_materialized
 
 from ..canvas.text.text_item_properties import TextItemProperties
 from modules.utils.textblock import TextBlock
+from modules.utils.region_metadata import ensure_region_id, normalize_region_metadata
 from ..canvas.rectangle import MoveableRectItem
 from ..canvas.text_item import TextBlockItem
 from modules.utils.common_utils import is_close
@@ -93,9 +94,10 @@ class RectCommandBase:
         """Save properties of a path item"""
         return {
             'pos':(item.pos().x(), item.pos().y()),
+            'region_id': getattr(item, 'region_id', None),
             'rotation': item.rotation(),
-            'width': item.boundingRect().width(),
-            'height': item.boundingRect().height(),
+            'width': item.rect().width(),
+            'height': item.rect().height(),
             'transform_origin': (item.transformOriginPoint().x(), 
                                      item.transformOriginPoint().y()),
         }
@@ -110,6 +112,7 @@ class RectCommandBase:
         
         # Use the viewer's add_rectangle method for consistent handling
         rect_item = viewer.add_rectangle(rect, position, rotation, transform_origin)
+        rect_item.region_id = properties.get('region_id')
         return rect_item
 
 
@@ -118,10 +121,12 @@ class RectCommandBase:
         """Find an item in the scene matching the given properties"""
         for item in scene.items():
             if isinstance(item, MoveableRectItem):
+                if properties.get('region_id') and getattr(item, 'region_id', None) != properties['region_id']:
+                    continue
                 if (is_close(item.pos().x(), properties['pos'][0]) and
                     is_close(item.pos().y(), properties['pos'][1]) and
-                    is_close(item.boundingRect().width(), properties['width']) and
-                    is_close(item.boundingRect().height(), properties['height']) and
+                    is_close(item.rect().width(), properties['width']) and
+                    is_close(item.rect().height(), properties['height']) and
                     is_close(item.rotation(), properties['rotation']) and
                     is_close(item.transformOriginPoint().x(), properties['transform_origin'][0]) and
                     is_close(item.transformOriginPoint().y(), properties['transform_origin'][1])):
@@ -135,6 +140,13 @@ class RectCommandBase:
     
     @staticmethod
     def find_matching_blk(blk_list, properties):
+        region_id = properties.get('region_id')
+        if region_id:
+            matches = [blk for blk in blk_list if getattr(blk, 'region_id', None) == region_id]
+            if len(matches) > 1:
+                matches = [blk for blk in matches if np.array_equal(blk.xyxy, properties.get('xyxy'))
+                           and is_close(blk.angle, properties.get('angle', 0), 1)]
+            return matches[0] if len(matches) == 1 else None
         for blk in blk_list:
             # Get current block's properties
             current_props = blk.__dict__.copy()
@@ -175,6 +187,8 @@ class RectCommandBase:
     def create_new_blk(properties):
         blk = TextBlock()  
         blk.__dict__.update(properties)  
+        ensure_region_id(blk)
+        blk.region_metadata = normalize_region_metadata(getattr(blk, 'region_metadata', None))
         return blk  
     
     @staticmethod
@@ -200,6 +214,16 @@ class RectCommandBase:
     @staticmethod
     def find_matching_txt_item(scene, properties):
         """Find a TextBlockItem in the scene matching the given properties"""
+        region_id = getattr(properties, 'region_id', '')
+        if region_id:
+            matches = [item for item in scene.items() if isinstance(item, TextBlockItem)
+                       and getattr(item, 'region_id', None) == region_id]
+            if len(matches) > 1:
+                matches = [item for item in matches
+                           if is_close(item.pos().x(), properties.position[0])
+                           and is_close(item.pos().y(), properties.position[1])
+                           and is_close(item.rotation(), properties.rotation)]
+            return matches[0] if len(matches) == 1 else None
         for item in scene.items():
             if isinstance(item, TextBlockItem):
                 # Compare all relevant properties with is_close for numerical values

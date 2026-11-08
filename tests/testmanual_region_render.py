@@ -151,9 +151,13 @@ class ManualRegionRenderTests(unittest.TestCase):
 
     def test_first_page_translation_layer_still_receives_initial_cleanup_mask(self):
         self.manual.translation = ""
-        self.main.pipeline.translate_image = lambda _single: setattr(
-            self.manual, "translation", "Bonjour mon ami",
-        )
+        job = SimpleNamespace(path=self.main.image_files[self.main.curr_img_idx])
+        job.run = lambda: job
+        def commit():
+            self.manual.translation = 'Bonjour mon ami'
+            return True
+        job.commit = commit
+        self.main.pipeline.translation_handler = SimpleNamespace(prepare_job=lambda *_args, **_kwargs: job)
 
         with patch("app.controllers.manual_workflow.validate_translator", return_value=True):
             self.ctrl.translate_image()
@@ -273,8 +277,15 @@ class ManualRegionRenderTests(unittest.TestCase):
         before = item.document().toHtml()
         self.main.settings_page.ui.uppercase_checkbox.setChecked(True)
         translator = Mock()
+        from modules.translation.llm.local import LocalLLMTranslation
+        from modules.translation.request import build_request
+        engine = LocalLLMTranslation()
+        engine.source_lang, engine.target_lang = 'English', 'French'
+        engine.img_as_llm_input = True
+        translator.prepare_request.side_effect = lambda blocks, image, context: build_request(
+            engine, blocks, image, context, provider='Local LLM')
 
-        def translate(blocks, _image, _context):
+        def translate(blocks, _image, _context, *, request=None):
             self.assertEqual(len(blocks), 1)
             self.assertFalse(blocks[0].is_manual)
             blocks[0].translation = "Nouvelle traduction"

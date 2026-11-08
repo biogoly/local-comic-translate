@@ -17,12 +17,34 @@ from modules.utils.image_utils import generate_mask
 from modules.utils.pipeline_config import get_config, get_inpainter_backend, inpaint_map
 from modules.utils.textblock import TextBlock, sort_blk_list
 from modules.utils.translator_utils import is_renderable_translation
+from modules.utils.region_policy import (
+    permits_region_operation, subtract_cleanup_protections, shifted_region_copy,
+    should_preserve_region,
+)
 from pipeline.inpainting import call_inpaint_image
+from modules.repair.protection import PixelProtectionError, get_protection
 
 if TYPE_CHECKING:
     from .processor import WebtoonBatchProcessor
 
 logger = logging.getLogger(__name__)
+
+
+def _record_pixel_protection(main, record, pixels):
+    """Map a physical page's protection into this virtual page's coordinates."""
+    vpage = record.get("vpage")
+    if vpage is None:
+        return get_protection(main, record["path"], pixels.shape)
+    protected = get_protection(main, record["path"], (vpage.physical_height, vpage.physical_width))
+    if protected is None:
+        return None
+    top, bottom = int(vpage.crop_top), int(vpage.crop_bottom)
+    if top < 0 or bottom > protected.shape[0] or bottom <= top:
+        raise PixelProtectionError("Protected virtual page bounds are invalid.")
+    cropped = protected[top:bottom, :pixels.shape[1]]
+    if cropped.shape != pixels.shape[:2]:
+        raise PixelProtectionError("Protection dimensions do not match this virtual page.")
+    return cropped.copy()
 
 
 class ChunkMixin:
@@ -119,11 +141,21 @@ class ChunkMixin:
             return blocks
 
         source_lang_en = self.main_page.lang_mapping.get(source_lang, source_lang)
-        self.block_detection.annotate_language_if_auto(image, blocks, source_lang_en)
+        eligible = [block for block in blocks if permits_region_operation(block, 'source')
+                    and block.region_id not in getattr(self, '_review_manual_ids', ())]
+        bounded = []
+        for block in eligible:
+            if should_preserve_region(block) and (block.xyxy[1] < 0 or block.xyxy[3] > image.shape[0]):
+                logger.info('Retaining source for region %s: full seam OCR context unavailable', block.region_id)
+            else:
+                bounded.append(block)
+        self.block_detection.annotate_language_if_auto(image, bounded, source_lang_en)
 
-        self.ocr_handler.ocr.initialize(self.main_page, source_lang)
+        if bounded:
+            self.ocr_handler.ocr.initialize(self.main_page, source_lang)
         try:
-            self.ocr_handler.ocr.process(image, blocks)
+            if bounded:
+                self.ocr_handler.ocr.process(image, bounded)
             if sort_after:
                 rtl = source_lang_en == "Japanese"
                 return sort_blk_list(blocks, rtl)
@@ -147,23 +179,30 @@ class ChunkMixin:
     ) -> None:
         if not blocks:
             return
-        extra_context = self.main_page.settings_page.get_llm_settings()["extra_context"]
-        translator = Translator(self.main_page, source_lang, target_lang)
+        eligible = [block for block in blocks if permits_region_operation(block, 'translation')
+                    and block.region_id not in getattr(self, '_review_manual_ids', ())]
         try:
-            translator.translate(blocks, image, extra_context)
+            if eligible:
+                from pipeline.translation_job import BatchTranslationSession
+                session = getattr(self, '_translation_session', None)
+                if session is None:
+                    session = BatchTranslationSession(self.main_page, [image_path], Translator)
+                session.translate(eligible, image, source_lang, target_lang, image_path, self.cache_manager)
         except InsufficientCreditsException:
             raise
         except Exception as error:
             err_msg = self._extract_error_message(error, context="translation")
             logger.exception("Translation failed for %s: %s", image_path, err_msg)
             self.main_page.image_skipped.emit(image_path, "Translation", err_msg)
-            for block in blocks:
-                block.translation = ""
+            # Retain prior targets; a failed response never erases completed work.
+            raise
 
     def _inpaint_image_with_blocks(
         self: WebtoonBatchProcessor,
         image: np.ndarray,
         blocks: List[TextBlock],
+        protected_blocks=None,
+        pixel_protection=None,
     ) -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
         if not blocks:
             return None, None
@@ -171,6 +210,9 @@ class ChunkMixin:
         mask_blocks: List[TextBlock] = []
         img_h, img_w = image.shape[:2]
         for block in blocks:
+            if (not permits_region_operation(block, 'cleanup')
+                    or block.region_id in getattr(self, '_review_manual_ids', ())):
+                continue
             mask_block = block.deep_copy()
             if (
                 not getattr(mask_block, "text", "")
@@ -203,10 +245,13 @@ class ChunkMixin:
             mask_blocks.append(mask_block)
         if not mask_blocks:
             return None, None
-        mask = generate_mask(image, mask_blocks)
+        protection_regions = list(protected_blocks or ()) + list(blocks)
+        mask = subtract_cleanup_protections(generate_mask(image, mask_blocks), protection_regions)
         if mask is None or not np.any(mask):
             return None, None
-        inpainted = call_inpaint_image(self.inpainting, image, mask, config, blk_list=mask_blocks)
+        inpainted = call_inpaint_image(self.inpainting, image, mask, config, blk_list=mask_blocks,
+                                      automatic=True, protected_blocks=protection_regions,
+                                      pixel_protection=pixel_protection)
         inpainted = imk.convert_scale_abs(inpainted)
         return mask, inpainted
 
@@ -454,8 +499,8 @@ class ChunkMixin:
     ) -> Dict[int, List[Dict]]:
         top_record = page_records[seam_job.top_page_index]
         bottom_record = page_records[seam_job.bottom_page_index]
-        top_image = top_record.get("image")
-        bottom_image = bottom_record.get("image")
+        top_image = top_record.get("composed_image", top_record.get("image"))
+        bottom_image = bottom_record.get("composed_image", bottom_record.get("image"))
         if top_image is None or bottom_image is None:
             return {seam_job.top_page_index: [], seam_job.bottom_page_index: []}
 
@@ -480,11 +525,36 @@ class ChunkMixin:
         # OCR has already been performed by the unified per-current-record pass.
         processed_local_blocks = seam_blocks_local
 
+        protection_regions = list(top_record.get('protection_blocks', ()))
+        protection_regions += [shifted_region_copy(block, dy=top_image.shape[0])
+                               for block in bottom_record.get('protection_blocks', ())]
+        protection_regions = [shifted_region_copy(block, -x1, -y1) for block in protection_regions]
+
+        protected = []
+        for record, pixels in ((top_record, top_image), (bottom_record, bottom_image)):
+            protected.append(_record_pixel_protection(getattr(self, "main_page", None), record, pixels))
+        seam_protection = None
+        if any(value is not None for value in protected):
+            stitched_protection = np.zeros(stitched.shape[:2], dtype=np.uint8)
+            if protected[0] is not None:
+                stitched_protection[:top_image.shape[0], :top_image.shape[1]] = protected[0]
+            if protected[1] is not None:
+                stitched_protection[top_image.shape[0]:top_image.shape[0]+bottom_image.shape[0],
+                                     :bottom_image.shape[1]] = protected[1]
+            seam_protection = stitched_protection[y1:y2, x1:x2].copy()
         mask, inpainted_crop = self._inpaint_image_with_blocks(
-            seam_crop, processed_local_blocks
+            seam_crop, processed_local_blocks, protected_blocks=protection_regions,
+            pixel_protection=seam_protection,
         )
         if mask is None or inpainted_crop is None:
             return {seam_job.top_page_index: [], seam_job.bottom_page_index: []}
+
+        # Keep the in-flight composed records current before processing the
+        # next virtual page; queued GUI patch publication may not have run yet.
+        stitched[y1:y2, x1:x2] = inpainted_crop
+        top_record['composed_image'] = stitched[:top_image.shape[0], :top_image.shape[1]].copy()
+        bottom_record['composed_image'] = stitched[top_image.shape[0]:top_image.shape[0]+bottom_image.shape[0],
+                                                   :bottom_image.shape[1]].copy()
 
         return self._extract_seam_patches_from_mask(
             mask=mask,

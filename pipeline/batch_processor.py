@@ -7,6 +7,7 @@ import logging
 import traceback
 import imkit as imk
 import time
+from copy import deepcopy
 from typing import TYPE_CHECKING
 from datetime import datetime
 from typing import List
@@ -20,8 +21,13 @@ from modules.utils.pipeline_config import get_config
 from modules.utils.image_utils import generate_mask, get_smart_text_color
 from modules.utils.language_utils import get_language_code, is_no_space_lang
 from modules.utils.translator_utils import get_raw_translation, get_raw_text, format_translations, is_renderable_translation
-from modules.rendering.render import get_best_render_area, pyside_word_wrap, is_vertical_block
+from modules.rendering.render import (
+    block_for_render_area, get_best_render_area, is_vertical_block, orient_new_lettering, pyside_word_wrap,
+)
+from modules.rendering.auto_bubble_fit import fit_new_text_item
 from modules.utils.device import resolve_device
+from modules.utils.manual_regions import merge_manual_regions, has_manual_translation
+from modules.utils.region_policy import permits_region_operation, retained_layout_states, subtract_cleanup_protections
 from modules.utils.exceptions import InsufficientCreditsException
 from app.path_materialization import ensure_path_materialized
 from app.ui.canvas.text_item import OutlineInfo, OutlineType
@@ -30,6 +36,7 @@ from app.ui.messages import Messages
 from .cache_manager import CacheManager
 from .block_detection import BlockDetectionHandler
 from .inpainting import InpaintingHandler, call_inpaint_image
+from modules.repair.protection import get_protection
 from .ocr_handler import OCRHandler
 
 if TYPE_CHECKING:
@@ -85,9 +92,20 @@ class BatchProcessor:
         return bool(worker and worker.is_cancelled)
 
     def batch_process(self, selected_paths: List[str] = None):
+        from pipeline.translation_job import BatchTranslationSession, speaker_region_ids
         timestamp = datetime.now().strftime("%b-%d-%Y_%I-%M-%S%p")
         image_list = selected_paths if selected_paths is not None else self.main_page.image_files
+        session = getattr(self, '_prepared_translation_session', None)
+        self._prepared_translation_session = None
         total_images = len(image_list)
+        auto_fit_at_start = bool(getattr(self.main_page.render_settings(), "auto_bubble_fit", False))
+        preserved_pages = {
+            path for path in image_list
+            if self.main_page.image_states.get(path, {}).get("viewer_state", {}).get("text_items_state")
+            and not self.main_page.image_states.get(path, {}).get('blk_list')
+        } if auto_fit_at_start else set()
+        if session is None:
+            session = BatchTranslationSession(self.main_page, [p for p in image_list if p not in preserved_pages], Translator)
         try:
             if self.main_page.file_handler.should_pre_materialize(image_list):
                 count = self.main_page.file_handler.pre_materialize(image_list)
@@ -103,6 +121,18 @@ class BatchProcessor:
 
             # index, step, total_steps, change_name
             self.emit_progress(index, total_images, 0, 10, True)
+
+            if image_path in preserved_pages:
+                # Redetection creates new region IDs. Preserve the entire
+                # edited page rather than guessing matches and losing edits.
+                reason = QCoreApplication.translate(
+                    "Messages",
+                    "Page already contains rendered text; use manual Render to add missing regions.",
+                )
+                logger.info("Preserving already-rendered page '%s': %s", image_path, reason)
+                self.main_page.image_skipped.emit(image_path, "Existing Rendered Text", reason)
+                self.emit_progress(index, total_images, 10, 10, False)
+                continue
 
             settings_page = self.main_page.settings_page
             source_lang = self.main_page.image_states[image_path]['source_lang']
@@ -134,6 +164,19 @@ class BatchProcessor:
                 self.log_skipped_image(directory, timestamp, image_path, "User-skipped")
                 continue
 
+            previous_blocks = deepcopy(state.get('blk_list', []))
+            previous_items = deepcopy(state.get('viewer_state', {}).get('text_items_state', []))
+            legacy_manual_ids = {block.region_id for block in previous_blocks if has_manual_translation(block)}
+            existing_layouts = retained_layout_states(previous_blocks, previous_items, retain_all=auto_fit_at_start)
+            composed_image = image.copy()
+            compose = getattr(getattr(self.main_page, 'image_ctrl', None), 'get_composited_page_image', None)
+            if callable(compose):
+                composed_image = compose(image_path)
+                if composed_image is None or composed_image.shape != image.shape:
+                    self.main_page.image_skipped.emit(image_path, 'Cleanup', 'Current page pixels are unavailable')
+                    continue
+                composed_image = composed_image.copy()
+
             # Text Block Detection
             self.emit_progress(index, total_images, 1, 10, False)
             if self._is_cancelled():
@@ -144,12 +187,16 @@ class BatchProcessor:
                 self.block_detection.block_detector_cache = TextBlockDetector(settings_page)
             
             blk_list = self.block_detection.block_detector_cache.detect(image) or []
+            retained_ids = set(existing_layouts) | speaker_region_ids(self.main_page, state.get('page_id'))
+            blk_list = merge_manual_regions(previous_blocks, blk_list, retain_ids=retained_ids)
 
             self.emit_progress(index, total_images, 2, 10, False)
             if self._is_cancelled():
                 return
 
-            self.block_detection.annotate_language_if_auto(image, blk_list, source_lang)
+            ocr_blocks = [block for block in blk_list if permits_region_operation(block, 'source')
+                          and block.region_id not in legacy_manual_ids]
+            self.block_detection.annotate_language_if_auto(image, ocr_blocks, source_lang)
 
             logger.info("Automatic workflow: processing all %d detected text blocks", len(blk_list))
 
@@ -159,11 +206,13 @@ class BatchProcessor:
                 device = resolve_device(settings_page.is_gpu_enabled())
                 cache_key = self.cache_manager._get_ocr_cache_key(image, source_lang, ocr_model, device)
                 # Use the shared OCR processor from the handler
-                self.ocr_handler.ocr.initialize(self.main_page, source_lang)
+                if ocr_blocks:
+                    self.ocr_handler.ocr.initialize(self.main_page, source_lang)
                 try:
-                    self.ocr_handler.ocr.process(image, blk_list)
+                    if ocr_blocks:
+                        self.ocr_handler.ocr.process(image, ocr_blocks)
                     # Cache the OCR results for potential future use
-                    self.cache_manager._cache_ocr_results(cache_key, self.main_page.blk_list)
+                    self.cache_manager._cache_ocr_results(cache_key, blk_list)
                     rtl = True if source_lang == 'Japanese' else False
                     blk_list = sort_blk_list(blk_list, rtl)
                     
@@ -207,21 +256,12 @@ class BatchProcessor:
             if self._is_cancelled():
                 return
 
-            # Get Translations/ Export if selected
-            extra_context = settings_page.get_llm_settings()['extra_context']
-            translator_key = settings_page.get_tool_selection('translator')
-            translator = Translator(self.main_page, source_lang, target_lang)
-            
-            # Get translation cache key for batch processing
-            translation_cache_key = self.cache_manager._get_translation_cache_key(
-                image, source_lang, target_lang, translator_key, extra_context
-            )
-            
             try:
                 # Use the complete block list regardless of detector class.
-                translator.translate(blk_list, image, extra_context)
-                # Cache the translation results for potential future use
-                self.cache_manager._cache_translation_results(translation_cache_key, blk_list)
+                translation_blocks = [block for block in blk_list if permits_region_operation(block, 'translation')
+                                      and block.region_id not in legacy_manual_ids]
+                if translation_blocks:
+                    session.translate(translation_blocks, image, source_lang, target_lang, image_path, self.cache_manager)
             except InsufficientCreditsException:
                 raise
             except Exception as e:
@@ -310,6 +350,13 @@ class BatchProcessor:
 
             # Clean Image of text
             config = get_config(settings_page)
+            render_settings = self.main_page.render_settings()
+            auto_bubble_fit = bool(getattr(render_settings, "auto_bubble_fit", False))
+            # Keep an untouched source for typography. The inpainter may modify
+            # its input in place; cleanup masks/cleaned pixels are not boundaries.
+            original_for_fitting = image.copy() if auto_bubble_fit else None
+            if original_for_fitting is not None:
+                original_for_fitting.setflags(write=False)
             
             # Filter blocks to only inpaint if both OCR text and Translation are non-empty
             # and the translation will actually be rendered (single-character translations
@@ -318,11 +365,12 @@ class BatchProcessor:
                 blk for blk in blk_list
                 if blk.text and blk.text.strip() and blk.translation and blk.translation.strip()
                 and is_renderable_translation(blk.translation)
+                and permits_region_operation(blk, 'cleanup') and blk.region_id not in legacy_manual_ids
             ]
             
             logger.info("pre-inpaint: generating mask (inpaint_blk_list=%d blocks out of %d)", len(inpaint_blk_list), len(blk_list))
             t0 = time.time()
-            mask = generate_mask(image, inpaint_blk_list)
+            mask = subtract_cleanup_protections(generate_mask(image, inpaint_blk_list), blk_list)
             t1 = time.time()
             logger.info("pre-inpaint: mask generated in %.2fs (mask shape=%s)", t1 - t0, getattr(mask, 'shape', None))
 
@@ -333,15 +381,18 @@ class BatchProcessor:
             if inpaint_blk_list:
                 inpaint_input_img = call_inpaint_image(
                     self.inpainting,
-                    image,
+                    composed_image,
                     mask,
                     config,
                     blk_list=inpaint_blk_list,
+                    automatic=True,
+                    protected_blocks=blk_list,
+                    pixel_protection=get_protection(self.main_page, image_path, composed_image.shape),
                 )
                 inpaint_input_img = imk.convert_scale_abs(inpaint_input_img)
                 patches = self.inpainting.get_inpainted_patches(mask, inpaint_input_img)
             else:
-                inpaint_input_img = image.copy()
+                inpaint_input_img = composed_image.copy()
                 patches = []
 
             if export_settings['export_inpainted_image']:
@@ -355,11 +406,17 @@ class BatchProcessor:
                 return
 
             # Text Rendering
-            render_settings = self.main_page.render_settings()
             upper_case = render_settings.upper_case
             outline = render_settings.outline
-            format_translations(blk_list, trg_lng_cd, upper_case=upper_case)
-            get_best_render_area(blk_list, image, inpaint_input_img)
+            format_translations([block for block in blk_list if permits_region_operation(block, 'translation')
+                                 and block.region_id not in legacy_manual_ids], trg_lng_cd, upper_case=upper_case)
+            layout_blocks = [block_for_render_area(blk) for blk in blk_list]
+            fit_blocks = {
+                id(layout): original.deep_copy() for original, layout in zip(blk_list, layout_blocks)
+            } if auto_bubble_fit else {}
+            get_best_render_area([block for block in layout_blocks if block.region_id not in existing_layouts
+                                  and permits_region_operation(block, 'layout')],
+                                 image, inpaint_input_img)
 
             font = render_settings.font_family
             setting_font_color = QColor(render_settings.color)
@@ -377,12 +434,21 @@ class BatchProcessor:
             direction = render_settings.direction
                 
             text_items_state = []
-            for blk in blk_list:
+            for blk in layout_blocks:
+                if blk.region_id in existing_layouts:
+                    text_items_state.append(deepcopy(existing_layouts[blk.region_id]))
+                    continue
+                if not permits_region_operation(blk, 'layout'):
+                    # Absence of lettering is also a layout decision.
+                    text_items_state.extend(deepcopy(item) for item in previous_items
+                                            if item.get('region_id') == blk.region_id)
+                    continue
                 x1, y1, block_width, block_height = blk.xywh
 
                 translation = blk.translation
                 if not is_renderable_translation(translation):
                     continue
+                logical_translation = translation
                 
                 # Determine if this block should use vertical rendering
                 vertical = is_vertical_block(blk, trg_lng_cd)
@@ -412,6 +478,7 @@ class BatchProcessor:
                 # Use TextItemProperties for consistent text item creation
                 text_props = TextItemProperties(
                     text=translation,
+                    region_id=blk.region_id,
                     font_family=font,
                     font_size=font_size,
                     text_color=font_color,
@@ -423,7 +490,6 @@ class BatchProcessor:
                     italic=italic,
                     underline=underline,
                     position=(x1, y1),
-                    rotation=blk.angle,
                     scale=1.0,
                     transform_origin=blk.tr_origin_point,
                     width=rendered_width,
@@ -437,8 +503,15 @@ class BatchProcessor:
                         OutlineType.Full_Document)
                     ] if outline else [],
                 )
+                orient_new_lettering(text_props, blk)
+                if auto_bubble_fit:
+                    text_props = fit_new_text_item(
+                        text_props, fit_blocks[id(blk)], original_for_fitting,
+                        render_settings, source_text=logical_translation,
+                    )
                 text_items_state.append(text_props.to_dict())
 
+            session.validate(image_path)
             self.main_page.image_states[image_path]['viewer_state'].update({
                 'text_items_state': text_items_state
                 })

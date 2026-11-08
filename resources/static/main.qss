@@ -1318,7 +1318,7 @@ MMenu[checked=true]{
     background-color: @background_out_color;
 }
 MMenu::item {
-    padding: 2px;
+    padding: 2px @menu_item_padding@unit;
     margin-top: 2px;    /* Add top margin */
     margin-bottom: 2px; /* Add bottom margin */
 }

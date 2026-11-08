@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from collections.abc import Mapping
+import copy
 import importlib.util
 import os
 from pathlib import Path
+import re
 import secrets
 import shutil
 import sys
@@ -19,6 +21,7 @@ from app.projects.patch_metadata import PATCH_KIND_ARTISTIC_EDIT, PATCH_KIND_FLU
 from app.ui.commands.inpaint import PatchClearCommand, PatchInsertCommand
 from app.ui.dialogs.artistic_edit_preview import ArtisticEditPreviewDialog
 from app.ui.dayu_widgets.message import MMessage
+from modules.repair.protection import get_protection, protect_patches
 from modules.artistic_edit.contracts import (
     ArtisticEditRequest,
     ArtisticEditResult,
@@ -51,6 +54,9 @@ from modules.artistic_edit.comfy_config import (
 )
 from modules.artistic_edit.comfy_job import ComfyEditJob
 from modules.utils.settings import app_settings
+from modules.artistic_edit.lettering_check import compare_lettering
+from modules.artistic_edit.lettering_ocr import capture_ocr_settings, prepare_lettering_crop, run_lettering_ocr
+from modules.utils.language_utils import get_language_code, to_canonical_language_name
 
 
 FLUX_PYTHON_ENV = "LOCAL_COMIC_TRANSLATE_FLUX_PYTHON"
@@ -58,8 +64,55 @@ FLUX_PYTHONPATH_ENV = "LOCAL_COMIC_TRANSLATE_FLUX_PYTHONPATH"
 FLUX_PYTHON_SETTING = "artistic_edit/python_executable"
 
 
+_WORD = re.compile(r"[^\W_]+(?:['’][^\W_]+)*")
+_SENTENCE_END = re.compile(r"[.!?…。！？]")
+
+
+def _lettering_wording(source: str, target: str, language: str) -> str:
+    """Recover display casing for an uppercase target using the selected source."""
+    if not target.isupper() or source.isupper():
+        return target
+
+    locale = QtCore.QLocale(get_language_code(language) or "C")
+    source_forms = {}
+    source_words = _WORD.findall(source)
+    for word in source_words:
+        source_forms.setdefault(word.casefold(), set()).add(word)
+
+    title = source.istitle() and len(source_words) > 1
+    first_cased = next((ch for ch in source if ch.isupper() or ch.islower()), "")
+    capitalize_start = not first_cased.islower()
+    end = 0
+
+    def recase(match):
+        nonlocal end
+        word = match.group()
+        sentence_start = end == 0 or _SENTENCE_END.search(target[end:match.start()])
+        end = match.end()
+        forms = source_forms.get(word.casefold(), ())
+        if len(forms) == 1:
+            original = next(iter(forms))
+            if any(ch.isupper() for ch in original):
+                return original
+        pronoun = language == "English" and not source.islower() and re.match(r"^I(?:['’]|$)", word)
+        word = locale.toLower(word)
+        if pronoun or title or (sentence_start and capitalize_start):
+            return locale.toUpper(word[:1]) + word[1:]
+        return word
+
+    return _WORD.sub(recase, target)
+
+
 def build_translation_prompt(source: str, translation: str, template: str) -> str:
-    """Build an editable prompt from one explicitly selected OCR block."""
+    """Build the editable prompt for callers that only need its text."""
+    prompt, _ = _prepare_translation_prompt(source, translation, template)
+    return prompt
+
+
+def _prepare_translation_prompt(
+    source: str, translation: str, template: str, language: str = "English"
+) -> tuple[str, str | None]:
+    """Return the prompt and the literal replacement checked in the preview."""
     source = " ".join(str(source or "").split())
     translation = " ".join(str(translation or "").split())
     if not source:
@@ -71,19 +124,23 @@ def build_translation_prompt(source: str, translation: str, template: str) -> st
             "ArtisticEditController", "The selected box has no translation yet."
         ))
     quoted_source = source.replace('"', '\\"')
-    quoted_translation = translation.replace('"', '\\"')
     if template == "empty_bubble":
+        quoted_translation = translation.replace('"', '\\"')
         return (
             "Remove the lettering \"%s\" and draw an empty speech bubble large enough "
             "for the translation \"%s\". Preserve the original comic style, border "
             "weight, tail direction, surrounding characters, and artwork. Do not put "
             "any text inside the bubble. Leave every other part of the image unchanged."
-        ) % (quoted_source, quoted_translation)
-    return (
-        "Replace only the lettering \"%s\" with exactly \"%s\". Preserve the original "
+        ) % (quoted_source, quoted_translation), None
+    wording = _lettering_wording(source, translation, language)
+    quoted_translation = wording.replace('"', '\\"')
+    prompt = (
+        "Replace only the lettering \"%s\" with \"%s\". Copy the replacement "
+        "as written, including its capitalization and punctuation. Preserve the original "
         "letter style, scale, placement, spacing, texture, outline, shadows, perspective, "
         "and integration with the comic art. Leave every other part of the image unchanged."
     ) % (quoted_source, quoted_translation)
+    return prompt, wording
 
 
 def preview_after_image(prepared: PreparedEdit, patch: ComposedPatch) -> np.ndarray:
@@ -116,6 +173,38 @@ class ArtisticEditSession:
     undo_stack: object | None = None
     accept_result: bool = True
     temp_root: Path | None = None
+    protection_snapshot: dict | None = None
+    expected_lettering: str | None = None
+    lettering_language: str | None = None
+    lettering_case_sensitive: bool = True
+    worker_python: str | None = None
+    lettering_result: object | None = None
+    lettering_revision: tuple | None = None
+
+
+class _LetteringCheckJob(QtCore.QThread):
+    """Independent OCR on copied preview pixels; never touches a page or widget."""
+    result = QtCore.Signal(object)
+    error = QtCore.Signal(str)
+
+    def __init__(self, pixels, language, settings, expected, parent=None, *, case_sensitive=True):
+        super().__init__(parent)
+        self.pixels = pixels.copy()
+        self.language, self.settings, self.expected = language, settings, expected
+        self.case_sensitive = case_sensitive
+
+    def run(self):
+        try:
+            if self.isInterruptionRequested():
+                return
+            recognized = run_lettering_ocr(self.pixels, self.language, self.settings)
+            result = compare_lettering(self.expected, recognized, case_sensitive=self.case_sensitive)
+            if not self.isInterruptionRequested():
+                self.result.emit(result)
+        except Exception as exc:
+            if not self.isInterruptionRequested():
+                # Provider exceptions can contain URLs with API credentials.
+                self.error.emit(type(exc).__name__)
 
 
 class _ComfyStopJob(QtCore.QThread):
@@ -162,6 +251,16 @@ class ArtisticEditController(QtCore.QObject):
         self._worker_cuda_device_index: int | None = None
         self._awaiting_worker_ready = False
         self._session: ArtisticEditSession | None = None
+        self._candidates: list[tuple[ArtisticEditSession, ArtisticEditResult]] = []
+        self._candidate_replace_index: int | None = None
+        self._preview_dialog = None
+        self._lettering_prompt = None
+        self._lettering_expected = None
+        self._lettering_dialog = None
+        self._lettering_job = None
+        self._lettering_context = None
+        self.panel.prompt_edit.textChanged.connect(self._clear_lettering_reference)
+        self.panel.prompt_template_combo.currentIndexChanged.connect(self._clear_lettering_reference)
         self._loras: list[LoraEntry] = []
         self.lora_registry = LoraRegistry(lora_root())
         self.refresh_loras()
@@ -184,8 +283,7 @@ class ArtisticEditController(QtCore.QObject):
 
     def _on_backend_changed(self, *_args):
         if self._session is not None and self._session.backend != self.panel.backend_combo.currentData():
-            self._session.accept_result = False
-            self.cancel()
+            self._retire_preview_series()
         self.update_availability()
 
     def _get_comfy_runtime(self):
@@ -215,6 +313,12 @@ class ArtisticEditController(QtCore.QObject):
     def invalidate_project(self):
         """Retire result acceptance before the page/undo stores are replaced."""
         self._project_epoch += 1
+        self._retire_preview_series()
+
+    def _retire_preview_series(self):
+        self._clear_candidates()
+        if hasattr(self._preview_dialog, 'reject'):
+            self._preview_dialog.reject()
         session = self._session
         if session is not None:
             session.accept_result = False
@@ -342,25 +446,31 @@ class ArtisticEditController(QtCore.QObject):
             self._warning(self.tr("Select exactly one OCR text box first."))
             return
         rect = viewer.get_selected_rectangles()[0]
-        mapped_rect = rect.mapRectToScene(rect.rect())
-        scene_rect = (
-            mapped_rect.boundingRect()
-            if hasattr(mapped_rect, "boundingRect")
-            else mapped_rect
-        )
-        block = self.main.rect_item_ctrl.find_corresponding_text_block(
-            scene_rect.getCoords(), 0.5
-        )
+        block = self.main.rect_item_ctrl.find_corresponding_text_block(rect, 0.5)
         try:
-            prompt = build_translation_prompt(
+            language = to_canonical_language_name(self.main.t_combo.currentText(), self.main.lang_mapping)
+            prompt, wording = _prepare_translation_prompt(
                 getattr(block, "text", ""),
                 getattr(block, "translation", ""),
                 self.panel.template_key(),
+                language,
             )
         except ValueError as exc:
             self._warning(str(exc))
             return
         self.panel.set_prompt(prompt)
+        if wording is not None:
+            self._lettering_prompt = self.panel.prompt_edit.toPlainText().strip()
+            self._lettering_expected = wording
+
+    def _clear_lettering_reference(self, *_):
+        # Freeform prompt edits cannot reliably be parsed back into exact words.
+        self._lettering_prompt = self._lettering_expected = None
+
+    def _expected_lettering(self, prompt):
+        if self.panel.template_key() == 'lettering' and prompt == self._lettering_prompt:
+            return self._lettering_expected
+        return None
 
     def _capture_selection(self, mode: SelectionMode, page: np.ndarray):
         height, width = page.shape[:2]
@@ -392,6 +502,21 @@ class ArtisticEditController(QtCore.QObject):
         entry = self._loras[options.lora_index]
         return self.lora_registry.to_lora_spec(entry, scale=options.lora_scale), entry.display_name
 
+    def _confirm_bfl_request(self):
+        api_key = self.main.settings_page.get_credentials("Black Forest Labs").get("api_key", "").strip()
+        if not api_key:
+            self._warning(self.tr("Configure a Black Forest Labs API key in Settings > Provider APIs."))
+            return None
+        answer = QtWidgets.QMessageBox.question(
+            self.main, self.tr("Cloud Artistic Edit"),
+            self.tr("Send the selected area and surrounding context (or the whole page if selected) to Black Forest Labs? "
+                    "This is a paid request under your provider account. Content restrictions apply. "
+                    "Cancel stops waiting but may not stop billing. Continue?"),
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+            QtWidgets.QMessageBox.StandardButton.No,
+        )
+        return api_key if answer == QtWidgets.QMessageBox.StandardButton.Yes else None
+
     def generate_preview(self, *, seed_override: int | None = None, confirm_whole_page: bool = True) -> None:
         if self._session is not None and self.panel.is_busy():
             return
@@ -401,6 +526,7 @@ class ArtisticEditController(QtCore.QObject):
         current = self._current_page()
         if current is None or getattr(self.main, "webtoon_mode", False):
             return
+        epoch = self._project_epoch
         try:
             options = self.panel.options()
         except (TypeError, ValueError) as exc:
@@ -423,22 +549,16 @@ class ArtisticEditController(QtCore.QObject):
             if answer != QtWidgets.QMessageBox.StandardButton.Yes:
                 return
 
+        api_key = None
         if options.backend == "bfl":
-            api_key = self.main.settings_page.get_credentials("Black Forest Labs").get("api_key", "").strip()
+            api_key = self._confirm_bfl_request()
             if not api_key:
-                self._warning(self.tr("Configure a Black Forest Labs API key in Settings > Provider APIs."))
-                return
-            answer = QtWidgets.QMessageBox.question(
-                self.main, self.tr("Cloud Artistic Edit"),
-                self.tr("Send the selected area and surrounding context (or the whole page if selected) to Black Forest Labs? "
-                        "This is a paid request under your provider account. Content restrictions apply. "
-                        "Cancel stops waiting but may not stop billing. Continue?"),
-                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
-                QtWidgets.QMessageBox.StandardButton.No,
-            )
-            if answer != QtWidgets.QMessageBox.StandardButton.Yes:
                 return
 
+        # Either confirmation can run a nested event loop and retire this page.
+        if (self._closing or self._close_pending or epoch != self._project_epoch
+                or current != self._current_page() or options.backend != self.panel.backend_combo.currentData()):
+            return
         page_path, page_index = current
         page = self.main.image_ctrl.get_composited_page_image(page_path)
         if page is None:
@@ -503,7 +623,8 @@ class ArtisticEditController(QtCore.QObject):
             self._warning(str(exc))
             return
 
-        self._discard_session_files()
+        self._finish_previews()
+        expected_lettering = self._expected_lettering(options.prompt)
         self._session = ArtisticEditSession(
             page_path=page_path,
             page_index=page_index,
@@ -525,14 +646,22 @@ class ArtisticEditController(QtCore.QObject):
             project_epoch=self._project_epoch,
             undo_stack=self.main.undo_stacks.get(page_path),
             temp_root=Path(self.main.temp_dir).resolve(),
+            expected_lettering=expected_lettering,
+            worker_python=python_path if options.backend == "local" else None,
+            lettering_language=(to_canonical_language_name(self.main.t_combo.currentText(),
+                self.main.lang_mapping) if expected_lettering else None),
         )
-        if options.backend == "comfyui":
+        self._dispatch_session(api_key)
+
+    def _dispatch_session(self, api_key=None):
+        session = self._session
+        if session.backend == "comfyui":
             self._dispatch_comfy_request()
             return
-        if options.backend == "bfl":
+        if session.backend == "bfl":
             self.panel.set_busy(True, self.tr("Waiting for Black Forest Labs…"))
             try:
-                self._bfl_job = BflEditJob(request, api_key, self)
+                self._bfl_job = BflEditJob(session.request, api_key, self)
                 self._bfl_job.result.connect(self._on_result)
                 self._bfl_job.error.connect(self._on_bfl_error)
                 self._bfl_job.cancelled.connect(self._on_cancelled)
@@ -543,11 +672,10 @@ class ArtisticEditController(QtCore.QObject):
             return
         self.panel.set_busy(True, self.tr("Starting FLUX worker…"))
         try:
-            self._dispatch_request(
-                python_path,
-                options.device_policy,
-                options.cuda_device_index,
-            )
+            python_path = session.worker_python or self._worker_python or self.configured_worker_python()
+            if python_path is None:
+                raise RuntimeError(self.tr("No valid FLUX Python executable is configured."))
+            self._dispatch_request(python_path, session.request.device_policy, session.cuda_device_index)
         except Exception as exc:
             self._generation_failed(str(exc))
 
@@ -621,8 +749,9 @@ class ArtisticEditController(QtCore.QObject):
             payload = outcome.payload if outcome is not None and outcome.kind == "cancelled" else {}
             continues = bool(payload.get("server_may_continue", False)) if isinstance(payload, Mapping) else False
             self._discard_session_files(session)
-            self._session = None
             self.panel.set_busy(False)
+            if not self._resume_candidate_preview():
+                self._session = None
             self.update_availability()
             self.panel.set_status(self.tr("Stopped waiting. ComfyUI may still be computing this request.") if continues else self.tr("Artistic Edit cancelled."))
             return
@@ -637,38 +766,52 @@ class ArtisticEditController(QtCore.QObject):
         session.execution_metadata = dict(completion.metadata)
         self._on_result(completion.result)
 
-    def _regenerate_comfy(self, session, seed):
+    def _generate_candidate(self, session, seed, *, replace_index=None):
+        """Generate sequentially from the captured input, retaining completed previews."""
+        if self._closing or self._close_pending or self.panel.is_busy() or self._session is not session:
+            return False
+        if replace_index is None and len(self._candidates) >= 2:
+            return False
+        api_key = None
+        if session.backend == "bfl":
+            api_key = self._confirm_bfl_request()
+            if (not api_key or self._session is not session or not session.accept_result
+                    or self._closing or self._close_pending or self.panel.is_busy()):
+                return False
         current, reason = self._source_is_current(session)
         if not current:
+            self._finish_previews()
             self._warning(reason)
-            self._discard_session_files(session)
-            self._session = None
-            return
+            return False
         request_dir = Path(self.main.temp_dir) / "artistic_edit" / str(uuid4())
         try:
             request_dir.mkdir(parents=True, exist_ok=False)
             input_path = request_dir / "input.png"
             Image.fromarray(session.prepared.model_input, mode="RGB").save(input_path)
-            raster = replace(session.request, request_id=request_dir.name,
-                             input_path=str(input_path.resolve()),
-                             output_path=str((request_dir / "output.png").resolve()), seed=seed)
-            spec = replace(session.comfy_spec, raster=raster, job_token=str(uuid4()), client_id=str(uuid4()))
-            new_session = replace(session, request=raster, request_dir=request_dir,
-                                  comfy_spec=spec, patch=None, execution_metadata=None)
+            request = replace(session.request, request_id=request_dir.name,
+                              input_path=str(input_path.resolve()),
+                              output_path=str((request_dir / "output.png").resolve()), seed=seed)
+            spec = (replace(session.comfy_spec, raster=request, job_token=str(uuid4()), client_id=str(uuid4()))
+                    if session.comfy_spec is not None else None)
+            new_session = replace(session, request=request, request_dir=request_dir,
+                                  comfy_spec=spec, patch=None, execution_metadata=None,
+                                  lettering_result=None, lettering_revision=None)
         except Exception as exc:
             shutil.rmtree(request_dir, ignore_errors=True)
-            self._generation_failed(str(exc), code="comfyui")
-            return
-        self._discard_session_files(session)
+            self._warning(str(exc))
+            return False
+        self._candidate_replace_index = replace_index
         self._session = new_session
-        self._dispatch_comfy_request()
+        self._dispatch_session(api_key)
+        return True
 
     def _worker_callback_is_current(self):
         sender = self.sender()
         if sender is not None and sender is not self.worker:
             return False
         return not self._closing and (
-            self._session is not None and self._session.backend == "local" and self._session.accept_result
+            self._session is not None and self._session.backend == "local"
+            and self._session.accept_result and self._session.patch is None
         )
 
     @QtCore.Slot(str)
@@ -806,12 +949,18 @@ class ArtisticEditController(QtCore.QObject):
         session = self._session
         if session is None or result.request_id != session.request.request_id:
             return
+        if any(candidate is session for candidate, _ in self._candidates):
+            return
         if not session.accept_result:
             self._on_cancelled(result.request_id)
             return
         if session.backend == "bfl":
             self._release_bfl_job()
         try:
+            if self._candidates:
+                current, reason = self._source_is_current(self._candidates[0][0])
+                if not current:
+                    raise ValueError(reason)
             result.validate_path(session.request_dir)
             if Path(result.output_path).resolve() != Path(session.request.output_path).resolve():
                 raise ValueError(self.tr("The result does not belong to this request."))
@@ -822,6 +971,15 @@ class ArtisticEditController(QtCore.QObject):
                 generated,
                 feather_radius=session.feather_radius,
             )
+            session.protection_snapshot = copy.deepcopy(
+                getattr(self.main, 'image_states', {}).get(session.page_path, {}).get('pixel_protection'))
+            protection = get_protection(self.main, session.page_path)
+            if protection is not None:
+                current_page = self.main.image_ctrl.get_composited_page_image(session.page_path)
+                clipped = protect_patches(current_page,
+                    [{'bbox': list(session.patch.bbox), 'image': session.patch.image}], protection)[0]
+                session.patch = replace(session.patch, image=clipped['image'])
+            self._remember_candidate(session, result)
         except Exception as exc:
             self._generation_failed(str(exc))
             return
@@ -829,6 +987,8 @@ class ArtisticEditController(QtCore.QObject):
         self._show_preview(result)
 
     def _source_is_current(self, session: ArtisticEditSession) -> tuple[bool, str]:
+        if session.patch is not None and session.protection_snapshot != getattr(self.main, 'image_states', {}).get(session.page_path, {}).get('pixel_protection'):
+            return False, self.tr("Artwork protection changed. Regenerate the preview.")
         if not session.accept_result or (session.project_epoch is not None and session.project_epoch != self._project_epoch):
             return False, self.tr("This preview belongs to a closed or replaced project. Regenerate it.")
         if session.undo_stack is not None and self.main.undo_stacks.get(session.page_path) is not session.undo_stack:
@@ -847,11 +1007,7 @@ class ArtisticEditController(QtCore.QObject):
             return False, self.tr("The source pixels changed. Regenerate before applying.")
         return True, ""
 
-    def _show_preview(self, result: ArtisticEditResult) -> None:
-        session = self._session
-        if session is None or session.patch is None:
-            return
-        current, reason = self._source_is_current(session)
+    def _preview_summary(self, session, result):
         model = session.request.model if session.backend != "comfyui" else None
         lora = session.lora_name or self.tr("None")
         percent = int(round(session.prepared.working_scale * 100))
@@ -880,52 +1036,228 @@ class ArtisticEditController(QtCore.QObject):
                      checkpoint=metadata.get("model_source", session.comfy_spec.profile.diffusion_model),
                      lora=lora, seed=result.seed, steps=session.request.steps, cfg=session.comfy_spec.cfg,
                      elapsed=result.elapsed_seconds, percent=percent, prompt=session.request.prompt)
+        return summary
+
+    def _remember_candidate(self, session, result):
+        for index, (candidate, _) in enumerate(self._candidates):
+            if candidate is session:
+                return index
+        index = self._candidate_replace_index
+        if index is None:
+            if len(self._candidates) >= 2:
+                raise ValueError("Only two Artistic Edit candidates can be retained.")
+            self._candidates.append((session, result))
+            index = len(self._candidates) - 1
+        else:
+            previous, _ = self._candidates[index]
+            self._candidates[index] = (session, result)
+            previous.accept_result = False
+            self._discard_session_files(previous)
+        self._candidate_replace_index = None
+        return index
+
+    def _select_candidate(self, dialog, index):
+        if dialog is not self._preview_dialog or not 0 <= index < len(self._candidates):
+            return
+        self._detach_lettering_check(dialog)
+        session, result = self._candidates[index]
+        self._session = session
+        current, reason = self._source_is_current(session)
+        dialog.set_candidate(
+            session.prepared.source_crop, preview_after_image(session.prepared, session.patch),
+            self._preview_summary(session, result), apply_available=current, stale_reason=reason)
+        if hasattr(dialog, 'set_comparison_candidate') and len(self._candidates) == 2:
+            other_index = 1 - index
+            other, _ = self._candidates[other_index]
+            dialog.set_comparison_candidate(
+                preview_after_image(other.prepared, other.patch),
+                self.tr('Candidate {number}').format(number=other_index + 1))
+        self._configure_lettering_preview(dialog, session, current, reason)
+
+    def _detach_lettering_check(self, dialog):
+        # A late OCR response must never describe the newly selected candidate.
+        if self._lettering_context is not None and self._lettering_context[1] is dialog:
+            if self._lettering_job is not None:
+                self._lettering_job.requestInterruption()
+            self._lettering_context = None
+
+    def _show_preview(self, result: ArtisticEditResult) -> None:
+        session = self._session
+        if session is None or session.patch is None or self._closing:
+            return
+        index = self._remember_candidate(session, result)
+        current, reason = self._source_is_current(session)
         dialog = self.preview_factory(
             session.prepared.source_crop,
             preview_after_image(session.prepared, session.patch),
-            summary,
+            self._preview_summary(session, result),
             apply_available=current,
             stale_reason=reason,
             parent=self.main,
         )
-        decision = dialog.exec()
+        self._preview_dialog = dialog
+        if hasattr(dialog, 'configure_candidates'):
+            labels = [self.tr('Candidate {number}').format(number=i + 1)
+                      for i in range(len(self._candidates))]
+            dialog.configure_candidates(labels, index)
+            dialog.candidate_selected.connect(lambda selected: self._select_candidate(dialog, selected))
+            self._select_candidate(dialog, index)
+        else:
+            self._configure_lettering_preview(dialog, session, current, reason)
+        try:
+            decision = dialog.exec()
+        finally:
+            self._preview_dialog = None
+            if self._lettering_dialog is dialog:
+                self._lettering_dialog = None
+            self._detach_lettering_check(dialog)
+            if hasattr(dialog, 'deleteLater'):
+                dialog.deleteLater()
+        # The user may have selected the earlier candidate inside this dialog.
+        session = self._session
+        if session is None or not any(candidate is session for candidate, _ in self._candidates):
+            return
         if decision == QtWidgets.QDialog.DialogCode.Accepted:
-            current, reason = self._source_is_current(session)
-            if not current:
-                self._warning(reason)
-                self._discard_session_files()
-                self._session = None
-                return
             self._apply_session(session)
             return
-        if decision == ArtisticEditPreviewDialog.REGENERATE_SAME_SEED:
+        if decision in (ArtisticEditPreviewDialog.REGENERATE_SAME_SEED,
+                        ArtisticEditPreviewDialog.REGENERATE_NEW_SEED,
+                        ArtisticEditPreviewDialog.GENERATE_ALTERNATIVE):
             seed = session.request.seed
-            if session.backend == "comfyui":
-                self._regenerate_comfy(session, seed)
-                return
-            self._discard_session_files()
-            self._session = None
-            self.generate_preview(seed_override=seed, confirm_whole_page=False)
+            if decision != ArtisticEditPreviewDialog.REGENERATE_SAME_SEED:
+                limit = 2**32 if session.backend == 'bfl' else 2**63
+                seed = secrets.randbelow(limit)
+                if seed == session.request.seed:
+                    seed = (seed + 1) % limit
+            index = next(i for i, (candidate, _) in enumerate(self._candidates) if candidate is session)
+            replacing = None if decision == ArtisticEditPreviewDialog.GENERATE_ALTERNATIVE else index
+            if not self._generate_candidate(session, seed, replace_index=replacing) and self._session is session:
+                self._resume_candidate_preview(preferred_index=index)
             return
-        if decision == ArtisticEditPreviewDialog.REGENERATE_NEW_SEED:
-            if session.backend == "comfyui":
-                self._regenerate_comfy(session, secrets.randbelow(2**63))
-                return
-            self._discard_session_files()
-            self._session = None
-            self.generate_preview(seed_override=secrets.randbelow(2**32 if session.backend == 'bfl' else 2**63), confirm_whole_page=False)
+        self._finish_previews()
+
+    def _configure_lettering_preview(self, dialog, session, current, reason):
+        # Keep lightweight preview factories used by non-GUI callers compatible.
+        if not hasattr(dialog, 'configure_lettering_check'):
             return
-        self._discard_session_files()
-        self._session = None
+        self._lettering_dialog = dialog
+        snapshot, label, unavailable = None, '', reason if not current else ''
+        if session.expected_lettering:
+            try:
+                snapshot = capture_ocr_settings(self.main.settings_page)
+                label = (self.tr('OCR: {engine} (provider API; sends the writable edit area).')
+                         if snapshot.hosted else self.tr('OCR: {engine} (local).')).format(engine=snapshot.ocr_key)
+                label += ' ' + self.tr('Checks use the translation target language. Pixels outside the writable area and protected pixels are excluded.')
+            except Exception as exc:
+                unavailable = self.tr('Lettering check unavailable: {error}').format(error=str(exc))
+        if self._lettering_job is not None:
+            unavailable = self.tr('A previous lettering check is still finishing.')
+        dialog.configure_lettering_check(session.expected_lettering, label, unavailable)
+        previous = getattr(dialog, '_lettering_start_callback', None)
+        if previous is not None:
+            dialog.lettering_check_requested.disconnect(previous)
+        dialog._lettering_start_callback = lambda: self._start_lettering_check(dialog, session, snapshot)
+        dialog.lettering_check_requested.connect(dialog._lettering_start_callback)
+        if (current and session.lettering_result is not None
+                and session.lettering_revision == self._lettering_revision(session)):
+            dialog.show_lettering_check_result(session.lettering_result)
+
+    def _start_lettering_check(self, dialog, session, settings):
+        if (self._closing or self._lettering_job is not None or self._lettering_dialog is not dialog
+                or self._session is not session or not session.expected_lettering or settings is None):
+            return
+        current, reason = self._source_is_current(session)
+        if not current:
+            dialog.show_lettering_check_error(reason)
+            dialog.block_apply(reason)
+            return
+        try:
+            crop = prepare_lettering_crop(session.prepared, session.patch,
+                get_protection(self.main, session.page_path))
+            job = _LetteringCheckJob(crop.image, session.lettering_language, settings,
+                                     session.expected_lettering, self,
+                                     case_sensitive=session.lettering_case_sensitive)
+        except Exception as exc:
+            dialog.show_lettering_check_error(str(exc))
+            return
+        self._lettering_job = job
+        self._lettering_context = (session, dialog, self._lettering_revision(session))
+        dialog.set_lettering_check_busy(True)
+        job.result.connect(self._on_lettering_result, QtCore.Qt.ConnectionType.QueuedConnection)
+        job.error.connect(self._on_lettering_error, QtCore.Qt.ConnectionType.QueuedConnection)
+        job.finished.connect(self._on_lettering_finished, QtCore.Qt.ConnectionType.QueuedConnection)
+        job.start()
+
+    @staticmethod
+    def _lettering_revision(session):
+        patch = session.patch
+        return (tuple(patch.bbox), sha256_pixels(patch.image), sha256_pixels(patch.alpha),
+                session.expected_lettering, session.lettering_language, session.lettering_case_sensitive,
+                session.request.prompt) if patch else None
+
+    def _current_lettering_dialog(self):
+        context = self._lettering_context
+        if self._closing or context is None:
+            return None
+        session, dialog, revision = context
+        if self._session is not session or self._lettering_dialog is not dialog:
+            return None
+        current, reason = self._source_is_current(session)
+        if not current:
+            dialog.show_lettering_check_error(reason)
+            dialog.block_apply(reason)
+            return None
+        if self._lettering_revision(session) != revision:
+            dialog.show_lettering_check_error(self.tr('The preview changed. Run Check lettering again.'))
+            return None
+        return dialog
+
+    @QtCore.Slot(object)
+    def _on_lettering_result(self, result):
+        if self.sender() is not self._lettering_job:
+            return
+        dialog = self._current_lettering_dialog()
+        if dialog is not None:
+            session = self._lettering_context[0]
+            session.lettering_result = result
+            session.lettering_revision = self._lettering_revision(session)
+            dialog.show_lettering_check_result(result)
+
+    @QtCore.Slot(str)
+    def _on_lettering_error(self, message):
+        if self.sender() is not self._lettering_job:
+            return
+        dialog = self._current_lettering_dialog()
+        if dialog is not None:
+            dialog.show_lettering_check_error(self.tr(
+                'OCR check failed ({error_type}). Check your OCR settings and try again.'
+            ).format(error_type=message))
+
+    @QtCore.Slot()
+    def _on_lettering_finished(self):
+        if self.sender() is not self._lettering_job:
+            return
+        job, self._lettering_job = self._lettering_job, None
+        context, self._lettering_context = self._lettering_context, None
+        if context is not None and self._lettering_dialog is context[1]:
+            context[1].set_lettering_check_busy(False)
+        elif self._lettering_dialog is not None and self._session is not None:
+            current, reason = self._source_is_current(self._session)
+            self._configure_lettering_preview(self._lettering_dialog, self._session, current, reason)
+        job.deleteLater()
+        if self._close_pending and not self._closing:
+            QtCore.QTimer.singleShot(0, self.main.close)
 
     def _apply_session(self, session: ArtisticEditSession) -> None:
         current, reason = self._source_is_current(session)
         if not current:
+            self._finish_previews()
             self._warning(reason)
             return
         patch = session.patch
         stack = self.main.undo_stacks.get(session.page_path)
         if patch is None or stack is None:
+            self._finish_previews()
             self._warning(self.tr("The current page has no undo history."))
             return
         request = session.request
@@ -978,8 +1310,7 @@ class ArtisticEditController(QtCore.QObject):
         except Exception:
             pass
         self.panel.set_status(self.tr("Artistic edit applied. Use Undo to reverse it."))
-        self._discard_session_files()
-        self._session = None
+        self._finish_previews()
 
     def cancel(self) -> None:
         if self._session is not None:
@@ -1009,15 +1340,18 @@ class ArtisticEditController(QtCore.QObject):
             return
         if self._session is None or _request_id != self._session.request.request_id:
             return
+        if self._session.patch is not None and self._session.accept_result:
+            return
         if self._session.backend == "bfl":
             self._release_bfl_job()
         self.panel.set_busy(False, self.tr("Artistic Edit cancelled."))
         self._discard_session_files()
-        self._session = None
+        if not self._resume_candidate_preview():
+            self._session = None
         self.update_availability()
 
     def _on_worker_error(self, code: str, message: str, details: str) -> None:
-        if self._session is None or self._session.backend != "local":
+        if self._session is None or self._session.backend != "local" or self._session.patch is not None:
             return
         if self.sender() is not None and self.sender() is not self.worker:
             return
@@ -1025,7 +1359,7 @@ class ArtisticEditController(QtCore.QObject):
         self._generation_failed(text, code=code)
 
     def _on_worker_crashed(self, message: str) -> None:
-        if self._session is None or self._session.backend != "local":
+        if self._session is None or self._session.backend != "local" or self._session.patch is not None:
             return
         if self.sender() is not None and self.sender() is not self.worker:
             return
@@ -1034,7 +1368,8 @@ class ArtisticEditController(QtCore.QObject):
     def _generation_failed(self, message: str, *, code: str = "artistic_edit_error") -> None:
         self.panel.set_busy(False, self.tr("Artistic Edit failed."))
         self._discard_session_files()
-        self._session = None
+        if not self._resume_candidate_preview():
+            self._session = None
         self.update_availability()
         self._warning(f"{code}: {message}")
 
@@ -1101,6 +1436,38 @@ class ArtisticEditController(QtCore.QObject):
         folder.mkdir(parents=True, exist_ok=True)
         QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(str(folder)))
 
+    def _resume_candidate_preview(self, preferred_index=None):
+        """Restore a completed choice after a declined, failed or cancelled generation."""
+        if not self._candidates or self._closing or self._close_pending:
+            return False
+        index = self._candidate_replace_index if preferred_index is None else preferred_index
+        index = len(self._candidates) - 1 if index is None else index
+        session, result = self._candidates[index]
+        self._candidate_replace_index = None
+        if not self._source_is_current(session)[0]:
+            self._clear_candidates()
+            return False
+        self._session = session
+        def reopen():
+            if (self._session is session and self._preview_dialog is None and not self._closing
+                    and not self._close_pending and any(s is session for s, _ in self._candidates)):
+                self._show_preview(result)
+        QtCore.QTimer.singleShot(0, reopen)
+        return True
+
+    def _finish_previews(self):
+        if self._session is not None and not any(s is self._session for s, _ in self._candidates):
+            self._discard_session_files()
+        self._clear_candidates()
+        self._session = None
+
+    def _clear_candidates(self):
+        for session, _ in self._candidates:
+            session.accept_result = False
+            self._discard_session_files(session)
+        self._candidates.clear()
+        self._candidate_replace_index = None
+
     def _discard_session_files(self, session=None) -> None:
         session = session if session is not None else self._session
         if session is None:
@@ -1141,6 +1508,10 @@ class ArtisticEditController(QtCore.QObject):
 
     def prepare_close(self) -> bool:
         """Finish Comfy cancellation/owned-process shutdown before temp files disappear."""
+        if self._lettering_job is not None:
+            self._close_pending = True
+            self._lettering_job.requestInterruption()
+            return False
         if self._comfy_job is not None:
             self._close_pending = True
             self.cancel()
@@ -1161,6 +1532,14 @@ class ArtisticEditController(QtCore.QObject):
 
     def shutdown(self) -> None:
         self._closing = True
+        self._clear_candidates()
+        if self._lettering_job is not None:
+            self._lettering_job.requestInterruption()
+            self._lettering_job.wait()
+            self._lettering_job.deleteLater()
+            self._lettering_job = None
+        self._lettering_context = None
+        self._lettering_dialog = None
         if self._comfy_job is not None:
             self._comfy_job.cancel()
             # Normal window close uses prepare_close asynchronously. This is an

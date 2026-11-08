@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Sequence
 
-import imkit as imk
 from PySide6 import QtCore
 
 from modules.detection.processor import TextBlockDetector
@@ -11,11 +10,11 @@ from modules.rendering.render import pyside_word_wrap, is_vertical_block, get_be
 from modules.translation.processor import Translator
 from modules.utils.common_utils import is_close
 from modules.utils.device import resolve_device
-from modules.utils.image_utils import generate_mask
 from modules.utils.language_utils import get_language_code, is_no_space_lang
 from modules.utils.language_utils import to_canonical_language_name
 from modules.utils.manual_regions import has_manual_translation, merge_manual_regions
-from modules.utils.pipeline_config import get_config, validate_ocr, validate_translator
+from modules.utils.region_policy import is_protected, permits_region_operation
+from modules.utils.pipeline_config import validate_ocr, validate_translator
 from modules.utils.textblock import sort_blk_list
 from modules.utils.translator_utils import (
     format_translations,
@@ -23,7 +22,6 @@ from modules.utils.translator_utils import (
     is_there_text,
     set_upper_case,
 )
-from pipeline.inpainting import call_inpaint_image
 from pipeline.webtoon_utils import (
     filter_and_convert_visible_blocks,
     find_block_page_index,
@@ -140,6 +138,7 @@ class ManualWorkflowController:
             rects.append(
                 {
                     "rect": (float(x1), float(y1), float(x2 - x1), float(y2 - y1)),
+                    "region_id": blk.region_id,
                     "rotation": float(getattr(blk, "angle", 0)),
                     "transform_origin": tuple(blk.tr_origin_point) if getattr(blk, "tr_origin_point", None) else (0.0, 0.0),
                 }
@@ -149,14 +148,20 @@ class ManualWorkflowController:
     @staticmethod
     def _has_rendered_manual_translation(blk: TextBlock, text_items: Sequence) -> bool:
         coords = getattr(blk, "xyxy", None)
-        if coords is None or len(coords) < 4 or not has_manual_translation(blk):
+        if coords is None or len(coords) < 4 or not (has_manual_translation(blk) or is_protected(blk, 'keep_layout')):
             return False
         for item in text_items:
             if isinstance(item, dict):
+                identity = item.get('region_id', '')
                 x, y = item.get("position", (0, 0))
                 angle = item.get("rotation", 0)
             else:
+                identity = getattr(item, 'region_id', '')
                 x, y, angle = item.pos().x(), item.pos().y(), item.rotation()
+            if identity:
+                if identity == getattr(blk, 'region_id', ''):
+                    return True
+                continue
             if (
                 is_close(x, blk.xyxy[0], 5)
                 and is_close(y, blk.xyxy[1], 5)
@@ -184,7 +189,7 @@ class ManualWorkflowController:
         strokes: list[dict] = []
         build_stroke = self.main.image_viewer.drawing_manager.make_segmentation_stroke_data
         for blk in blk_list:
-            if blk.xyxy is None or len(blk.xyxy) < 4:
+            if blk.xyxy is None or len(blk.xyxy) < 4 or not permits_region_operation(blk, 'cleanup'):
                 continue
             stroke = build_stroke(blk, image)
             if stroke is not None:
@@ -217,7 +222,9 @@ class ManualWorkflowController:
                     if blk_list:
                         get_best_render_area(blk_list, image)
                     self.main.pipeline.block_detection.annotate_language_if_auto(image, blk_list, source_lang)
-                    blk_list = merge_manual_regions(state.get("blk_list", []), blk_list)
+                    from pipeline.translation_job import speaker_region_ids
+                    blk_list = merge_manual_regions(state.get("blk_list", []), blk_list,
+                        retain_ids=speaker_region_ids(self.main, state.get('page_id')))
                     rtl = source_lang == "Japanese"
                     results[file_path] = sort_blk_list(blk_list, rtl)
                 return results
@@ -287,6 +294,9 @@ class ManualWorkflowController:
     def ocr(self, single_block: bool = False) -> None:
         if not validate_ocr(self.main):
             return
+        review = getattr(self.main, 'review_ctrl', None)
+        if single_block and review is not None and review.preview_replacement('source'):
+            return
         selected_paths = self._selected_page_paths()
         if len(selected_paths) > 1 and not single_block:
             self.main.loading.setVisible(True)
@@ -313,7 +323,7 @@ class ManualWorkflowController:
                         continue
                     source_lang = state.get("source_lang", source_lang_fallback)
                     cache_key = cache_manager._get_ocr_cache_key(image, source_lang, ocr_model, device)
-                    pending = [blk for blk in blk_list if not has_manual_translation(blk)]
+                    pending = [blk for blk in blk_list if not has_manual_translation(blk) and permits_region_operation(blk, 'source')]
                     if pending and cache_manager._can_serve_all_blocks_from_ocr_cache(cache_key, pending):
                         cache_manager._apply_cached_ocr_to_blocks(cache_key, pending)
                     elif pending:
@@ -366,6 +376,9 @@ class ManualWorkflowController:
             )
 
     def translate_image(self, single_block: bool = False) -> None:
+        review = getattr(self.main, 'review_ctrl', None)
+        if single_block and review is not None and review.preview_replacement('translation', update_lettering=False):
+            return
         selected_paths = self._selected_page_paths()
         if len(selected_paths) > 1 and not single_block:
             has_any_text = False
@@ -403,60 +416,36 @@ class ManualWorkflowController:
             translator_key = settings_page.get_tool_selection("translator")
             upper_case = settings_page.ui.uppercase_checkbox.isChecked()
 
-            def translate_selected_pages() -> dict[str, list[TextBlock]]:
-                cache_manager = self.main.pipeline.cache_manager
-                results: dict[str, list[TextBlock]] = {}
+            from pipeline.translation_job import TranslationJob, eligible_translation_blocks
+            jobs = []
+            try:
                 for file_path in selected_paths:
                     state = self.main.image_states.get(file_path, {})
-                    blk_list = state.get("blk_list", [])
-                    if not blk_list:
+                    pending = eligible_translation_blocks(state.get('blk_list', []))
+                    if not pending:
                         continue
-                    image = self._load_page_image(file_path)
-                    if image is None:
-                        continue
-                    source_lang = state.get("source_lang", source_lang_fallback)
-                    target_lang = state.get("target_lang", target_lang_fallback)
+                    source_lang = state.get('source_lang', source_lang_fallback)
+                    target_lang = state.get('target_lang', target_lang_fallback)
                     translator = Translator(self.main, source_lang, target_lang)
-                    cache_key = cache_manager._get_translation_cache_key(
-                        image,
-                        source_lang,
-                        target_lang,
-                        translator_key,
-                        extra_context,
-                    )
-                    pending = [blk for blk in blk_list if not has_manual_translation(blk)]
-                    if pending and cache_manager._can_serve_all_blocks_from_translation_cache(cache_key, pending):
-                        cache_manager._apply_cached_translations_to_blocks(cache_key, pending)
-                    elif pending:
-                        translator.translate(pending, image, extra_context)
-                        cache_manager._cache_translation_results(cache_key, pending)
-                    set_upper_case(pending, upper_case)
-                    results[file_path] = blk_list
-                return results
+                    jobs.append(TranslationJob(self.main, translator, pending, None, extra_context,
+                        self.main.pipeline.cache_manager, path=file_path, upper_case=upper_case,
+                        resolve_blocks=lambda path=file_path: self._translation_blocks_for_page(path),
+                        image_loader=lambda path=file_path: self._load_page_image(path)))
+            except Exception:
+                self._translation_setup_failed()
+                return
 
-            def on_translation_ready(results: dict[str, list[TextBlock]]) -> None:
-                current_file = context["current_file"]
-                for file_path, blk_list in (results or {}).items():
-                    state = self.main.image_states.get(file_path)
-                    if state is None:
-                        continue
-                    state["blk_list"] = blk_list
-                    if file_path == current_file:
-                        self._set_current_blocks_from_page_state(
-                            blk_list,
-                            current_page_unloaded=context["current_page_unloaded"],
-                        )
+            def refresh_current():
+                current_file = self._current_file_path()
+                if current_file == context['current_file'] and current_file in selected_paths:
+                    if self.main.webtoon_mode:
+                        self._set_current_blocks_from_page_state(self.main.image_states[current_file].get('blk_list', []),
+                            current_page_unloaded=context['current_page_unloaded'])
+                    self._finish_translation(False)
+                else:
+                    self.main.on_manual_finished()
 
-                if results:
-                    self.main.batch_report_ctrl.resolve_translated_pages(list(results))
-                    self.main.mark_project_dirty()
-
-            self.main.run_threaded(
-                translate_selected_pages,
-                on_translation_ready,
-                self.main.default_error_handler,
-                lambda: self._finish_translation(single_block),
-            )
+            self._run_translation_jobs(jobs, refresh_current)
             return
 
         target_lang = self.main.t_combo.currentText()
@@ -467,20 +456,79 @@ class ManualWorkflowController:
         self.main.loading.setVisible(True)
         self.main.disable_hbutton_group()
 
-        if self.main.webtoon_mode:
-            self.main.run_threaded(
-                lambda: self.main.pipeline.translate_webtoon_visible_area(single_block),
-                None,
-                self.main.default_error_handler,
-                lambda: self._finish_translation(single_block),
-            )
-        else:
-            self.main.run_threaded(
-                lambda: self.main.pipeline.translate_image(single_block),
-                None,
-                self.main.default_error_handler,
-                lambda: self._finish_translation(single_block),
-            )
+        selected_id = getattr(self.main.pipeline.get_selected_block(), 'region_id', None) if single_block else None
+        start_path = self._current_file_path()
+        try:
+            job = self.main.pipeline.translation_handler.prepare_job(single_block, visible=self.main.webtoon_mode)
+        except Exception:
+            self._translation_setup_failed()
+            return
+
+        def finish_current():
+            current_id = getattr(self.main.pipeline.get_selected_block(), 'region_id', None) if single_block else None
+            if self._current_file_path() == start_path and (not single_block or selected_id == current_id):
+                self._finish_translation(single_block)
+            else:
+                self.main.on_manual_finished()
+
+        self._run_translation_jobs([job] if job is not None else [], finish_current)
+
+    def _translation_setup_failed(self):
+        import sys
+        import traceback
+        kind, error = sys.exc_info()[:2]
+        self.main.on_manual_finished()
+        self.main.default_error_handler((kind, error, traceback.format_exc()))
+
+    def _translation_blocks_for_page(self, path):
+        if not self.main.webtoon_mode and path == self._current_file_path():
+            return self.main.blk_list
+        return self.main.image_states.get(path, {}).get('blk_list', [])
+
+    def _run_translation_jobs(self, jobs, finish):
+        """Only the GUI callback changes page text; failures retain prior targets."""
+        import traceback
+        from pipeline.translation_job import StaleTranslationError
+        if not jobs:
+            self.main.on_manual_finished()
+            return
+        applied = []
+
+        def run():
+            results = []
+            for job in jobs:
+                try:
+                    results.append((job.run(), None))
+                except Exception as error:
+                    results.append((job, (type(error), error, traceback.format_exc())))
+                    if isinstance(error, StaleTranslationError):
+                        break
+            return results
+
+        def ready(results):
+            errors = []
+            for job, error in results:
+                if error is not None:
+                    errors.append(error)
+                    continue
+                try:
+                    if job.commit():
+                        applied.append(job.path)
+                except Exception as error:
+                    errors.append((type(error), error, traceback.format_exc()))
+            if applied:
+                self.main.mark_project_dirty()
+                self.main.batch_report_ctrl.resolve_translated_pages([p for p in applied if p])
+            for error in errors:
+                self.main.default_error_handler(error)
+
+        def finished():
+            if applied:
+                finish()
+            else:
+                self.main.on_manual_finished()
+
+        self.main.run_threaded(run, ready, self.main.default_error_handler, finished)
 
     def _get_visible_text_items(self) -> list[TextBlockItem]:
         if not self.main.webtoon_mode:
@@ -494,11 +542,17 @@ class ManualWorkflowController:
         blk: TextBlock,
         text_items: Sequence[TextBlockItem],
     ) -> TextBlockItem | None:
+        # Lettering can be moved or rotated independently of the OCR box.
+        identity = getattr(blk, 'region_id', '')
+        if identity:
+            for item in text_items:
+                if getattr(item, 'region_id', '') == identity:
+                    return item
         return next(
             (
                 item
                 for item in text_items
-                if is_close(item.pos().x(), blk.xyxy[0], 5)
+                if not getattr(item, 'region_id', '') and is_close(item.pos().x(), blk.xyxy[0], 5)
                 and is_close(item.pos().y(), blk.xyxy[1], 5)
                 and is_close(item.rotation(), blk.angle, 1)
             ),
@@ -531,104 +585,13 @@ class ManualWorkflowController:
         return blocks
 
     def _finish_translation(self, single_block: bool) -> None:
-        """Finish manual translation, cleaning a newly translated selected box first."""
+        """Selected Translate updates target text; Clean and Render remain explicit."""
         if not single_block:
             self.update_translated_text_items(False)
             return
 
-        blk = self.main.pipeline.get_selected_block()
-        if not (
-            blk
-            and getattr(blk, "text", "").strip()
-            and is_renderable_translation(getattr(blk, "translation", ""))
-        ):
-            self.update_translated_text_items(True)
-            return
-
-        # Existing text layers already sit on a cleaned background. Only run a
-        # focused cleanup when materializing a translation that has no layer yet.
-        if self._find_text_item_for_block(blk, self._get_visible_text_items()) is not None:
-            self.update_translated_text_items(True)
-            return
-
-        self.main.run_threaded(
-            lambda: self._inpaint_translated_block(blk),
-            self._apply_translated_block_patches,
-            self.main.default_error_handler,
-            lambda: self.update_translated_text_items(True),
-        )
-
-    def _inpaint_translated_block(self, blk: TextBlock) -> dict[str, list[dict]]:
-        """Inpaint one explicitly selected block and return patches grouped by page."""
-        inpainting = self.main.pipeline.inpainting
-        blocks: list[TextBlock]
-
-        if self.main.webtoon_mode:
-            image, mappings = self.main.image_viewer.get_visible_area_image()
-            if image is None or not mappings:
-                return {}
-            blocks = filter_and_convert_visible_blocks(
-                self.main,
-                self.main.pipeline,
-                mappings,
-                single_block=True,
-            )
-        else:
-            file_path = self._current_file_path()
-            if not file_path:
-                return {}
-            image = self.main.image_ctrl.get_composited_page_image(file_path)
-            if image is None:
-                return {}
-            blocks = [blk.deep_copy() if hasattr(blk, "deep_copy") else blk]
-
-        if not blocks:
-            return {}
-
-        try:
-            mask = generate_mask(image, blocks)
-            if mask is None or not mask.any():
-                return {}
-            config = get_config(self.main.settings_page)
-            inpainted = call_inpaint_image(
-                inpainting,
-                image,
-                mask,
-                config,
-                blk_list=blocks,
-            )
-            inpainted = imk.convert_scale_abs(inpainted)
-            patches = inpainting.get_inpainted_patches(mask, inpainted)
-        finally:
-            if self.main.webtoon_mode:
-                restore_original_block_coordinates(blocks)
-
-        if not patches:
-            return {}
-        if not self.main.webtoon_mode:
-            return {file_path: patches}
-
-        grouped: dict[str, list[dict]] = {}
-        for patch in patches:
-            patch_file = patch.get("file_path")
-            if not patch_file:
-                continue
-            clean_patch = {"bbox": patch["bbox"], "image": patch["image"]}
-            for key in ("scene_pos", "page_index"):
-                if key in patch:
-                    clean_patch[key] = patch[key]
-            grouped.setdefault(patch_file, []).append(clean_patch)
-        return grouped
-
-    def _apply_translated_block_patches(self, grouped: dict[str, list[dict]]) -> None:
-        applied = False
-        for file_path, patches in (grouped or {}).items():
-            if not patches:
-                continue
-            self.main.image_ctrl.on_inpaint_patches_processed(patches, file_path)
-            applied = True
-        if applied:
-            self.main.mark_project_dirty()
+        self._resolve_current_page_if_translated()
+        self.finish_ocr_translate(True)
 
     def update_translated_text_items(self, single_blk: bool) -> None:
 
@@ -650,6 +613,7 @@ class ManualWorkflowController:
             blocks_to_process = [
                 blk for blk in self._visible_blocks_for_translation_refresh()
                 if not self._has_rendered_manual_translation(blk, text_items_to_process)
+                and permits_region_operation(blk, 'layout')
             ]
 
         rs = self.main.render_settings()
@@ -701,7 +665,13 @@ class ManualWorkflowController:
                             wrap_res[0], wrap_res[1], block, path
                         )
                     else:
-                        set_new_text(ti, wrap_res[0], wrap_res[1])
+                        controller = self.main.text_ctrl
+                        suspended = controller._suspend_text_command
+                        controller._suspend_text_command = suspended or (not single_blk and not permits_region_operation(block, 'translation'))
+                        try:
+                            set_new_text(ti, wrap_res[0], wrap_res[1])
+                        finally:
+                            controller._suspend_text_command = suspended
 
                 self.main.run_threaded(
                     pyside_word_wrap,
@@ -718,7 +688,9 @@ class ManualWorkflowController:
                 self.finish_ocr_translate(single_blk)
 
         self.main.run_threaded(
-            lambda: format_translations(blocks_to_process, trg_lng_cd, upper_case=upper),
+            lambda: format_translations([blk for blk in blocks_to_process
+                                         if single_blk or permits_region_operation(blk, 'translation')],
+                                        trg_lng_cd, upper_case=upper),
             None,
             self.main.default_error_handler,
             on_format_finished,
@@ -734,7 +706,7 @@ class ManualWorkflowController:
         if text_blocks and all(getattr(blk, "translation", "") for blk in text_blocks):
             self.main.batch_report_ctrl.resolve_translated_pages([file_path])
 
-    def inpaint_and_set(self) -> None:
+    def inpaint_and_set(self, automatic: bool = True) -> None:
         if not self.main.image_viewer.hasPhoto():
             return
 
@@ -765,6 +737,7 @@ class ManualWorkflowController:
                         image,
                         strokes,
                         blk_list=blk_list,
+                        automatic=automatic,
                     )
 
                     if self.main.webtoon_mode and patches:
@@ -827,7 +800,7 @@ class ManualWorkflowController:
             self.main.disable_hbutton_group()
             self.main.undo_group.activeStack().beginMacro("inpaint")
             self.main.run_threaded(
-                self.main.pipeline.inpaint,
+                lambda: self.main.pipeline.inpaint(automatic=automatic),
             self.main.pipeline.inpaint_complete,
                 self.main.default_error_handler,
                 self.main.on_manual_finished,
@@ -846,7 +819,7 @@ class ManualWorkflowController:
         self.main.undo_group.activeStack().beginMacro("draw_segmentation_boxes")
         image = self.main.image_viewer.get_image_array()
         for blk in self.main.blk_list:
-            if blk.xyxy is not None:
+            if blk.xyxy is not None and permits_region_operation(blk, 'cleanup'):
                 stroke = self.main.image_viewer.drawing_manager.make_segmentation_stroke_data(blk, image)
                 self.main.image_viewer.draw_segmentation_lines(blk.xyxy, stroke=stroke)
         self.main.undo_group.activeStack().endMacro()
@@ -940,6 +913,8 @@ class ManualWorkflowController:
                         image = self.main.image_viewer.get_image_array()
                         results = []
                         for blk in self.main.blk_list:
+                            if not permits_region_operation(blk, 'cleanup'):
+                                continue
                             stroke = self.main.image_viewer.drawing_manager.make_segmentation_stroke_data(blk, image)
                             results.append((blk, stroke))
                         return results
@@ -965,11 +940,11 @@ class ManualWorkflowController:
     ) -> None:
         if self.main.webtoon_mode:
             for blk in results:
-                if blk.xyxy is not None:
+                if blk.xyxy is not None and permits_region_operation(blk, 'cleanup'):
                     stroke = self.main.image_viewer.drawing_manager.make_segmentation_stroke_data(blk)
                     self.main.image_viewer.draw_segmentation_lines(blk.xyxy, stroke=stroke)
         else:
             for blk, stroke in results:
-                if stroke is not None:
+                if stroke is not None and permits_region_operation(blk, 'cleanup'):
                     self.main.image_viewer.draw_segmentation_lines(blk.xyxy, stroke=stroke)
         self.main.undo_group.activeStack().endMacro()

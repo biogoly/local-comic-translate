@@ -1,9 +1,18 @@
 Local Comic Translate - Windows x64 beta
 
 1. Extract the ENTIRE ZIP to a normal folder. Do not run from inside the ZIP.
+   If Windows reports a long path, choose a short, fresh destination such as
+   C:\LCT. Restart extraction there so every file is included.
 2. Run LocalComicTranslate.exe. Keep _internal next to the executable.
 3. Python is included for the editor. No Python, uv or CUDA Toolkit install is
    needed for ordinary editing, ONNX processing or provider API connections.
+
+EDITOR FEATURES IN BETA 3
+Start with _internal/docs/RELEASE_NOTES_0.1.0b3.md for the editor guides.
+For text that overflows, select its lettering and open Fit Text. Use Review
+to locate the next region that needs work. For a smooth colored background,
+paint a repair mask and open Gradient. Shift-drag four short sample lines
+around the area, generate the preview, and apply the result you want.
 
 This beta is unsigned. Windows may show an unknown-publisher/SmartScreen warning.
 Verify the download came from biogoly/local-comic-translate and compare its

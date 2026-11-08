@@ -10,18 +10,15 @@ The OCR pipeline supports English, Korean, Japanese, French, Simplified and Trad
 
 This fork is under active development. Run the current source or a matching fork beta package; downloads on the upstream Comic Translate website do not include these changes. The language links above provide translations of this fork's current documentation. Settings and button labels are kept in English in these guides so they can be matched across interface languages.
 
-## Latest update — 0.1.0b2
+## Latest update — 0.1.0b3
 
-See the [beta 2 release notes](docs/RELEASE_NOTES_0.1.0b2.md) for testing guidance and current limitations.
+Beta 3 adds tools for lettering, page review, and artwork repair. On Windows, the [beta 3 setup ZIP](https://github.com/biogoly/local-comic-translate/releases/tag/v0.1.0b3) includes the source and a launcher that installs dependencies on first run. See the [beta 3 release notes](docs/RELEASE_NOTES_0.1.0b3.md).
 
-- **Artistic Edit:** local FLUX.2 Klein 4B/9B with compatible LoRAs, or the Black Forest Labs API, using a preview-before-apply workflow with undo and project persistence.
-- **Optional ComfyUI backend:** reuse an existing local server or Windows portable installation, including qualified native INT8 Klein 9B and experimental Qwen Image 2.1 with validated model-only LoRAs. Diffusers and provider APIs remain available.
-- **Your choice of translation backend:** retain local llama-server settings while switching to OpenAI, Gemini, Claude, or Deepseek with your own API keys.
-- **Better manual workflow:** OCR works directly on hand-drawn regions; completed manual translations and their formatting survive later whole-page processing; source and target language choices persist between pages.
-- **Portuguese and Vietnamese:** explicit source-language choices, Portugal/Brazil dialect instructions for local/cloud LLMs, and a separate Vietnamese OCR model downloaded only when needed. Existing translation targets and saved project identifiers remain compatible.
-- **Localized cleanup:** restore original pixels with a brush, clone a fixed sample of color and texture, or fill a mask with a sampled background color.
-- **Desktop polish:** Midnight, Parchment, Lavender, and Mint themes alongside Light/Dark, clearer Artistic Edit controls, refreshed splash artwork, and updated GUI language catalogs.
-- **Independent fork identity:** separate settings and application data, with upstream update prompts and paid-service routing removed.
+- Use **Fit Text** to preview wrapping and text size inside a box or balloon. The **Review** navigator helps you find missing or overflowing text and retry OCR on a selected region.
+- Use a project glossary, character notes, and previously approved translations to keep wording consistent. When a vision model receives the page image, optional text-box coordinates can help it distinguish identical words in different panels.
+- Save lettering styles, apply perspective or curves to editable text, and match its angle to the original lettering.
+- Repair a colored background with **Gradient** by clicking clean pixels or holding **Shift** and dragging short sample lines. Protect nearby artwork, or compare **Clone** and **Heal** on textured areas.
+- Compare two **Artistic Edit** previews, optionally check the intended wording with OCR, and apply the version you choose. You can undo the edit.
 
 ## Highlights of this fork
 
@@ -136,14 +133,11 @@ Automatic translation remains available, but careful comic restoration usually b
 
 You can also draw a missed region and right-click **OCR**, then **Translate**, without detecting the rest of the page first. Its completed translation remains intact if you subsequently run the whole-page manual workflow. For colored or textured backgrounds, try the sampled-color fill, restore brush, or clone brush before repeatedly inpainting the same area. Use Artistic Edit for lettering that should become part of the artwork rather than a normal editable text layer.
 
-The detector intentionally keeps both speech-bubble text and free-floating text. This prevents manual mode from losing valid OCR regions, but it also means **Translate All** can inpaint artistic titles, signs, sound effects, or other lettering that is part of the art. Manual review before cleaning is the recommended approach when preserving artwork matters.
+The detector finds speech balloons as well as titles, signs, and sound effects. In Manual mode, right-click **Translate** to update the selected region’s text. Use **Segment** to preview which pixels will be affected, review the mask, then choose **Clean** to remove the old lettering and **Render** to place the translation.
 
 ## Installation
 
-An experimental **Windows x64 beta** build recipe is available in the
-[Windows packaging guide](packaging/windows/README.md). It creates a portable ZIP
-with the main editor's Python/Qt/ONNX dependencies included; local LLM and FLUX
-models/runtimes remain separate. Beta binaries require testing before a public release.
+Download **LCT-0.1.0b3-Windows-setup.zip** from the [beta 3 release page](https://github.com/biogoly/local-comic-translate/releases/tag/v0.1.0b3). Extract the full ZIP and run the included Windows launcher. It installs the editor’s dependencies on first run, so you’ll need an internet connection. Local LLM and FLUX runtimes and models are separate. To build the frozen editor yourself, see the [Windows packaging guide](packaging/windows/README.md).
 
 ### Requirements
 
@@ -289,7 +283,7 @@ The release checks include manual-region OCR and preservation, local/API provide
 
 ## Current limitations
 
-- This is an early fork with source builds and Windows beta packages; broad testing across languages, models, layouts, and operating systems is still in progress. Public binary distribution remains subject to the packaging release review.
+- Testing across languages, models, page layouts, and operating systems is ongoing.
 - Automatic mode cannot always distinguish dialogue from lettering that belongs to the artwork. Use Manual mode when preservation is important.
 - Detection, OCR, translation, segmentation, and inpainting can all require human correction on difficult pages.
 - Vision input requires a genuinely multimodal model, a compatible server, and (when applicable) the matching projector file.

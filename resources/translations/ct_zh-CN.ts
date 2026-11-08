@@ -775,6 +775,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>艺术编辑</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻译上下文</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字样式</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>文字形状</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -1572,6 +1584,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>艺术编辑</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻译上下文</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字样式</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>文字形状</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -1914,6 +1938,14 @@ It may have been moved, renamed, or deleted.
         <source>Top K:</source>
         <translation>Top K：</translation>
     </message>
+    <message>
+        <source>Provide text-box coordinates (experimental)</source>
+        <translation>提供文本框坐标（实验性功能）</translation>
+    </message>
+    <message>
+        <source>Send text-box positions with the page image. Requires image input and a vision-capable model; improvement is not guaranteed.</source>
+        <translation>将文本框位置随页面图像一起发送。需要启用图像输入并使用具备视觉能力的模型；不能保证结果有所改善。</translation>
+    </message>
 </context>
 <context>
     <name>Messages</name>
@@ -2121,6 +2153,22 @@ Please check your internet connection.</source>
     <message>
         <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
         <translation>请在设置 &gt; 服务商 API 中配置 API 密钥及必填项：{provider}</translation>
+    </message>
+    <message>
+        <source>Page already contains rendered text; use manual Render to add missing regions.</source>
+        <translation>页面已含渲染文字；请使用手动渲染添加缺失区域。</translation>
+    </message>
+    <message>
+        <source>Existing Rendered Text</source>
+        <translation>已有渲染文字</translation>
+    </message>
+    <message>
+        <source>Perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit the perspective lettering.</source>
+        <translation>此PSD中的透视文字已作为背景像素导入。其他文字仍可在其上方编辑。要编辑透视文字，请使用原始项目。</translation>
+    </message>
+    <message>
+        <source>Curved or perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit its text and shape.</source>
+        <translation>此PSD中的弯曲文字或透视文字已作为背景像素导入，其他文字仍可在其上方编辑。请使用原始项目来编辑这些文字及其形状。</translation>
     </message>
 </context>
 <context>
@@ -3198,6 +3246,18 @@ Open or create a project to get started.</source>
         <source>Render Text in UpperCase</source>
         <translation>文本渲染为大写</translation>
     </message>
+    <message>
+        <source>Fit to bubble when rendering</source>
+        <translation>渲染时将文字适配到气泡</translation>
+    </message>
+    <message>
+        <source>Bubble padding:</source>
+        <translation>气泡内边距：</translation>
+    </message>
+    <message>
+        <source>Fit newly rendered text to speech-bubble interiors, with Box fallback. Existing lettering is preserved; other regions continue through processing.</source>
+        <translation>将新渲染的文字适配到对话气泡内部，无法适配时使用文本框。保留现有文字，其他区域继续处理。</translation>
+    </message>
 </context>
 <context>
     <name>ToolsPage</name>
@@ -3576,6 +3636,18 @@ back on the Image (for further editing)</source>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
         <source>Artistic Edit</source>
         <translation>艺术编辑</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻译上下文</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字样式</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>文字形状</translation>
     </message>
 </context>
 <context>
@@ -4639,6 +4711,42 @@ Prompt: {prompt}</source>
         <source>{model} (experimental)</source>
         <translation>{model}（实验性）</translation>
     </message>
+    <message>
+        <source>Artwork protection changed. Regenerate the preview.</source>
+        <translation>画面保护设置已更改。请重新生成预览。</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (provider API; sends the writable edit area).</source>
+        <translation>OCR：{engine}（提供商 API；将发送可编辑区域）。</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (local).</source>
+        <translation>OCR：{engine}（本地）。</translation>
+    </message>
+    <message>
+        <source>Checks use the translation target language. Pixels outside the writable area and protected pixels are excluded.</source>
+        <translation>检查使用翻译目标语言。可编辑区域外的像素和受保护的像素将被排除。</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>无法检查文字：{error}</translation>
+    </message>
+    <message>
+        <source>A previous lettering check is still finishing.</source>
+        <translation>上一次文字检查尚未完成。</translation>
+    </message>
+    <message>
+        <source>The preview changed. Run Check lettering again.</source>
+        <translation>预览已更改。请重新运行“检查文字”。</translation>
+    </message>
+    <message>
+        <source>OCR check failed ({error_type}). Check your OCR settings and try again.</source>
+        <translation>OCR 检查失败（{error_type}）。请检查 OCR 设置后重试。</translation>
+    </message>
+    <message>
+        <source>Candidate {number}</source>
+        <translation>候选 {number}</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4983,6 +5091,102 @@ Prompt: {prompt}</source>
         <source>Apply</source>
         <translation>应用</translation>
     </message>
+    <message>
+        <source>Check lettering</source>
+        <translation>检查文字</translation>
+    </message>
+    <message>
+        <source>Lettering details</source>
+        <translation>文字详情</translation>
+    </message>
+    <message>
+        <source>Stylized lettering can confuse OCR. Review the image before applying.</source>
+        <translation>艺术字可能导致 OCR 误识别。应用前请检查图像。</translation>
+    </message>
+    <message>
+        <source>Lettering check details</source>
+        <translation>文字检查详情</translation>
+    </message>
+    <message>
+        <source>Not checked yet.</source>
+        <translation>尚未检查。</translation>
+    </message>
+    <message>
+        <source>Use selected translation with Artistic lettering to supply exact wording. Editing that prompt clears the lettering check.</source>
+        <translation>在“艺术字”模式下点击“使用所选翻译”以提供确切文案。编辑该提示词后，文字检查将失效。</translation>
+    </message>
+    <message>
+        <source>Requested wording:</source>
+        <translation>要求的文案：</translation>
+    </message>
+    <message>
+        <source>OCR reading:</source>
+        <translation>OCR 识别结果：</translation>
+    </message>
+    <message>
+        <source>(no text)</source>
+        <translation>（无文字）</translation>
+    </message>
+    <message>
+        <source>Differences:</source>
+        <translation>差异：</translation>
+    </message>
+    <message>
+        <source>Not read by OCR: {expected}</source>
+        <translation>OCR 未读出的内容：{expected}</translation>
+    </message>
+    <message>
+        <source>Extra OCR text: {recognized}</source>
+        <translation>OCR 多读出的内容：{recognized}</translation>
+    </message>
+    <message>
+        <source>Requested: {expected} | OCR: {recognized}</source>
+        <translation>要求：{expected} | OCR：{recognized}</translation>
+    </message>
+    <message>
+        <source>Checking lettering…</source>
+        <translation>正在检查文字…</translation>
+    </message>
+    <message>
+        <source>OCR text matches the requested wording.</source>
+        <translation>OCR 识别的文字与要求的文案一致。</translation>
+    </message>
+    <message>
+        <source>Possible lettering differences</source>
+        <translation>文字可能存在差异</translation>
+    </message>
+    <message>
+        <source>OCR could not read enough text to compare.</source>
+        <translation>OCR 未能读出足够的文字来进行比较。</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>无法检查文字：{error}</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>候选</translation>
+    </message>
+    <message>
+        <source>Compare with</source>
+        <translation>比较对象</translation>
+    </message>
+    <message>
+        <source>Generate alternative</source>
+        <translation>生成备选方案</translation>
+    </message>
+    <message>
+        <source>Two candidates are already available.</source>
+        <translation>已有两个候选。</translation>
+    </message>
+    <message>
+        <source>The preview is stale. Generate a fresh preview to compare alternatives.</source>
+        <translation>预览已过期。请生成新预览以比较备选方案。</translation>
+    </message>
+    <message>
+        <source>Generate a second candidate to compare.</source>
+        <translation>生成第二个候选以进行比较。</translation>
+    </message>
 </context>
 <context>
     <name>MBigView</name>
@@ -5256,6 +5460,78 @@ Prompt: {prompt}</source>
         <source>Soft edge</source>
         <translation>边缘柔化</translation>
     </message>
+    <message>
+        <source>Fill method</source>
+        <translation>填充方式</translation>
+    </message>
+    <message>
+        <source>Solid</source>
+        <translation>纯色</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>渐变</translation>
+    </message>
+    <message>
+        <source>Preview gradient fill…</source>
+        <translation>预览渐变填充…</translation>
+    </message>
+    <message>
+        <source>Sample clean points around one masked background area, then preview a smooth gradient before applying it.</source>
+        <translation>在一个已蒙版覆盖的背景区域周围采样干净位置，然后预览平滑渐变，再进行应用。</translation>
+    </message>
+    <message>
+        <source>Heal (experimental)</source>
+        <translation>修复（实验性）</translation>
+    </message>
+    <message>
+        <source>Protect artwork</source>
+        <translation>保护画面</translation>
+    </message>
+    <message>
+        <source>Paint areas that cleanup and artistic edits must leave unchanged.</source>
+        <translation>绘制清理和艺术编辑时必须保持不变的区域。</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>保护</translation>
+    </message>
+    <message>
+        <source>Protect brush</source>
+        <translation>保护画笔</translation>
+    </message>
+    <message>
+        <source>Brush over artwork to protect its pixels. Uses the brush size slider. Each stroke can be undone.</source>
+        <translation>在画面上涂刷以保护像素。使用画笔大小滑块调整尺寸。每次笔画都可以撤销。</translation>
+    </message>
+    <message>
+        <source>Unprotect</source>
+        <translation>取消保护</translation>
+    </message>
+    <message>
+        <source>Unprotect brush</source>
+        <translation>取消保护画笔</translation>
+    </message>
+    <message>
+        <source>Brush over protected pixels to allow editing again. This does not erase artwork.</source>
+        <translation>在受保护的像素上涂刷，即可重新允许编辑。此操作不会擦除画面。</translation>
+    </message>
+    <message>
+        <source>Show protected pixels</source>
+        <translation>显示受保护的像素</translation>
+    </message>
+    <message>
+        <source>Purple marks protected artwork. This overlay is never exported.</source>
+        <translation>紫色标记表示受保护的画面。此叠加层不会被导出。</translation>
+    </message>
+    <message>
+        <source>Preview Heal…</source>
+        <translation>修复预览…</translation>
+    </message>
+    <message>
+        <source>Use a fixed clone sample and a picked background color to preview one small masked repair. The mask must fit inside the sample.</source>
+        <translation>使用固定克隆样本和所选背景颜色，预览一个小范围的蒙版修复。蒙版必须位于样本范围内。</translation>
+    </message>
 </context>
 <context>
     <name>LocalRepairController</name>
@@ -5282,6 +5558,26 @@ Prompt: {prompt}</source>
     <message>
         <source>Sampled color fill</source>
         <translation>取样颜色填充</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new gradient preview before applying the repair.</source>
+        <translation>页面或蒙版已更改。应用修复前，请重新打开渐变预览。</translation>
+    </message>
+    <message>
+        <source>Sampled gradient fill</source>
+        <translation>采样渐变填充</translation>
+    </message>
+    <message>
+        <source>Alt-click a clean area with Clone to capture a sample first.</source>
+        <translation>请先使用克隆工具，按住 Alt 点击干净区域以采集样本。</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new repair preview before applying.</source>
+        <translation>页面或蒙版已更改。请打开新的修复预览后再应用。</translation>
+    </message>
+    <message>
+        <source>Heal repair</source>
+        <translation>修复</translation>
     </message>
 </context>
 <context>
@@ -5509,6 +5805,1552 @@ Prompt: {prompt}</source>
         <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
         <source>The LoRA file changed during verification. Select it again and retry.</source>
         <translation>LoRA 文件在验证过程中发生了变化。请重新选择该文件并重试。</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitDialog</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>适配文字</translation>
+    </message>
+    <message>
+        <source>Preview text layout inside the fitting area. Artwork and cleanup masks are unchanged.</source>
+        <translation>预览适配区域内的文字布局。图像和清理蒙版保持不变。</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>宽度</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高度</translation>
+    </message>
+    <message>
+        <source>Fitting area: width × height</source>
+        <translation>适配区域：宽度 × 高度</translation>
+    </message>
+    <message>
+        <source>Minimum font size</source>
+        <translation>最小字号</translation>
+    </message>
+    <message>
+        <source>Maximum font size</source>
+        <translation>最大字号</translation>
+    </message>
+    <message>
+        <source>Keep manual line breaks</source>
+        <translation>保留手动换行</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>当前布局</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>均衡布局</translation>
+    </message>
+    <message>
+        <source>Larger text</source>
+        <translation>更大文字</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>布局</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Minimum font size must not exceed maximum font size.</source>
+        <translation>最小字号不能超过最大字号。</translation>
+    </message>
+    <message>
+        <source>Fits within the area.</source>
+        <translation>文字可完整容纳在区域内。</translation>
+    </message>
+    <message>
+        <source>Does not fit. Enlarge the area or shorten the text.</source>
+        <translation>文字无法完整容纳。请扩大区域或缩短文字。</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>文字小于最小可读字号。</translation>
+    </message>
+    <message>
+        <source>Font size: {size} — {status}</source>
+        <translation>字号：{size} — {status}</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>文本框</translation>
+    </message>
+    <message>
+        <source>Bubble interior</source>
+        <translation>气泡内部</translation>
+    </message>
+    <message>
+        <source>Fit mode</source>
+        <translation>适配模式</translation>
+    </message>
+    <message>
+        <source>Estimate from original</source>
+        <translation>从原图估算</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>椭圆</translation>
+    </message>
+    <message>
+        <source>Boundary</source>
+        <translation>边界</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>左侧</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>顶部</translation>
+    </message>
+    <message>
+        <source>Boundary origin: X × Y</source>
+        <translation>边界起点：X × Y</translation>
+    </message>
+    <message>
+        <source>Padding</source>
+        <translation>内边距</translation>
+    </message>
+    <message>
+        <source>Estimated interior. Check the boundary before applying.</source>
+        <translation>已估算内部区域。应用前请检查边界。</translation>
+    </message>
+    <message>
+        <source>Manual boundary.</source>
+        <translation>手动指定的边界。</translation>
+    </message>
+    <message>
+        <source>Bubble fitting requires unrotated horizontal text at normal scale. Using Box.</source>
+        <translation>气泡适配要求文字为未旋转、正常缩放的横排文字。将使用文本框模式。</translation>
+    </message>
+    <message>
+        <source>Original image unavailable or its dimensions changed. Using Box.</source>
+        <translation>原图不可用或图像尺寸已更改。将使用文本框模式。</translation>
+    </message>
+    <message>
+        <source>Padding leaves no usable interior. Using Box.</source>
+        <translation>应用内边距后没有可用的内部区域。将使用文本框模式。</translation>
+    </message>
+    <message>
+        <source>Fitting area is too large. Using Box.</source>
+        <translation>适配区域过大。将使用文本框模式。</translation>
+    </message>
+    <message>
+        <source>No reliable enclosed interior was found. Using Box. Try Rectangle or Ellipse.</source>
+        <translation>未找到可靠的封闭内部区域。将使用文本框模式。请尝试矩形或椭圆。</translation>
+    </message>
+    <message>
+        <source>The boundary is outside the page or has no usable area. Using Box.</source>
+        <translation>边界位于页面之外或没有可用区域。将使用文本框模式。</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitController</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>适配文字</translation>
+    </message>
+    <message>
+        <source>Text overflows the fitting area.</source>
+        <translation>文字超出适配区域。</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>文字小于最小可读字号。</translation>
+    </message>
+    <message>
+        <source>The text or page changed. Open Fit Text again to make a new preview.</source>
+        <translation>文字或页面已更改。请重新打开“适配文字”以生成新的预览。</translation>
+    </message>
+    <message>
+        <source>Fit Text requires a text item contained within one page.</source>
+        <translation>“适配文字”要求文字项完整位于同一页面内。</translation>
+    </message>
+    <message>
+        <source>Wait for page processing to finish before fitting text.</source>
+        <translation>请等待页面处理完成后再适配文字。</translation>
+    </message>
+    <message>
+        <source>Reset text shape to fit.</source>
+        <translation>请重置文字形状后再适配。</translation>
+    </message>
+    <message>
+        <source>Fit Text is unavailable for transformed lettering. Reset the lettering transform first.</source>
+        <translation>变换后的文字无法使用文字适配。请先重置文字变换。</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewPanel</name>
+    <message>
+        <source>Review</source>
+        <translation>审阅</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>所有页面</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>当前页面</translation>
+    </message>
+    <message>
+        <source>Review scope</source>
+        <translation>审阅范围</translation>
+    </message>
+    <message>
+        <source>All issues</source>
+        <translation>所有问题</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>缺少识别文字</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>缺少翻译</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>文字溢出</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>文字过小</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>操作失败</translation>
+    </message>
+    <message>
+        <source>Awaiting review</source>
+        <translation>待审阅</translation>
+    </message>
+    <message>
+        <source>Issue filter</source>
+        <translation>问题筛选</translation>
+    </message>
+    <message>
+        <source>Review issues</source>
+        <translation>待审阅问题</translation>
+    </message>
+    <message>
+        <source>No issues in this view.</source>
+        <translation>此视图中没有问题。</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>上一个</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>下一个</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>刷新</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>原文</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>翻译</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>排版</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>Review stage</source>
+        <translation>审阅阶段</translation>
+    </message>
+    <message>
+        <source>Mark reviewed</source>
+        <translation>标记为已审阅</translation>
+    </message>
+    <message>
+        <source>Ignore issue</source>
+        <translation>忽略问题</translation>
+    </message>
+    <message>
+        <source>Keep source</source>
+        <translation>保留原文</translation>
+    </message>
+    <message>
+        <source>Keep translation</source>
+        <translation>保留翻译</translation>
+    </message>
+    <message>
+        <source>Keep layout</source>
+        <translation>保留排版</translation>
+    </message>
+    <message>
+        <source>Skip automatic cleanup</source>
+        <translation>跳过自动清除</translation>
+    </message>
+    <message>
+        <source>Fit Text</source>
+        <translation>适配文字</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>报告</translation>
+    </message>
+    <message>
+        <source>Pages: {pages} · Regions: {regions} · Issues: {issues}</source>
+        <translation>页面：{pages} · 区域：{regions} · 问题：{issues}</translation>
+    </message>
+    <message>
+        <source>Page-wide operations keep protected stages. Direct edits remain allowed.</source>
+        <translation>整页操作会保留受保护的阶段。仍可直接编辑。</translation>
+    </message>
+    <message>
+        <source>Uncertain OCR</source>
+        <translation>识别结果存疑</translation>
+    </message>
+    <message>
+        <source>Retry OCR…</source>
+        <translation>重新识别文字…</translation>
+    </message>
+    <message>
+        <source>Lowest line score {score} ({model})</source>
+        <translation>最低行得分：{score}（{model}）</translation>
+    </message>
+    <message>
+        <source>Lowest word score {score} ({model})</source>
+        <translation>最低词得分：{score}（{model}）</translation>
+    </message>
+    <message>
+        <source>Lowest sequence score {score} ({model})</source>
+        <translation>最低序列得分：{score}（{model}）</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewController</name>
+    <message>
+        <source>Change review state</source>
+        <translation>更改审阅状态</translation>
+    </message>
+    <message>
+        <source>Apply reviewed text</source>
+        <translation>应用已审阅文字</translation>
+    </message>
+    <message>
+        <source>Checking text layouts…</source>
+        <translation>正在检查文字排版…</translation>
+    </message>
+    <message>
+        <source>Detect text regions to start reviewing.</source>
+        <translation>请先检测文字区域，再开始审阅。</translation>
+    </message>
+    <message>
+        <source>Bubble outlines are checked when their page is open.</source>
+        <translation>打开页面时会检查该页的气泡轮廓。</translation>
+    </message>
+    <message>
+        <source>Awaiting review: {stage}</source>
+        <translation>待审阅：{stage}</translation>
+    </message>
+    <message>
+        <source>The page is not ready. Try selecting the issue again.</source>
+        <translation>页面尚未就绪，请再次选择该问题。</translation>
+    </message>
+    <message>
+        <source>This region has changed. Refresh the review list.</source>
+        <translation>此区域已更改，请刷新审阅列表。</translation>
+    </message>
+    <message>
+        <source>The original page is unavailable for this preview.</source>
+        <translation>此预览无法访问原始页面。</translation>
+    </message>
+    <message>
+        <source>Review replacement</source>
+        <translation>审阅替换内容</translation>
+    </message>
+    <message>
+        <source>Current text</source>
+        <translation>当前文字</translation>
+    </message>
+    <message>
+        <source>Proposed text</source>
+        <translation>建议文字</translation>
+    </message>
+    <message>
+        <source>Apply keeps the protection and existing lettering geometry. Use Clean and Render for missing lettering.</source>
+        <translation>应用时会保留保护设置及现有文字的布局。请使用“清除”和“渲染”补充缺失的文字。</translation>
+    </message>
+    <message>
+        <source>This region changed while the preview was open. Run the action again.</source>
+        <translation>预览打开期间，此区域已更改。请重新运行该操作。</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>缺少识别文字</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>缺少翻译</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>文字溢出</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>文字过小</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>操作失败</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>原文</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>翻译</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>排版</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>Retry OCR</source>
+        <translation>重新识别文字</translation>
+    </message>
+    <message>
+        <source>Local recognizer</source>
+        <translation>本地文字识别引擎</translation>
+    </message>
+    <message>
+        <source>Missing model files will be downloaded when you continue.</source>
+        <translation>继续后将下载缺少的模型文件。</translation>
+    </message>
+    <message>
+        <source>No alternative local recognizer is available for this source language.</source>
+        <translation>没有其他适用于该源语言的本地文字识别引擎。</translation>
+    </message>
+    <message>
+        <source>Select a text region first.</source>
+        <translation>请先选择一个文字区域。</translation>
+    </message>
+    <message>
+        <source>The recognizer returned no text.</source>
+        <translation>识别引擎未识别到文字。</translation>
+    </message>
+    <message>
+        <source>Apply replaces the source text for this region.</source>
+        <translation>点击“应用”将替换此区域的原文。</translation>
+    </message>
+</context>
+<context>
+    <name>ContextEntryDialog</name>
+    <message>
+        <source>Glossary entry</source>
+        <translation>术语表条目</translation>
+    </message>
+    <message>
+        <source>Character</source>
+        <translation>角色</translation>
+    </message>
+    <message>
+        <source>One alias per line</source>
+        <translation>每行一个别名</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>原文术语</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>姓名</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>首选译文</translation>
+    </message>
+    <message>
+        <source>Aliases</source>
+        <translation>别名</translation>
+    </message>
+    <message>
+        <source>Source language</source>
+        <translation>源语言</translation>
+    </message>
+    <message>
+        <source>Target language</source>
+        <translation>目标语言</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自动</translation>
+    </message>
+    <message>
+        <source>Whole word</source>
+        <translation>完整词语</translation>
+    </message>
+    <message>
+        <source>Substring</source>
+        <translation>子字符串</translation>
+    </message>
+    <message>
+        <source>Matching rule</source>
+        <translation>匹配规则</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>备注</translation>
+    </message>
+    <message>
+        <source>Voice and formality notes</source>
+        <translation>语气与正式程度备注</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>启用</translation>
+    </message>
+    <message>
+        <source>Approved for translation</source>
+        <translation>已批准用于翻译</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>任何语言</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation.</source>
+        <translation>请输入原文术语和首选译文。</translation>
+    </message>
+    <message>
+        <source>Enter a character name.</source>
+        <translation>请输入角色名称。</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextController</name>
+    <message>
+        <source>Choose an LLM translator to suggest a summary.</source>
+        <translation>请选择大语言模型翻译器以生成摘要建议。</translation>
+    </message>
+    <message>
+        <source>In Review, mark a translation reviewed for this source and target language pair.</source>
+        <translation>请在“审阅”中，将这一源语言和目标语言组合的一条译文标记为已审阅。</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit or shorten the story summary to fit approved translations.</source>
+        <translation>请提高上下文的词元上限，或缩短故事摘要，以便纳入已批准的译文。</translation>
+    </message>
+    <message>
+        <source>Check the selected translator’s connection settings.</source>
+        <translation>请检查所选翻译器的连接设置。</translation>
+    </message>
+    <message>
+        <source>The model returned an unusable summary.</source>
+        <translation>模型返回的摘要无法使用。</translation>
+    </message>
+    <message>
+        <source>The summary request failed. Check the translator settings and try again.</source>
+        <translation>摘要请求失败。请检查翻译器设置后重试。</translation>
+    </message>
+    <message>
+        <source>The project or summary inputs changed. Open the suggestion again.</source>
+        <translation>项目或生成摘要所用的内容已更改。请重新打开建议。</translation>
+    </message>
+    <message>
+        <source>Change translation context</source>
+        <translation>更改翻译上下文</translation>
+    </message>
+    <message>
+        <source>Select a text region to preview its request.</source>
+        <translation>选择文本区域以预览其请求。</translation>
+    </message>
+    <message>
+        <source>The current page has no text regions to preview.</source>
+        <translation>当前页面没有可预览的文本区域。</translation>
+    </message>
+    <message>
+        <source>Cannot build request preview: {error}</source>
+        <translation>无法生成请求预览：{error}</translation>
+    </message>
+    <message>
+        <source>Choose an LLM translator to suggest glossary terms.</source>
+        <translation>请选择大语言模型翻译器以生成术语建议。</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit to fit approved translations.</source>
+        <translation>请提高上下文 token 上限，以容纳已批准的译文。</translation>
+    </message>
+    <message>
+        <source>The model returned unusable glossary suggestions.</source>
+        <translation>模型返回的术语建议无法使用。</translation>
+    </message>
+    <message>
+        <source>The glossary request failed. Check the translator settings and try again.</source>
+        <translation>术语建议请求失败。请检查翻译器设置后重试。</translation>
+    </message>
+    <message>
+        <source>The project or glossary inputs changed. Open the suggestion again.</source>
+        <translation>项目或生成术语建议所用的内容已更改。请重新打开建议。</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextDialog</name>
+    <message>
+        <source>Suggest story summary…</source>
+        <translation>生成故事摘要建议…</translation>
+    </message>
+    <message>
+        <source>Include approved translations from earlier pages</source>
+        <translation>包含之前页面中已批准的译文</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻译上下文</translation>
+    </message>
+    <message>
+        <source>Glossary</source>
+        <translation>术语表</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>角色</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>原文术语</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>姓名</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>首选译文</translation>
+    </message>
+    <message>
+        <source>Language pair</source>
+        <translation>语言对</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>编辑</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>移除</translation>
+    </message>
+    <message>
+        <source>Add selected source/translation</source>
+        <translation>添加选中的原文/译文</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>说话者</translation>
+    </message>
+    <message>
+        <source>Assign selected region</source>
+        <translation>指定给选中区域</translation>
+    </message>
+    <message>
+        <source>Project notes</source>
+        <translation>项目备注</translation>
+    </message>
+    <message>
+        <source>Setting, tone, terminology guidance, and other context for this work.</source>
+        <translation>本作品的背景、语气、术语指导及其他上下文。</translation>
+    </message>
+    <message>
+        <source>Story summary</source>
+        <translation>故事摘要</translation>
+    </message>
+    <message>
+        <source>Context token limit</source>
+        <translation>上下文 token 上限</translation>
+    </message>
+    <message>
+        <source>Uses a conservative estimate. Required context that exceeds the available budget must be shortened.</source>
+        <translation>使用保守估算。所需上下文超出可用预算时必须缩短。</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>备注</translation>
+    </message>
+    <message>
+        <source>Request preview</source>
+        <translation>请求预览</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>当前页面</translation>
+    </message>
+    <message>
+        <source>Selected region</source>
+        <translation>选中区域</translation>
+    </message>
+    <message>
+        <source>Preview scope</source>
+        <translation>预览范围</translation>
+    </message>
+    <message>
+        <source>Build preview</source>
+        <translation>生成预览</translation>
+    </message>
+    <message>
+        <source>Undo context</source>
+        <translation>撤销上下文更改</translation>
+    </message>
+    <message>
+        <source>Redo context</source>
+        <translation>重做上下文更改</translation>
+    </message>
+    <message>
+        <source>Revert draft</source>
+        <translation>还原草稿</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Changes apply to this project. The existing LLM context setting also remains in use.</source>
+        <translation>更改适用于此项目，现有的 LLM 上下文设置也将继续使用。</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>任何语言</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>禁用</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation>已批准</translation>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation>草稿</translation>
+    </message>
+    <message>
+        <source>No speaker</source>
+        <translation>无说话者</translation>
+    </message>
+    <message>
+        <source>Selected region: {text}</source>
+        <translation>选中区域：{text}</translation>
+    </message>
+    <message>
+        <source>Select a text region on the page to assign a speaker.</source>
+        <translation>选择页面上的文本区域以指定说话者。</translation>
+    </message>
+    <message>
+        <source>Approved glossary entries, assigned character notes, and project notes guide LLM translation.</source>
+        <translation>已批准的术语表条目、所指定角色的备注和项目备注将用于指导 LLM 翻译。</translation>
+    </message>
+    <message>
+        <source>This translator does not support structured LLM context. Project entries remain editable for use with an LLM.</source>
+        <translation>此翻译器不支持结构化 LLM 上下文。您仍可编辑项目条目，以便配合 LLM 使用。</translation>
+    </message>
+    <message>
+        <source>Unapplied changes. Apply to use them for translation.</source>
+        <translation>存在未应用的更改。请应用后再用于翻译。</translation>
+    </message>
+    <message>
+        <source>No unapplied changes.</source>
+        <translation>没有未应用的更改。</translation>
+    </message>
+    <message>
+        <source>Suggest glossary terms…</source>
+        <translation>推荐术语表条目…</translation>
+    </message>
+</context>
+<context>
+    <name>GradientRepairDialog</name>
+    <message>
+        <source>Gradient repair</source>
+        <translation>渐变修复</translation>
+    </message>
+    <message>
+        <source>Repair one smooth background area at a time. Click at least four clean spots around the entire mask, away from text and borders. Six or more samples improve reliability.</source>
+        <translation>每次仅修复一个平滑背景区域。请在整个蒙版周围至少点击四个干净位置，避开文字和边框。六个或更多样本可提高可靠性。</translation>
+    </message>
+    <message>
+        <source>Sample from</source>
+        <translation>采样来源</translation>
+    </message>
+    <message>
+        <source>Edited page</source>
+        <translation>编辑后的页面</translation>
+    </message>
+    <message>
+        <source>Original page</source>
+        <translation>原始页面</translation>
+    </message>
+    <message>
+        <source>Changing the source clears samples. Preview pixels are never used as samples.</source>
+        <translation>更改来源会清除样本。预览中的像素不会用于采样。</translation>
+    </message>
+    <message>
+        <source>Show mask</source>
+        <translation>显示蒙版</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>适应修复区域</translation>
+    </message>
+    <message>
+        <source>Fit page</source>
+        <translation>适应页面</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>缩小</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>放大</translation>
+    </message>
+    <message>
+        <source>Sample background</source>
+        <translation>背景采样</translation>
+    </message>
+    <message>
+        <source>Repair preview</source>
+        <translation>修复预览</translation>
+    </message>
+    <message>
+        <source>Remove last sample</source>
+        <translation>移除最后一个样本</translation>
+    </message>
+    <message>
+        <source>Clear samples</source>
+        <translation>清除样本</translation>
+    </message>
+    <message>
+        <source>Generate preview</source>
+        <translation>生成预览</translation>
+    </message>
+    <message>
+        <source>Drag to pan; use the mouse wheel to zoom. Only pixels inside the painted mask will change.</source>
+        <translation>拖动可平移，滚动鼠标滚轮可缩放。只有绘制的蒙版内的像素会改变。</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Samples: {count}</source>
+        <translation>样本数：{count}</translation>
+    </message>
+    <message>
+        <source>Click inside the page image.</source>
+        <translation>请在页面图像内点击。</translation>
+    </message>
+    <message>
+        <source>Choose a clean spot outside the painted mask.</source>
+        <translation>请选择绘制的蒙版外的干净位置。</translation>
+    </message>
+    <message>
+        <source>That pixel is already sampled. Choose another clean spot.</source>
+        <translation>该像素已被采样。请选择另一个干净位置。</translation>
+    </message>
+    <message>
+        <source>Use at most 64 samples. Remove a sample before adding another.</source>
+        <translation>最多可使用64个样本。添加新样本前请先移除一个。</translation>
+    </message>
+    <message>
+        <source>Choose at least four distinct clean spots around the repair.</source>
+        <translation>请在修复区域周围选择至少四个不同的干净位置。</translation>
+    </message>
+    <message>
+        <source>Spread samples in both directions; do not place them along one line.</source>
+        <translation>请在横向和纵向分散样本，不要将其放在同一直线上。</translation>
+    </message>
+    <message>
+        <source>Place clean samples around all sides of the painted mask.</source>
+        <translation>请在绘制的蒙版四周放置干净样本。</translation>
+    </message>
+    <message>
+        <source>The samples do not describe a smooth background. Remove spots on text or borders, or add more clean samples.</source>
+        <translation>这些样本无法拟合平滑背景。请移除文字或边框上的采样点，或添加更多干净样本。</translation>
+    </message>
+    <message>
+        <source>Cannot build this repair from the image, mask, and samples.</source>
+        <translation>无法根据图像、蒙版和样本生成此次修复。</translation>
+    </message>
+    <message>
+        <source>The preview would not change any pixels.</source>
+        <translation>该预览不会更改任何像素。</translation>
+    </message>
+    <message>
+        <source>Preview ready: {used} of {total} samples used.</source>
+        <translation>预览已就绪：使用了{total}个样本中的{used}个。</translation>
+    </message>
+    <message>
+        <source>Ready to generate a preview.</source>
+        <translation>已准备好生成预览。</translation>
+    </message>
+    <message>
+        <source>Generating preview…</source>
+        <translation>正在生成预览…</translation>
+    </message>
+    <message>
+        <source>Preview unavailable: {reason}</source>
+        <translation>预览不可用：{reason}</translation>
+    </message>
+    <message>
+        <source>Unable to generate preview: {error}</source>
+        <translation>无法生成预览：{error}</translation>
+    </message>
+    <message>
+        <source>Shift-drag to sample a line of background color.</source>
+        <translation>按住 Shift 键拖动，沿直线采样背景颜色。</translation>
+    </message>
+</context>
+<context>
+    <name>HealRepairDialog</name>
+    <message>
+        <source>Experimental Heal preview</source>
+        <translation>修复预览（实验性）</translation>
+    </message>
+    <message>
+        <source>Compare one fixed clone sample with a color-adjusted copy. This prototype preserves sampled texture and shifts its color toward your picked color. It does not reconstruct detail or borrow nearby pixels.</source>
+        <translation>比较固定的克隆样本与调整颜色后的副本。此实验功能保留采样纹理，并将其颜色向所选颜色调整。它不会重建细节或借用附近的像素。</translation>
+    </message>
+    <message>
+        <source>The entire painted mask must fit inside one sample centered on the mask. Use a larger clean clone sample or a smaller mask. Only painted, unprotected pixels can change; texture will not be tiled.</source>
+        <translation>绘制的整个蒙版必须位于以蒙版中心为中心的单个样本内。请使用更大的干净克隆样本或更小的蒙版。只有蒙版内未受保护的像素会改变；纹理不会重复平铺。</translation>
+    </message>
+    <message>
+        <source>Picked target color: RGB {0}</source>
+        <translation>所选目标颜色：RGB {0}</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>适应修复区域</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>缩小</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>放大</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>当前页面</translation>
+    </message>
+    <message>
+        <source>Ordinary Clone</source>
+        <translation>普通克隆</translation>
+    </message>
+    <message>
+        <source>Heal preview</source>
+        <translation>修复预览</translation>
+    </message>
+    <message>
+        <source>Color adjustment</source>
+        <translation>颜色调整</translation>
+    </message>
+    <message>
+        <source>Apply Heal</source>
+        <translation>应用修复</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>This preview would not change any pixels.</source>
+        <translation>此预览不会更改任何像素。</translation>
+    </message>
+    <message>
+        <source>Preview ready. Compare the texture and color before applying.</source>
+        <translation>预览已就绪。应用前请比较纹理和颜色。</translation>
+    </message>
+    <message>
+        <source>The mask extends beyond the clean clone sample. Cancel and use a larger clean sample or a smaller mask.</source>
+        <translation>蒙版超出了干净克隆样本的范围。请取消，然后使用更大的干净样本或更小的蒙版。</translation>
+    </message>
+    <message>
+        <source>All masked pixels are protected. No repair can be applied.</source>
+        <translation>蒙版内的所有像素均受保护，无法应用修复。</translation>
+    </message>
+    <message>
+        <source>Paint a repair mask before opening Heal preview.</source>
+        <translation>打开修复预览前，请先绘制修复蒙版。</translation>
+    </message>
+    <message>
+        <source>The repair inputs are invalid. Cancel and sample again.</source>
+        <translation>修复输入无效。请取消并重新采样。</translation>
+    </message>
+    <message>
+        <source>Could not generate the preview. No changes were applied.</source>
+        <translation>无法生成预览。未应用任何更改。</translation>
+    </message>
+</context>
+<context>
+    <name>PixelProtectionController</name>
+    <message>
+        <source>Protect artwork</source>
+        <translation>保护画面</translation>
+    </message>
+    <message>
+        <source>Unprotect artwork</source>
+        <translation>取消画面保护</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesController</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字样式</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before applying a lettering style.</source>
+        <translation>请等待处理完成后再应用文字样式。</translation>
+    </message>
+    <message>
+        <source>Open a page before editing project lettering styles.</source>
+        <translation>请先打开页面，再编辑项目文字样式。</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one current page to apply a style.</source>
+        <translation>请选择当前页面上的文本框以应用样式。</translation>
+    </message>
+    <message>
+        <source>Select one copy of each text region before applying a style.</source>
+        <translation>应用样式前，请只选择每个文本区域的一份副本。</translation>
+    </message>
+    <message>
+        <source>The page, lettering or presets changed. Open a new style preview.</source>
+        <translation>页面、文字或预设已更改。请重新打开样式预览。</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesDialog</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字样式</translation>
+    </message>
+    <message>
+        <source>Save lettering from a selected text box as a named project style. Choose which properties to apply; word emphasis is preserved unless you select Bold, Italic or Underline.</source>
+        <translation>将所选文本框的文字格式保存为命名的项目样式。选择要应用的属性；除非勾选粗体、斜体或下划线，否则会保留各词的强调格式。</translation>
+    </message>
+    <message>
+        <source>Project styles</source>
+        <translation>项目样式</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>样式名称</translation>
+    </message>
+    <message>
+        <source>Dialogue, narration, sound effects…</source>
+        <translation>对白、旁白、音效…</translation>
+    </message>
+    <message>
+        <source>Save from previewed text box</source>
+        <translation>从预览文本框保存</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the text box chosen in Preview text box.</source>
+        <translation>根据“预览文本框”中所选的文本框创建新样式。</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>重命名</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>删除样式</translation>
+    </message>
+    <message>
+        <source>Replace style from previewed text box</source>
+        <translation>用预览文本框替换样式</translation>
+    </message>
+    <message>
+        <source>Properties to apply</source>
+        <translation>要应用的属性</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>字体</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>字号</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>文字颜色</translation>
+    </message>
+    <message>
+        <source>Outline</source>
+        <translation>描边</translation>
+    </message>
+    <message>
+        <source>Line spacing</source>
+        <translation>行间距</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>对齐方式</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>加粗</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>斜体</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>下划线</translation>
+    </message>
+    <message>
+        <source>Preview text box</source>
+        <translation>预览文本框</translation>
+    </message>
+    <message>
+        <source>{0}: {1}</source>
+        <translation>{0}：{1}</translation>
+    </message>
+    <message>
+        <source>{0} selected text boxes</source>
+        <translation>已选择 {0} 个文本框</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>适应预览</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>当前布局</translation>
+    </message>
+    <message>
+        <source>Styled</source>
+        <translation>应用样式后</translation>
+    </message>
+    <message>
+        <source>Preview uses a neutral background. Inspect text fit after changing font or size.</source>
+        <translation>预览使用中性背景。更改字体或字号后，请检查文字是否适合文本框。</translation>
+    </message>
+    <message>
+        <source>Apply despite these font warnings</source>
+        <translation>忽略这些字体警告并应用</translation>
+    </message>
+    <message>
+        <source>Save presets only</source>
+        <translation>仅保存预设</translation>
+    </message>
+    <message>
+        <source>Apply to selection</source>
+        <translation>应用到所选项</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Changes to presets are saved only when you choose Save presets only or Apply to selection.</source>
+        <translation>只有选择“仅保存预设”或“应用到所选项”时，才会保存预设的更改。</translation>
+    </message>
+    <message>
+        <source>Enter a style name.</source>
+        <translation>请输入样式名称。</translation>
+    </message>
+    <message>
+        <source>A style with this name already exists. Choose another name.</source>
+        <translation>已存在同名样式。请选择其他名称。</translation>
+    </message>
+    <message>
+        <source>Could not capture this text style. No preset was added.</source>
+        <translation>无法获取此文字样式。未添加任何预设。</translation>
+    </message>
+    <message>
+        <source>Ready to apply this style to {0} text boxes.</source>
+        <translation>可以将此样式应用到 {0} 个文本框。</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still rename or delete project presets.</source>
+        <translation>请选择同一页面上的文本框以获取或应用样式。您仍可重命名或删除项目预设。</translation>
+    </message>
+    <message>
+        <source>Choose a project style, or enter a name and save the previewed text box as a new style.</source>
+        <translation>请选择项目样式，或输入名称并将预览文本框保存为新样式。</translation>
+    </message>
+    <message>
+        <source>Choose at least one property to apply.</source>
+        <translation>请至少选择一个要应用的属性。</translation>
+    </message>
+    <message>
+        <source>Could not build the style preview. No changes were applied.</source>
+        <translation>无法生成样式预览。未应用任何更改。</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" is unavailable. A fallback font will be used.</source>
+        <translation>文本框 {0}：字体“{1}”不可用。将使用替代字体。</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" lacks these characters: {2}. Fallback glyphs may differ.</source>
+        <translation>文本框 {0}：字体“{1}”缺少以下字符：{2}。替代字形可能有所不同。</translation>
+    </message>
+    <message>
+        <source>Reuse a project style or change emphasis directly. Bold, Italic and Underline affect whole selected text boxes; Keep existing preserves individual-word formatting.</source>
+        <translation>复用项目样式，或直接更改强调格式。粗体、斜体和下划线会应用于整个所选文本框；“保留现有格式”会保留各个词语的格式。</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the current text box and your emphasis choices.</source>
+        <translation>根据当前文本框和您选择的强调设置创建新样式。</translation>
+    </message>
+    <message>
+        <source>Replaces the selected preset with the current text box style and your emphasis choices.</source>
+        <translation>使用当前文本框的样式和您选择的强调设置替换所选预设。</translation>
+    </message>
+    <message>
+        <source>Keep existing</source>
+        <translation>保留现有格式</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>开启</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Use preset</source>
+        <translation>使用预设</translation>
+    </message>
+    <message>
+        <source>On and Off change this emphasis for each entire selected box. Keep existing preserves word-level formatting. Use preset copies the saved value.</source>
+        <translation>“开启”和“关闭”会更改每个所选文本框内全部文字的该项强调格式。“保留现有格式”会保留各个词语的格式。“使用预设”会应用已保存的值。</translation>
+    </message>
+    <message>
+        <source>Ready to apply formatting to {0} text boxes.</source>
+        <translation>已准备好将格式应用于 {0} 个文本框。</translation>
+    </message>
+    <message>
+        <source>Choose a project style, save a new style, or set Bold, Italic or Underline to On or Off.</source>
+        <translation>请选择项目样式、保存新样式，或将粗体、斜体或下划线设为开启或关闭。</translation>
+    </message>
+    <message>
+        <source>Import presets…</source>
+        <translation>导入预设…</translation>
+    </message>
+    <message>
+        <source>Export presets…</source>
+        <translation>导出预设…</translation>
+    </message>
+    <message>
+        <source>Lettering presets (*.json)</source>
+        <translation>文字样式预设 (*.json)</translation>
+    </message>
+    <message>
+        <source>Export all presets in this list to a file.</source>
+        <translation>将列表中的所有预设导出到一个文件。</translation>
+    </message>
+    <message>
+        <source>Existing presets are kept. Name conflicts receive a numbered suffix.</source>
+        <translation>保留已有预设。如果名称冲突，会在导入的预设名称末尾添加编号。</translation>
+    </message>
+    <message>
+        <source>Imported: {0}. Renamed: {1}. Skipped duplicates: {2}.</source>
+        <translation>已导入：{0} 个。已重命名：{1} 个。已跳过重复项：{2} 个。</translation>
+    </message>
+    <message>
+        <source>Exported {0} presets.</source>
+        <translation>已导出 {0} 个预设。</translation>
+    </message>
+    <message>
+        <source>Could not read the preset file.</source>
+        <translation>无法读取预设文件。</translation>
+    </message>
+    <message>
+        <source>Could not write the preset file.</source>
+        <translation>无法写入预设文件。</translation>
+    </message>
+    <message>
+        <source>The preset file is too large.</source>
+        <translation>预设文件过大。</translation>
+    </message>
+    <message>
+        <source>This file is not a lettering preset library.</source>
+        <translation>此文件不是文字样式预设库。</translation>
+    </message>
+    <message>
+        <source>This preset file version is unsupported.</source>
+        <translation>不支持此版本的预设文件。</translation>
+    </message>
+    <message>
+        <source>The preset file contains invalid styles.</source>
+        <translation>预设文件中包含无效的样式。</translation>
+    </message>
+    <message>
+        <source>The import would exceed the project limit of 100 presets.</source>
+        <translation>导入后将超过每个项目 100 个预设的上限。</translation>
+    </message>
+    <message>
+        <source>The preset library is empty.</source>
+        <translation>预设库为空。</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still manage project presets.</source>
+        <translation>要提取或应用样式，请选择同一页上的文本框。未选择文本框时也可以管理项目预设。</translation>
+    </message>
+</context>
+<context>
+    <name>controller</name>
+    <message>
+        <source>Apply lettering style</source>
+        <translation>应用文字样式</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformController</name>
+    <message>
+        <source>Text shape</source>
+        <translation>文字形状</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before changing text shape.</source>
+        <translation>请等待处理完成后再更改文字形状。</translation>
+    </message>
+    <message>
+        <source>Open a page and select one text box to change its shape.</source>
+        <translation>打开页面并选择一个文本框以更改其形状。</translation>
+    </message>
+    <message>
+        <source>Select one text box on the current page to change its shape.</source>
+        <translation>在当前页面上选择一个文本框以更改其形状。</translation>
+    </message>
+    <message>
+        <source>The page or lettering changed. Open a new text shape preview.</source>
+        <translation>页面或文字已更改。请重新打开文字形状预览。</translation>
+    </message>
+    <message>
+        <source>Transform lettering</source>
+        <translation>变换文字</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformDialog</name>
+    <message>
+        <source>Text shape</source>
+        <translation>文字形状</translation>
+    </message>
+    <message>
+        <source>Stretch, skew or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>拉伸、倾斜或添加透视，同时保留文字和单词格式的可编辑性。</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>宽度</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高度</translation>
+    </message>
+    <message>
+        <source>Skew</source>
+        <translation>倾斜</translation>
+    </message>
+    <message>
+        <source>Horizontal perspective</source>
+        <translation>水平透视</translation>
+    </message>
+    <message>
+        <source>Vertical perspective</source>
+        <translation>垂直透视</translation>
+    </message>
+    <message>
+        <source>Reset distortion</source>
+        <translation>重置变形</translation>
+    </message>
+    <message>
+        <source>Width and height stretch the lettering without changing line wrapping. Use the canvas handles to resize the text box or rotate it.</source>
+        <translation>宽度和高度会拉伸文字，而不改变换行位置。使用画布上的控制柄调整文本框大小或旋转文本框。</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>当前布局</translation>
+    </message>
+    <message>
+        <source>Transformed</source>
+        <translation>变换后</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>适应预览</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Preview only. Apply creates one undoable change.</source>
+        <translation>仅预览。点击应用后将创建可撤销的更改。</translation>
+    </message>
+    <message>
+        <source>PSD: perspective lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD：透视文字将导出为有明确标记的图像图层。请保留项目文件，以便编辑文字及其形状。</translation>
+    </message>
+    <message>
+        <source>PSD: this lettering exports as an editable text layer.</source>
+        <translation>PSD：此文字将导出为可编辑的文本图层。</translation>
+    </message>
+    <message>
+        <source>This transform could not be previewed. Reset the distortion and try again.</source>
+        <translation>无法预览此变换。请重置变形后重试。</translation>
+    </message>
+    <message>
+        <source>Stretch, skew, curve or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>拉伸、倾斜、弯曲文字或添加透视效果，同时保留文字及单个词语格式的可编辑性。</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>弯曲</translation>
+    </message>
+    <message>
+        <source>Positive curves arch upward; negative curves bend downward. Each line keeps its text and formatting.</source>
+        <translation>正值使文字向上拱起，负值使文字向下弯曲。每一行的文字和格式均会保留。</translation>
+    </message>
+    <message>
+        <source>Curves are available for horizontal lettering.</source>
+        <translation>弯曲效果适用于横排文字。</translation>
+    </message>
+    <message>
+        <source>PSD: curved lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD：弯曲文字将导出为带有标注的图像图层。请保留项目文件，以便编辑其文字和形状。</translation>
+    </message>
+</context>
+<context>
+    <name>RectItemController</name>
+    <message>
+        <source>Edit lettering geometry</source>
+        <translation>编辑文字几何形状</translation>
+    </message>
+</context>
+<context>
+    <name>SummarySuggestionDialog</name>
+    <message>
+        <source>Suggest story summary</source>
+        <translation>生成故事摘要建议</translation>
+    </message>
+    <message>
+        <source>Generate locally with {provider}.</source>
+        <translation>使用 {provider} 在本地生成。</translation>
+    </message>
+    <message>
+        <source>Generate sends the displayed material to {destination} using {provider}.</source>
+        <translation>点击“生成”后，将通过 {provider} 把所显示的内容发送到 {destination}。</translation>
+    </message>
+    <message>
+        <source>Approved translations ({count}) · {source} → {target}</source>
+        <translation>已批准的译文（{count} 条）· {source} → {target}</translation>
+    </message>
+    <message>
+        <source>Current summary</source>
+        <translation>当前摘要</translation>
+    </message>
+    <message>
+        <source>Suggested summary</source>
+        <translation>建议的摘要</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Use suggestion</source>
+        <translation>采用建议</translation>
+    </message>
+    <message>
+        <source>Generating suggestion…</source>
+        <translation>正在生成建议…</translation>
+    </message>
+</context>
+<context>
+    <name>GlossarySuggestionDialog</name>
+    <message>
+        <source>Suggest glossary terms</source>
+        <translation>推荐术语表条目</translation>
+    </message>
+    <message>
+        <source>Add selected terms</source>
+        <translation>添加所选术语</translation>
+    </message>
+    <message>
+        <source>Approved example</source>
+        <translation>已批准的示例</translation>
+    </message>
+    <message>
+        <source>No new terms found in the approved translations.</source>
+        <translation>在已批准的译文中未找到新术语。</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation for each selected row.</source>
+        <translation>请在每个所选行中填写原文术语及其首选译文。</translation>
+    </message>
+    <message>
+        <source>A selected source term already exists in this language pair or appears twice in your selection.</source>
+        <translation>某个所选原文术语已存在于此语言对中，或在所选条目中重复出现。</translation>
+    </message>
+    <message>
+        <source>Select terms to add to the draft glossary.</source>
+        <translation>请选择要添加到术语表草稿的术语。</translation>
     </message>
 </context>
 </TS>

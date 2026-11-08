@@ -2,15 +2,20 @@
 
 These supplemental assets are copied byte-for-byte from upstream sources, not
 rewritten license summaries. The build copies this directory into the package.
-They supplement, rather than replace, the notices supplied by installed wheels.
+They accompany the notices supplied by installed wheels.
 
 ## Qt, PySide, Shapely and GEOS
 
-`source-notices/` contains 188 assets from the six archives pinned in
+`source-notices/` in the repository contains 188 assets from the six archives pinned in
 `packaging/windows/source-archives.json`. Generated with
 `prepare_source_evidence.py`, it includes conventionally named license files,
 Qt attribution records, and the files those records identify as LicenseFile.
 Some referenced files are source headers or README files.
+
+In the Windows package, these files are under `_internal/licenses/src/`.
+`INDEX.txt` in that folder maps each short project name to the original archive
+and its top-level directory. The files under each project keep their original
+names and relative locations so attribution records still link to the supplied licenses.
 
 This is a conservative source attribution collection, not a statement that
 every test/example dependency in the source archives is shipped at runtime.

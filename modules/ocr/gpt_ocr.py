@@ -3,6 +3,7 @@ import requests
 import json
 
 from .base import OCREngine
+from .evidence import assign_unscored_reading
 from ..utils.textblock import TextBlock, adjust_text_line_coordinates
 from ..utils.translator_utils import MODEL_MAP
 
@@ -61,7 +62,7 @@ class GPTOCR(OCREngine):
                 img_to_gpt = self.encode_image(cropped_img)
                 
                 # Get OCR result from GPT
-                blk.text = self._get_gpt_ocr(img_to_gpt)
+                assign_unscored_reading(blk, self._get_gpt_ocr(img_to_gpt), "GPT", self.model)
                 
         return blk_list
     

@@ -3,6 +3,7 @@ import numpy as np
 import requests
 
 from .base import OCREngine
+from .evidence import make_ocr_evidence
 from ..utils.textblock import TextBlock
 from ..utils.textblock import lists_to_blk_list
 
@@ -63,4 +64,7 @@ class GoogleOCR(OCREngine):
                     texts_bboxes.append((x1, y1, x2, y2))
                     texts_string.append(text['description'])
             
-        return lists_to_blk_list(blk_list, texts_bboxes, texts_string)
+        def record_reading(block, _indices):
+            block.ocr_evidence = make_ocr_evidence(block.text, "Google Cloud Vision", "TEXT_DETECTION")
+
+        return lists_to_blk_list(blk_list, texts_bboxes, texts_string, on_text_assigned=record_reading)

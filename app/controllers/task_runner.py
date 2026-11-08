@@ -142,6 +142,7 @@ class TaskRunnerController:
         self.operation_queue.clear()
 
     def cancel_current_task(self):
+        self.main._translation_cancel_epoch = getattr(self.main, '_translation_cancel_epoch', 0) + 1
         if self.main.current_worker:
             self.main.current_worker.cancel()
 

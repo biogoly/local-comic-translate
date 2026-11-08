@@ -2,6 +2,7 @@ import logging
 from modules.ocr.processor import OCRProcessor
 from modules.utils.device import resolve_device
 from modules.utils.manual_regions import has_manual_translation, is_manual_region
+from modules.utils.region_policy import permits_region_operation, is_protected
 from modules.utils.language_utils import (
     to_canonical_language_name, get_dominant_page_script, is_supported_script,
 )
@@ -46,7 +47,8 @@ class OCRHandler:
                 # A completed manual region may already be cleaned underneath
                 # its text layer. Page OCR must not replace its source with an
                 # empty reading of that cleaned background.
-                blocks = [blk for blk in self.main_page.blk_list if not has_manual_translation(blk)]
+                blocks = [blk for blk in self.main_page.blk_list if not has_manual_translation(blk)
+                          and permits_region_operation(blk, 'source')]
                 # For full page OCR, check if we can use cached results
                 if self.cache_manager._can_serve_all_blocks_from_ocr_cache(cache_key, blocks):
                     # All blocks can be served from cache
@@ -54,16 +56,20 @@ class OCRHandler:
                     logger.info("Using cached OCR results for %d unfinished blocks", len(blocks))
                 else:
                     # Need to run OCR and cache results
-                    self.ocr.initialize(self.main_page, source_lang)
                     if blocks:
+                        self.ocr.initialize(self.main_page, source_lang)
                         self.ocr.process(image, blocks)
                         self.cache_manager._cache_ocr_results(cache_key, blocks)
                         logger.info("OCR completed and cached for %d blocks", len(blocks))
+                for protected in self.main_page.blk_list:
+                    if is_protected(protected, 'keep_source'):
+                        self.cache_manager.update_ocr_cache_for_block(cache_key, protected)
 
     def _recognize_selected_block(self, image, blk, source_lang, context_blocks=None):
         # Work on a copy so a failed request cannot erase existing user text.
         working = blk.deep_copy()
         working.text = ""
+        working.ocr_evidence = None
         working.texts = []
         working.skipped_small_texts = []
         if source_lang == 'Auto' and not is_supported_script(working.script):
@@ -77,7 +83,7 @@ class OCRHandler:
             working.direction = ""
         self.ocr.initialize(self.main_page, source_lang)
         self.ocr.process(image, [working])
-        for name in ('text', 'texts', 'skipped_small_texts', 'source_lang', 'lines', 'direction'):
+        for name in ('text', 'texts', 'skipped_small_texts', 'source_lang', 'lines', 'direction', 'ocr_evidence'):
             setattr(blk, name, getattr(working, name))
 
     def OCR_webtoon_visible_area(self, single_block: bool = False):
@@ -111,6 +117,7 @@ class OCRHandler:
         # leave these attached to a block restored to webtoon scene coordinates.
         blocks = visible_blocks if single_block else [
             blk for blk in visible_blocks if not has_manual_translation(blk)
+            and permits_region_operation(blk, 'source')
         ]
         line_states = [(blk, blk.lines, blk.direction) for blk in blocks]
         try:
@@ -122,8 +129,8 @@ class OCRHandler:
                     visible_image, blocks[0], source_lang, visible_blocks,
                 )
             else:
-                self.ocr.initialize(self.main_page, source_lang)
                 if blocks:
+                    self.ocr.initialize(self.main_page, source_lang)
                     self.ocr.process(visible_image, blocks)
         finally:
             for blk, lines, direction in line_states:

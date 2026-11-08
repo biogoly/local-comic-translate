@@ -17,6 +17,8 @@ def main() -> int:
 
         parser = argparse.ArgumentParser()
         parser.add_argument("--smoke-test", required=True, metavar="REPORT.json")
+        parser.add_argument("--smoke-project", metavar="PROJECT.ctpr",
+                            help="Also exercise an editable copy of this project with the isolated editor")
         parser.add_argument("--require-cuda", action="store_true")
         args = parser.parse_args()
         log_dir = Path(args.smoke_test).resolve().parent
@@ -48,7 +50,7 @@ def main() -> int:
         if smoke:
             from app.package_smoke import run_smoke_test
 
-            return run_smoke_test(args.smoke_test, require_cuda=args.require_cuda)
+            return run_smoke_test(args.smoke_test, require_cuda=args.require_cuda, smoke_project=args.smoke_project)
         from comic import main as run_desktop
 
         run_desktop()

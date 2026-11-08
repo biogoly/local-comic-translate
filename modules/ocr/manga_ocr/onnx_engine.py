@@ -9,6 +9,7 @@ from modules.utils.onnx import make_session
 
 from modules.ocr.base import OCREngine
 from modules.utils.textblock import TextBlock, adjust_text_line_coordinates
+from modules.ocr.evidence import assign_unscored_reading
 from modules.utils.download import ModelDownloader, ModelID
 
 
@@ -72,7 +73,7 @@ class MangaOCREngineONNX(OCREngine):
             return blk_list
 
         for idx, text in zip(crop_indices, texts):
-            blk_list[idx].text = text
+            assign_unscored_reading(blk_list[idx], text, "Manga OCR", ModelID.MANGA_OCR_INT8_ONNX.value)
 
         return blk_list
 

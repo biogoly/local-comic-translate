@@ -5,6 +5,7 @@ import numpy as np
 import onnxruntime as ort
 
 from modules.ocr.base import OCREngine
+from modules.ocr.evidence import make_ocr_evidence
 from modules.utils.textblock import TextBlock
 from modules.utils.textblock import lists_to_blk_list
 from modules.utils.language_utils import is_no_space_lang, normalize_script
@@ -16,6 +17,7 @@ from .postprocessing import DBPostProcessor, CTCLabelDecoder
 
 
 LANG_TO_REC_MODEL: dict[str, ModelID] = {
+	'multi': ModelID.PPOCR_V6_REC_SMALL,
 	'ch': ModelID.PPOCR_V6_REC_SMALL,
 	'ja': ModelID.PPOCR_V6_REC_SMALL,
 	'en': ModelID.PPOCR_V5_REC_EN_MOBILE,
@@ -62,6 +64,7 @@ class PPOCRv5Engine(OCREngine):
 		self.rec_img_shape = (3, 48, 320)
 		self.rec_batch_size = 8
 		self.rec_threads = 4
+		self.recognition_model = None
 
 	def initialize(
 		self, 
@@ -81,6 +84,7 @@ class PPOCRv5Engine(OCREngine):
 		else:
 			self.rec_threads = 4
 		rec_id = LANG_TO_REC_MODEL.get(lang, ModelID.PPOCR_V6_REC_SMALL)
+		self.recognition_model = rec_id.value
 		ModelDownloader.ensure([rec_id])
 
 		rec_paths = ModelDownloader.file_path_map(rec_id)
@@ -187,21 +191,27 @@ class PPOCRv5Engine(OCREngine):
 				block_lines.append(valid_lines)
 				all_crops.extend(crops)
 
-			all_texts, _ = self._rec_infer(all_crops)
+			all_texts, all_scores = self._rec_infer(all_crops)
 
 			offset = 0
 			for blk, lines, crops in zip(blk_list, block_lines, block_crops):
 				texts = all_texts[offset:offset + len(crops)]
+				scores = all_scores[offset:offset + len(crops)]
 				offset += len(crops)
 				texts = [text.strip() if text else "" for text in texts]
 				blk.texts, blk.skipped_small_texts = _split_japanese_small_line_texts(blk, lines, texts)
 				blk.text = ''.join(blk.texts) if is_no_space_lang(getattr(blk, 'source_lang', '')) else ' '.join(blk.texts)
+				skipped = {entry["line_index"] for entry in blk.skipped_small_texts}
+				included_scores = ([scores[i] for i, text in enumerate(texts) if text and i not in skipped]
+				                   if len(scores) == len(texts) else None)
+				blk.ocr_evidence = make_ocr_evidence(
+					blk.text, "PP-OCR", self.recognition_model, line_scores=included_scores)
 			return blk_list
 		boxes, _ = self._det_infer(img)
 		if boxes is None or len(boxes) == 0:
 			return blk_list
 		crops = [crop_quad(img, quad.astype(np.float32)) for quad in boxes]
-		texts, _ = self._rec_infer(crops)
+		texts, scores = self._rec_infer(crops)
 		# map quads -> axis-aligned boxes
 		bboxes = []
 		for quad in boxes:
@@ -209,7 +219,12 @@ class PPOCRv5Engine(OCREngine):
 			ys = quad[:, 1]
 			x1, y1, x2, y2 = int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())
 			bboxes.append((x1, y1, x2, y2))
-		return lists_to_blk_list(blk_list, bboxes, texts)
+		def record_evidence(blk, included):
+			line_scores = [scores[i] for i in included] if len(scores) == len(texts) else None
+			blk.ocr_evidence = make_ocr_evidence(blk.text, "PP-OCR", self.recognition_model,
+			                                    line_scores=line_scores)
+
+		return lists_to_blk_list(blk_list, bboxes, texts, on_text_assigned=record_evidence)
 
 
 def _should_rotate_line_crops(blk: TextBlock) -> bool:

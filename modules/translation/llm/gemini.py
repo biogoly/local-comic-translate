@@ -63,7 +63,7 @@ class GeminiTranslation(BaseLLMTranslation):
             },
         }
         if self.model_api_name.startswith("gemini-2.5"):
-            generation_config["thinkingConfig"] = {"thinkingBudget": 1024}
+            generation_config["thinkingConfig"] = {"thinkingBudget": min(1024, self.max_tokens // 2)}
         
         # Setup safety settings
         safety_settings = [

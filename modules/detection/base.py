@@ -134,7 +134,7 @@ class DetectionEngine(ABC):
             backend = resolve_detection_backend(getattr(self, "backend", None))
             device = resolve_device(self.settings.is_gpu_enabled(), backend) if self.settings else "cpu"
             _ = backend, device
-            annotate_blocks_with_heuristic_lines(image, text_blocks)
+            annotate_blocks_with_heuristic_lines(image, text_blocks, measure_lettering_angle=True)
         except Exception as e:
             print(f"Failed to build heuristic text lines: {e}")
 

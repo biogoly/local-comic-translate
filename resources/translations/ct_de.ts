@@ -776,6 +776,18 @@ Möglicherweise wurde es verschoben, umbenannt oder gelöscht.
         <source>Artistic Edit</source>
         <translation>Künstlerische Bearbeitung</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Übersetzungskontext</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Schriftstile</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Textform</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -1574,6 +1586,18 @@ Möglicherweise wurde es verschoben, umbenannt oder gelöscht.
         <source>Artistic Edit</source>
         <translation>Künstlerische Bearbeitung</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Übersetzungskontext</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Schriftstile</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Textform</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -1916,6 +1940,14 @@ Möglicherweise wurde es verschoben, umbenannt oder gelöscht.
         <source>Top K:</source>
         <translation>Top K:</translation>
     </message>
+    <message>
+        <source>Provide text-box coordinates (experimental)</source>
+        <translation>Textfeldkoordinaten senden (experimentell)</translation>
+    </message>
+    <message>
+        <source>Send text-box positions with the page image. Requires image input and a vision-capable model; improvement is not guaranteed.</source>
+        <translation>Sendet die Positionen der Textfelder zusammen mit dem Seitenbild. Bildübergabe und ein bildfähiges Modell sind erforderlich; eine Verbesserung ist nicht garantiert.</translation>
+    </message>
 </context>
 <context>
     <name>Messages</name>
@@ -2124,6 +2156,22 @@ Bitte überprüfen Sie Ihre Internetverbindung.</translation>
     <message>
         <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
         <translation>Konfigurieren Sie den API-Schlüssel und die Pflichtfelder unter Einstellungen &gt; Anbieter-APIs: {provider}</translation>
+    </message>
+    <message>
+        <source>Page already contains rendered text; use manual Render to add missing regions.</source>
+        <translation>Die Seite enthält bereits gerenderten Text; ergänzen Sie fehlende Bereiche mit „Rendern“ im manuellen Modus.</translation>
+    </message>
+    <message>
+        <source>Existing Rendered Text</source>
+        <translation>Bereits gerenderter Text</translation>
+    </message>
+    <message>
+        <source>Perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit the perspective lettering.</source>
+        <translation>Perspektivischer Text in dieser PSD wurde als Hintergrundpixel importiert. Andere Texte bleiben darüber bearbeitbar. Verwenden Sie das Originalprojekt, um den perspektivischen Text zu bearbeiten.</translation>
+    </message>
+    <message>
+        <source>Curved or perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit its text and shape.</source>
+        <translation>Gekrümmte oder perspektivisch verzerrte Schrift in dieser PSD wurde als Hintergrundpixel importiert. Anderer Text bleibt darüber bearbeitbar. Verwenden Sie das ursprüngliche Projekt, um Text und Form dieser Schrift zu bearbeiten.</translation>
     </message>
 </context>
 <context>
@@ -3201,6 +3249,18 @@ Open or create a project to get started.</source>
         <source>Render Text in UpperCase</source>
         <translation>Text in Großbuchstaben darstellen</translation>
     </message>
+    <message>
+        <source>Fit to bubble when rendering</source>
+        <translation>Text beim Rendern in Sprechblasen einpassen</translation>
+    </message>
+    <message>
+        <source>Bubble padding:</source>
+        <translation>Sprechblasen-Innenabstand:</translation>
+    </message>
+    <message>
+        <source>Fit newly rendered text to speech-bubble interiors, with Box fallback. Existing lettering is preserved; other regions continue through processing.</source>
+        <translation>Neu gerenderten Text in Sprechblasen einpassen, ersatzweise in das Textfeld. Vorhandene Beschriftungen bleiben erhalten; andere Bereiche werden weiterverarbeitet.</translation>
+    </message>
 </context>
 <context>
     <name>ToolsPage</name>
@@ -3580,6 +3640,18 @@ zurück auf das Bild (zur weiteren Bearbeitung)</translation>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
         <source>Artistic Edit</source>
         <translation>Künstlerische Bearbeitung</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Übersetzungskontext</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Schriftstile</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Textform</translation>
     </message>
 </context>
 <context>
@@ -4643,6 +4715,42 @@ Anweisung: {prompt}</translation>
         <source>{model} (experimental)</source>
         <translation>{model} (experimentell)</translation>
     </message>
+    <message>
+        <source>Artwork protection changed. Regenerate the preview.</source>
+        <translation>Der Bildschutz wurde geändert. Erstellen Sie die Vorschau erneut.</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (provider API; sends the writable edit area).</source>
+        <translation>OCR: {engine} (Anbieter-API; sendet den bearbeitbaren Bildbereich).</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (local).</source>
+        <translation>OCR: {engine} (lokal).</translation>
+    </message>
+    <message>
+        <source>Checks use the translation target language. Pixels outside the writable area and protected pixels are excluded.</source>
+        <translation>Die Prüfung verwendet die Zielsprache der Übersetzung. Pixel außerhalb des bearbeitbaren Bereichs und geschützte Pixel werden ausgeschlossen.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>Schriftzugprüfung nicht verfügbar: {error}</translation>
+    </message>
+    <message>
+        <source>A previous lettering check is still finishing.</source>
+        <translation>Eine vorherige Schriftzugprüfung wird noch abgeschlossen.</translation>
+    </message>
+    <message>
+        <source>The preview changed. Run Check lettering again.</source>
+        <translation>Die Vorschau hat sich geändert. Führen Sie „Schriftzug prüfen“ erneut aus.</translation>
+    </message>
+    <message>
+        <source>OCR check failed ({error_type}). Check your OCR settings and try again.</source>
+        <translation>OCR-Prüfung fehlgeschlagen ({error_type}). Prüfen Sie Ihre OCR-Einstellungen und versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>Candidate {number}</source>
+        <translation>Variante {number}</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4987,6 +5095,102 @@ Anweisung: {prompt}</translation>
         <source>Apply</source>
         <translation>Anwenden</translation>
     </message>
+    <message>
+        <source>Check lettering</source>
+        <translation>Schriftzug prüfen</translation>
+    </message>
+    <message>
+        <source>Lettering details</source>
+        <translation>Schriftzugdetails</translation>
+    </message>
+    <message>
+        <source>Stylized lettering can confuse OCR. Review the image before applying.</source>
+        <translation>Stilisierte Schrift kann die OCR-Erkennung erschweren. Prüfen Sie das Bild vor dem Anwenden.</translation>
+    </message>
+    <message>
+        <source>Lettering check details</source>
+        <translation>Details der Schriftzugprüfung</translation>
+    </message>
+    <message>
+        <source>Not checked yet.</source>
+        <translation>Noch nicht geprüft.</translation>
+    </message>
+    <message>
+        <source>Use selected translation with Artistic lettering to supply exact wording. Editing that prompt clears the lettering check.</source>
+        <translation>Nutzen Sie „Ausgewählte Übersetzung verwenden“ mit „Künstlerischer Schriftzug“, um den genauen Wortlaut festzulegen. Eine Änderung dieses Prompts hebt die Schriftzugprüfung auf.</translation>
+    </message>
+    <message>
+        <source>Requested wording:</source>
+        <translation>Gewünschter Wortlaut:</translation>
+    </message>
+    <message>
+        <source>OCR reading:</source>
+        <translation>OCR-Ergebnis:</translation>
+    </message>
+    <message>
+        <source>(no text)</source>
+        <translation>(kein Text)</translation>
+    </message>
+    <message>
+        <source>Differences:</source>
+        <translation>Abweichungen:</translation>
+    </message>
+    <message>
+        <source>Not read by OCR: {expected}</source>
+        <translation>Von OCR nicht erkannt: {expected}</translation>
+    </message>
+    <message>
+        <source>Extra OCR text: {recognized}</source>
+        <translation>Zusätzlicher OCR-Text: {recognized}</translation>
+    </message>
+    <message>
+        <source>Requested: {expected} | OCR: {recognized}</source>
+        <translation>Gewünscht: {expected} | OCR: {recognized}</translation>
+    </message>
+    <message>
+        <source>Checking lettering…</source>
+        <translation>Schriftzug wird geprüft…</translation>
+    </message>
+    <message>
+        <source>OCR text matches the requested wording.</source>
+        <translation>Der OCR-Text stimmt mit dem gewünschten Wortlaut überein.</translation>
+    </message>
+    <message>
+        <source>Possible lettering differences</source>
+        <translation>Mögliche Abweichungen im Schriftzug</translation>
+    </message>
+    <message>
+        <source>OCR could not read enough text to compare.</source>
+        <translation>OCR konnte nicht genügend Text für einen Vergleich erkennen.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>Schriftzugprüfung nicht verfügbar: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>Variante</translation>
+    </message>
+    <message>
+        <source>Compare with</source>
+        <translation>Vergleichen mit</translation>
+    </message>
+    <message>
+        <source>Generate alternative</source>
+        <translation>Alternative erzeugen</translation>
+    </message>
+    <message>
+        <source>Two candidates are already available.</source>
+        <translation>Es sind bereits zwei Varianten verfügbar.</translation>
+    </message>
+    <message>
+        <source>The preview is stale. Generate a fresh preview to compare alternatives.</source>
+        <translation>Die Vorschau ist veraltet. Erzeugen Sie eine neue Vorschau, um Alternativen zu vergleichen.</translation>
+    </message>
+    <message>
+        <source>Generate a second candidate to compare.</source>
+        <translation>Erzeugen Sie zum Vergleich eine zweite Variante.</translation>
+    </message>
 </context>
 <context>
     <name>MBigView</name>
@@ -5260,6 +5464,78 @@ Anweisung: {prompt}</translation>
         <source>Soft edge</source>
         <translation>Weiche Kante</translation>
     </message>
+    <message>
+        <source>Fill method</source>
+        <translation>Füllmethode</translation>
+    </message>
+    <message>
+        <source>Solid</source>
+        <translation>Einfarbig</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>Farbverlauf</translation>
+    </message>
+    <message>
+        <source>Preview gradient fill…</source>
+        <translation>Farbverlaufsfüllung vorschauen…</translation>
+    </message>
+    <message>
+        <source>Sample clean points around one masked background area, then preview a smooth gradient before applying it.</source>
+        <translation>Nehmen Sie Proben an sauberen Stellen rund um einen maskierten Hintergrundbereich und prüfen Sie den gleichmäßigen Farbverlauf vor dem Anwenden.</translation>
+    </message>
+    <message>
+        <source>Heal (experimental)</source>
+        <translation>Heal (experimentell)</translation>
+    </message>
+    <message>
+        <source>Protect artwork</source>
+        <translation>Bild schützen</translation>
+    </message>
+    <message>
+        <source>Paint areas that cleanup and artistic edits must leave unchanged.</source>
+        <translation>Markieren Sie Bereiche, die bei Bereinigung und künstlerischer Bearbeitung unverändert bleiben sollen.</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>Schützen</translation>
+    </message>
+    <message>
+        <source>Protect brush</source>
+        <translation>Schutzpinsel</translation>
+    </message>
+    <message>
+        <source>Brush over artwork to protect its pixels. Uses the brush size slider. Each stroke can be undone.</source>
+        <translation>Übermalen Sie Bildbereiche, um ihre Pixel zu schützen. Die Größe wird mit dem Pinselgrößenregler eingestellt. Jeder Pinselstrich kann rückgängig gemacht werden.</translation>
+    </message>
+    <message>
+        <source>Unprotect</source>
+        <translation>Schutz aufheben</translation>
+    </message>
+    <message>
+        <source>Unprotect brush</source>
+        <translation>Pinsel zum Aufheben des Schutzes</translation>
+    </message>
+    <message>
+        <source>Brush over protected pixels to allow editing again. This does not erase artwork.</source>
+        <translation>Übermalen Sie geschützte Pixel, um sie wieder bearbeiten zu können. Das Bild wird dabei nicht gelöscht.</translation>
+    </message>
+    <message>
+        <source>Show protected pixels</source>
+        <translation>Geschützte Pixel anzeigen</translation>
+    </message>
+    <message>
+        <source>Purple marks protected artwork. This overlay is never exported.</source>
+        <translation>Geschützte Bildbereiche sind violett markiert. Diese Überlagerung wird nie exportiert.</translation>
+    </message>
+    <message>
+        <source>Preview Heal…</source>
+        <translation>Heal-Vorschau…</translation>
+    </message>
+    <message>
+        <source>Use a fixed clone sample and a picked background color to preview one small masked repair. The mask must fit inside the sample.</source>
+        <translation>Zeigen Sie mit einer festen Klonprobe und einer gewählten Hintergrundfarbe eine kleine maskierte Reparatur in der Vorschau an. Die Maske muss in die Probe passen.</translation>
+    </message>
 </context>
 <context>
     <name>LocalRepairController</name>
@@ -5286,6 +5562,26 @@ Anweisung: {prompt}</translation>
     <message>
         <source>Sampled color fill</source>
         <translation>Füllung mit aufgenommener Farbe</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new gradient preview before applying the repair.</source>
+        <translation>Die Seite oder Maske wurde geändert. Öffnen Sie eine neue Farbverlaufsvorschau, bevor Sie die Reparatur anwenden.</translation>
+    </message>
+    <message>
+        <source>Sampled gradient fill</source>
+        <translation>Farbverlaufsfüllung aus Proben</translation>
+    </message>
+    <message>
+        <source>Alt-click a clean area with Clone to capture a sample first.</source>
+        <translation>Nehmen Sie zuerst mit dem Klonwerkzeug per Alt-Klick auf einen sauberen Bereich eine Probe auf.</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new repair preview before applying.</source>
+        <translation>Die Seite oder Maske wurde geändert. Öffnen Sie vor dem Anwenden eine neue Reparaturvorschau.</translation>
+    </message>
+    <message>
+        <source>Heal repair</source>
+        <translation>Heal-Reparatur</translation>
     </message>
 </context>
 <context>
@@ -5513,6 +5809,1552 @@ Anweisung: {prompt}</translation>
         <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
         <source>The LoRA file changed during verification. Select it again and retry.</source>
         <translation>Die LoRA-Datei wurde während der Überprüfung geändert. Wählen Sie sie erneut aus und versuchen Sie es noch einmal.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitDialog</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>Text einpassen</translation>
+    </message>
+    <message>
+        <source>Preview text layout inside the fitting area. Artwork and cleanup masks are unchanged.</source>
+        <translation>Vorschau des Textlayouts im Einpassbereich. Bild und Bereinigungsmasken bleiben unverändert.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Breite</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Höhe</translation>
+    </message>
+    <message>
+        <source>Fitting area: width × height</source>
+        <translation>Einpassbereich: Breite × Höhe</translation>
+    </message>
+    <message>
+        <source>Minimum font size</source>
+        <translation>Minimale Schriftgröße</translation>
+    </message>
+    <message>
+        <source>Maximum font size</source>
+        <translation>Maximale Schriftgröße</translation>
+    </message>
+    <message>
+        <source>Keep manual line breaks</source>
+        <translation>Manuelle Zeilenumbrüche beibehalten</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Aktuell</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Ausgewogen</translation>
+    </message>
+    <message>
+        <source>Larger text</source>
+        <translation>Größerer Text</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Layout</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Anwenden</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>Minimum font size must not exceed maximum font size.</source>
+        <translation>Die minimale Schriftgröße darf die maximale Schriftgröße nicht überschreiten.</translation>
+    </message>
+    <message>
+        <source>Fits within the area.</source>
+        <translation>Passt in den Bereich.</translation>
+    </message>
+    <message>
+        <source>Does not fit. Enlarge the area or shorten the text.</source>
+        <translation>Passt nicht. Vergrößern Sie den Bereich oder kürzen Sie den Text.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>Der Text ist kleiner als die minimale lesbare Schriftgröße.</translation>
+    </message>
+    <message>
+        <source>Font size: {size} — {status}</source>
+        <translation>Schriftgröße: {size} — {status}</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>Textfeld</translation>
+    </message>
+    <message>
+        <source>Bubble interior</source>
+        <translation>Sprechblaseninneres</translation>
+    </message>
+    <message>
+        <source>Fit mode</source>
+        <translation>Einpassmodus</translation>
+    </message>
+    <message>
+        <source>Estimate from original</source>
+        <translation>Aus Original ermitteln</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Rechteck</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>Ellipse</translation>
+    </message>
+    <message>
+        <source>Boundary</source>
+        <translation>Begrenzung</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>Links</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>Oben</translation>
+    </message>
+    <message>
+        <source>Boundary origin: X × Y</source>
+        <translation>Ursprung der Begrenzung: X × Y</translation>
+    </message>
+    <message>
+        <source>Padding</source>
+        <translation>Innenabstand</translation>
+    </message>
+    <message>
+        <source>Estimated interior. Check the boundary before applying.</source>
+        <translation>Geschätzter Innenbereich. Prüfen Sie die Begrenzung vor dem Anwenden.</translation>
+    </message>
+    <message>
+        <source>Manual boundary.</source>
+        <translation>Manuelle Begrenzung.</translation>
+    </message>
+    <message>
+        <source>Bubble fitting requires unrotated horizontal text at normal scale. Using Box.</source>
+        <translation>Das Einpassen in Sprechblasen erfordert ungedrehten horizontalen Text in normaler Skalierung. Der Modus „Textfeld“ wird verwendet.</translation>
+    </message>
+    <message>
+        <source>Original image unavailable or its dimensions changed. Using Box.</source>
+        <translation>Das Originalbild ist nicht verfügbar oder seine Abmessungen wurden geändert. Der Modus „Textfeld“ wird verwendet.</translation>
+    </message>
+    <message>
+        <source>Padding leaves no usable interior. Using Box.</source>
+        <translation>Der Innenabstand lässt keinen nutzbaren Innenbereich übrig. Der Modus „Textfeld“ wird verwendet.</translation>
+    </message>
+    <message>
+        <source>Fitting area is too large. Using Box.</source>
+        <translation>Der Einpassbereich ist zu groß. Der Modus „Textfeld“ wird verwendet.</translation>
+    </message>
+    <message>
+        <source>No reliable enclosed interior was found. Using Box. Try Rectangle or Ellipse.</source>
+        <translation>Es wurde kein zuverlässiger geschlossener Innenbereich gefunden. Der Modus „Textfeld“ wird verwendet. Versuchen Sie Rechteck oder Ellipse.</translation>
+    </message>
+    <message>
+        <source>The boundary is outside the page or has no usable area. Using Box.</source>
+        <translation>Die Begrenzung liegt außerhalb der Seite oder umfasst keinen nutzbaren Bereich. Der Modus „Textfeld“ wird verwendet.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitController</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>Text einpassen</translation>
+    </message>
+    <message>
+        <source>Text overflows the fitting area.</source>
+        <translation>Der Text ragt über den Einpassbereich hinaus.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>Der Text ist kleiner als die minimale lesbare Schriftgröße.</translation>
+    </message>
+    <message>
+        <source>The text or page changed. Open Fit Text again to make a new preview.</source>
+        <translation>Der Text oder die Seite wurde geändert. Öffnen Sie „Text einpassen“ erneut, um eine neue Vorschau zu erstellen.</translation>
+    </message>
+    <message>
+        <source>Fit Text requires a text item contained within one page.</source>
+        <translation>Text einpassen erfordert ein Textelement, das vollständig auf einer Seite liegt.</translation>
+    </message>
+    <message>
+        <source>Wait for page processing to finish before fitting text.</source>
+        <translation>Warten Sie, bis die Seitenverarbeitung abgeschlossen ist, bevor Sie Text einpassen.</translation>
+    </message>
+    <message>
+        <source>Reset text shape to fit.</source>
+        <translation>Textform zum Einpassen zurücksetzen.</translation>
+    </message>
+    <message>
+        <source>Fit Text is unavailable for transformed lettering. Reset the lettering transform first.</source>
+        <translation>Text einpassen ist für transformierten Text nicht verfügbar. Setzen Sie zuerst die Texttransformation zurück.</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewPanel</name>
+    <message>
+        <source>Review</source>
+        <translation>Prüfung</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>Alle Seiten</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Aktuelle Seite</translation>
+    </message>
+    <message>
+        <source>Review scope</source>
+        <translation>Prüfumfang</translation>
+    </message>
+    <message>
+        <source>All issues</source>
+        <translation>Alle Probleme</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR fehlt</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>Übersetzung fehlt</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>Textüberlauf</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>Kleiner Text</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>Vorgang fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Awaiting review</source>
+        <translation>Prüfung ausstehend</translation>
+    </message>
+    <message>
+        <source>Issue filter</source>
+        <translation>Problemfilter</translation>
+    </message>
+    <message>
+        <source>Review issues</source>
+        <translation>Zu prüfende Probleme</translation>
+    </message>
+    <message>
+        <source>No issues in this view.</source>
+        <translation>Keine Probleme in dieser Ansicht.</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>Zurück</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>Weiter</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Aktualisieren</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Quelltext</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Übersetzung</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Layout</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>Bereinigung</translation>
+    </message>
+    <message>
+        <source>Review stage</source>
+        <translation>Prüfschritt</translation>
+    </message>
+    <message>
+        <source>Mark reviewed</source>
+        <translation>Geprüft markieren</translation>
+    </message>
+    <message>
+        <source>Ignore issue</source>
+        <translation>Problem ignorieren</translation>
+    </message>
+    <message>
+        <source>Keep source</source>
+        <translation>Quelltext beibehalten</translation>
+    </message>
+    <message>
+        <source>Keep translation</source>
+        <translation>Übersetzung beibehalten</translation>
+    </message>
+    <message>
+        <source>Keep layout</source>
+        <translation>Layout beibehalten</translation>
+    </message>
+    <message>
+        <source>Skip automatic cleanup</source>
+        <translation>Automatische Bereinigung überspringen</translation>
+    </message>
+    <message>
+        <source>Fit Text</source>
+        <translation>Text einpassen</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>Bericht</translation>
+    </message>
+    <message>
+        <source>Pages: {pages} · Regions: {regions} · Issues: {issues}</source>
+        <translation>Seiten: {pages} · Bereiche: {regions} · Probleme: {issues}</translation>
+    </message>
+    <message>
+        <source>Page-wide operations keep protected stages. Direct edits remain allowed.</source>
+        <translation>Seitenweite Vorgänge behalten geschützte Schritte bei. Direkte Bearbeitungen sind weiterhin möglich.</translation>
+    </message>
+    <message>
+        <source>Uncertain OCR</source>
+        <translation>Unsichere Texterkennung</translation>
+    </message>
+    <message>
+        <source>Retry OCR…</source>
+        <translation>Texterkennung wiederholen…</translation>
+    </message>
+    <message>
+        <source>Lowest line score {score} ({model})</source>
+        <translation>Niedrigster Zeilenwert {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest word score {score} ({model})</source>
+        <translation>Niedrigster Wortwert {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest sequence score {score} ({model})</source>
+        <translation>Niedrigster Sequenzwert {score} ({model})</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewController</name>
+    <message>
+        <source>Change review state</source>
+        <translation>Prüfstatus ändern</translation>
+    </message>
+    <message>
+        <source>Apply reviewed text</source>
+        <translation>Geprüften Text übernehmen</translation>
+    </message>
+    <message>
+        <source>Checking text layouts…</source>
+        <translation>Textlayouts werden geprüft…</translation>
+    </message>
+    <message>
+        <source>Detect text regions to start reviewing.</source>
+        <translation>Erkennen Sie Textbereiche, um mit der Prüfung zu beginnen.</translation>
+    </message>
+    <message>
+        <source>Bubble outlines are checked when their page is open.</source>
+        <translation>Sprechblasenränder werden geprüft, wenn die jeweilige Seite geöffnet ist.</translation>
+    </message>
+    <message>
+        <source>Awaiting review: {stage}</source>
+        <translation>Prüfung ausstehend: {stage}</translation>
+    </message>
+    <message>
+        <source>The page is not ready. Try selecting the issue again.</source>
+        <translation>Die Seite ist noch nicht bereit. Wählen Sie das Problem erneut aus.</translation>
+    </message>
+    <message>
+        <source>This region has changed. Refresh the review list.</source>
+        <translation>Dieser Bereich wurde geändert. Aktualisieren Sie die Prüfliste.</translation>
+    </message>
+    <message>
+        <source>The original page is unavailable for this preview.</source>
+        <translation>Die Originalseite ist für diese Vorschau nicht verfügbar.</translation>
+    </message>
+    <message>
+        <source>Review replacement</source>
+        <translation>Ersetzung prüfen</translation>
+    </message>
+    <message>
+        <source>Current text</source>
+        <translation>Aktueller Text</translation>
+    </message>
+    <message>
+        <source>Proposed text</source>
+        <translation>Vorgeschlagener Text</translation>
+    </message>
+    <message>
+        <source>Apply keeps the protection and existing lettering geometry. Use Clean and Render for missing lettering.</source>
+        <translation>Beim Übernehmen bleiben der Schutz und die vorhandene Textgeometrie erhalten. Verwenden Sie „Bereinigen“ und „Rendern“ für fehlenden Text.</translation>
+    </message>
+    <message>
+        <source>This region changed while the preview was open. Run the action again.</source>
+        <translation>Dieser Bereich wurde geändert, während die Vorschau geöffnet war. Führen Sie die Aktion erneut aus.</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR fehlt</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>Übersetzung fehlt</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>Textüberlauf</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>Kleiner Text</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>Vorgang fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Quelltext</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Übersetzung</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Layout</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>Bereinigung</translation>
+    </message>
+    <message>
+        <source>Retry OCR</source>
+        <translation>Texterkennung wiederholen</translation>
+    </message>
+    <message>
+        <source>Local recognizer</source>
+        <translation>Lokale OCR-Engine</translation>
+    </message>
+    <message>
+        <source>Missing model files will be downloaded when you continue.</source>
+        <translation>Wenn Sie fortfahren, werden fehlende Modelldateien heruntergeladen.</translation>
+    </message>
+    <message>
+        <source>No alternative local recognizer is available for this source language.</source>
+        <translation>Für diese Ausgangssprache ist keine andere lokale OCR-Engine verfügbar.</translation>
+    </message>
+    <message>
+        <source>Select a text region first.</source>
+        <translation>Wählen Sie zuerst einen Textbereich aus.</translation>
+    </message>
+    <message>
+        <source>The recognizer returned no text.</source>
+        <translation>Die OCR-Engine hat keinen Text erkannt.</translation>
+    </message>
+    <message>
+        <source>Apply replaces the source text for this region.</source>
+        <translation>Mit „Anwenden“ ersetzen Sie den Ausgangstext dieses Bereichs.</translation>
+    </message>
+</context>
+<context>
+    <name>ContextEntryDialog</name>
+    <message>
+        <source>Glossary entry</source>
+        <translation>Glossareintrag</translation>
+    </message>
+    <message>
+        <source>Character</source>
+        <translation>Figur</translation>
+    </message>
+    <message>
+        <source>One alias per line</source>
+        <translation>Ein Alias pro Zeile</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>Ausgangsbegriff</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>Bevorzugte Übersetzung</translation>
+    </message>
+    <message>
+        <source>Aliases</source>
+        <translation>Aliase</translation>
+    </message>
+    <message>
+        <source>Source language</source>
+        <translation>Ausgangssprache</translation>
+    </message>
+    <message>
+        <source>Target language</source>
+        <translation>Zielsprache</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatisch</translation>
+    </message>
+    <message>
+        <source>Whole word</source>
+        <translation>Ganzes Wort</translation>
+    </message>
+    <message>
+        <source>Substring</source>
+        <translation>Teilzeichenfolge</translation>
+    </message>
+    <message>
+        <source>Matching rule</source>
+        <translation>Abgleichregel</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Notizen</translation>
+    </message>
+    <message>
+        <source>Voice and formality notes</source>
+        <translation>Sprechstil und Förmlichkeit</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>Aktiviert</translation>
+    </message>
+    <message>
+        <source>Approved for translation</source>
+        <translation>Für Übersetzungen freigegeben</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>Beliebige Sprache</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation.</source>
+        <translation>Geben Sie einen Ausgangsbegriff und die bevorzugte Übersetzung ein.</translation>
+    </message>
+    <message>
+        <source>Enter a character name.</source>
+        <translation>Geben Sie einen Figurennamen ein.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextController</name>
+    <message>
+        <source>Choose an LLM translator to suggest a summary.</source>
+        <translation>Wählen Sie für einen Zusammenfassungsvorschlag einen LLM-Übersetzer.</translation>
+    </message>
+    <message>
+        <source>In Review, mark a translation reviewed for this source and target language pair.</source>
+        <translation>Markieren Sie unter „Prüfung“ eine Übersetzung für dieses Sprachenpaar als geprüft.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit or shorten the story summary to fit approved translations.</source>
+        <translation>Erhöhen Sie das Token-Limit für den Kontext oder kürzen Sie die Zusammenfassung, damit die freigegebenen Übersetzungen hineinpassen.</translation>
+    </message>
+    <message>
+        <source>Check the selected translator’s connection settings.</source>
+        <translation>Prüfen Sie die Verbindungseinstellungen des gewählten Übersetzers.</translation>
+    </message>
+    <message>
+        <source>The model returned an unusable summary.</source>
+        <translation>Das Modell hat eine unbrauchbare Zusammenfassung geliefert.</translation>
+    </message>
+    <message>
+        <source>The summary request failed. Check the translator settings and try again.</source>
+        <translation>Die Anfrage für die Zusammenfassung ist fehlgeschlagen. Prüfen Sie die Übersetzereinstellungen und versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>The project or summary inputs changed. Open the suggestion again.</source>
+        <translation>Das Projekt oder die Eingaben für die Zusammenfassung wurden geändert. Öffnen Sie den Vorschlag erneut.</translation>
+    </message>
+    <message>
+        <source>Change translation context</source>
+        <translation>Übersetzungskontext ändern</translation>
+    </message>
+    <message>
+        <source>Select a text region to preview its request.</source>
+        <translation>Wählen Sie einen Textbereich, um dessen Anfrage anzuzeigen.</translation>
+    </message>
+    <message>
+        <source>The current page has no text regions to preview.</source>
+        <translation>Die aktuelle Seite hat keine Textbereiche für die Vorschau.</translation>
+    </message>
+    <message>
+        <source>Cannot build request preview: {error}</source>
+        <translation>Anfragevorschau kann nicht erstellt werden: {error}</translation>
+    </message>
+    <message>
+        <source>Choose an LLM translator to suggest glossary terms.</source>
+        <translation>Wählen Sie einen LLM-Übersetzer, um Glossarbegriffe vorschlagen zu lassen.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit to fit approved translations.</source>
+        <translation>Erhöhen Sie das Token-Limit für den Kontext, damit die freigegebenen Übersetzungen hineinpassen.</translation>
+    </message>
+    <message>
+        <source>The model returned unusable glossary suggestions.</source>
+        <translation>Das Modell hat keine verwertbaren Glossarvorschläge geliefert.</translation>
+    </message>
+    <message>
+        <source>The glossary request failed. Check the translator settings and try again.</source>
+        <translation>Die Glossaranfrage ist fehlgeschlagen. Prüfen Sie die Übersetzereinstellungen und versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>The project or glossary inputs changed. Open the suggestion again.</source>
+        <translation>Das Projekt oder die Eingaben für die Glossarvorschläge wurden geändert. Öffnen Sie die Vorschläge erneut.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextDialog</name>
+    <message>
+        <source>Suggest story summary…</source>
+        <translation>Handlungszusammenfassung vorschlagen…</translation>
+    </message>
+    <message>
+        <source>Include approved translations from earlier pages</source>
+        <translation>Freigegebene Übersetzungen aus vorherigen Seiten einbeziehen</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Übersetzungskontext</translation>
+    </message>
+    <message>
+        <source>Glossary</source>
+        <translation>Glossar</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>Figuren</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>Ausgangsbegriff</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>Bevorzugte Übersetzung</translation>
+    </message>
+    <message>
+        <source>Language pair</source>
+        <translation>Sprachpaar</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Bearbeiten</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <source>Add selected source/translation</source>
+        <translation>Ausgewählten Ausgangstext/Übersetzung hinzufügen</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>Sprecher</translation>
+    </message>
+    <message>
+        <source>Assign selected region</source>
+        <translation>Ausgewähltem Bereich zuweisen</translation>
+    </message>
+    <message>
+        <source>Project notes</source>
+        <translation>Projektnotizen</translation>
+    </message>
+    <message>
+        <source>Setting, tone, terminology guidance, and other context for this work.</source>
+        <translation>Schauplatz, Ton, Vorgaben zur Terminologie und weiterer Kontext für dieses Werk.</translation>
+    </message>
+    <message>
+        <source>Story summary</source>
+        <translation>Handlungszusammenfassung</translation>
+    </message>
+    <message>
+        <source>Context token limit</source>
+        <translation>Token-Limit für Kontext</translation>
+    </message>
+    <message>
+        <source>Uses a conservative estimate. Required context that exceeds the available budget must be shortened.</source>
+        <translation>Verwendet eine vorsichtige Schätzung. Erforderlicher Kontext, der das verfügbare Budget überschreitet, muss gekürzt werden.</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Notizen</translation>
+    </message>
+    <message>
+        <source>Request preview</source>
+        <translation>Anfragevorschau</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Aktuelle Seite</translation>
+    </message>
+    <message>
+        <source>Selected region</source>
+        <translation>Ausgewählter Bereich</translation>
+    </message>
+    <message>
+        <source>Preview scope</source>
+        <translation>Vorschaubereich</translation>
+    </message>
+    <message>
+        <source>Build preview</source>
+        <translation>Vorschau erstellen</translation>
+    </message>
+    <message>
+        <source>Undo context</source>
+        <translation>Kontext rückgängig</translation>
+    </message>
+    <message>
+        <source>Redo context</source>
+        <translation>Kontext wiederholen</translation>
+    </message>
+    <message>
+        <source>Revert draft</source>
+        <translation>Entwurf zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Anwenden</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Schließen</translation>
+    </message>
+    <message>
+        <source>Changes apply to this project. The existing LLM context setting also remains in use.</source>
+        <translation>Änderungen gelten für dieses Projekt. Die vorhandene LLM-Kontexteinstellung wird weiterhin verwendet.</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>Beliebige Sprache</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>Deaktiviert</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation>Freigegeben</translation>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation>Entwurf</translation>
+    </message>
+    <message>
+        <source>No speaker</source>
+        <translation>Kein Sprecher</translation>
+    </message>
+    <message>
+        <source>Selected region: {text}</source>
+        <translation>Ausgewählter Bereich: {text}</translation>
+    </message>
+    <message>
+        <source>Select a text region on the page to assign a speaker.</source>
+        <translation>Wählen Sie einen Textbereich auf der Seite, um einen Sprecher zuzuweisen.</translation>
+    </message>
+    <message>
+        <source>Approved glossary entries, assigned character notes, and project notes guide LLM translation.</source>
+        <translation>Freigegebene Glossareinträge, zugewiesene Figurennotizen und Projektnotizen leiten die LLM-Übersetzung.</translation>
+    </message>
+    <message>
+        <source>This translator does not support structured LLM context. Project entries remain editable for use with an LLM.</source>
+        <translation>Dieser Übersetzer unterstützt keinen strukturierten LLM-Kontext. Projekteinstellungen können für die Verwendung mit einem LLM weiterhin bearbeitet werden.</translation>
+    </message>
+    <message>
+        <source>Unapplied changes. Apply to use them for translation.</source>
+        <translation>Nicht angewendete Änderungen. Wenden Sie sie an, um sie für Übersetzungen zu verwenden.</translation>
+    </message>
+    <message>
+        <source>No unapplied changes.</source>
+        <translation>Keine ausstehenden Änderungen.</translation>
+    </message>
+    <message>
+        <source>Suggest glossary terms…</source>
+        <translation>Glossarbegriffe vorschlagen…</translation>
+    </message>
+</context>
+<context>
+    <name>GradientRepairDialog</name>
+    <message>
+        <source>Gradient repair</source>
+        <translation>Farbverlauf reparieren</translation>
+    </message>
+    <message>
+        <source>Repair one smooth background area at a time. Click at least four clean spots around the entire mask, away from text and borders. Six or more samples improve reliability.</source>
+        <translation>Reparieren Sie jeweils nur einen gleichmäßigen Hintergrundbereich. Klicken Sie auf mindestens vier saubere Stellen rund um die gesamte Maske, mit Abstand zu Text und Rändern. Sechs oder mehr Proben verbessern die Zuverlässigkeit.</translation>
+    </message>
+    <message>
+        <source>Sample from</source>
+        <translation>Probenquelle</translation>
+    </message>
+    <message>
+        <source>Edited page</source>
+        <translation>Bearbeitete Seite</translation>
+    </message>
+    <message>
+        <source>Original page</source>
+        <translation>Originalseite</translation>
+    </message>
+    <message>
+        <source>Changing the source clears samples. Preview pixels are never used as samples.</source>
+        <translation>Beim Wechsel der Quelle werden die Proben gelöscht. Pixel aus der Vorschau werden niemals als Proben verwendet.</translation>
+    </message>
+    <message>
+        <source>Show mask</source>
+        <translation>Maske anzeigen</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>Reparaturbereich einpassen</translation>
+    </message>
+    <message>
+        <source>Fit page</source>
+        <translation>Seite einpassen</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>Verkleinern</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>Vergrößern</translation>
+    </message>
+    <message>
+        <source>Sample background</source>
+        <translation>Hintergrund abtasten</translation>
+    </message>
+    <message>
+        <source>Repair preview</source>
+        <translation>Reparaturvorschau</translation>
+    </message>
+    <message>
+        <source>Remove last sample</source>
+        <translation>Letzte Probe entfernen</translation>
+    </message>
+    <message>
+        <source>Clear samples</source>
+        <translation>Proben löschen</translation>
+    </message>
+    <message>
+        <source>Generate preview</source>
+        <translation>Vorschau erstellen</translation>
+    </message>
+    <message>
+        <source>Drag to pan; use the mouse wheel to zoom. Only pixels inside the painted mask will change.</source>
+        <translation>Zum Verschieben ziehen; mit dem Mausrad zoomen. Nur Pixel innerhalb der gemalten Maske werden geändert.</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Anwenden</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>Samples: {count}</source>
+        <translation>Proben: {count}</translation>
+    </message>
+    <message>
+        <source>Click inside the page image.</source>
+        <translation>Klicken Sie innerhalb des Seitenbildes.</translation>
+    </message>
+    <message>
+        <source>Choose a clean spot outside the painted mask.</source>
+        <translation>Wählen Sie eine saubere Stelle außerhalb der gemalten Maske.</translation>
+    </message>
+    <message>
+        <source>That pixel is already sampled. Choose another clean spot.</source>
+        <translation>Dieser Pixel wurde bereits erfasst. Wählen Sie eine andere saubere Stelle.</translation>
+    </message>
+    <message>
+        <source>Use at most 64 samples. Remove a sample before adding another.</source>
+        <translation>Höchstens 64 Proben sind möglich. Entfernen Sie eine Probe, bevor Sie eine weitere hinzufügen.</translation>
+    </message>
+    <message>
+        <source>Choose at least four distinct clean spots around the repair.</source>
+        <translation>Wählen Sie mindestens vier verschiedene saubere Stellen rund um den Reparaturbereich.</translation>
+    </message>
+    <message>
+        <source>Spread samples in both directions; do not place them along one line.</source>
+        <translation>Verteilen Sie die Proben in beide Richtungen, nicht auf einer einzigen Linie.</translation>
+    </message>
+    <message>
+        <source>Place clean samples around all sides of the painted mask.</source>
+        <translation>Platzieren Sie saubere Proben auf allen Seiten der gemalten Maske.</translation>
+    </message>
+    <message>
+        <source>The samples do not describe a smooth background. Remove spots on text or borders, or add more clean samples.</source>
+        <translation>Die Proben ergeben keinen gleichmäßigen Hintergrund. Entfernen Sie Stellen auf Text oder Rändern oder fügen Sie weitere saubere Proben hinzu.</translation>
+    </message>
+    <message>
+        <source>Cannot build this repair from the image, mask, and samples.</source>
+        <translation>Aus diesem Bild, dieser Maske und diesen Proben kann keine Reparatur erstellt werden.</translation>
+    </message>
+    <message>
+        <source>The preview would not change any pixels.</source>
+        <translation>Die Vorschau würde keine Pixel ändern.</translation>
+    </message>
+    <message>
+        <source>Preview ready: {used} of {total} samples used.</source>
+        <translation>Vorschau bereit: {used} von {total} Proben verwendet.</translation>
+    </message>
+    <message>
+        <source>Ready to generate a preview.</source>
+        <translation>Bereit zum Erstellen einer Vorschau.</translation>
+    </message>
+    <message>
+        <source>Generating preview…</source>
+        <translation>Vorschau wird erstellt…</translation>
+    </message>
+    <message>
+        <source>Preview unavailable: {reason}</source>
+        <translation>Vorschau nicht verfügbar: {reason}</translation>
+    </message>
+    <message>
+        <source>Unable to generate preview: {error}</source>
+        <translation>Vorschau konnte nicht erstellt werden: {error}</translation>
+    </message>
+    <message>
+        <source>Shift-drag to sample a line of background color.</source>
+        <translation>Halte die Umschalttaste gedrückt und ziehe eine Linie, um die Hintergrundfarbe entlang der Linie aufzunehmen.</translation>
+    </message>
+</context>
+<context>
+    <name>HealRepairDialog</name>
+    <message>
+        <source>Experimental Heal preview</source>
+        <translation>Heal-Vorschau (experimentell)</translation>
+    </message>
+    <message>
+        <source>Compare one fixed clone sample with a color-adjusted copy. This prototype preserves sampled texture and shifts its color toward your picked color. It does not reconstruct detail or borrow nearby pixels.</source>
+        <translation>Vergleichen Sie eine feste Klonprobe mit einer farblich angepassten Kopie. Dieser Prototyp erhält die aufgenommene Textur und passt ihren Farbton an die gewählte Farbe an. Er rekonstruiert keine Details und übernimmt keine benachbarten Pixel.</translation>
+    </message>
+    <message>
+        <source>The entire painted mask must fit inside one sample centered on the mask. Use a larger clean clone sample or a smaller mask. Only painted, unprotected pixels can change; texture will not be tiled.</source>
+        <translation>Die gesamte gemalte Maske muss in eine einzelne, auf der Maske zentrierte Probe passen. Verwenden Sie eine größere saubere Klonprobe oder eine kleinere Maske. Nur gemalte, ungeschützte Pixel können sich ändern; die Textur wird nicht gekachelt.</translation>
+    </message>
+    <message>
+        <source>Picked target color: RGB {0}</source>
+        <translation>Gewählte Zielfarbe: RGB {0}</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>Reparaturbereich einpassen</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>Verkleinern</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>Vergrößern</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Aktuelle Seite</translation>
+    </message>
+    <message>
+        <source>Ordinary Clone</source>
+        <translation>Normales Klonen</translation>
+    </message>
+    <message>
+        <source>Heal preview</source>
+        <translation>Heal-Vorschau</translation>
+    </message>
+    <message>
+        <source>Color adjustment</source>
+        <translation>Farbanpassung</translation>
+    </message>
+    <message>
+        <source>Apply Heal</source>
+        <translation>Heal anwenden</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>This preview would not change any pixels.</source>
+        <translation>Diese Vorschau würde keine Pixel verändern.</translation>
+    </message>
+    <message>
+        <source>Preview ready. Compare the texture and color before applying.</source>
+        <translation>Vorschau bereit. Vergleichen Sie Textur und Farbe vor dem Anwenden.</translation>
+    </message>
+    <message>
+        <source>The mask extends beyond the clean clone sample. Cancel and use a larger clean sample or a smaller mask.</source>
+        <translation>Die Maske reicht über die saubere Klonprobe hinaus. Brechen Sie ab und verwenden Sie eine größere saubere Probe oder eine kleinere Maske.</translation>
+    </message>
+    <message>
+        <source>All masked pixels are protected. No repair can be applied.</source>
+        <translation>Alle maskierten Pixel sind geschützt. Eine Reparatur kann nicht angewendet werden.</translation>
+    </message>
+    <message>
+        <source>Paint a repair mask before opening Heal preview.</source>
+        <translation>Malen Sie eine Reparaturmaske, bevor Sie die Heal-Vorschau öffnen.</translation>
+    </message>
+    <message>
+        <source>The repair inputs are invalid. Cancel and sample again.</source>
+        <translation>Die Reparatureingaben sind ungültig. Brechen Sie ab und nehmen Sie eine neue Probe auf.</translation>
+    </message>
+    <message>
+        <source>Could not generate the preview. No changes were applied.</source>
+        <translation>Die Vorschau konnte nicht erstellt werden. Es wurden keine Änderungen angewendet.</translation>
+    </message>
+</context>
+<context>
+    <name>PixelProtectionController</name>
+    <message>
+        <source>Protect artwork</source>
+        <translation>Bild schützen</translation>
+    </message>
+    <message>
+        <source>Unprotect artwork</source>
+        <translation>Bildschutz aufheben</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesController</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Schriftstile</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before applying a lettering style.</source>
+        <translation>Warten Sie, bis die Verarbeitung abgeschlossen ist, bevor Sie einen Schriftstil anwenden.</translation>
+    </message>
+    <message>
+        <source>Open a page before editing project lettering styles.</source>
+        <translation>Öffnen Sie eine Seite, bevor Sie die Schriftstile des Projekts bearbeiten.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one current page to apply a style.</source>
+        <translation>Wählen Sie Textfelder auf der aktuellen Seite aus, um einen Stil anzuwenden.</translation>
+    </message>
+    <message>
+        <source>Select one copy of each text region before applying a style.</source>
+        <translation>Wählen Sie vor dem Anwenden eines Stils nur eine Instanz jedes Textbereichs aus.</translation>
+    </message>
+    <message>
+        <source>The page, lettering or presets changed. Open a new style preview.</source>
+        <translation>Die Seite, der Text oder die Vorlagen haben sich geändert. Öffnen Sie eine neue Stilvorschau.</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesDialog</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Schriftstile</translation>
+    </message>
+    <message>
+        <source>Save lettering from a selected text box as a named project style. Choose which properties to apply; word emphasis is preserved unless you select Bold, Italic or Underline.</source>
+        <translation>Speichern Sie die Formatierung eines ausgewählten Textfelds als benannten Projektstil. Wählen Sie die anzuwendenden Eigenschaften; Hervorhebungen einzelner Wörter bleiben erhalten, sofern Sie nicht Fett, Kursiv oder Unterstrichen auswählen.</translation>
+    </message>
+    <message>
+        <source>Project styles</source>
+        <translation>Projektstile</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>Stilname</translation>
+    </message>
+    <message>
+        <source>Dialogue, narration, sound effects…</source>
+        <translation>Dialog, Erzählung, Geräuscheffekte…</translation>
+    </message>
+    <message>
+        <source>Save from previewed text box</source>
+        <translation>Aus angezeigtem Textfeld speichern</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the text box chosen in Preview text box.</source>
+        <translation>Erstellt einen neuen Stil aus dem unter „Textfeldvorschau“ ausgewählten Textfeld.</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>Umbenennen</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>Stil löschen</translation>
+    </message>
+    <message>
+        <source>Replace style from previewed text box</source>
+        <translation>Stil aus angezeigtem Textfeld ersetzen</translation>
+    </message>
+    <message>
+        <source>Properties to apply</source>
+        <translation>Anzuwendende Eigenschaften</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>Schriftart</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>Schriftgröße</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>Textfarbe</translation>
+    </message>
+    <message>
+        <source>Outline</source>
+        <translation>Umriss</translation>
+    </message>
+    <message>
+        <source>Line spacing</source>
+        <translation>Zeilenabstand</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>Ausrichtung</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>Fett</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Kursiv</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Unterstrichen</translation>
+    </message>
+    <message>
+        <source>Preview text box</source>
+        <translation>Textfeldvorschau</translation>
+    </message>
+    <message>
+        <source>{0}: {1}</source>
+        <translation>{0}: {1}</translation>
+    </message>
+    <message>
+        <source>{0} selected text boxes</source>
+        <translation>{0} ausgewählte Textfelder</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>Vorschau einpassen</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Aktuell</translation>
+    </message>
+    <message>
+        <source>Styled</source>
+        <translation>Mit Stil</translation>
+    </message>
+    <message>
+        <source>Preview uses a neutral background. Inspect text fit after changing font or size.</source>
+        <translation>Die Vorschau verwendet einen neutralen Hintergrund. Prüfen Sie nach dem Ändern von Schriftart oder -größe, ob der Text passt.</translation>
+    </message>
+    <message>
+        <source>Apply despite these font warnings</source>
+        <translation>Trotz dieser Schriftwarnungen anwenden</translation>
+    </message>
+    <message>
+        <source>Save presets only</source>
+        <translation>Nur Vorlagen speichern</translation>
+    </message>
+    <message>
+        <source>Apply to selection</source>
+        <translation>Auf Auswahl anwenden</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>Changes to presets are saved only when you choose Save presets only or Apply to selection.</source>
+        <translation>Vorlagenänderungen werden nur mit „Nur Vorlagen speichern“ oder „Auf Auswahl anwenden“ gespeichert.</translation>
+    </message>
+    <message>
+        <source>Enter a style name.</source>
+        <translation>Geben Sie einen Stilnamen ein.</translation>
+    </message>
+    <message>
+        <source>A style with this name already exists. Choose another name.</source>
+        <translation>Ein Stil mit diesem Namen existiert bereits. Wählen Sie einen anderen Namen.</translation>
+    </message>
+    <message>
+        <source>Could not capture this text style. No preset was added.</source>
+        <translation>Dieser Textstil konnte nicht übernommen werden. Es wurde keine Vorlage hinzugefügt.</translation>
+    </message>
+    <message>
+        <source>Ready to apply this style to {0} text boxes.</source>
+        <translation>Dieser Stil kann auf {0} Textfelder angewendet werden.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still rename or delete project presets.</source>
+        <translation>Wählen Sie Textfelder auf einer Seite aus, um einen Stil zu übernehmen oder anzuwenden. Projektvorlagen können Sie weiterhin umbenennen oder löschen.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, or enter a name and save the previewed text box as a new style.</source>
+        <translation>Wählen Sie einen Projektstil oder geben Sie einen Namen ein und speichern Sie das angezeigte Textfeld als neuen Stil.</translation>
+    </message>
+    <message>
+        <source>Choose at least one property to apply.</source>
+        <translation>Wählen Sie mindestens eine anzuwendende Eigenschaft.</translation>
+    </message>
+    <message>
+        <source>Could not build the style preview. No changes were applied.</source>
+        <translation>Die Stilvorschau konnte nicht erstellt werden. Es wurden keine Änderungen angewendet.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" is unavailable. A fallback font will be used.</source>
+        <translation>Textfeld {0}: Die Schriftart „{1}“ ist nicht verfügbar. Es wird eine Ersatzschrift verwendet.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" lacks these characters: {2}. Fallback glyphs may differ.</source>
+        <translation>Textfeld {0}: Der Schriftart „{1}“ fehlen diese Zeichen: {2}. Ersatzzeichen können anders aussehen.</translation>
+    </message>
+    <message>
+        <source>Reuse a project style or change emphasis directly. Bold, Italic and Underline affect whole selected text boxes; Keep existing preserves individual-word formatting.</source>
+        <translation>Verwenden Sie einen Projektstil oder ändern Sie die Hervorhebung direkt. Fett, Kursiv und Unterstrichen gelten für die gesamten ausgewählten Textfelder; Vorhandenes beibehalten erhält die Formatierung einzelner Wörter.</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the current text box and your emphasis choices.</source>
+        <translation>Erstellt einen neuen Stil aus dem aktuellen Textfeld und Ihren gewählten Hervorhebungen.</translation>
+    </message>
+    <message>
+        <source>Replaces the selected preset with the current text box style and your emphasis choices.</source>
+        <translation>Ersetzt die ausgewählte Vorlage durch den Stil des aktuellen Textfelds und Ihre gewählten Hervorhebungen.</translation>
+    </message>
+    <message>
+        <source>Keep existing</source>
+        <translation>Vorhandenes beibehalten</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Ein</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Aus</translation>
+    </message>
+    <message>
+        <source>Use preset</source>
+        <translation>Vorlage verwenden</translation>
+    </message>
+    <message>
+        <source>On and Off change this emphasis for each entire selected box. Keep existing preserves word-level formatting. Use preset copies the saved value.</source>
+        <translation>Ein und Aus ändern diese Hervorhebung für jedes gesamte ausgewählte Textfeld. Vorhandenes beibehalten erhält die Formatierung einzelner Wörter. Vorlage verwenden übernimmt den gespeicherten Wert.</translation>
+    </message>
+    <message>
+        <source>Ready to apply formatting to {0} text boxes.</source>
+        <translation>Bereit, die Formatierung auf {0} Textfelder anzuwenden.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, save a new style, or set Bold, Italic or Underline to On or Off.</source>
+        <translation>Wählen Sie einen Projektstil, speichern Sie einen neuen Stil oder stellen Sie Fett, Kursiv oder Unterstrichen auf Ein oder Aus.</translation>
+    </message>
+    <message>
+        <source>Import presets…</source>
+        <translation>Vorlagen importieren…</translation>
+    </message>
+    <message>
+        <source>Export presets…</source>
+        <translation>Vorlagen exportieren…</translation>
+    </message>
+    <message>
+        <source>Lettering presets (*.json)</source>
+        <translation>Lettering-Vorlagen (*.json)</translation>
+    </message>
+    <message>
+        <source>Export all presets in this list to a file.</source>
+        <translation>Alle Vorlagen in dieser Liste in eine Datei exportieren.</translation>
+    </message>
+    <message>
+        <source>Existing presets are kept. Name conflicts receive a numbered suffix.</source>
+        <translation>Bestehende Vorlagen bleiben erhalten. Bei Namenskonflikten wird an den importierten Namen eine Nummer angehängt.</translation>
+    </message>
+    <message>
+        <source>Imported: {0}. Renamed: {1}. Skipped duplicates: {2}.</source>
+        <translation>Importiert: {0}. Umbenannt: {1}. Übersprungene Duplikate: {2}.</translation>
+    </message>
+    <message>
+        <source>Exported {0} presets.</source>
+        <translation>Exportierte Vorlagen: {0}.</translation>
+    </message>
+    <message>
+        <source>Could not read the preset file.</source>
+        <translation>Die Vorlagendatei konnte nicht gelesen werden.</translation>
+    </message>
+    <message>
+        <source>Could not write the preset file.</source>
+        <translation>Die Vorlagendatei konnte nicht geschrieben werden.</translation>
+    </message>
+    <message>
+        <source>The preset file is too large.</source>
+        <translation>Die Vorlagendatei ist zu groß.</translation>
+    </message>
+    <message>
+        <source>This file is not a lettering preset library.</source>
+        <translation>Diese Datei enthält keine Bibliothek mit Lettering-Vorlagen.</translation>
+    </message>
+    <message>
+        <source>This preset file version is unsupported.</source>
+        <translation>Diese Version der Vorlagendatei wird nicht unterstützt.</translation>
+    </message>
+    <message>
+        <source>The preset file contains invalid styles.</source>
+        <translation>Die Vorlagendatei enthält ungültige Stile.</translation>
+    </message>
+    <message>
+        <source>The import would exceed the project limit of 100 presets.</source>
+        <translation>Durch den Import würde die Höchstzahl von 100 Vorlagen pro Projekt überschritten.</translation>
+    </message>
+    <message>
+        <source>The preset library is empty.</source>
+        <translation>Die Vorlagenbibliothek ist leer.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still manage project presets.</source>
+        <translation>Wählen Sie Textfelder auf derselben Seite aus, um einen Stil zu übernehmen oder anzuwenden. Die Projektvorlagen lassen sich auch ohne Auswahl verwalten.</translation>
+    </message>
+</context>
+<context>
+    <name>controller</name>
+    <message>
+        <source>Apply lettering style</source>
+        <translation>Schriftstil anwenden</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformController</name>
+    <message>
+        <source>Text shape</source>
+        <translation>Textform</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before changing text shape.</source>
+        <translation>Warten Sie, bis die Verarbeitung abgeschlossen ist, bevor Sie die Textform ändern.</translation>
+    </message>
+    <message>
+        <source>Open a page and select one text box to change its shape.</source>
+        <translation>Öffnen Sie eine Seite und wählen Sie ein Textfeld aus, um seine Form zu ändern.</translation>
+    </message>
+    <message>
+        <source>Select one text box on the current page to change its shape.</source>
+        <translation>Wählen Sie ein Textfeld auf der aktuellen Seite aus, um seine Form zu ändern.</translation>
+    </message>
+    <message>
+        <source>The page or lettering changed. Open a new text shape preview.</source>
+        <translation>Die Seite oder der Text hat sich geändert. Öffnen Sie eine neue Vorschau der Textform.</translation>
+    </message>
+    <message>
+        <source>Transform lettering</source>
+        <translation>Schriftzug transformieren</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformDialog</name>
+    <message>
+        <source>Text shape</source>
+        <translation>Textform</translation>
+    </message>
+    <message>
+        <source>Stretch, skew or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>Strecken, schrägstellen oder perspektivisch verzerren, während Text und Wortformatierung bearbeitbar bleiben.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Breite</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Höhe</translation>
+    </message>
+    <message>
+        <source>Skew</source>
+        <translation>Schrägstellung</translation>
+    </message>
+    <message>
+        <source>Horizontal perspective</source>
+        <translation>Horizontale Perspektive</translation>
+    </message>
+    <message>
+        <source>Vertical perspective</source>
+        <translation>Vertikale Perspektive</translation>
+    </message>
+    <message>
+        <source>Reset distortion</source>
+        <translation>Verzerrung zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Width and height stretch the lettering without changing line wrapping. Use the canvas handles to resize the text box or rotate it.</source>
+        <translation>Breite und Höhe strecken den Schriftzug, ohne die Zeilenumbrüche zu ändern. Mit den Griffen auf der Zeichenfläche können Sie das Textfeld skalieren oder drehen.</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Aktuell</translation>
+    </message>
+    <message>
+        <source>Transformed</source>
+        <translation>Transformiert</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>Vorschau einpassen</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Anwenden</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>Preview only. Apply creates one undoable change.</source>
+        <translation>Nur Vorschau. Anwenden erstellt eine rückgängig machbare Änderung.</translation>
+    </message>
+    <message>
+        <source>PSD: perspective lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: Perspektivischer Text wird als gekennzeichnete Bildebene exportiert. Behalten Sie die Projektdatei, um Text und Form zu bearbeiten.</translation>
+    </message>
+    <message>
+        <source>PSD: this lettering exports as an editable text layer.</source>
+        <translation>PSD: Dieser Text wird als bearbeitbare Textebene exportiert.</translation>
+    </message>
+    <message>
+        <source>This transform could not be previewed. Reset the distortion and try again.</source>
+        <translation>Diese Transformation konnte nicht in der Vorschau angezeigt werden. Setzen Sie die Verzerrung zurück und versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>Stretch, skew, curve or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>Strecken, neigen, krümmen oder perspektivisch verzerren – Text und Formatierung einzelner Wörter bleiben bearbeitbar.</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>Krümmung</translation>
+    </message>
+    <message>
+        <source>Positive curves arch upward; negative curves bend downward. Each line keeps its text and formatting.</source>
+        <translation>Positive Werte wölben den Text nach oben, negative nach unten. Text und Formatierung jeder Zeile bleiben erhalten.</translation>
+    </message>
+    <message>
+        <source>Curves are available for horizontal lettering.</source>
+        <translation>Krümmung ist für horizontale Schrift verfügbar.</translation>
+    </message>
+    <message>
+        <source>PSD: curved lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: Gekrümmte Schrift wird als entsprechend benannte Bildebene exportiert. Bewahren Sie die Projektdatei auf, um Text und Form zu bearbeiten.</translation>
+    </message>
+</context>
+<context>
+    <name>RectItemController</name>
+    <message>
+        <source>Edit lettering geometry</source>
+        <translation>Schriftgeometrie bearbeiten</translation>
+    </message>
+</context>
+<context>
+    <name>SummarySuggestionDialog</name>
+    <message>
+        <source>Suggest story summary</source>
+        <translation>Handlungszusammenfassung vorschlagen</translation>
+    </message>
+    <message>
+        <source>Generate locally with {provider}.</source>
+        <translation>Lokal mit {provider} generieren.</translation>
+    </message>
+    <message>
+        <source>Generate sends the displayed material to {destination} using {provider}.</source>
+        <translation>Beim Generieren wird das angezeigte Material über {provider} an {destination} gesendet.</translation>
+    </message>
+    <message>
+        <source>Approved translations ({count}) · {source} → {target}</source>
+        <translation>Freigegebene Übersetzungen ({count}) · {source} → {target}</translation>
+    </message>
+    <message>
+        <source>Current summary</source>
+        <translation>Aktuelle Zusammenfassung</translation>
+    </message>
+    <message>
+        <source>Suggested summary</source>
+        <translation>Vorgeschlagene Zusammenfassung</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>Generieren</translation>
+    </message>
+    <message>
+        <source>Use suggestion</source>
+        <translation>Vorschlag übernehmen</translation>
+    </message>
+    <message>
+        <source>Generating suggestion…</source>
+        <translation>Vorschlag wird generiert…</translation>
+    </message>
+</context>
+<context>
+    <name>GlossarySuggestionDialog</name>
+    <message>
+        <source>Suggest glossary terms</source>
+        <translation>Glossarbegriffe vorschlagen</translation>
+    </message>
+    <message>
+        <source>Add selected terms</source>
+        <translation>Ausgewählte Begriffe hinzufügen</translation>
+    </message>
+    <message>
+        <source>Approved example</source>
+        <translation>Freigegebenes Beispiel</translation>
+    </message>
+    <message>
+        <source>No new terms found in the approved translations.</source>
+        <translation>In den freigegebenen Übersetzungen wurden keine neuen Begriffe gefunden.</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation for each selected row.</source>
+        <translation>Geben Sie für jede ausgewählte Zeile einen Ausgangsbegriff und eine bevorzugte Übersetzung ein.</translation>
+    </message>
+    <message>
+        <source>A selected source term already exists in this language pair or appears twice in your selection.</source>
+        <translation>Ein ausgewählter Ausgangsbegriff ist für dieses Sprachenpaar bereits vorhanden oder wurde mehrfach ausgewählt.</translation>
+    </message>
+    <message>
+        <source>Select terms to add to the draft glossary.</source>
+        <translation>Wählen Sie die Begriffe aus, die Sie in den Glossarentwurf aufnehmen möchten.</translation>
     </message>
 </context>
 </TS>

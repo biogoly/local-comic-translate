@@ -18,6 +18,14 @@ class LlmsPage(QtWidgets.QWidget):
 
         self.image_checkbox = MCheckBox(self.tr("Provide Image as Input to AI"))
         self.image_checkbox.setChecked(False)
+        self._translator_supports_images = True
+        self.spatial_context_checkbox = MCheckBox(self.tr("Provide text-box coordinates (experimental)"))
+        self.spatial_context_checkbox.setChecked(False)
+        self.spatial_context_help = MLabel(self.tr(
+            "Send text-box positions with the page image. Requires image input and a vision-capable model; improvement is not guaranteed."
+        ))
+        self.spatial_context_help.setWordWrap(True)
+        self.spatial_context_checkbox.setToolTip(self.spatial_context_help.text())
 
         # Left
         left_layout = QtWidgets.QVBoxLayout()
@@ -27,6 +35,8 @@ class LlmsPage(QtWidgets.QWidget):
         left_layout.addWidget(prompt_label)
         left_layout.addWidget(self.extra_context)
         left_layout.addWidget(self.image_checkbox)
+        left_layout.addWidget(self.spatial_context_checkbox)
+        left_layout.addWidget(self.spatial_context_help)
         left_layout.addStretch(1)
 
         # Keep local configuration visible even while another translator is
@@ -143,11 +153,23 @@ class LlmsPage(QtWidgets.QWidget):
 
         self.extra_context.textChanged.connect(self._limit_extra_context)
         self.local_runtime_combo.currentIndexChanged.connect(self._sync_runtime_widgets)
+        self.image_checkbox.toggled.connect(self._sync_spatial_context)
         self._sync_runtime_widgets()
+        self._sync_spatial_context()
         self.set_local_settings_visible(True)
 
     def set_local_settings_visible(self, visible: bool) -> None:
         self.local_settings_container.setVisible(visible)
+
+    def set_translator_supports_images(self, supported: bool) -> None:
+        self._translator_supports_images = bool(supported)
+        self._sync_spatial_context()
+
+    def _sync_spatial_context(self, *_):
+        # Availability does not erase the user's preference when switching
+        # translators or temporarily turning off image input.
+        self.spatial_context_checkbox.setEnabled(
+            self._translator_supports_images and self.image_checkbox.isChecked())
 
     def set_local_runtime(self, runtime: str) -> None:
         index = self.local_runtime_combo.findData(runtime)

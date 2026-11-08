@@ -94,6 +94,7 @@ def get_theme_size():
         "big_view_min_size": int(24 * scale_factor_x),
         "indicator_padding": int(4 * scale_factor_x),
         "indicator_size": int(8 * scale_factor_x),
+        "menu_item_padding": int(12 * scale_factor_x),
         "scroll_bar_size": int(12 * scale_factor_x),
         "scroll_bar_margin": int(12 * scale_factor_x * 2) + 1,
         "scroll_bar_radius": int(12 * scale_factor_x / 2.0),

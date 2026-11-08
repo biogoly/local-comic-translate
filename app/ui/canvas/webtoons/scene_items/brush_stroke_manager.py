@@ -7,7 +7,9 @@ Handles brush stroke management with state storage for webtoon mode.
 from typing import List, Dict, Set, Optional
 from PySide6.QtWidgets import QGraphicsPathItem
 from PySide6.QtCore import QPointF, QRectF
-from PySide6.QtGui import QPen, QBrush, QColor, QPainterPath, Qt
+from PySide6.QtGui import QPainterPath
+
+from app.ui.canvas.brush_stroke_style import add_stored_stroke, stroke_record
 
 
 class BrushStrokeManager:
@@ -36,18 +38,7 @@ class BrushStrokeManager:
                 # Convert the path from page-local to scene coordinates
                 scene_path = self.coordinate_converter.convert_path_to_scene_coordinates(stroke_data['path'], page_idx)
                 
-                pen = QPen()
-                pen.setColor(QColor(stroke_data['pen']))
-                pen.setWidth(stroke_data['width'])
-                pen.setStyle(Qt.SolidLine)
-                pen.setCapStyle(Qt.RoundCap)
-                pen.setJoinStyle(Qt.RoundJoin)
-                
-                brush = QBrush(QColor(stroke_data['brush']))
-                if brush.color() == QColor("#80ff0000"):
-                    self._scene.addPath(scene_path, pen, brush)
-                else:
-                    self._scene.addPath(scene_path, pen)
+                add_stored_stroke(self._scene, scene_path, stroke_data)
     
     def unload_brush_strokes(self, page_idx: int, page_y: float, page_bottom: float, file_path: str):
         """Unload brush strokes for a specific page."""
@@ -86,12 +77,7 @@ class BrushStrokeManager:
                 item != self.viewer.photo):
                 
                 # Process this brush stroke using coordinate converter
-                stroke_data = {
-                    'path': item.path(),
-                    'pen': item.pen().color().name(QColor.HexArgb) if hasattr(item, 'pen') else '#80ff0000',
-                    'brush': item.brush().color().name(QColor.HexArgb) if hasattr(item, 'brush') else '#00000000',
-                    'width': item.pen().width() if hasattr(item, 'pen') else 25
-                }
+                stroke_data = stroke_record(item.mapToScene(item.path()), item.pen(), item.brush())
                 
                 # Find all pages this stroke intersects with and create clipped versions
                 self._process_single_brush_stroke(stroke_data, scene_items_by_page)
@@ -99,9 +85,19 @@ class BrushStrokeManager:
     def _process_single_brush_stroke(self, stroke: Dict, scene_items_by_page: Dict) -> Set[int]:
         """Process a single brush stroke and distribute it to pages."""
         path = stroke['path']
-        pen_color = stroke['pen']
-        brush_color = stroke['brush']
-        width = stroke['width']
+        # A path entirely within one physical page needs only a translation.
+        # Rebuilding it point by point would replace cubic curves with lines.
+        bounds = path.controlPointRect()
+        page_index = self.layout_manager.get_page_at_position(bounds.center().y())
+        if 0 <= page_index < len(self.image_loader.image_file_paths):
+            origin = self.coordinate_converter.page_local_to_scene_position(QPointF(), page_index)
+            image = self.image_loader.image_data.get(page_index)
+            width = image.shape[1] if image is not None else self.layout_manager.webtoon_width
+            page_rect = QRectF(origin.x(), origin.y(), width, self.layout_manager.image_heights[page_index])
+            if page_rect.contains(bounds) and not path.isEmpty():
+                page_stroke = dict(stroke, path=path.translated(-origin))
+                scene_items_by_page[page_index]['brush_strokes'].append(page_stroke)
+                return {page_index}
         
         # Get all points in the path to determine which pages this stroke touches
         pages_touched = set()
@@ -125,12 +121,7 @@ class BrushStrokeManager:
             
             # Only add the stroke if it has valid elements on this page
             if page_path and not page_path.isEmpty():
-                page_stroke = {
-                    'path': page_path,
-                    'pen': pen_color,
-                    'brush': brush_color,
-                    'width': width
-                }
+                page_stroke = dict(stroke, path=page_path)
                 scene_items_by_page[page_index]['brush_strokes'].append(page_stroke)
         
         return pages_touched
@@ -237,17 +228,7 @@ class BrushStrokeManager:
                     continue
                 
                 # Convert path from page-local to scene coordinates
-                scene_path = QPainterPath()
-                for i in range(path.elementCount()):
-                    element = path.elementAt(i)
-                    local_point = QPointF(element.x, element.y)
-                    scene_point = self.coordinate_converter.page_local_to_scene_position(local_point, original_page_idx)
-
-                    if element.type == QPainterPath.ElementType.MoveToElement:
-                        scene_path.moveTo(scene_point)
-                    elif element.type == QPainterPath.ElementType.LineToElement:
-                        scene_path.lineTo(scene_point)
-                    # Handle other element types as needed
+                scene_path = self.coordinate_converter.convert_path_to_scene_coordinates(path, original_page_idx)
                 
                 # Create stroke data with scene coordinates
                 scene_stroke_data = stroke_data.copy()
@@ -374,7 +355,8 @@ class BrushStrokeManager:
         # Check similar styling
         data1 = stroke1['data']
         data2 = stroke2['data']
-        style_attrs = ['pen', 'width', 'brush']
+        style_attrs = ['pen', 'width', 'brush', 'pen_style', 'cap_style', 'join_style',
+                       'brush_style', 'fill_rule', 'cosmetic', 'dash_pattern', 'dash_offset', 'miter_limit']
         for attr in style_attrs:
             if data1.get(attr) != data2.get(attr):
                 return False

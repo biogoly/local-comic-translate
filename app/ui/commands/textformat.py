@@ -30,13 +30,25 @@ class TextFormatCommand(QUndoCommand, RectCommandBase):
             return
         matching_item = self._get_item(self.old_item_prp)
         if matching_item:
+            if self.new_item_prp.lettering_transform:
+                from app.controllers.lettering_style_format import apply_style_properties
+                apply_style_properties(matching_item, self.new_item_prp.to_dict())
+                matching_item.on_selection_changed()
+                return
             matching_item.set_text(self.new_html, self.new_item_prp.width)
             matching_item.__dict__.update(self.new_dict)
+            matching_item.refresh_lettering_transform()
             matching_item.update()
 
     def undo(self):
         matching_item = self._get_item(self.new_item_prp)
         if matching_item:
+            if self.old_item_prp.lettering_transform:
+                from app.controllers.lettering_style_format import apply_style_properties
+                apply_style_properties(matching_item, self.old_item_prp.to_dict())
+                matching_item.on_selection_changed()
+                return
             matching_item.set_text(self.old_html, self.old_item_prp.width)
             matching_item.__dict__.update(self.old_dict)
+            matching_item.refresh_lettering_transform()
             matching_item.update()

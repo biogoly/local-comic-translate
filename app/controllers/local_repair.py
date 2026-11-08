@@ -10,6 +10,8 @@ from app.ui.commands.base import PathCommandBase
 from app.ui.commands.inpaint import PatchInsertCommand
 from app.ui.dayu_widgets.message import MMessage
 from app.controllers.clone_brush import CloneBrushController
+from app.ui.dialogs.gradient_repair import GradientRepairDialog
+from modules.repair.protection import get_protection
 
 
 def rasterize_paths(shape, paths, origin=QtCore.QPointF()):
@@ -105,7 +107,11 @@ class LocalRepairController(QtCore.QObject):
         return self.stroke is not None or self.clone.stroke is not None
 
     def transient_items(self):
-        return [item for item in (self.preview, self.clone.preview, self.clone.marker, self.clone.destination) if item is not None]
+        items = [item for item in (self.preview, self.clone.preview, self.clone.marker, self.clone.destination) if item is not None]
+        protection = getattr(self.main, 'pixel_protection_ctrl', None)
+        if protection is not None:
+            items.extend(protection.transient_items())
+        return items
 
     def reset_page(self):
         self.cancel()
@@ -166,7 +172,7 @@ class LocalRepairController(QtCore.QObject):
                 self.main.set_tool("brush")
                 self.main.set_slider_size(self.viewer.brush_size)
                 return
-            original = self.main.image_ctrl.load_image(file_path)
+            original = self.main.image_ctrl.load_original_image(file_path)
             if original is None or original.shape != current.shape:
                 self._notice(self.tr("The original page image is unavailable."))
                 return
@@ -250,6 +256,12 @@ class LocalRepairController(QtCore.QObject):
         self.stroke = None
 
     def fill_mask(self):
+        if self.panel.fill_mode.currentData() == "heal":
+            self.fill_heal_mask()
+            return
+        if self.panel.fill_mode.currentData() == "gradient":
+            self.fill_gradient_mask()
+            return
         self.cancel()
         if not self._available():
             return
@@ -264,30 +276,167 @@ class LocalRepairController(QtCore.QObject):
             current = self.main.image_ctrl.get_composited_page_image(file_path)
             if current is None:
                 return
-            paths = []
-            for item in self.viewer._scene.items():
-                if not isinstance(item, QtWidgets.QGraphicsPathItem):
-                    continue
-                pen = QtGui.QPen(item.pen())
-                pen.setColor(QtCore.Qt.white)
-                brush = QtGui.QBrush(QtCore.Qt.white) if item.brush().style() != QtCore.Qt.NoBrush else QtCore.Qt.NoBrush
-                paths.append((item.mapToScene(item.path()), pen, brush))
-            mask = rasterize_paths(current.shape, paths, origin)
+            mask = self._current_mask(current.shape, origin)
             if not np.any(mask):
                 self._notice(self.tr("Paint or segment the area to fill first."))
                 return
             patch = repair_patch(current, self.color, mask)
             if patch is None:
                 return
-            stack = self.main.undo_stacks[file_path]
-            rect = QtCore.QRectF(origin.x(), origin.y(), current.shape[1], current.shape[0])
-            command = PatchInsertCommand(self.main, [patch], file_path, kind="inpaint", text=self.tr("Sampled color fill"))
-            stack.beginMacro(self.tr("Sampled color fill"))
+            self._commit_fill(patch, file_path, origin, current.shape, self.tr("Sampled color fill"))
+        except Exception as exc:
+            self.main.default_error_handler((type(exc), exc, traceback.format_exc()))
+
+    def _current_mask(self, shape, origin):
+        paths = []
+        for item in self.viewer._scene.items():
+            if not isinstance(item, QtWidgets.QGraphicsPathItem):
+                continue
+            pen = QtGui.QPen(item.pen())
+            pen.setColor(QtCore.Qt.white)
+            brush = QtGui.QBrush(QtCore.Qt.white) if item.brush().style() != QtCore.Qt.NoBrush else QtCore.Qt.NoBrush
+            paths.append((item.mapToScene(item.path()), pen, brush))
+        return rasterize_paths(shape, paths, origin)
+
+    def _commit_fill(self, patch, file_path, origin, shape, text, metadata=None):
+        stack = self.main.undo_stacks[file_path]
+        rect = QtCore.QRectF(origin.x(), origin.y(), shape[1], shape[0])
+        command = PatchInsertCommand(self.main, [patch], file_path, kind="inpaint", text=text, metadata=metadata)
+        stack.beginMacro(text)
+        try:
+            stack.push(command)
+            stack.push(ClearPageMaskCommand(self.viewer, rect) if self.viewer.webtoon_mode else ClearBrushStrokesCommand(self.viewer))
+        finally:
+            stack.endMacro()
+
+    def fill_gradient_mask(self):
+        self.cancel()
+        if not self._available():
+            return
+        page = self._page()
+        if page is None:
+            return
+        file_path, origin = page
+        try:
+            current = self.main.image_ctrl.get_composited_page_image(file_path)
+            if current is None:
+                return
+            current = current.copy()
+            mask = self._current_mask(current.shape, origin)
+            if not np.any(mask):
+                self._notice(self.tr("Paint or segment the area to fill first."))
+                return
+            # Original sampling is optional; an unavailable source must not
+            # prevent repairing the already loaded, composed background.
             try:
-                stack.push(command)
-                stack.push(ClearPageMaskCommand(self.viewer, rect) if self.viewer.webtoon_mode else ClearBrushStrokesCommand(self.viewer))
+                original = self.main.image_ctrl.load_original_image(file_path)
+            except Exception:
+                original = None
+            original = original.copy() if original is not None and original.shape == current.shape else None
+            stack = self.main.undo_stacks[file_path]
+            revision = stack.index()
+            webtoon_mode = self.viewer.webtoon_mode
+            project_epoch = getattr(self.main, "_translation_project_epoch", None)
+            page_id = getattr(self.main, "image_states", {}).get(file_path, {}).get("page_id")
+            parent = self.main if isinstance(self.main, QtWidgets.QWidget) else None
+            protection = get_protection(self.main, file_path, current.shape)
+            options = {'protection': protection} if protection is not None else {}
+            dialog = GradientRepairDialog(current, original, mask, parent=parent, **options)
+            try:
+                if dialog.exec() != QtWidgets.QDialog.Accepted or dialog.patch is None:
+                    return
+                if not self._available():
+                    return
+                page_now = self._page()
+                valid = (page_now is not None and page_now[0] == file_path and page_now[1] == origin
+                         and self.viewer.webtoon_mode == webtoon_mode
+                         and self.main.undo_stacks.get(file_path) is stack and stack.index() == revision
+                         and getattr(self.main, "_translation_project_epoch", None) == project_epoch
+                         and getattr(self.main, "image_states", {}).get(file_path, {}).get("page_id") == page_id)
+                if valid:
+                    latest = self.main.image_ctrl.get_composited_page_image(file_path)
+                    valid = latest is not None and np.array_equal(latest, current)
+                if valid:
+                    valid = np.array_equal(self._current_mask(current.shape, origin), mask)
+                if valid:
+                    valid = np.array_equal(get_protection(self.main, file_path, current.shape), protection)
+                if valid and dialog.metadata.get("source") == "original":
+                    try:
+                        latest_original = self.main.image_ctrl.load_original_image(file_path)
+                    except Exception:
+                        latest_original = None
+                    valid = original is not None and latest_original is not None and np.array_equal(latest_original, original)
+                if not valid:
+                    self._notice(self.tr("The page or mask changed. Open a new gradient preview before applying the repair."))
+                    return
+                self._commit_fill(dialog.patch, file_path, origin, current.shape,
+                                  self.tr("Sampled gradient fill"), dialog.metadata)
             finally:
-                stack.endMacro()
+                dialog.deleteLater()
+        except Exception as exc:
+            self.main.default_error_handler((type(exc), exc, traceback.format_exc()))
+
+    def fill_heal_mask(self):
+        """Experimental one-stamp comparison; never infer a texture/color source."""
+        self.cancel()
+        if not self._available():
+            return
+        page = self._page()
+        if page is None:
+            return
+        file_path, origin = page
+        source = self.clone.source
+        stack = self.main.undo_stacks[file_path]
+        if source is None or source['file'] != file_path or source['stack'] is not stack:
+            self._notice(self.tr("Alt-click a clean area with Clone to capture a sample first."))
+            return
+        if self.color is None:
+            self._notice(self.tr("Pick a background color first."))
+            return
+        try:
+            from app.ui.dialogs.heal_repair import HealRepairDialog
+            current = self.main.image_ctrl.get_composited_page_image(file_path)
+            if current is None or current.shape != source['shape']:
+                return
+            current = current.copy()
+            mask = self._current_mask(current.shape, origin)
+            ys, xs = np.nonzero(mask)
+            if not len(xs):
+                self._notice(self.tr("Paint or segment the area to fill first."))
+                return
+            # Center one fixed stamp on the explicitly painted repair area.
+            # The engine rejects masks larger than the captured sample.
+            destination = ((int(xs.min()) + int(xs.max())) / 2,
+                           (int(ys.min()) + int(ys.max())) / 2)
+            protection = get_protection(self.main, file_path, current.shape)
+            revision, webtoon = stack.index(), self.viewer.webtoon_mode
+            epoch = getattr(self.main, '_translation_project_epoch', None)
+            page_id = getattr(self.main, 'image_states', {}).get(file_path, {}).get('page_id')
+            parent = self.main if isinstance(self.main, QtWidgets.QWidget) else None
+            dialog = HealRepairDialog(current, mask, source['sample'], self.color, destination,
+                parent=parent, protection=protection, softness=self.panel.clone_softness.value() / 100)
+            try:
+                if dialog.exec() != QtWidgets.QDialog.Accepted or dialog.patch is None:
+                    return
+                if not self._available():
+                    return
+                page_now = self._page()
+                valid = (page_now is not None and page_now == page and self.viewer.webtoon_mode == webtoon
+                         and self.main.undo_stacks.get(file_path) is stack and stack.index() == revision
+                         and getattr(self.main, '_translation_project_epoch', None) == epoch
+                         and getattr(self.main, 'image_states', {}).get(file_path, {}).get('page_id') == page_id)
+                if valid:
+                    latest = self.main.image_ctrl.get_composited_page_image(file_path)
+                    valid = (latest is not None and np.array_equal(latest, current)
+                             and np.array_equal(self._current_mask(current.shape, origin), mask)
+                             and np.array_equal(get_protection(self.main, file_path, current.shape), protection))
+                if not valid:
+                    self._notice(self.tr("The page or mask changed. Open a new repair preview before applying."))
+                    return
+                self._commit_fill(dialog.patch, file_path, origin, current.shape,
+                                  self.tr("Heal repair"), dialog.metadata)
+            finally:
+                dialog.deleteLater()
         except Exception as exc:
             self.main.default_error_handler((type(exc), exc, traceback.format_exc()))
 

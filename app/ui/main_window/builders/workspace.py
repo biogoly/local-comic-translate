@@ -291,10 +291,34 @@ class WorkspaceMixin:
         text_render_layout.addLayout(font_settings_layout)
         text_render_layout.addLayout(main_text_settings_layout)
         text_render_layout.addLayout(outline_settings_layout)
+        fit_layout = QtWidgets.QHBoxLayout()
+        self.fit_text_button = MPushButton(QtCore.QCoreApplication.translate("TextFitDialog", "Fit Text"))
+        self.fit_text_button.setEnabled(False)
+        self.fit_text_button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        fit_layout.addWidget(self.fit_text_button)
+        self.text_fit_status = QtWidgets.QLabel()
+        self.text_fit_status.setWordWrap(True)
+        fit_layout.addWidget(self.text_fit_status, 1)
+        text_render_layout.addLayout(fit_layout)
+        self.lettering_styles_button = MPushButton(self.tr('Lettering styles')).small()
+        self.lettering_styles_button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        self.lettering_styles_button.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Fixed)
+        text_render_layout.addWidget(self.lettering_styles_button)
+        self.lettering_transform_button = MPushButton(self.tr('Text shape')).small()
+        self.lettering_transform_button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        self.lettering_transform_button.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Fixed)
+        text_render_layout.addWidget(self.lettering_transform_button)
+        from app.ui.review_panel import ReviewPanel
+        self.review_panel = ReviewPanel(self)
+        self.translation_context_button = MPushButton(self.tr('Translation context')).small()
+        self.translation_context_button.setToolTip(self.tr('Translation context'))
+        self.translation_context_button.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Fixed)
+        text_render_layout.addWidget(self.translation_context_button)
         text_render_layout.addWidget(rendering_divider_bottom)
 
         tools_widget = QtWidgets.QWidget()
         tools_layout = QtWidgets.QVBoxLayout()
+        tools_layout.addWidget(self.review_panel)
 
         misc_lay = QtWidgets.QHBoxLayout()
 
@@ -433,6 +457,8 @@ class WorkspaceMixin:
         self.tool_buttons["restore"] = self.local_repair_panel.restore
         self.tool_buttons["color_pick"] = self.local_repair_panel.pick
         self.tool_buttons["clone"] = self.local_repair_panel.clone
+        self.tool_buttons["protect_pixels"] = self.local_repair_panel.protect
+        self.tool_buttons["unprotect_pixels"] = self.local_repair_panel.unprotect
         tools_layout.addWidget(self.local_repair_panel)
 
         artistic_edit_div = MDivider(self.tr("Artistic Edit"))

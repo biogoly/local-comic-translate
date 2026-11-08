@@ -61,7 +61,7 @@ class ToolStateMixin:
         except Exception:
             current_tool = None
 
-        if current_tool in {"brush", "restore", "clone"}:
+        if current_tool in {"brush", "restore", "clone", "protect_pixels", "unprotect_pixels"}:
             self.image_viewer.brush_size = size
         elif current_tool == "eraser":
             self.image_viewer.eraser_size = size

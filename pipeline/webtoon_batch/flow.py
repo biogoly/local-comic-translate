@@ -1,17 +1,21 @@
 from __future__ import annotations
 
 import logging
+from copy import deepcopy
 from datetime import datetime
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
 import numpy as np
 from PIL import Image, UnidentifiedImageError
+from PySide6.QtCore import QCoreApplication
 
 from app.path_materialization import ensure_path_materialized
 from modules.utils.textblock import sort_blk_list
 from modules.detection.heuristic_lines import annotate_blocks_with_heuristic_lines
 from modules.utils.language_utils import to_canonical_language_name
+from modules.utils.manual_regions import merge_manual_regions, has_manual_translation
+from modules.utils.region_policy import should_preserve_region, retained_layout_states, shifted_region_copy
 from pipeline.virtual_page import VirtualPage
 
 if TYPE_CHECKING:
@@ -201,7 +205,42 @@ class FlowMixin:
             return record
 
         record["image"] = image
-        record["detected_blocks"] = self._detect_blocks_for_page(image)
+        record['composed_image'] = image.copy()
+        compose = getattr(getattr(self.main_page, 'image_ctrl', None), 'get_composited_page_image', None)
+        if callable(compose):
+            composed = compose(record['path'])
+            if composed is None:
+                raise ValueError('Current page pixels are unavailable for cleanup')
+            crop = composed[int(vpage.crop_top):int(vpage.crop_bottom), :image.shape[1]]
+            if crop.shape != image.shape:
+                raise ValueError('Current page and original page dimensions do not match')
+            record['composed_image'] = crop.copy()
+        previous = getattr(self, '_review_previous_blocks', {}).get(record['path'], [])
+        retained_ids = getattr(self, '_review_retained_ids', {}).get(record['path'], set())
+        retained = [block for block in previous if should_preserve_region(block) or block.region_id in retained_ids]
+        intersecting = [shifted_region_copy(block, dy=-vpage.crop_top) for block in retained
+                        if block.xyxy[3] > vpage.crop_top and block.xyxy[1] < vpage.crop_bottom]
+        owner_ids = {block.region_id for block in retained
+                     if vpage.crop_top <= max(0, float(block.xyxy[1])) < vpage.crop_bottom}
+        detected = self._detect_blocks_for_page(image)
+        merged = merge_manual_regions(intersecting, detected, retain_ids=retained_ids)
+        shadow_ids = {block.region_id for block in intersecting} - owner_ids
+        record['detected_blocks'] = [block for block in merged if block.region_id not in shadow_ids]
+        record['protection_blocks'] = intersecting
+        record['retained_ids'] = {block.region_id for block in intersecting}
+        # A previously retained region can extend from the preceding physical
+        # page. Its cleanup footprint belongs on both sides of that seam.
+        previous_path = getattr(self, '_review_previous_path', {}).get(record['path'])
+        previous_height = getattr(self, '_review_page_heights', {}).get(previous_path)
+        if previous_path is not None and previous_height:
+            for block in getattr(self, '_review_previous_blocks', {}).get(previous_path, ()):
+                if should_preserve_region(block) and block.xyxy[3] > previous_height + vpage.crop_top:
+                    shadow = shifted_region_copy(block, dy=-previous_height-vpage.crop_top)
+                    if shadow.xyxy[1] < image.shape[0]:
+                        record['protection_blocks'].append(shadow)
+                        record['detected_blocks'] = [candidate for candidate in
+                            merge_manual_regions([shadow], record['detected_blocks'])
+                            if candidate.region_id != shadow.region_id]
         logger.info(
             "Webtoon batch detect: page=%s virtual=%s detected_blocks=%d",
             record["path"],
@@ -251,6 +290,10 @@ class FlowMixin:
 
             top_block = current_blocks[top_idx]
             bottom_block = next_blocks[bottom_idx]
+            if (should_preserve_region(top_block) or should_preserve_region(bottom_block)
+                    or top_block.region_id in current_record.get('retained_ids', ())
+                    or bottom_block.region_id in next_record.get('retained_ids', ())):
+                continue
             owner_block = top_block.deep_copy()
 
             shifted_bottom_xyxy = self._shift_xyxy(
@@ -317,10 +360,7 @@ class FlowMixin:
     ) -> List:
         physical_blocks = []
         for block in blocks:
-            out = block.deep_copy()
-            out.xyxy = owner_vpage.virtual_to_physical_coords(list(out.xyxy))
-            if out.bubble_xyxy is not None:
-                out.bubble_xyxy = owner_vpage.virtual_to_physical_coords(list(out.bubble_xyxy))
+            out = shifted_region_copy(block, dy=owner_vpage.crop_top)
             physical_blocks.append(out)
         return physical_blocks
 
@@ -348,8 +388,8 @@ class FlowMixin:
         if blocks:
             blocks = sort_blk_list(blocks, rtl)
 
-        emitted_block_count = int(accumulated.get("emitted_block_count", 0))
-        live_blocks = list(accumulated["blocks"][emitted_block_count:])
+        emitted_ids = accumulated.get('emitted_region_ids', set())
+        live_blocks = [block for block in accumulated['blocks'] if block.region_id not in emitted_ids]
         prepared_blocks = self._prepare_page_blocks_for_render(
             image_path=image_path,
             blocks=blocks,
@@ -383,6 +423,7 @@ class FlowMixin:
                 live_blocks=live_blocks,
             )
             accumulated["emitted_block_count"] = len(accumulated["blocks"])
+            accumulated['emitted_region_ids'] = {block.region_id for block in accumulated['blocks']}
             for patch_path, pending_patches in pending_patches_by_path.items():
                 self.main_page.patches_processed.emit(pending_patches, patch_path)
         finally:
@@ -410,6 +451,12 @@ class FlowMixin:
         global_index = int(page_info["global_index"])
         page_state = self.main_page.image_states.setdefault(image_path, {})
         page_state.setdefault("viewer_state", {})
+
+        if page_info.get("preserve_rendered", False):
+            # This run-start snapshot also acts as a seam barrier. Do not clear
+            # text/patch state or publish an empty replacement for edited pages.
+            self._emit_progress(selected_index, total_images, 10, False)
+            return
 
         if page_info.get("skip", False):
             page_state["blk_list"] = []
@@ -465,6 +512,8 @@ class FlowMixin:
     def webtoon_batch_process(
         self: WebtoonBatchProcessor, selected_paths: List[str] = None
     ):
+        from modules.translation.processor import Translator
+        from pipeline.translation_job import BatchTranslationSession, speaker_region_ids
         try:
             timestamp = datetime.now().strftime("%b-%d-%Y_%I-%M-%S%p")
             self._reported_image_load_failures.clear()
@@ -473,6 +522,36 @@ class FlowMixin:
             if total_images < 1:
                 logger.warning("No images to process")
                 return
+
+            self._translation_session = getattr(self, '_prepared_translation_session', None)
+            self._prepared_translation_session = None
+
+            auto_fit_at_start = bool(getattr(self.main_page.render_settings(), "auto_bubble_fit", False))
+            preserved_pages = {
+                path for path in image_list
+                if self.main_page.image_states.get(path, {}).get("viewer_state", {}).get("text_items_state")
+                and not self.main_page.image_states.get(path, {}).get('blk_list')
+            } if auto_fit_at_start else set()
+            if self._translation_session is None:
+                self._translation_session = BatchTranslationSession(self.main_page,
+                    [p for p in image_list if p not in preserved_pages], Translator)
+            self._review_previous_blocks = {
+                path: deepcopy(self.main_page.image_states.get(path, {}).get('blk_list', []))
+                for path in self.main_page.image_files
+            }
+            for path, blocks in self._review_previous_blocks.items():
+                for block in blocks:
+                    block._page_id = self.main_page.image_states[path].get('page_id')
+            self._review_manual_ids = {block.region_id for blocks in self._review_previous_blocks.values()
+                                       for block in blocks if has_manual_translation(block)}
+            self._review_retained_ids = {
+                path: set(retained_layout_states(self._review_previous_blocks.get(path, []),
+                    self.main_page.image_states.get(path, {}).get('viewer_state', {}).get('text_items_state', []),
+                    retain_all=auto_fit_at_start)) | speaker_region_ids(self.main_page,
+                        self.main_page.image_states[path].get('page_id')) for path in image_list
+            }
+            self._review_previous_path = {path: self.main_page.image_files[index-1]
+                                         for index, path in enumerate(self.main_page.image_files) if index}
 
             try:
                 if self.main_page.file_handler.should_pre_materialize(image_list):
@@ -498,14 +577,23 @@ class FlowMixin:
             for selected_index, image_path in enumerate(image_list):
                 global_index = int(global_index_by_path.get(image_path, selected_index))
                 page_state = self.main_page.image_states.get(image_path, {})
-                skip_page = bool(page_state.get("skip", False))
+                preserve_rendered = image_path in preserved_pages
+                skip_page = bool(page_state.get("skip", False)) or preserve_rendered
 
                 if skip_page:
+                    if preserve_rendered:
+                        reason = QCoreApplication.translate(
+                            "Messages",
+                            "Page already contains rendered text; use manual Render to add missing regions.",
+                        )
+                        logger.info("Preserving already-rendered webtoon page '%s': %s", image_path, reason)
+                        self.main_page.image_skipped.emit(image_path, "Existing Rendered Text", reason)
                     page_info = {
                         "path": image_path,
                         "selected_index": selected_index,
                         "global_index": global_index,
                         "skip": True,
+                        "preserve_rendered": preserve_rendered,
                         "width": 0,
                         "height": 0,
                     }
@@ -567,9 +655,19 @@ class FlowMixin:
                     )
 
             page_info_by_path = {info["path"]: info for info in physical_pages}
+            self._review_page_heights = {info['path']: info['height'] for info in physical_pages if info.get('height')}
+            for previous_path in set(self._review_previous_path.get(path) for path in image_list):
+                if previous_path and previous_path not in self._review_page_heights and self._review_previous_blocks.get(previous_path):
+                    try:
+                        ensure_path_materialized(previous_path)
+                        with Image.open(previous_path) as source:
+                            self._review_page_heights[previous_path] = source.height
+                    except (OSError, ValueError):
+                        logger.warning('Previous seam page unavailable: %s', previous_path)
             page_accum = {
                 info["path"]: {
-                    "blocks": [],
+                    "blocks": [deepcopy(block) for block in self._review_previous_blocks.get(info['path'], [])
+                               if should_preserve_region(block) or block.region_id in self._review_retained_ids.get(info['path'], ())],
                     "patches": [],
                     "emitted_block_count": 0,
                     "emitted_patch_count": 0,
@@ -660,7 +758,8 @@ class FlowMixin:
                 ocr_image = self._build_extended_ocr_image_for_pair(
                     current_record=current_record,
                     next_record=next_record,
-                    split_owned_blocks=split_owned_blocks,
+                    split_owned_blocks=split_owned_blocks + [block for block in regular_blocks
+                        if block.xyxy[3] > current_record['image'].shape[0]],
                 )
                 if split_owned_blocks:
                     try:
@@ -699,10 +798,17 @@ class FlowMixin:
 
                 progress_patch_paths = {current_record["path"]}
                 self._emit_progress(current_record["selected_index"], total_images, 4, False)
+                from .chunk import _record_pixel_protection
                 mask, inpainted = self._inpaint_image_with_blocks(
-                    current_record["image"], regular_blocks
+                    current_record.get('composed_image', current_record['image']), regular_blocks,
+                    protected_blocks=current_record.get('protection_blocks', ()),
+                    pixel_protection=_record_pixel_protection(self.main_page, current_record,
+                                                              current_record['image']),
                 )
                 if mask is not None and inpainted is not None:
+                    # A following seam edit must see this operation's pixels;
+                    # otherwise its rectangular patch can resurrect old text.
+                    current_record['composed_image'] = inpainted.copy()
                     regular_patches = self._extract_page_patches_from_mask(
                         mask=mask,
                         inpainted=inpainted,
@@ -737,7 +843,10 @@ class FlowMixin:
                 final_blocks_physical = self._convert_blocks_to_physical(
                     final_blocks_virtual, current_vpage
                 )
-                page_accum[current_record["path"]]["blocks"].extend(final_blocks_physical)
+                updates = {block.region_id for block in final_blocks_physical}
+                accumulated = page_accum[current_record['path']]
+                accumulated['blocks'] = [block for block in accumulated['blocks'] if block.region_id not in updates]
+                accumulated['blocks'].extend(final_blocks_physical)
 
                 self._publish_physical_page_progress(
                     page_info=page_info_by_path[current_record["path"]],

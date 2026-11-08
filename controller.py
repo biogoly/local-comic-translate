@@ -35,6 +35,7 @@ from app.controllers.batch_report import BatchReportController
 from app.controllers.manual_workflow import ManualWorkflowController
 from app.controllers.artistic_edit import ArtisticEditController
 from app.controllers.local_repair import LocalRepairController
+from app.controllers.pixel_protection import PixelProtectionController
 from modules.utils.exceptions import InsufficientCreditsException, ContentFlaggedException
 
 
@@ -127,6 +128,15 @@ class ComicTranslate(ComicTranslateUI):
         self.manual_workflow_ctrl = ManualWorkflowController(self)
         self.artistic_edit_ctrl = ArtisticEditController(self)
         self.local_repair_ctrl = LocalRepairController(self)
+        self.pixel_protection_ctrl = PixelProtectionController(self)
+        from app.controllers.review import ReviewController
+        self.review_ctrl = ReviewController(self)
+        from app.controllers.translation_context import TranslationContextController
+        self.translation_context_ctrl = TranslationContextController(self)
+        from app.controllers.lettering_styles import LetteringStylesController
+        self.lettering_styles_ctrl = LetteringStylesController(self)
+        from app.controllers.lettering_transform import LetteringTransformController
+        self.lettering_transform_ctrl = LetteringTransformController(self)
         try:
             if self._memlogger is not None:
                 self._memlogger.emit("after_controllers_init")
@@ -439,8 +449,7 @@ class ComicTranslate(ComicTranslateUI):
         seen = set()
 
         for rect_item in self.image_viewer.get_selected_rectangles():
-            rect_coords = rect_item.mapRectToScene(rect_item.rect()).getCoords()
-            blk = self.rect_item_ctrl.find_corresponding_text_block(rect_coords, 0.5)
+            blk = self.rect_item_ctrl.find_corresponding_text_block(rect_item, 0.5)
             text_item = None
             for candidate in self.image_viewer.text_items:
                 if self.text_ctrl._find_text_block_for_item(candidate) is blk:
@@ -674,10 +683,23 @@ class ComicTranslate(ComicTranslateUI):
         if not unique_paths:
             return
 
+        self.text_ctrl._commit_pending_text_command()
+        if self.webtoon_mode:
+            self.image_viewer.webtoon_manager.scene_item_manager.save_all_scene_items_to_states()
+        else:
+            self.image_ctrl.save_current_image_state()
+
         for path in unique_paths:
             tgt = self.image_states[path]['target_lang']
             if not validate_settings(self, tgt):
                 return
+
+        try:
+            self.pipeline.prepare_translation_session(unique_paths)
+        except Exception as error:
+            import traceback
+            self.default_error_handler((type(error), error, traceback.format_exc()))
+            return
 
         self.image_ctrl.clear_page_skip_errors_for_paths(unique_paths)
         self._start_batch_report(unique_paths)
@@ -794,7 +816,7 @@ class ComicTranslate(ComicTranslateUI):
         if not self.manual_radio.isChecked():
             self.manual_radio.setChecked(True)
             self.manual_mode_selected()
-        self.inpaint_and_set()
+        self.manual_workflow_ctrl.inpaint_and_set(automatic=False)
 
     def blk_detect_segment(self, result): 
         self.manual_workflow_ctrl.blk_detect_segment(result)
@@ -962,6 +984,14 @@ class ComicTranslate(ComicTranslateUI):
         self._is_shutting_down = True
 
         self.batch_report_ctrl.shutdown()
+        if getattr(self, 'review_ctrl', None) is not None:
+            self.review_ctrl.shutdown()
+        if getattr(self, 'translation_context_ctrl', None) is not None:
+            self.translation_context_ctrl.shutdown()
+        if getattr(self, 'lettering_styles_ctrl', None) is not None:
+            self.lettering_styles_ctrl.shutdown()
+        if getattr(self, 'lettering_transform_ctrl', None) is not None:
+            self.lettering_transform_ctrl.shutdown()
 
         try:
             self.cancel_current_task()

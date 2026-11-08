@@ -9,6 +9,7 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtGui import QTextCursor
 
 from modules.utils.common_utils import is_close
+from modules.utils.region_metadata import find_region
 from app.ui.commands.search_replace import ReplaceBlocksCommand, ReplaceChange
 
 if TYPE_CHECKING:
@@ -683,6 +684,12 @@ class SearchReplaceController(QtCore.QObject):
         text_items = getattr(self.main.image_viewer, "text_items", None)
         if not text_items:
             return None
+        identity = getattr(blk, "region_id", "")
+        if identity:
+            linked = [item for item in text_items if getattr(item, "region_id", "") == identity]
+            if linked:
+                return linked[0] if len(linked) == 1 else None
+            text_items = [item for item in text_items if not getattr(item, "region_id", "")]
         try:
             x1, y1, x2, y2 = blk.xyxy
         except Exception:
@@ -934,6 +941,13 @@ class SearchReplaceController(QtCore.QObject):
     def _find_matching_text_item_state(self, state: dict, key: BlockKey) -> Optional[dict]:
         viewer_state = state.get("viewer_state") or {}
         text_items_state = viewer_state.get("text_items_state") or []
+        block = find_region(state.get("blk_list") or [], x=key.xyxy[0], y=key.xyxy[1], angle=key.angle, tolerance=0.5)
+        identity = getattr(block, "region_id", "")
+        if identity:
+            linked = [item for item in text_items_state if item.get("region_id") == identity]
+            if linked:
+                return linked[0] if len(linked) == 1 else None
+            text_items_state = [item for item in text_items_state if not item.get("region_id")]
         for ti in text_items_state:
             pos = ti.get("position") or (None, None)
             rot = float(ti.get("rotation") or 0.0)
@@ -999,7 +1013,13 @@ class SearchReplaceController(QtCore.QObject):
                     x = float(text_item.pos().x())
                     y = float(text_item.pos().y())
                     rot = float(text_item.rotation())
-                    if is_close(x, key.xyxy[0], 5) and is_close(y, key.xyxy[1], 5) and is_close(rot, key.angle, 1.0):
+                    item_id = getattr(text_item, 'region_id', '')
+                    block_id = getattr(blk, 'region_id', '')
+                    if item_id and block_id:
+                        matches = item_id == block_id
+                    else:
+                        matches = is_close(x, key.xyxy[0], 5) and is_close(y, key.xyxy[1], 5) and is_close(rot, key.angle, 1.0)
+                    if matches:
                         if html_override is not None:
                             self.main.text_ctrl.apply_text_from_command(text_item, new_text, html=html_override, blk=blk)
                         else:

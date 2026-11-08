@@ -1,12 +1,15 @@
 from PySide6.QtWidgets import QGraphicsTextItem, QGraphicsItem, \
      QApplication, QWidget, QStyleOptionGraphicsItem
 from PySide6.QtGui import QFont, QCursor, QColor, \
-     QTextCharFormat, QTextBlockFormat, QTextCursor, QPainter
-from PySide6.QtCore import Qt, QRectF, Signal, QPointF
+     QTextCharFormat, QTextBlockFormat, QTextCursor, QPainter, QTextLayout, QTransform
+from PySide6.QtCore import Qt, QRectF, Signal, QPointF, QSignalBlocker
 import math, copy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from .text.vertical_layout import VerticalTextDocumentLayout
+from .text.curved_layout import CurvedTextDocumentLayout
+from .text.lettering_transform import lettering_qtransform
+from modules.utils.lettering_transform import normalize_lettering_transform
 
 
 @dataclass
@@ -14,15 +17,20 @@ class TextBlockState:
     rect: tuple  
     rotation: float
     transform_origin: QPointF
+    properties: dict = field(default_factory=dict)
+    page_path: str | None = None
 
     @classmethod
     def from_item(cls, item: QGraphicsTextItem):
         """Create TextBlockState from a TextBlockItem"""
         rect = QRectF(item.pos(), item.boundingRect().size()).getCoords()
+        from .text.text_item_properties import TextItemProperties
         return cls(
             rect=rect,
             rotation=item.rotation(),
-            transform_origin=item.transformOriginPoint()
+            transform_origin=item.transformOriginPoint(),
+            properties=TextItemProperties.from_text_item(item).to_dict(),
+            page_path=getattr(item, '_page_path', None),
         )
     
 class OutlineType(Enum):
@@ -38,6 +46,7 @@ class OutlineInfo:
     type: OutlineType
 
 class TextBlockItem(QGraphicsTextItem):
+    fit_requested = Signal()
     text_changed = Signal(str)
     item_selected = Signal(object)
     item_deselected = Signal()
@@ -71,6 +80,10 @@ class TextBlockItem(QGraphicsTextItem):
         self.alignment = alignment
         self.line_spacing = line_spacing
         self.direction = direction
+        self.region_id = ""
+        self.layout_preferences = {}
+        self.lettering_transform = {}
+        self._refreshing_lettering_transform = False
 
         self.layout = None
         self.vertical = False
@@ -85,6 +98,7 @@ class TextBlockItem(QGraphicsTextItem):
         self._restoring_insertion_format = False
         self._drag_selecting = False
         self._drag_select_anchor = None
+        self._curve_preedit = None
 
         # Rotation properties
         self.rot_handle = None
@@ -111,6 +125,8 @@ class TextBlockItem(QGraphicsTextItem):
         self._apply_text_direction()
 
     def set_vertical(self, vertical: bool):
+        if vertical and self.lettering_transform.get('arc_angle', 0):
+            raise ValueError('Curved lettering requires horizontal text. Reset the curve before using vertical text.')
         doc = self.document()
         is_already_vertical = isinstance(doc.documentLayout(), VerticalTextDocumentLayout)
 
@@ -170,6 +186,63 @@ class TextBlockItem(QGraphicsTextItem):
     def setCenterTransform(self):
         center = self.boundingRect().center()
         self.setTransformOriginPoint(center)
+        self.refresh_lettering_transform()
+
+    def set_lettering_transform(self, value):
+        settings = normalize_lettering_transform(value)
+        if settings.get('arc_angle', 0) and self.vertical:
+            raise ValueError('Curved lettering requires horizontal text.')
+        self.lettering_transform = settings
+        self._sync_lettering_layout()
+        self.refresh_lettering_transform()
+
+    def _sync_lettering_layout(self):
+        doc = self.document()
+        arc = self.lettering_transform.get('arc_angle', 0)
+        current = doc.documentLayout()
+        if arc:
+            if isinstance(current, CurvedTextDocumentLayout):
+                self.layout = current
+                current.set_arc_angle(arc)
+            else:
+                self.prepareGeometryChange()
+                layout = CurvedTextDocumentLayout(doc, arc, self.line_spacing)
+                self.layout = layout
+                doc.setDocumentLayout(layout)
+                layout.documentSizeChanged.connect(self.setCenterTransform)
+                layout.update_layout()
+        elif isinstance(current, CurvedTextDocumentLayout):
+            self.prepareGeometryChange()
+            self.layout = None
+            doc.setDocumentLayout(None)
+
+    def logical_text_width(self):
+        """Stable wrap width, independent of the curve's painted footprint."""
+        if isinstance(self.document().documentLayout(), CurvedTextDocumentLayout):
+            return self.textWidth()
+        return self.boundingRect().width()
+
+    def refresh_lettering_transform(self, *_):
+        if (not hasattr(self, 'lettering_transform')
+                or self._refreshing_lettering_transform):
+            return
+        self._refreshing_lettering_transform = True
+        try:
+            rect = self.boundingRect()
+            if rect.width() <= 0 or rect.height() <= 0:
+                from PySide6.QtGui import QTransform
+                self.setTransform(QTransform())
+            else:
+                self.setTransform(lettering_qtransform(rect, self.lettering_transform))
+            self.setCacheMode(QGraphicsItem.CacheMode.NoCache if self.lettering_transform or self.editing_mode
+                              else QGraphicsItem.CacheMode.DeviceCoordinateCache)
+            self.update()
+        finally:
+            self._refreshing_lettering_transform = False
+
+    def setTextWidth(self, width):
+        super().setTextWidth(width)
+        self.refresh_lettering_transform()
 
     def on_document_enlarged(self):
         self.prepareGeometryChange()
@@ -310,6 +383,8 @@ class TextBlockItem(QGraphicsTextItem):
         self.update_text_format('size', font_size)
 
     def update_text_width(self):
+        if isinstance(self.layout, CurvedTextDocumentLayout):
+            return
         width = self.document().size().width()
         self.setTextWidth(width)
 
@@ -377,7 +452,7 @@ class TextBlockItem(QGraphicsTextItem):
                 self.document().setDefaultFont(value)
             elif attribute == 'size':
                 font = self.document().defaultFont()
-                font.setPointSize(value)
+                font.setPointSizeF(float(value))
                 self.document().setDefaultFont(font)
             self.document().setDefaultTextOption(doc_format)
         
@@ -531,6 +606,18 @@ class TextBlockItem(QGraphicsTextItem):
 
         # Draw the normal text on top
         super().paint(painter, option, widget)
+        if self.editing_mode and self._curve_preedit and isinstance(self.layout, CurvedTextDocumentLayout):
+            # IME composition is transient editor UI. Show its native shaped
+            # underlined text at the curved caret instead of hiding preedit in
+            # the ordinary QTextControl layout. It is never saved or exported.
+            layout, transform, _ = self._curve_preedit_geometry()
+            painter.save()
+            painter.setTransform(transform, True)
+            palette = QApplication.palette()
+            painter.fillRect(layout.boundingRect(), palette.base())
+            painter.setPen(palette.text().color())
+            layout.draw(painter, QPointF())
+            painter.restore()
 
     def _clone_outline_document(self):
         source = self.document()
@@ -548,6 +635,10 @@ class TextBlockItem(QGraphicsTextItem):
             )
             doc.setDocumentLayout(vertical_layout)
             vertical_layout.set_max_size(self.layout.max_width, self.layout.max_height)
+        elif isinstance(self.layout, CurvedTextDocumentLayout):
+            curved_layout = CurvedTextDocumentLayout(doc, self.layout.arc_angle, self.line_spacing)
+            doc.setDocumentLayout(curved_layout)
+            curved_layout.update_layout()
 
         return doc
 
@@ -578,6 +669,16 @@ class TextBlockItem(QGraphicsTextItem):
         self.set_alignment(self.alignment)
 
     def mouseDoubleClickEvent(self, event):
+        if isinstance(self.layout, CurvedTextDocumentLayout) and event.button() == Qt.MouseButton.LeftButton:
+            if not self.editing_mode:
+                self.enter_editing_mode()
+            cursor = self.textCursor()
+            cursor.setPosition(self.layout.hitTest(event.pos(), None))
+            cursor.select(QTextCursor.SelectionType.WordUnderCursor)
+            self.setTextCursor(cursor)
+            self.on_selection_changed()
+            event.accept()
+            return
         if not self.editing_mode:
             self.enter_editing_mode()
             if self.layout:
@@ -710,9 +811,65 @@ class TextBlockItem(QGraphicsTextItem):
         self.setCursor(QCursor(Qt.CursorShape.IBeamCursor))
         self.setFocus()
 
+    def inputMethodQuery(self, query):
+        if query == Qt.InputMethodQuery.ImCursorRectangle and isinstance(self.layout, CurvedTextDocumentLayout):
+            if self._curve_preedit:
+                layout, transform, position = self._curve_preedit_geometry()
+                line = layout.lineAt(0)
+                x = line.cursorToX(position)[0]
+                return transform.mapRect(QRectF(x, 0, 1, line.height()))
+            caret = self.layout.caret_line(self.textCursor().position())
+            return QRectF(caret.p1(), caret.p2()).normalized().adjusted(-1, -1, 1, 1)
+        return super().inputMethodQuery(query)
+
+    def inputMethodEvent(self, event):
+        super().inputMethodEvent(event)
+        if isinstance(self.layout, CurvedTextDocumentLayout):
+            self._curve_preedit = (event.preeditString(), event.attributes()) if event.preeditString() else None
+            # Native preedit is not committed document text and must not enter
+            # the saved shaped-line geometry.
+            block = self.textCursor().block()
+            block.layout().setPreeditArea(-1, '')
+            self.layout.update_layout()
+            self.update()
+        else:
+            self._curve_preedit = None
+
+    def _curve_preedit_geometry(self):
+        text, attributes = self._curve_preedit
+        font = self.textCursor().charFormat().font().resolve(self.document().defaultFont())
+        layout = QTextLayout(text, font)
+        length = len(text.encode('utf-16-le')) // 2
+        fmt = QTextLayout.FormatRange()
+        fmt.start, fmt.length = 0, length
+        fmt.format.setFontUnderline(True)
+        formats = [fmt]
+        position = length
+        from PySide6.QtGui import QInputMethodEvent
+        for attribute in attributes:
+            if attribute.type == QInputMethodEvent.AttributeType.Cursor:
+                position = max(0, min(length, attribute.start))
+            elif attribute.type == QInputMethodEvent.AttributeType.TextFormat:
+                entry = QTextLayout.FormatRange()
+                entry.start, entry.length = attribute.start, attribute.length
+                entry.format = QTextCharFormat(attribute.value)
+                formats.append(entry)
+        layout.setFormats(formats)
+        layout.beginLayout()
+        line = layout.createLine()
+        line.setLineWidth(1000000)
+        layout.endLayout()
+        caret = self.layout.caret_line(self.textCursor().position())
+        transform = QTransform()
+        transform.translate(caret.x1(), caret.y1())
+        transform.rotate(math.degrees(math.atan2(-caret.dx(), caret.dy())))
+        return layout, transform, position
+
     def exit_editing_mode(self):
         self.editing_mode = False
-        self.setCacheMode(QGraphicsItem.CacheMode.DeviceCoordinateCache)
+        self._curve_preedit = None
+        self.setCacheMode(QGraphicsItem.CacheMode.NoCache if self.lettering_transform
+                          else QGraphicsItem.CacheMode.DeviceCoordinateCache)
         self.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
         self.setFlag(QGraphicsTextItem.GraphicsItemFlag.ItemIsMovable, True)
         self.clear_format_selection()
@@ -725,6 +882,7 @@ class TextBlockItem(QGraphicsTextItem):
             self._restore_base_insertion_format()
         self.text_changed.emit(new_text)
         self.update_outlines()
+        self.refresh_lettering_transform()
 
     def mouseMoveEvent(self, event):
         # Resize/rotate/move logic is now handled by EventHandler and QGraphicsView
@@ -756,7 +914,27 @@ class TextBlockItem(QGraphicsTextItem):
             self.on_selection_changed()
 
     def contextMenuEvent(self, event):
-        super().contextMenuEvent(event)
+        if self.editing_mode:
+            super().contextMenuEvent(event)
+            return
+        from PySide6.QtWidgets import QMenu
+        menu = QMenu()
+        action = menu.addAction(QApplication.translate("TextFitDialog", "Fit Text"))
+        action.setEnabled(bool(self.toPlainText().strip()))
+        views = self.scene().views() if self.scene() is not None else []
+        review = getattr(views[0], 'review_controller', None) if views else None
+        if review is not None:
+            review.add_context_actions(menu, item=self)
+        if menu.exec(event.screenPos()) is action:
+            if self.scene() is not None:
+                for item in self.scene().selectedItems():
+                    item.setSelected(False)
+                    if isinstance(item, TextBlockItem):
+                        item.selected = False
+            self.setSelected(True)
+            self.selected = True
+            self.fit_requested.emit()
+        event.accept()
         if self.editing_mode:
             self.enter_editing_mode()
     
@@ -780,6 +958,17 @@ class TextBlockItem(QGraphicsTextItem):
     def init_rotation(self, scene_pos):
         self.rotating = True
         center = self.boundingRect().center()
+        if self.lettering_transform:
+            # Keep the existing origin: resetting it under a projective matrix
+            # would deform the visible quad even before the pointer moved.
+            self._rotation_parent_center = self.mapToParent(center)
+            self._rotation_inverse, valid = self.sceneTransform().inverted()
+            if not valid:
+                self.rotating = False
+                return
+            self._rotation_start = self.rotation()
+            local = self._rotation_inverse.map(scene_pos) - center
+            self._rotation_start_angle = math.degrees(math.atan2(local.y(), local.x()))
         self.center_scene_pos = self.mapToScene(center)
         self.last_rotation_angle = math.degrees(math.atan2(
             scene_pos.y() - self.center_scene_pos.y(),
@@ -816,6 +1005,13 @@ class TextBlockItem(QGraphicsTextItem):
         self.setPos(new_pos)
 
     def rotate_item(self, scene_pos):
+        if self.lettering_transform:
+            local = self._rotation_inverse.map(scene_pos) - self.boundingRect().center()
+            angle = math.degrees(math.atan2(local.y(), local.x()))
+            delta = (angle - self._rotation_start_angle + 180) % 360 - 180
+            self.setRotation(self._rotation_start + delta)
+            self.setPos(self.pos() + self._rotation_parent_center - self.mapToParent(self.boundingRect().center()))
+            return
         self.setTransformOriginPoint(self.boundingRect().center())
         current_angle = math.degrees(math.atan2(
             scene_pos.y() - self.center_scene_pos.y(),
@@ -837,6 +1033,9 @@ class TextBlockItem(QGraphicsTextItem):
 
     def resize_item(self, scene_pos: QPointF):
         if not self.resize_start:
+            return
+        if self.lettering_transform:
+            self._resize_transformed(scene_pos)
             return
 
         # Calculate delta from start position in scene coordinates
@@ -915,6 +1114,49 @@ class TextBlockItem(QGraphicsTextItem):
                         return
 
         self.resize_start = scene_pos
+
+    @staticmethod
+    def _resize_anchor(rect, handle):
+        x = rect.right() if 'left' in handle else rect.left() if 'right' in handle else rect.center().x()
+        y = rect.bottom() if 'top' in handle else rect.top() if 'bottom' in handle else rect.center().y()
+        return QPointF(x, y)
+
+    def _resize_transformed(self, scene_pos):
+        """Resize the real document through the full inverse scene mapping."""
+        from .text.text_item_properties import TextItemProperties
+        from app.controllers.lettering_style_format import apply_style_properties
+        handle = self.resize_handle
+        if not handle or not self.sceneTransform().isInvertible():
+            return
+        rect = self.boundingRect()
+        delta = self.mapFromScene(scene_pos) - self.mapFromScene(self.resize_start)
+        width = self.logical_text_width() + (delta.x() if 'right' in handle else -delta.x() if 'left' in handle else 0)
+        height = rect.height() + (delta.y() if 'bottom' in handle else -delta.y() if 'top' in handle else 0)
+        width, height = max(10.0, width), max(10.0, height)
+        if rect.height() <= 0:
+            return
+        new_font_size = max(1.0, self.font_size * height / rect.height())
+        before = TextItemProperties.from_text_item(self).to_dict()
+        anchor = self.mapToParent(self._resize_anchor(rect, handle))
+        # Font/layout changes emit document signals, but the item publishes just
+        # one final update after the full geometry is accepted.
+        with QSignalBlocker(self):
+            if self.vertical and self.layout:
+                self.layout.set_max_size(width, height)
+                self.layout_preferences['bound_height'] = height
+            else:
+                self.setTextWidth(width)
+                self.set_font_size(new_font_size)
+            self.refresh_lettering_transform()
+            self.setPos(self.pos() + anchor - self.mapToParent(self._resize_anchor(self.boundingRect(), handle)))
+            scene = self.scene()
+            if scene is not None and scene.views():
+                bounds = scene.sceneRect().adjusted(-1e-6, -1e-6, 1e-6, 1e-6)
+                if not bounds.contains(self.sceneBoundingRect()):
+                    apply_style_properties(self, before)
+                    return
+        self.resize_start = scene_pos
+        self.text_changed.emit(self.toPlainText())
 
     def on_selection_changed(self):
         cursor = self.textCursor()
@@ -1025,11 +1267,25 @@ class TextBlockItem(QGraphicsTextItem):
             underline=self.underline
         )
         
-        new_instance.set_text(self.toHtml(), self.boundingRect().width())
+        new_instance.set_text(self.toHtml(), self.logical_text_width())
         new_instance.setTransformOriginPoint(self.transformOriginPoint())
         new_instance.setPos(self.pos())
         new_instance.setRotation(self.rotation())
         new_instance.setScale(self.scale())
         new_instance.__dict__.update(copy.copy(self.__dict__))
+        # Layouts belong to their QTextDocument; never share the source object's
+        # custom layout through the Python attribute snapshot.
+        new_instance.layout = None
+        new_instance.vertical = False
+        if self.vertical:
+            new_instance.set_vertical(True)
+        from modules.utils.region_metadata import new_id
+        new_instance.region_id = new_id()
+        new_instance.layout_preferences = copy.deepcopy(self.layout_preferences)
+        new_instance.set_lettering_transform(copy.deepcopy(self.lettering_transform))
+        new_instance._ct_signals_connected = False
+        for name in ('_ct_text_changed_slot', '_page_path'):
+            new_instance.__dict__.pop(name, None)
+        new_instance.document().setDefaultFont(self.document().defaultFont())
         return new_instance
 

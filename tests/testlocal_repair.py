@@ -31,7 +31,7 @@ class LocalRepairTests(unittest.TestCase):
             image_viewer=self.viewer, local_repair_panel=self.panel,
             image_files=["page.png"], curr_img_idx=0, undo_stacks={"page.png": self.stack},
             temp_dir=self.tmp.name, image_patches={}, in_memory_patches={},
-            image_ctrl=SimpleNamespace(load_image=lambda _: self.original.copy(),
+            image_ctrl=SimpleNamespace(load_original_image=lambda _: self.original.copy(),
                                        get_composited_page_image=lambda _: self.viewer.get_image_array()),
             set_tool=self.viewer.set_tool, set_slider_size=lambda _: None,
             default_error_handler=self.errors.append,
@@ -238,8 +238,9 @@ class LocalRepairTests(unittest.TestCase):
         self.assertIs(toolbar.itemAt(0).widget(), panel.restore)
         self.assertIs(toolbar.itemAt(1).widget(), panel.pick)
         self.assertIs(toolbar.itemAt(2).widget(), panel.clone)
-        self.assertEqual(panel.layout().count(), 2)
-        self.assertIs(panel.layout().itemAt(0).widget(), panel.fill)
+        self.assertEqual(panel.layout().count(), 4)
+        self.assertIs(panel.layout().itemAt(0).layout().itemAt(1).widget(), panel.fill_mode)
+        self.assertIs(panel.layout().itemAt(1).widget(), panel.fill)
         for button in (panel.restore, panel.pick, panel.clone):
             self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
             self.assertTrue(button.isCheckable())

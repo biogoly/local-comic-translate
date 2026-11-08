@@ -6,6 +6,7 @@ from modules.detection.processor import TextBlockDetector
 from modules.detection.script_detection import ScriptDetector
 from modules.utils.textblock import TextBlock, sort_blk_list
 from modules.utils.manual_regions import is_manual_region, merge_manual_regions
+from modules.utils.region_policy import should_preserve_region
 from modules.rendering.render import get_best_render_area
 from pipeline.webtoon_utils import get_first_visible_block
 from app.ui.commands.box import ReplaceDetectedBlocksCommand
@@ -38,6 +39,7 @@ class BlockDetectionHandler:
                 rect_item = self.main_page.image_viewer.add_rectangle(
                     rect, QtCore.QPointF(x1, y1), blk.angle, transform_origin
                 )
+                rect_item.region_id = blk.region_id
                 self.main_page.connect_rect_item_signals(rect_item)
 
             # In webtoon mode, use first visible block instead of just first block
@@ -150,6 +152,8 @@ class BlockDetectionHandler:
                 return blk_list, load_rects, current_page
 
     def on_blk_detect_complete(self, result): 
+        from pipeline.translation_job import speaker_region_ids
+        speaker_ids = speaker_region_ids(self.main_page)
         blk_list, load_rects, page_mappings_or_current_page = result
         previous_blocks = [blk.deep_copy() for blk in self.main_page.blk_list]
         
@@ -173,7 +177,7 @@ class BlockDetectionHandler:
                     blk_y = existing_blk.xyxy[1]  # Top Y coordinate
                     blk_bottom = existing_blk.xyxy[3]  # Bottom Y coordinate
 
-                    if (is_manual_region(existing_blk)
+                    if ((should_preserve_region(existing_blk) or existing_blk.region_id in speaker_ids)
                             and blk_bottom > scene_y_min and blk_y < scene_y_max):
                         manual_in_view.append(existing_blk)
                         continue
@@ -183,14 +187,14 @@ class BlockDetectionHandler:
                         filtered_blocks.append(existing_blk)
                 
                 # Add the new blocks to the filtered list
-                blk_list = merge_manual_regions(manual_in_view, blk_list)
+                blk_list = merge_manual_regions(manual_in_view, blk_list, retain_ids=speaker_ids)
                 self.main_page.blk_list = filtered_blocks + blk_list
             else:
-                blk_list = merge_manual_regions(self.main_page.blk_list, blk_list)
+                blk_list = merge_manual_regions(self.main_page.blk_list, blk_list, retain_ids=speaker_ids)
                 self.main_page.blk_list = blk_list
         else:
             # Detection refreshes automatic regions, never user-drawn ones.
-            blk_list = merge_manual_regions(self.main_page.blk_list, blk_list)
+            blk_list = merge_manual_regions(self.main_page.blk_list, blk_list, retain_ids=speaker_ids)
             self.main_page.blk_list = blk_list
         
         source_lang = self.main_page.s_combo.currentText()

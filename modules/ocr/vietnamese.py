@@ -25,6 +25,7 @@ class VietnameseOCREngine(PPOCRv5Engine):
     def initialize(self, device='cpu', det_model='mobile', use_text_lines=True):
         self.device = device
         self.det_model = det_model
+        self.recognition_model = ModelID.PPOCR_V6_REC_VI.value
         self.use_text_lines = use_text_lines
         # Bounded batches keep long comic pages from creating large allocations.
         self.rec_batch_size = 4

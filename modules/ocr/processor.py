@@ -25,7 +25,10 @@ class OCRProcessor:
     based on settings and language.
     """
     
-    def __init__(self):
+    def __init__(self, engine_factory=None):
+        # Ordinary OCR retains the shared cache; isolated preview jobs may
+        # supply a private factory without mutating those cached engines.
+        self.engine_factory = engine_factory if engine_factory is not None else OCRFactory
         self.main_page = None
         self.settings = None
         self.source_lang = None
@@ -74,7 +77,7 @@ class OCRProcessor:
         if self.source_lang_english == 'Auto':
             return self._process_auto(img, blk_list)
 
-        engine = OCRFactory.create_engine(self.settings, self.source_lang_english, self.ocr_key)
+        engine = self.engine_factory.create_engine(self.settings, self.source_lang_english, self.ocr_key)
         return self._dispatch_with_override(img, blk_list, engine)
 
     def _process_auto(self, img: np.ndarray, blk_list: list[TextBlock]) -> list[TextBlock]:
@@ -87,7 +90,7 @@ class OCRProcessor:
             groups.setdefault(bucket, []).append(blk)
 
         for bucket, blks in groups.items():
-            engine = OCRFactory.create_engine(self.settings, bucket, self.ocr_key)
+            engine = self.engine_factory.create_engine(self.settings, bucket, self.ocr_key)
             self._dispatch_with_override(img, blks, engine)
 
         return blk_list
@@ -106,7 +109,7 @@ class OCRProcessor:
 
     def _dispatch_with_override(self, img: np.ndarray, blk_list: list[TextBlock], engine) -> list[TextBlock]:
         if type(engine).__name__ not in _MANGA_OCR_CLASS_NAMES:
-            return engine.process_image(img, blk_list)
+            return self._recognize(engine, img, blk_list)
 
         h, w = img.shape[:2]
         override = []
@@ -118,12 +121,24 @@ class OCRProcessor:
                 normal.append(blk)
 
         if override:
-            ppocr_engine = OCRFactory._create_ppocr(self.settings, 'ja')
-            ppocr_engine.process_image(img, override)
+            ppocr_engine = self.engine_factory._create_ppocr(self.settings, 'ja')
+            self._recognize(ppocr_engine, img, override)
         if normal:
-            engine.process_image(img, normal)
+            self._recognize(engine, img, normal)
 
         return blk_list
+
+    @staticmethod
+    def _recognize(engine, image, blocks):
+        # Some adapters skip invalid crops, and older ones only return text.
+        # A successful new pass must never inherit a prior recognizer's score.
+        previous = [(block, block.ocr_evidence) for block in blocks
+                    if getattr(block, "ocr_evidence", None) is not None]
+        result = engine.process_image(image, blocks)
+        for block, evidence in previous:
+            if block.ocr_evidence is evidence:
+                block.ocr_evidence = None
+        return result
 
     def _resolve_auto_script(self, blk: TextBlock, dominant_script: str) -> str:
         script = normalize_script(getattr(blk, 'script', ''))

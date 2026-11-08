@@ -26,6 +26,15 @@ class EventHandler:
         if self.viewer.webtoon_mode:
             self.viewer.webtoon_manager.update_page_on_click(scene_pos)
 
+        protection = getattr(self.viewer, "protection_controller", None)
+        if (event.button() == Qt.LeftButton and protection is not None
+                and self.viewer.current_tool in {"protect_pixels", "unprotect_pixels"}
+                and self.viewer.hasPhoto()):
+            if self._is_on_image(scene_pos):
+                protection.press(scene_pos)
+            event.accept()
+            return
+
         repair = getattr(self.viewer, "repair_controller", None)
         if (event.button() == Qt.LeftButton and repair is not None
                 and self.viewer.current_tool in {"restore", "color_pick", "clone"}
@@ -125,12 +134,17 @@ class EventHandler:
     def handle_mouse_move(self, event: QtGui.QMouseEvent):
         scene_pos = self.viewer.mapToScene(event.position().toPoint())
 
+        protection = getattr(self.viewer, "protection_controller", None)
+        if protection is not None and protection.is_drawing:
+            protection.move(scene_pos)
+            event.accept()
+            return
         repair = getattr(self.viewer, "repair_controller", None)
         if repair is not None and repair.is_drawing:
             repair.move(scene_pos)
             event.accept()
             return
-        if (self.viewer.current_tool in {"brush", "eraser", "restore", "color_pick", "clone"}
+        if (self.viewer.current_tool in {"brush", "eraser", "restore", "color_pick", "clone", "protect_pixels", "unprotect_pixels"}
                 and not self.viewer.panning):
             self.viewer.setCursor(Qt.CrossCursor)
             if repair is not None and self.viewer.current_tool == "clone":
@@ -163,6 +177,12 @@ class EventHandler:
         self.last_scene_pos = scene_pos
 
     def handle_mouse_release(self, event: QtGui.QMouseEvent):
+        protection = getattr(self.viewer, "protection_controller", None)
+        if event.button() == Qt.LeftButton and protection is not None and protection.is_drawing:
+            protection.move(self.viewer.mapToScene(event.position().toPoint()))
+            protection.release()
+            event.accept()
+            return
         repair = getattr(self.viewer, "repair_controller", None)
         if event.button() == Qt.LeftButton and repair is not None and repair.is_drawing:
             repair.move(self.viewer.mapToScene(event.position().toPoint()))
@@ -292,6 +312,7 @@ class EventHandler:
             self.last_scene_pos = scene_pos
             # Record state for undo purposes (instead of calling mousePressEvent which expects QGraphicsSceneMouseEvent)
             if isinstance(sel_item, TextBlockItem):
+                self._commit_before_text_geometry(sel_item)
                 sel_item.old_state = TextBlockState.from_item(sel_item)
             elif isinstance(sel_item, MoveableRectItem):
                 sel_item.old_state = RectState.from_item(sel_item)
@@ -302,6 +323,11 @@ class EventHandler:
 
         return False
 
+    def _commit_before_text_geometry(self, item):
+        controller = getattr(self.viewer.window(), 'text_ctrl', None)
+        if controller is not None:
+            controller._commit_pending_text_command()
+
     def _press_handle_resize(self, event, scene_pos) -> bool:
         blk_item, rect_item = self.viewer.sel_rot_item()
         sel_item = blk_item or rect_item
@@ -309,14 +335,15 @@ class EventHandler:
             local_pos = sel_item.mapFromScene(scene_pos)
             handle = self.viewer.interaction_manager.get_resize_handle(sel_item, local_pos)
             if handle:
+                if isinstance(sel_item, TextBlockItem):
+                    self._commit_before_text_geometry(sel_item)
+                    sel_item.old_state = TextBlockState.from_item(sel_item)
                 if isinstance(sel_item, TextBlockItem) and sel_item.editing_mode:
                     sel_item.exit_editing_mode()
                 sel_item.resize_handle = handle
                 sel_item.init_resize(scene_pos)
                 # Record state for undo purposes (instead of calling mousePressEvent which expects QGraphicsSceneMouseEvent)
-                if isinstance(sel_item, TextBlockItem):
-                    sel_item.old_state = TextBlockState.from_item(sel_item)
-                elif isinstance(sel_item, MoveableRectItem):
+                if isinstance(sel_item, MoveableRectItem):
                     sel_item.old_state = RectState.from_item(sel_item)
                 # Set cursor for resize operation
                 cursor = self.viewer.interaction_manager.get_resize_cursor(sel_item, local_pos)
@@ -331,23 +358,24 @@ class EventHandler:
         if isinstance(sel_item, TextBlockItem) and sel_item.editing_mode:
             return False
         if sel_item and self.viewer.interaction_manager._in_rotate_ring(sel_item, scene_pos):
-            angle = sel_item.rotation()
+            angle = 0 if getattr(sel_item, 'lettering_transform', None) else sel_item.rotation()
             inner_rect = sel_item.boundingRect()
             outer_rect = inner_rect.adjusted(-self.viewer.interaction_manager.rotate_margin_max, 
                                            -self.viewer.interaction_manager.rotate_margin_max, 
                                            self.viewer.interaction_manager.rotate_margin_max, 
                                            self.viewer.interaction_manager.rotate_margin_max)
-            sel_item.rot_handle = self.viewer.interaction_manager.get_rotate_handle(outer_rect, sel_item.mapFromScene(scene_pos), angle)
+            sel_item.rot_handle = self.viewer.interaction_manager.get_rotate_handle(outer_rect, sel_item.mapFromScene(scene_pos), angle, sel_item)
             if sel_item.rot_handle:
+                if isinstance(sel_item, TextBlockItem):
+                    self._commit_before_text_geometry(sel_item)
+                    sel_item.old_state = TextBlockState.from_item(sel_item)
                 sel_item.init_rotation(scene_pos)
                 # Record state for undo purposes (instead of calling mousePressEvent which expects QGraphicsSceneMouseEvent)
-                if isinstance(sel_item, TextBlockItem):
-                    sel_item.old_state = TextBlockState.from_item(sel_item)
-                elif isinstance(sel_item, MoveableRectItem):
+                if isinstance(sel_item, MoveableRectItem):
                     sel_item.old_state = RectState.from_item(sel_item)
                 # Set cursor for rotation operation
                 local_pos = sel_item.mapFromScene(scene_pos)
-                cursor = self.viewer.interaction_manager.get_rotation_cursor(outer_rect, local_pos, angle)
+                cursor = self.viewer.interaction_manager.get_rotation_cursor(outer_rect, local_pos, angle, sel_item)
                 self.viewer.viewport().setCursor(cursor)
                 event.accept()
                 return True
@@ -400,6 +428,8 @@ class EventHandler:
 
         # Call the appropriate move method
         sel_item.move_item(local_pos, last_local_pos)
+        if getattr(sel_item, 'lettering_transform', None):
+            self.last_scene_pos = scene_pos
 
         event.accept()
         return True
@@ -438,7 +468,8 @@ class EventHandler:
                                            -self.viewer.interaction_manager.rotate_margin_max, 
                                            self.viewer.interaction_manager.rotate_margin_max, 
                                            self.viewer.interaction_manager.rotate_margin_max)
-            cursor = self.viewer.interaction_manager.get_rotation_cursor(outer_rect, local_pos, sel_item.rotation())
+            angle = 0 if getattr(sel_item, 'lettering_transform', None) else sel_item.rotation()
+            cursor = self.viewer.interaction_manager.get_rotation_cursor(outer_rect, local_pos, angle, sel_item)
             self.viewer.viewport().setCursor(cursor)
             return True
         
@@ -477,6 +508,11 @@ class EventHandler:
         blk_item, rect_item = self.viewer.sel_rot_item()
         sel_item = blk_item or rect_item
         if sel_item:
+            # An ordinary pointer drag rarely lands on exactly zero degrees.
+            # Snap the final half degree so a horizontal override is reachable.
+            if sel_item.rotating and sel_item.old_state and sel_item.rotation() != sel_item.old_state.rotation:
+                if abs((sel_item.rotation() + 180) % 360 - 180) < 0.5:
+                    sel_item.setRotation(0)
             # Reset flags
             sel_item.resizing = False
             sel_item.resize_handle = None
@@ -491,6 +527,7 @@ class EventHandler:
                 new_state = TextBlockState.from_item(sel_item)
                 if new_state != sel_item.old_state:
                     sel_item.change_undo.emit(sel_item.old_state, new_state)
+                sel_item.old_state = None
             elif isinstance(sel_item, MoveableRectItem) and sel_item.old_state:
                 new_state = RectState.from_item(sel_item)
                 if new_state != sel_item.old_state:

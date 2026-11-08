@@ -2,6 +2,7 @@ import hashlib
 import logging
 
 from modules.utils.translator_utils import has_translatable_content
+from modules.ocr.evidence import current_ocr_evidence
 
 logger = logging.getLogger(__name__)
 
@@ -10,7 +11,7 @@ class CacheManager:
     """Manages OCR and translation caching for the pipeline."""
     
     def __init__(self):
-        self.ocr_cache = {}  # OCR results cache: {(image_hash, model_key, source_lang): {block_id: text}}
+        self.ocr_cache = {}  # Page/engine/language/device -> region geometry -> reading and evidence.
         self.translation_cache = {}  # Translation results cache: {(image_hash, translator_key, source_lang, target_lang, extra_context): {block_id: {source_text: str, translation: str}}}
 
     def clear_ocr_cache(self):
@@ -100,12 +101,15 @@ class CacheManager:
 
     def _find_matching_translation_block_id(self, cache_key, target_block):
         """Find a matching block ID in translation cache, allowing for small coordinate differences"""
-        target_id = self._get_block_id(target_block)
+        target_id = self._translation_block_id(target_block)
         cached_results = self.translation_cache.get(cache_key, {})
         
         # First try exact match
         if target_id in cached_results:
             return target_id, cached_results[target_id]
+        # Explicit identities must never fall through to a neighboring box.
+        if getattr(target_block, 'region_id', ''):
+            return None, ''
         
         # If no exact match, try fuzzy matching for coordinates within tolerance
         try:
@@ -152,23 +156,10 @@ class CacheManager:
         """Cache OCR results for all blocks"""
         try:
             block_results = {}
-            # If we have separate processed blocks (with OCR results), use them for text
-            # but use original blocks for consistent IDs
-            if processed_blk_list is not None:
-                for original_blk, processed_blk in zip(blk_list, processed_blk_list):
-                    block_id = self._get_block_id(original_blk)  # Use original block for ID
-                    text = getattr(processed_blk, 'text', '') or ''  # Get text from processed block
-                    # Only include blocks that actually have OCR text
-                    if text:
-                        block_results[block_id] = text
-            else:
-                # Standard case: use the same blocks for both ID and text
-                for blk in blk_list:
-                    block_id = self._get_block_id(blk)
-                    text = getattr(blk, 'text', '') or ''
-                    # Only include blocks that actually have OCR text
-                    if text:
-                        block_results[block_id] = text
+            processed = blk_list if processed_blk_list is None else processed_blk_list
+            for original, reading in zip(blk_list, processed):
+                if getattr(reading, 'text', ''):
+                    block_results[self._get_block_id(original)] = self._ocr_record(reading)
             # Do not create a cache entry if there are no blocks with OCR text
             if block_results:
                 self.ocr_cache[cache_key] = block_results
@@ -200,16 +191,20 @@ class CacheManager:
         if cache_key not in self.ocr_cache:
             self.ocr_cache[cache_key] = {}
 
-        self.ocr_cache[cache_key][block_id] = text
+        self.ocr_cache[cache_key][block_id] = self._ocr_record(block)
         logger.debug(f"Updated OCR cache for block ID {block_id}")
 
+
+    @staticmethod
+    def _ocr_record(block):
+        return {"text": block.text, "ocr_evidence": current_ocr_evidence(block)}
 
     def _get_cached_text_for_block(self, cache_key, block):
         """Retrieve cached text for a specific block"""
         matched_id, result = self._find_matching_block_id(cache_key, block)
         
         if matched_id is not None:  # Block found in cache
-            return result  # Return the cached text (could be empty string)
+            return result.get("text") if isinstance(result, dict) else result
         else:
             # Block not found in cache at all
             # Debug logging to help identify cache issues (only log when block not found in cache)
@@ -219,8 +214,14 @@ class CacheManager:
             logger.debug(f"Available block IDs in cache: {list(cached_results.keys())}")
             return None  # Indicate block needs processing
 
-    def _get_translation_cache_key(self, image, source_lang, target_lang, translator_key, extra_context):
+    def _translation_block_id(self, block):
+        identity = getattr(block, 'region_id', '')
+        return 'region:' + identity if identity else self._get_block_id(block)
+
+    def _get_translation_cache_key(self, image, source_lang, target_lang, translator_key, extra_context, *, request=None):
         """Generate cache key for translation results"""
+        if request is not None:
+            return ('request-v1', request.fingerprint)
         image_hash = self._generate_image_hash(image)
         # Include extra_context in cache key since it affects translation results
         context_hash = hashlib.md5(extra_context.encode()).hexdigest() if extra_context else "no_context"
@@ -238,7 +239,7 @@ class CacheManager:
             # but use original blocks for consistent IDs
             if processed_blk_list is not None:
                 for original_blk, processed_blk in zip(blk_list, processed_blk_list):
-                    block_id = self._get_block_id(original_blk)  # Use original block for ID
+                    block_id = self._translation_block_id(original_blk)  # Stable translation ownership
                     translation = getattr(processed_blk, 'translation', '') or ''  # Get translation from processed block
                     source_text = getattr(original_blk, 'text', '') or ''  # Get source text from original block
                     # Only include blocks that actually have a translation
@@ -251,7 +252,7 @@ class CacheManager:
             else:
                 # Standard case: use the same blocks for both ID and translation
                 for blk in blk_list:
-                    block_id = self._get_block_id(blk)
+                    block_id = self._translation_block_id(blk)
                     translation = getattr(blk, 'translation', '') or ''
                     source_text = getattr(blk, 'text', '') or ''
                     # Only include blocks that actually have a translation
@@ -271,7 +272,7 @@ class CacheManager:
 
     def update_translation_cache_for_block(self, cache_key, block):
         """Update or add a single block's translation result to the cache."""
-        block_id = self._get_block_id(block)
+        block_id = self._translation_block_id(block)
         translation = getattr(block, 'translation', '') or ''
         source_text = getattr(block, 'text', '') or ''
 
@@ -349,9 +350,15 @@ class CacheManager:
     def _apply_cached_ocr_to_blocks(self, cache_key, block_list):
         """Apply cached OCR results to all blocks in the list"""
         for block in block_list:
-            cached_text = self._get_cached_text_for_block(cache_key, block)
-            if cached_text is not None: 
-                block.text = cached_text  
+            matched, reading = self._find_matching_block_id(cache_key, block)
+            if matched is None:
+                continue
+            if isinstance(reading, dict):
+                block.text = reading["text"]
+                block.ocr_evidence = current_ocr_evidence(reading)
+            else:
+                block.text = reading
+                block.ocr_evidence = None
 
     def _apply_cached_translations_to_blocks(self, cache_key, block_list):
         """Apply cached translation results to all blocks in the list"""

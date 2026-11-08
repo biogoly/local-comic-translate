@@ -13,6 +13,7 @@ from modules.utils.pipeline_config import inpaint_map, get_config, get_inpainter
 from modules.utils.textblock import adjust_text_line_coordinates
 from pipeline.inpainting_boxes import merge_overlapping_padded_boxes
 from pipeline.webtoon_utils import filter_and_convert_visible_blocks, restore_original_block_coordinates
+from modules.repair.protection import protect_image
 
 logger = logging.getLogger(__name__)
 
@@ -20,21 +21,48 @@ FAST_FILL_BUBBLE_INSET = 7
 FAST_FILL_UNIFORM_COLOR_TOLERANCE = 12
 FAST_FILL_MIN_UNIFORM_COVERAGE = 0.94
 
+from modules.utils.region_policy import (
+    permits_region_operation, subtract_cleanup_protections, composite_cleanup_result,
+)
 
-def call_inpaint_image(inpainting_handler, image: np.ndarray, mask: np.ndarray, config, blk_list: list | None = None):
+
+def call_inpaint_image(inpainting_handler, image: np.ndarray, mask: np.ndarray, config,
+                       blk_list: list | None = None, *, automatic=False,
+                       protected_blocks=None, preserve_unmatched_mask=False,
+                       pixel_protection=None):
     inpaint_image = inpainting_handler.inpaint_image
     try:
         parameters = inspect.signature(inpaint_image).parameters
-        accepts_blk_list = (
-            "blk_list" in parameters
-            or any(param.kind == inspect.Parameter.VAR_KEYWORD for param in parameters.values())
-        )
+        accepts_kwargs = any(param.kind == inspect.Parameter.VAR_KEYWORD for param in parameters.values())
     except (TypeError, ValueError):
-        accepts_blk_list = True
-
-    if accepts_blk_list:
-        return inpaint_image(image, mask, config, blk_list=blk_list)
-    return inpaint_image(image, mask, config)
+        parameters, accepts_kwargs = {}, True
+    arguments = {'blk_list': blk_list}
+    before = None
+    # Validate protection before invoking a backend, preserving an immutable
+    # snapshot even when a custom/manual backend modifies its input in place.
+    pixel_before = protect_image(image, image, pixel_protection) if pixel_protection is not None else None
+    if pixel_protection is not None:
+        mask = mask.copy()
+        mask[pixel_protection != 0] = 0
+    if automatic and image is not None:
+        before = image.copy()
+        protected_blocks = protected_blocks if protected_blocks is not None else blk_list
+        mask = subtract_cleanup_protections(mask, protected_blocks)
+        if mask is None or not np.any(mask):
+            return before
+        arguments.update(automatic=True, protected_blocks=protected_blocks)
+        arguments['blk_list'] = [block for block in blk_list or ()
+                                 if permits_region_operation(block, 'cleanup')]
+    if preserve_unmatched_mask:
+        arguments['preserve_unmatched_mask'] = True
+    arguments = {key: value for key, value in arguments.items() if accepts_kwargs or key in parameters}
+    # A backend is permitted to mutate its input, never the captured page/mask.
+    result = inpaint_image(image.copy() if automatic or pixel_before is not None else image,
+                           mask.copy() if automatic and mask is not None else mask,
+                           config, **arguments)
+    result = composite_cleanup_result(before, result, mask) if before is not None else result
+    # Clip again after backend dilation, feathering and fast bubble cleanup.
+    return protect_image(pixel_before, result, pixel_protection) if pixel_before is not None else result
 
 
 class InpaintingHandler:
@@ -59,7 +87,7 @@ class InpaintingHandler:
             logger.info("pre-inpaint: inpainter initialized in %.2fs", time.time() - t0)
         return self.inpainter_cache
 
-    def manual_inpaint(self):
+    def manual_inpaint(self, *, automatic=False):
         image_viewer = self.main_page.image_viewer
         settings_page = self.main_page.settings_page
         mask = image_viewer.get_mask_for_inpainting()
@@ -78,12 +106,15 @@ class InpaintingHandler:
 
         config = get_config(settings_page)
         inpaint_blocks = self._get_manual_fast_fill_blocks(mappings)
-        inpaint_input_img = self.inpaint_image(
+        inpaint_input_img = call_inpaint_image(
+            self,
             image,
             mask,
             config,
             blk_list=inpaint_blocks or None,
             preserve_unmatched_mask=True,
+            automatic=automatic,
+            protected_blocks=inpaint_blocks,
         )
         inpaint_input_img = imk.convert_scale_abs(inpaint_input_img) 
 
@@ -846,6 +877,7 @@ class InpaintingHandler:
         config,
         blk_list: list | None = None,
         preserve_unmatched_mask: bool = False,
+        *, automatic: bool = False, protected_blocks=None,
     ) -> np.ndarray:
         """
         Intelligently chooses between full-image and patch-based inpainting
@@ -856,20 +888,38 @@ class InpaintingHandler:
         if mask is None or not np.any(mask):
             return image.copy()
 
+        before = image.copy() if automatic else None
+        if automatic:
+            protected_blocks = protected_blocks if protected_blocks is not None else blk_list
+            mask = subtract_cleanup_protections(mask, protected_blocks)
+            blk_list = [block for block in blk_list or () if permits_region_operation(block, 'cleanup')]
+            if not np.any(mask):
+                return before
+
+        def finish(result):
+            return composite_cleanup_result(before, result, mask) if automatic else result
+
         working_image, working_mask, cleaned_blocks = self._apply_fast_bubble_cleanup(
             image,
             mask,
             blk_list,
             preserve_unmatched_mask=preserve_unmatched_mask,
         )
+        if automatic:
+            # Fast fill can feather beyond its mask. Restore the pre-operation
+            # composed pixels before the NN sees them, then constrain its result.
+            working_mask = subtract_cleanup_protections(working_mask, protected_blocks)
+            if working_mask is not None:
+                working_mask[mask == 0] = 0
+            working_image = finish(working_image)
         if cleaned_blocks:
             logger.info("Inpaint hybrid: fast-cleaned %d bubble blocks", cleaned_blocks)
         if working_mask is None or not np.any(working_mask):
-            return working_image
+            return finish(working_image)
 
         contours, _ = imk.find_contours(working_mask)
         if not contours:
-            return working_image
+            return finish(working_image)
 
         if cleaned_blocks:
             component_count, largest_area, largest_bbox = self._residual_component_summary(working_mask)
@@ -888,14 +938,14 @@ class InpaintingHandler:
 
         if getattr(self.inpainter_cache, "force_full_image_inpainting", False):
             logger.info("Inpaint hybrid: FULL-IMAGE forced by inpainter")
-            return self._inpaint_full_image(working_image, working_mask, config)
+            return finish(self._inpaint_full_image(working_image, working_mask, config))
 
         boxes = [imk.bounding_rect(c) for c in contours]
         merged_boxes = merge_overlapping_padded_boxes(boxes, working_image.shape)
         num_patches = len(merged_boxes)
 
         if num_patches == 0:
-            return working_image
+            return finish(working_image)
 
         # Calculate mathematically modeled cost comparison:
         # 1. Calculate the scaled dimension of the full image based on actual configuration
@@ -936,25 +986,29 @@ class InpaintingHandler:
                 "Inpaint hybrid: PATCH-BASED (patches=%d, ratio=%.2f%%, size=%dx%d)",
                 num_patches, area_ratio * 100, w_img, h_img
             )
-            return self._inpaint_by_patches(working_image, working_mask, config)
+            return finish(self._inpaint_by_patches(working_image, working_mask, config))
         else:
             logger.info(
                 "Inpaint hybrid: FULL-IMAGE (patches=%d, ratio=%.2f%%, size=%dx%d)",
                 num_patches, area_ratio * 100, w_img, h_img
             )
-            return self._inpaint_full_image(working_image, working_mask, config)
+            return finish(self._inpaint_full_image(working_image, working_mask, config))
 
-    def inpaint_page_from_saved_strokes(self, image: np.ndarray, strokes: list[dict], blk_list: list | None = None):
+    def inpaint_page_from_saved_strokes(self, image: np.ndarray, strokes: list[dict], blk_list: list | None = None,
+                                       *, automatic=False):
         mask = self._generate_mask_from_saved_strokes(strokes, image)
         if mask is None:
             return []
         config = get_config(self.main_page.settings_page)
-        inpainted = self.inpaint_image(
+        inpainted = call_inpaint_image(
+            self,
             image,
             mask,
             config,
             blk_list=blk_list or None,
             preserve_unmatched_mask=True,
+            automatic=automatic,
+            protected_blocks=blk_list,
         )
         inpainted = imk.convert_scale_abs(inpainted)
         return self._get_regular_patches(mask, inpainted)
@@ -1072,8 +1126,8 @@ class InpaintingHandler:
                 
         return patches
     
-    def inpaint(self):
+    def inpaint(self, *, automatic=False):
         mask = self.main_page.image_viewer.get_mask_for_inpainting()
-        painted = self.manual_inpaint()              
+        painted = self.manual_inpaint(automatic=automatic)
         patches = self.get_inpainted_patches(mask, painted)
         return patches         

@@ -513,7 +513,7 @@ class ManualTextBoxTests(unittest.TestCase):
         ]
         self.assertIn("Visible free text", rendered_texts)
 
-    def test_selected_translation_inpaints_before_creating_text_layer(self):
+    def test_selected_translation_refreshes_target_without_cleaning_or_rendering(self):
         blk = TextBlock(
             text_bbox=np.array([20, 20, 115, 70]),
             text="texto original",
@@ -521,38 +521,22 @@ class ManualTextBoxTests(unittest.TestCase):
         )
         self.main.blk_list = [blk]
         self.main.image_states["page.png"]["blk_list"] = self.main.blk_list
-        self.main.curr_tblock = blk
-        events = []
-        patch = {
-            "bbox": [20, 20, 95, 50],
-            "image": np.full((50, 95, 3), 255, dtype=np.uint8),
-        }
-
-        self.main.manual_workflow_ctrl._inpaint_translated_block = (
-            lambda _blk: {"page.png": [patch]}
+        rect = self.main.image_viewer.add_rectangle(
+            QtCore.QRectF(0, 0, 95, 50), QtCore.QPointF(20, 20)
         )
-        original_apply = self.main.image_ctrl.on_inpaint_patches_processed
-        self.main.image_ctrl.on_inpaint_patches_processed = (
-            lambda patches, path: (
-                events.append("inpaint"),
-                original_apply(patches, path),
-            )
-        )
-        original_render = self.main.text_ctrl.on_blk_rendered
-        self.main.text_ctrl.on_blk_rendered = (
-            lambda *args: (events.append("render"), original_render(*args))
-        )
+        self.main.image_viewer.select_rectangle(rect)
+        before = self.main.image_viewer.get_image_array(paint_all=True).copy()
+        undo_count = self.main.undo_stacks['page.png'].count()
 
         self.main.manual_workflow_ctrl._finish_translation(True)
         self.app.processEvents()
 
-        self.assertEqual(events[:2], ["inpaint", "render"])
-        self.assertEqual(len(self.main.applied_patches), 1)
-        self.assertEqual(len(self.main.image_viewer.text_items), 1)
-        self.assertIn(
-            "Translated text",
-            self.main.image_viewer.text_items[0].toPlainText().replace("\n", " "),
-        )
+        self.assertEqual(self.main.t_text_edit.toPlainText(), 'Translated text')
+        self.assertEqual(self.main.applied_patches, [])
+        self.assertEqual(self.main.image_viewer.text_items, [])
+        np.testing.assert_array_equal(self.main.image_viewer.get_image_array(paint_all=True), before)
+        self.assertEqual(self.main.undo_stacks['page.png'].count(), undo_count)
+        self.assertEqual(self.main.finished_count, 1)
 
     def test_selected_translate_still_works_without_reclassifying_free_text(self):
         block = TextBlock(

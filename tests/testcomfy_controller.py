@@ -12,10 +12,13 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PIL import Image
 from PySide6 import QtCore, QtWidgets
 
+from app.controllers.rect_item import RectItemController
 from app.ui.dialogs.artistic_edit_preview import ArtisticEditPreviewDialog
 from modules.artistic_edit.backend_contracts import ComfyCompletion, ComfyJobEvent
 from modules.artistic_edit.comfy_config import ComfyLoraSelection, ComfySettings, save_comfy_settings
-from modules.artistic_edit.contracts import ArtisticEditResult
+from modules.artistic_edit.comfy_workflows import build_workflow
+from modules.artistic_edit.contracts import ArtisticEditResult, SelectionMode
+from modules.utils.textblock import TextBlock
 from tests import testartistic_edit_controller as harness
 
 
@@ -99,6 +102,38 @@ class ComfyControllerTests(unittest.TestCase):
         self.assertFalse(self.panel.generate_button.isEnabled())
         self.assertIn("Configure ComfyUI", self.panel.generate_button.toolTip())
         self.assertIsNone(self.controller._comfy_job)
+
+    def test_selected_cover_credit_reaches_klein_9b_encoder_in_source_case(self):
+        stored = "COVER ILLUSTRATION COLORING: BRUSCO"
+        expected = "Cover illustration coloring: BRUSCO"
+        block = TextBlock(text_bbox=[20, 20, 40, 36],
+                          text="Color de la ilustración de cubierta BRUSCO", translation=stored)
+        self.main.blk_list = [block]
+        self.main.rect_item_ctrl = RectItemController(self.main)
+        self.main.t_combo = QtWidgets.QComboBox()
+        self.addCleanup(self.main.t_combo.deleteLater)
+        self.main.t_combo.addItem("English")
+        self.main.lang_mapping = {"English": "English"}
+        rect = self.viewer.add_rectangle(QtCore.QRectF(0, 0, 20, 16), QtCore.QPointF(20, 20))
+        self.viewer.select_rectangle(rect)
+        self.controller.connect_signals()
+        self.panel.area_combo.setCurrentIndex(self.panel.area_combo.findData(SelectionMode.SELECTED_BOX.value))
+        self.panel.use_translation_button.click()
+        self.assertTrue(self.panel.generate_button.isEnabled(), self.panel.generate_button.toolTip())
+        self.panel.generate_button.click()
+
+        job = self.controller._comfy_job
+        self.assertIsNotNone(job, self.controller._warning.call_args)
+        self.assertEqual(job.spec.profile.model_key, "klein-9b")
+        graph = build_workflow(job.spec, "credit.png")
+        guider, = [node for node in graph.values() if node["class_type"] == "CFGGuider"]
+        reference = graph[guider["inputs"]["positive"][0]]
+        encoder = graph[reference["inputs"]["conditioning"][0]]
+        self.assertEqual(encoder["class_type"], "CLIPTextEncode")
+        self.assertIn(f'"{expected}"', encoder["inputs"]["text"])
+        self.assertNotIn(stored, encoder["inputs"]["text"])
+        self.assertEqual(self.controller._session.expected_lettering, expected)
+        self.assertEqual(block.translation, stored)
 
     def test_result_dispatches_preview_on_gui_thread_and_discard_is_clean(self):
         seen = []
@@ -216,7 +251,8 @@ class ComfyControllerTests(unittest.TestCase):
         self.assertEqual(regenerated.profile, original.profile)
         self.assertNotEqual(regenerated.job_token, original.job_token)
         self.assertNotEqual(regenerated.raster.request_id, original.raster.request_id)
-        self.assertFalse(Path(original.raster.input_path).exists())
+        # The last successful preview survives until its replacement succeeds.
+        self.assertTrue(Path(original.raster.input_path).exists())
 
     def test_apply_is_one_typed_patch_with_comfy_provenance(self):
         self.controller.preview_factory = lambda *_args, **_kwargs: harness._PreviewDecision(QtWidgets.QDialog.Accepted)

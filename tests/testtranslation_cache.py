@@ -7,6 +7,8 @@ import numpy as np
 from modules.utils.textblock import TextBlock
 from pipeline.cache_manager import CacheManager
 from pipeline.translation_handler import TranslationHandler
+from modules.translation.llm.local import LocalLLMTranslation
+from modules.translation.request import build_request
 
 
 class _Combo:
@@ -52,17 +54,20 @@ class TranslationCacheTests(unittest.TestCase):
             text="dos",
         )
         cache = CacheManager()
-        cache_key = cache._get_translation_cache_key(
-            source, "Spanish", "English", "Local LLM", ""
-        )
-        cache._cache_translation_results(cache_key, [first])
-        first.translation = ""
-
         translated_block_counts = []
+        engine = LocalLLMTranslation()
+        engine.source_lang, engine.target_lang = 'Spanish', 'English'
+        engine.img_as_llm_input = True
+        observed_images = []
 
         class _Translator:
-            def translate(self, blocks, image, extra_context):
-                del image, extra_context
+            source_lang, target_lang, translator_key = 'Spanish', 'English', 'Local LLM'
+
+            def prepare_request(self, blocks, image, extra_context):
+                return build_request(engine, blocks, image, extra_context)
+
+            def translate(self, blocks, image, extra_context, *, request):
+                observed_images.append(image.copy())
                 translated_block_counts.append(len(blocks))
                 for block in blocks:
                     block.translation = "two"
@@ -83,13 +88,25 @@ class TranslationCacheTests(unittest.TestCase):
         pipeline = SimpleNamespace(get_selected_block=lambda: selected)
         handler = TranslationHandler(main, cache, pipeline)
 
-        with patch("pipeline.translation_handler.Translator", return_value=_Translator()):
+        translator = _Translator()
+        request = translator.prepare_request([selected], source, '')
+        cache_key = cache._get_translation_cache_key(source, 'Spanish', 'English', 'Local LLM', '', request=request)
+        with patch("pipeline.translation_handler.Translator", return_value=translator):
+            handler.translate_image(single_block=True)
+            self.assertEqual(selected.translation, 'two')
+            # A further pixel repair must not invalidate a translation whose
+            # visual context still comes from the original page.
+            viewer.composited[:] = 100
+            selected.translation = ''
             handler.translate_image(single_block=True)
 
-        self.assertEqual(viewer.include_patches_calls, [False])
+        self.assertEqual(viewer.include_patches_calls, [False, False])
         self.assertEqual(translated_block_counts, [1])
-        self.assertEqual(selected.translation, "two")
-        self.assertEqual(len(cache.translation_cache[cache_key]), 2)
+        np.testing.assert_array_equal(observed_images[0], source)
+        self.assertEqual(selected.translation, 'two')
+        self.assertEqual(first.translation, 'one')
+        self.assertEqual(len(cache.translation_cache[cache_key]), 1)
+        self.assertIsNone(cache._get_cached_translation_for_block(cache_key, first))
 
 
 if __name__ == "__main__":

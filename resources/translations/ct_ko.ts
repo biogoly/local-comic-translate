@@ -776,6 +776,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>아트 편집</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>번역 맥락</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>레터링 스타일</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>텍스트 모양</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -1574,6 +1586,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>아트 편집</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>번역 맥락</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>레터링 스타일</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>텍스트 모양</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -1916,6 +1940,14 @@ It may have been moved, renamed, or deleted.
         <source>Top K:</source>
         <translation>Top K:</translation>
     </message>
+    <message>
+        <source>Provide text-box coordinates (experimental)</source>
+        <translation>텍스트 상자 좌표 제공 (실험적 기능)</translation>
+    </message>
+    <message>
+        <source>Send text-box positions with the page image. Requires image input and a vision-capable model; improvement is not guaranteed.</source>
+        <translation>페이지 이미지와 함께 텍스트 상자의 위치를 전송합니다. 이미지 입력과 이미지를 이해할 수 있는 모델이 필요하며, 결과 개선은 보장되지 않습니다.</translation>
+    </message>
 </context>
 <context>
     <name>Messages</name>
@@ -2124,6 +2156,22 @@ Please check your internet connection.</source>
     <message>
         <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
         <translation>설정 &gt; 제공업체 API에서 API 키와 필수 항목을 설정하세요: {provider}</translation>
+    </message>
+    <message>
+        <source>Page already contains rendered text; use manual Render to add missing regions.</source>
+        <translation>이 페이지에는 이미 렌더링된 텍스트가 있습니다. 누락된 영역은 수동 렌더링으로 추가하세요.</translation>
+    </message>
+    <message>
+        <source>Existing Rendered Text</source>
+        <translation>이미 렌더링된 텍스트</translation>
+    </message>
+    <message>
+        <source>Perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit the perspective lettering.</source>
+        <translation>이 PSD의 원근 레터링은 배경 픽셀로 가져왔습니다. 다른 텍스트는 그 위에서 계속 편집할 수 있습니다. 원근 레터링을 편집하려면 원본 프로젝트를 사용하세요.</translation>
+    </message>
+    <message>
+        <source>Curved or perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit its text and shape.</source>
+        <translation>이 PSD의 곡선 또는 원근 효과가 적용된 텍스트는 배경 픽셀로 가져왔습니다. 다른 텍스트는 그 위에서 계속 편집할 수 있습니다. 해당 텍스트와 모양을 편집하려면 원본 프로젝트를 사용하세요.</translation>
     </message>
 </context>
 <context>
@@ -3201,6 +3249,18 @@ Open or create a project to get started.</source>
         <source>Render Text in UpperCase</source>
         <translation>대문자로 텍스트 렌더링</translation>
     </message>
+    <message>
+        <source>Fit to bubble when rendering</source>
+        <translation>렌더링 시 말풍선에 텍스트 맞춤</translation>
+    </message>
+    <message>
+        <source>Bubble padding:</source>
+        <translation>말풍선 안쪽 여백:</translation>
+    </message>
+    <message>
+        <source>Fit newly rendered text to speech-bubble interiors, with Box fallback. Existing lettering is preserved; other regions continue through processing.</source>
+        <translation>새로 렌더링하는 텍스트를 말풍선 내부에 맞추며, 불가능하면 텍스트 상자에 맞춥니다. 기존 글자는 유지하고 다른 영역은 계속 처리합니다.</translation>
+    </message>
 </context>
 <context>
     <name>ToolsPage</name>
@@ -3581,6 +3641,18 @@ back on the Image (for further editing)</source>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
         <source>Artistic Edit</source>
         <translation>아트 편집</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>번역 맥락</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>레터링 스타일</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>텍스트 모양</translation>
     </message>
 </context>
 <context>
@@ -4644,6 +4716,42 @@ Prompt: {prompt}</source>
         <source>{model} (experimental)</source>
         <translation>{model} (실험적)</translation>
     </message>
+    <message>
+        <source>Artwork protection changed. Regenerate the preview.</source>
+        <translation>그림 보호 설정이 변경되었습니다. 미리보기를 다시 생성하세요.</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (provider API; sends the writable edit area).</source>
+        <translation>OCR: {engine} (제공업체 API, 편집 가능한 영역을 전송합니다).</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (local).</source>
+        <translation>OCR: {engine} (로컬).</translation>
+    </message>
+    <message>
+        <source>Checks use the translation target language. Pixels outside the writable area and protected pixels are excluded.</source>
+        <translation>확인에는 번역 대상 언어를 사용합니다. 편집 가능 영역 밖의 픽셀과 보호된 픽셀은 제외됩니다.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>레터링을 확인할 수 없습니다: {error}</translation>
+    </message>
+    <message>
+        <source>A previous lettering check is still finishing.</source>
+        <translation>이전 레터링 확인이 아직 완료되지 않았습니다.</translation>
+    </message>
+    <message>
+        <source>The preview changed. Run Check lettering again.</source>
+        <translation>미리보기가 변경되었습니다. 「레터링 확인」을 다시 실행하세요.</translation>
+    </message>
+    <message>
+        <source>OCR check failed ({error_type}). Check your OCR settings and try again.</source>
+        <translation>OCR 확인에 실패했습니다 ({error_type}). OCR 설정을 확인하고 다시 시도하세요.</translation>
+    </message>
+    <message>
+        <source>Candidate {number}</source>
+        <translation>후보 {number}</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4988,6 +5096,102 @@ Prompt: {prompt}</source>
         <source>Apply</source>
         <translation>적용</translation>
     </message>
+    <message>
+        <source>Check lettering</source>
+        <translation>레터링 확인</translation>
+    </message>
+    <message>
+        <source>Lettering details</source>
+        <translation>레터링 세부 정보</translation>
+    </message>
+    <message>
+        <source>Stylized lettering can confuse OCR. Review the image before applying.</source>
+        <translation>장식적인 글자는 OCR이 잘못 인식할 수 있습니다. 적용하기 전에 이미지를 확인하세요.</translation>
+    </message>
+    <message>
+        <source>Lettering check details</source>
+        <translation>레터링 확인 세부 정보</translation>
+    </message>
+    <message>
+        <source>Not checked yet.</source>
+        <translation>아직 확인하지 않았습니다.</translation>
+    </message>
+    <message>
+        <source>Use selected translation with Artistic lettering to supply exact wording. Editing that prompt clears the lettering check.</source>
+        <translation>「아트 레터링」에서 「선택한 번역 사용」으로 정확한 문구를 지정하세요. 해당 프롬프트를 편집하면 레터링 확인이 해제됩니다.</translation>
+    </message>
+    <message>
+        <source>Requested wording:</source>
+        <translation>요청한 문구:</translation>
+    </message>
+    <message>
+        <source>OCR reading:</source>
+        <translation>OCR 인식 결과:</translation>
+    </message>
+    <message>
+        <source>(no text)</source>
+        <translation>(텍스트 없음)</translation>
+    </message>
+    <message>
+        <source>Differences:</source>
+        <translation>차이점:</translation>
+    </message>
+    <message>
+        <source>Not read by OCR: {expected}</source>
+        <translation>OCR이 읽지 못한 텍스트: {expected}</translation>
+    </message>
+    <message>
+        <source>Extra OCR text: {recognized}</source>
+        <translation>OCR이 추가로 읽은 텍스트: {recognized}</translation>
+    </message>
+    <message>
+        <source>Requested: {expected} | OCR: {recognized}</source>
+        <translation>요청: {expected} | OCR: {recognized}</translation>
+    </message>
+    <message>
+        <source>Checking lettering…</source>
+        <translation>레터링 확인 중…</translation>
+    </message>
+    <message>
+        <source>OCR text matches the requested wording.</source>
+        <translation>OCR 인식 결과가 요청한 문구와 일치합니다.</translation>
+    </message>
+    <message>
+        <source>Possible lettering differences</source>
+        <translation>레터링에 차이가 있을 수 있습니다</translation>
+    </message>
+    <message>
+        <source>OCR could not read enough text to compare.</source>
+        <translation>비교에 필요한 텍스트를 OCR이 충분히 읽지 못했습니다.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>레터링을 확인할 수 없습니다: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>후보</translation>
+    </message>
+    <message>
+        <source>Compare with</source>
+        <translation>비교 대상</translation>
+    </message>
+    <message>
+        <source>Generate alternative</source>
+        <translation>다른 후보 생성</translation>
+    </message>
+    <message>
+        <source>Two candidates are already available.</source>
+        <translation>이미 두 개의 후보가 있습니다.</translation>
+    </message>
+    <message>
+        <source>The preview is stale. Generate a fresh preview to compare alternatives.</source>
+        <translation>미리보기가 더 이상 최신 상태가 아닙니다. 다른 후보와 비교하려면 새 미리보기를 생성하세요.</translation>
+    </message>
+    <message>
+        <source>Generate a second candidate to compare.</source>
+        <translation>비교할 두 번째 후보를 생성합니다.</translation>
+    </message>
 </context>
 <context>
     <name>MBigView</name>
@@ -5261,6 +5465,78 @@ Prompt: {prompt}</source>
         <source>Soft edge</source>
         <translation>가장자리 부드러움</translation>
     </message>
+    <message>
+        <source>Fill method</source>
+        <translation>채우기 방식</translation>
+    </message>
+    <message>
+        <source>Solid</source>
+        <translation>단색</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>그라데이션</translation>
+    </message>
+    <message>
+        <source>Preview gradient fill…</source>
+        <translation>그라데이션 채우기 미리 보기…</translation>
+    </message>
+    <message>
+        <source>Sample clean points around one masked background area, then preview a smooth gradient before applying it.</source>
+        <translation>마스크를 칠한 하나의 배경 영역 주변에서 깨끗한 지점을 샘플링한 뒤, 부드러운 그라데이션을 미리 보고 적용하세요.</translation>
+    </message>
+    <message>
+        <source>Heal (experimental)</source>
+        <translation>복구(실험 기능)</translation>
+    </message>
+    <message>
+        <source>Protect artwork</source>
+        <translation>그림 보호</translation>
+    </message>
+    <message>
+        <source>Paint areas that cleanup and artistic edits must leave unchanged.</source>
+        <translation>지우기와 아트 편집에서 변경하지 않을 영역을 칠하세요.</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>보호</translation>
+    </message>
+    <message>
+        <source>Protect brush</source>
+        <translation>보호 브러시</translation>
+    </message>
+    <message>
+        <source>Brush over artwork to protect its pixels. Uses the brush size slider. Each stroke can be undone.</source>
+        <translation>그림 위를 브러시로 칠하면 해당 픽셀이 보호됩니다. 브러시 크기 슬라이더를 사용합니다. 각 획은 실행 취소할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Unprotect</source>
+        <translation>보호 해제</translation>
+    </message>
+    <message>
+        <source>Unprotect brush</source>
+        <translation>보호 해제 브러시</translation>
+    </message>
+    <message>
+        <source>Brush over protected pixels to allow editing again. This does not erase artwork.</source>
+        <translation>보호된 픽셀을 브러시로 칠하면 다시 편집할 수 있습니다. 그림은 지워지지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Show protected pixels</source>
+        <translation>보호된 픽셀 표시</translation>
+    </message>
+    <message>
+        <source>Purple marks protected artwork. This overlay is never exported.</source>
+        <translation>보라색은 보호된 그림 영역을 나타냅니다. 이 오버레이는 내보내기에 포함되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Preview Heal…</source>
+        <translation>복구 미리보기…</translation>
+    </message>
+    <message>
+        <source>Use a fixed clone sample and a picked background color to preview one small masked repair. The mask must fit inside the sample.</source>
+        <translation>고정된 복제 샘플과 선택한 배경색으로 작은 마스크 영역의 복구를 미리 봅니다. 마스크는 샘플 안에 들어가야 합니다.</translation>
+    </message>
 </context>
 <context>
     <name>LocalRepairController</name>
@@ -5287,6 +5563,26 @@ Prompt: {prompt}</source>
     <message>
         <source>Sampled color fill</source>
         <translation>추출 색상 채우기</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new gradient preview before applying the repair.</source>
+        <translation>페이지나 마스크가 변경되었습니다. 복구를 적용하기 전에 새 그라데이션 미리 보기를 여세요.</translation>
+    </message>
+    <message>
+        <source>Sampled gradient fill</source>
+        <translation>샘플 기반 그라데이션 채우기</translation>
+    </message>
+    <message>
+        <source>Alt-click a clean area with Clone to capture a sample first.</source>
+        <translation>먼저 복제 도구로 깨끗한 영역을 Alt-클릭하여 샘플을 캡처하세요.</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new repair preview before applying.</source>
+        <translation>페이지 또는 마스크가 변경되었습니다. 적용하기 전에 새 복구 미리보기를 여세요.</translation>
+    </message>
+    <message>
+        <source>Heal repair</source>
+        <translation>복구</translation>
     </message>
 </context>
 <context>
@@ -5514,6 +5810,1552 @@ Prompt: {prompt}</source>
         <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
         <source>The LoRA file changed during verification. Select it again and retry.</source>
         <translation>검증 중에 LoRA 파일이 변경되었습니다. 파일을 다시 선택하고 재시도하세요.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitDialog</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>텍스트 맞춤</translation>
+    </message>
+    <message>
+        <source>Preview text layout inside the fitting area. Artwork and cleanup masks are unchanged.</source>
+        <translation>맞춤 영역 안의 텍스트 배치를 미리 봅니다. 이미지와 지우기 마스크는 변경되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>너비</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>높이</translation>
+    </message>
+    <message>
+        <source>Fitting area: width × height</source>
+        <translation>맞춤 영역: 너비 × 높이</translation>
+    </message>
+    <message>
+        <source>Minimum font size</source>
+        <translation>최소 글꼴 크기</translation>
+    </message>
+    <message>
+        <source>Maximum font size</source>
+        <translation>최대 글꼴 크기</translation>
+    </message>
+    <message>
+        <source>Keep manual line breaks</source>
+        <translation>수동 줄바꿈 유지</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>현재 배치</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>균형 잡힌 배치</translation>
+    </message>
+    <message>
+        <source>Larger text</source>
+        <translation>더 큰 텍스트</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>배치</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>적용</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Minimum font size must not exceed maximum font size.</source>
+        <translation>최소 글꼴 크기는 최대 글꼴 크기를 초과할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Fits within the area.</source>
+        <translation>영역 안에 들어갑니다.</translation>
+    </message>
+    <message>
+        <source>Does not fit. Enlarge the area or shorten the text.</source>
+        <translation>영역에 들어가지 않습니다. 영역을 넓히거나 텍스트를 줄이세요.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>텍스트가 읽기 위한 최소 크기보다 작습니다.</translation>
+    </message>
+    <message>
+        <source>Font size: {size} — {status}</source>
+        <translation>글꼴 크기: {size} — {status}</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>텍스트 상자</translation>
+    </message>
+    <message>
+        <source>Bubble interior</source>
+        <translation>말풍선 내부</translation>
+    </message>
+    <message>
+        <source>Fit mode</source>
+        <translation>맞춤 모드</translation>
+    </message>
+    <message>
+        <source>Estimate from original</source>
+        <translation>원본에서 추정</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>직사각형</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>타원</translation>
+    </message>
+    <message>
+        <source>Boundary</source>
+        <translation>경계</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>왼쪽</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>위쪽</translation>
+    </message>
+    <message>
+        <source>Boundary origin: X × Y</source>
+        <translation>경계 시작점: X × Y</translation>
+    </message>
+    <message>
+        <source>Padding</source>
+        <translation>안쪽 여백</translation>
+    </message>
+    <message>
+        <source>Estimated interior. Check the boundary before applying.</source>
+        <translation>추정된 내부 영역입니다. 적용하기 전에 경계를 확인하세요.</translation>
+    </message>
+    <message>
+        <source>Manual boundary.</source>
+        <translation>수동 경계입니다.</translation>
+    </message>
+    <message>
+        <source>Bubble fitting requires unrotated horizontal text at normal scale. Using Box.</source>
+        <translation>말풍선 맞춤은 회전하지 않은 가로 텍스트가 기본 배율일 때 사용할 수 있습니다. 텍스트 상자 모드를 사용합니다.</translation>
+    </message>
+    <message>
+        <source>Original image unavailable or its dimensions changed. Using Box.</source>
+        <translation>원본 이미지를 사용할 수 없거나 크기가 변경되었습니다. 텍스트 상자 모드를 사용합니다.</translation>
+    </message>
+    <message>
+        <source>Padding leaves no usable interior. Using Box.</source>
+        <translation>여백을 적용하면 사용 가능한 내부 영역이 남지 않습니다. 텍스트 상자 모드를 사용합니다.</translation>
+    </message>
+    <message>
+        <source>Fitting area is too large. Using Box.</source>
+        <translation>맞춤 영역이 너무 큽니다. 텍스트 상자 모드를 사용합니다.</translation>
+    </message>
+    <message>
+        <source>No reliable enclosed interior was found. Using Box. Try Rectangle or Ellipse.</source>
+        <translation>신뢰할 수 있는 닫힌 내부 영역을 찾지 못했습니다. 텍스트 상자 모드를 사용합니다. 직사각형 또는 타원을 선택해 보세요.</translation>
+    </message>
+    <message>
+        <source>The boundary is outside the page or has no usable area. Using Box.</source>
+        <translation>경계가 페이지 밖에 있거나 사용 가능한 영역이 없습니다. 텍스트 상자 모드를 사용합니다.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitController</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>텍스트 맞춤</translation>
+    </message>
+    <message>
+        <source>Text overflows the fitting area.</source>
+        <translation>텍스트가 맞춤 영역을 벗어납니다.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>텍스트가 읽기 위한 최소 크기보다 작습니다.</translation>
+    </message>
+    <message>
+        <source>The text or page changed. Open Fit Text again to make a new preview.</source>
+        <translation>텍스트 또는 페이지가 변경되었습니다. 텍스트 맞춤을 다시 열어 새 미리보기를 만드세요.</translation>
+    </message>
+    <message>
+        <source>Fit Text requires a text item contained within one page.</source>
+        <translation>텍스트 맞춤은 한 페이지 안에 완전히 들어가는 텍스트 항목에만 사용할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Wait for page processing to finish before fitting text.</source>
+        <translation>페이지 처리가 끝난 후 텍스트를 맞추세요.</translation>
+    </message>
+    <message>
+        <source>Reset text shape to fit.</source>
+        <translation>텍스트를 맞추려면 모양을 초기화하세요.</translation>
+    </message>
+    <message>
+        <source>Fit Text is unavailable for transformed lettering. Reset the lettering transform first.</source>
+        <translation>변형된 레터링에는 텍스트 맞춤을 사용할 수 없습니다. 먼저 레터링 변형을 초기화하세요.</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewPanel</name>
+    <message>
+        <source>Review</source>
+        <translation>검토</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>모든 페이지</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>현재 페이지</translation>
+    </message>
+    <message>
+        <source>Review scope</source>
+        <translation>검토 범위</translation>
+    </message>
+    <message>
+        <source>All issues</source>
+        <translation>모든 문제</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR 누락</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>번역 누락</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>텍스트 넘침</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>작은 텍스트</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>작업 실패</translation>
+    </message>
+    <message>
+        <source>Awaiting review</source>
+        <translation>검토 대기</translation>
+    </message>
+    <message>
+        <source>Issue filter</source>
+        <translation>문제 필터</translation>
+    </message>
+    <message>
+        <source>Review issues</source>
+        <translation>검토할 문제</translation>
+    </message>
+    <message>
+        <source>No issues in this view.</source>
+        <translation>이 보기에는 문제가 없습니다.</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>이전</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>다음</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>새로고침</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>원문</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>번역</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>배치</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>지우기</translation>
+    </message>
+    <message>
+        <source>Review stage</source>
+        <translation>검토 단계</translation>
+    </message>
+    <message>
+        <source>Mark reviewed</source>
+        <translation>검토 완료 표시</translation>
+    </message>
+    <message>
+        <source>Ignore issue</source>
+        <translation>문제 무시</translation>
+    </message>
+    <message>
+        <source>Keep source</source>
+        <translation>원문 유지</translation>
+    </message>
+    <message>
+        <source>Keep translation</source>
+        <translation>번역 유지</translation>
+    </message>
+    <message>
+        <source>Keep layout</source>
+        <translation>배치 유지</translation>
+    </message>
+    <message>
+        <source>Skip automatic cleanup</source>
+        <translation>자동 지우기 건너뛰기</translation>
+    </message>
+    <message>
+        <source>Fit Text</source>
+        <translation>텍스트 맞춤</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>보고서</translation>
+    </message>
+    <message>
+        <source>Pages: {pages} · Regions: {regions} · Issues: {issues}</source>
+        <translation>페이지: {pages} · 영역: {regions} · 문제: {issues}</translation>
+    </message>
+    <message>
+        <source>Page-wide operations keep protected stages. Direct edits remain allowed.</source>
+        <translation>페이지 전체 작업은 보호된 단계를 유지합니다. 직접 편집은 계속 가능합니다.</translation>
+    </message>
+    <message>
+        <source>Uncertain OCR</source>
+        <translation>불확실한 OCR 결과</translation>
+    </message>
+    <message>
+        <source>Retry OCR…</source>
+        <translation>OCR 다시 실행…</translation>
+    </message>
+    <message>
+        <source>Lowest line score {score} ({model})</source>
+        <translation>가장 낮은 줄 점수: {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest word score {score} ({model})</source>
+        <translation>가장 낮은 단어 점수: {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest sequence score {score} ({model})</source>
+        <translation>가장 낮은 문자열 점수: {score} ({model})</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewController</name>
+    <message>
+        <source>Change review state</source>
+        <translation>검토 상태 변경</translation>
+    </message>
+    <message>
+        <source>Apply reviewed text</source>
+        <translation>검토한 텍스트 적용</translation>
+    </message>
+    <message>
+        <source>Checking text layouts…</source>
+        <translation>텍스트 배치 확인 중…</translation>
+    </message>
+    <message>
+        <source>Detect text regions to start reviewing.</source>
+        <translation>검토를 시작하려면 텍스트 영역을 감지하세요.</translation>
+    </message>
+    <message>
+        <source>Bubble outlines are checked when their page is open.</source>
+        <translation>말풍선 윤곽은 해당 페이지가 열려 있을 때 확인됩니다.</translation>
+    </message>
+    <message>
+        <source>Awaiting review: {stage}</source>
+        <translation>검토 대기: {stage}</translation>
+    </message>
+    <message>
+        <source>The page is not ready. Try selecting the issue again.</source>
+        <translation>페이지가 준비되지 않았습니다. 문제를 다시 선택하세요.</translation>
+    </message>
+    <message>
+        <source>This region has changed. Refresh the review list.</source>
+        <translation>이 영역이 변경되었습니다. 검토 목록을 새로고침하세요.</translation>
+    </message>
+    <message>
+        <source>The original page is unavailable for this preview.</source>
+        <translation>이 미리보기에서는 원본 페이지를 사용할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Review replacement</source>
+        <translation>대체 내용 검토</translation>
+    </message>
+    <message>
+        <source>Current text</source>
+        <translation>현재 텍스트</translation>
+    </message>
+    <message>
+        <source>Proposed text</source>
+        <translation>제안된 텍스트</translation>
+    </message>
+    <message>
+        <source>Apply keeps the protection and existing lettering geometry. Use Clean and Render for missing lettering.</source>
+        <translation>적용해도 보호 설정과 기존 글자 배치는 유지됩니다. 누락된 글자는 정리 및 렌더링으로 추가하세요.</translation>
+    </message>
+    <message>
+        <source>This region changed while the preview was open. Run the action again.</source>
+        <translation>미리보기가 열린 동안 이 영역이 변경되었습니다. 작업을 다시 실행하세요.</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR 누락</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>번역 누락</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>텍스트 넘침</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>작은 텍스트</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>작업 실패</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>원문</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>번역</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>배치</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>지우기</translation>
+    </message>
+    <message>
+        <source>Retry OCR</source>
+        <translation>OCR 다시 실행</translation>
+    </message>
+    <message>
+        <source>Local recognizer</source>
+        <translation>로컬 문자 인식 엔진</translation>
+    </message>
+    <message>
+        <source>Missing model files will be downloaded when you continue.</source>
+        <translation>계속하면 누락된 모델 파일을 다운로드합니다.</translation>
+    </message>
+    <message>
+        <source>No alternative local recognizer is available for this source language.</source>
+        <translation>이 원문 언어를 지원하는 다른 로컬 문자 인식 엔진이 없습니다.</translation>
+    </message>
+    <message>
+        <source>Select a text region first.</source>
+        <translation>먼저 텍스트 영역을 선택하세요.</translation>
+    </message>
+    <message>
+        <source>The recognizer returned no text.</source>
+        <translation>인식된 텍스트가 없습니다.</translation>
+    </message>
+    <message>
+        <source>Apply replaces the source text for this region.</source>
+        <translation>‘적용’을 누르면 이 영역의 원문이 바뀝니다.</translation>
+    </message>
+</context>
+<context>
+    <name>ContextEntryDialog</name>
+    <message>
+        <source>Glossary entry</source>
+        <translation>용어집 항목</translation>
+    </message>
+    <message>
+        <source>Character</source>
+        <translation>등장인물</translation>
+    </message>
+    <message>
+        <source>One alias per line</source>
+        <translation>한 줄에 별칭 하나</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>원문 용어</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>이름</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>선호 번역</translation>
+    </message>
+    <message>
+        <source>Aliases</source>
+        <translation>별칭</translation>
+    </message>
+    <message>
+        <source>Source language</source>
+        <translation>원문 언어</translation>
+    </message>
+    <message>
+        <source>Target language</source>
+        <translation>대상 언어</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>자동</translation>
+    </message>
+    <message>
+        <source>Whole word</source>
+        <translation>전체 단어</translation>
+    </message>
+    <message>
+        <source>Substring</source>
+        <translation>부분 문자열</translation>
+    </message>
+    <message>
+        <source>Matching rule</source>
+        <translation>일치 규칙</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>메모</translation>
+    </message>
+    <message>
+        <source>Voice and formality notes</source>
+        <translation>말투 및 격식 메모</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>사용</translation>
+    </message>
+    <message>
+        <source>Approved for translation</source>
+        <translation>번역에 사용하도록 승인</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>모든 언어</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation.</source>
+        <translation>원문 용어와 선호 번역을 입력하세요.</translation>
+    </message>
+    <message>
+        <source>Enter a character name.</source>
+        <translation>등장인물 이름을 입력하세요.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextController</name>
+    <message>
+        <source>Choose an LLM translator to suggest a summary.</source>
+        <translation>요약을 제안받으려면 LLM 번역기를 선택하세요.</translation>
+    </message>
+    <message>
+        <source>In Review, mark a translation reviewed for this source and target language pair.</source>
+        <translation>검토에서 이 원문 언어와 대상 언어 조합의 번역을 검토 완료로 표시하세요.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit or shorten the story summary to fit approved translations.</source>
+        <translation>승인한 번역을 포함할 수 있도록 컨텍스트 토큰 한도를 높이거나 줄거리 요약을 줄이세요.</translation>
+    </message>
+    <message>
+        <source>Check the selected translator’s connection settings.</source>
+        <translation>선택한 번역기의 연결 설정을 확인하세요.</translation>
+    </message>
+    <message>
+        <source>The model returned an unusable summary.</source>
+        <translation>모델이 반환한 요약을 사용할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>The summary request failed. Check the translator settings and try again.</source>
+        <translation>요약 요청에 실패했습니다. 번역기 설정을 확인한 후 다시 시도하세요.</translation>
+    </message>
+    <message>
+        <source>The project or summary inputs changed. Open the suggestion again.</source>
+        <translation>프로젝트 또는 요약에 사용할 내용이 변경되었습니다. 제안을 다시 여세요.</translation>
+    </message>
+    <message>
+        <source>Change translation context</source>
+        <translation>번역 맥락 변경</translation>
+    </message>
+    <message>
+        <source>Select a text region to preview its request.</source>
+        <translation>텍스트 영역을 선택하여 요청을 미리 보세요.</translation>
+    </message>
+    <message>
+        <source>The current page has no text regions to preview.</source>
+        <translation>현재 페이지에 미리 볼 텍스트 영역이 없습니다.</translation>
+    </message>
+    <message>
+        <source>Cannot build request preview: {error}</source>
+        <translation>요청 미리 보기를 만들 수 없습니다: {error}</translation>
+    </message>
+    <message>
+        <source>Choose an LLM translator to suggest glossary terms.</source>
+        <translation>용어집에 추가할 용어를 제안받으려면 LLM 번역기를 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit to fit approved translations.</source>
+        <translation>승인한 번역을 포함할 수 있도록 맥락 토큰 한도를 늘리세요.</translation>
+    </message>
+    <message>
+        <source>The model returned unusable glossary suggestions.</source>
+        <translation>모델이 반환한 용어 제안을 사용할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>The glossary request failed. Check the translator settings and try again.</source>
+        <translation>용어 제안 요청에 실패했습니다. 번역기 설정을 확인하고 다시 시도하세요.</translation>
+    </message>
+    <message>
+        <source>The project or glossary inputs changed. Open the suggestion again.</source>
+        <translation>프로젝트 또는 용어 제안에 사용할 내용이 변경되었습니다. 제안을 다시 여세요.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextDialog</name>
+    <message>
+        <source>Suggest story summary…</source>
+        <translation>줄거리 요약 제안…</translation>
+    </message>
+    <message>
+        <source>Include approved translations from earlier pages</source>
+        <translation>이전 페이지에서 승인한 번역 포함</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>번역 맥락</translation>
+    </message>
+    <message>
+        <source>Glossary</source>
+        <translation>용어집</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>등장인물</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>원문 용어</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>이름</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>선호 번역</translation>
+    </message>
+    <message>
+        <source>Language pair</source>
+        <translation>언어 쌍</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>상태</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>추가</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>편집</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>삭제</translation>
+    </message>
+    <message>
+        <source>Add selected source/translation</source>
+        <translation>선택한 원문/번역 추가</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>화자</translation>
+    </message>
+    <message>
+        <source>Assign selected region</source>
+        <translation>선택 영역에 지정</translation>
+    </message>
+    <message>
+        <source>Project notes</source>
+        <translation>프로젝트 메모</translation>
+    </message>
+    <message>
+        <source>Setting, tone, terminology guidance, and other context for this work.</source>
+        <translation>작품의 배경, 어조, 용어 지침 및 기타 맥락을 입력하세요.</translation>
+    </message>
+    <message>
+        <source>Story summary</source>
+        <translation>줄거리 요약</translation>
+    </message>
+    <message>
+        <source>Context token limit</source>
+        <translation>맥락 토큰 한도</translation>
+    </message>
+    <message>
+        <source>Uses a conservative estimate. Required context that exceeds the available budget must be shortened.</source>
+        <translation>보수적인 추정치를 사용합니다. 필수 맥락이 사용 가능한 한도를 초과하면 내용을 줄여야 합니다.</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>메모</translation>
+    </message>
+    <message>
+        <source>Request preview</source>
+        <translation>요청 미리 보기</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>현재 페이지</translation>
+    </message>
+    <message>
+        <source>Selected region</source>
+        <translation>선택 영역</translation>
+    </message>
+    <message>
+        <source>Preview scope</source>
+        <translation>미리 보기 범위</translation>
+    </message>
+    <message>
+        <source>Build preview</source>
+        <translation>미리 보기 만들기</translation>
+    </message>
+    <message>
+        <source>Undo context</source>
+        <translation>맥락 변경 취소</translation>
+    </message>
+    <message>
+        <source>Redo context</source>
+        <translation>맥락 변경 다시 실행</translation>
+    </message>
+    <message>
+        <source>Revert draft</source>
+        <translation>초안 되돌리기</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>적용</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>닫기</translation>
+    </message>
+    <message>
+        <source>Changes apply to this project. The existing LLM context setting also remains in use.</source>
+        <translation>변경 사항은 이 프로젝트에 적용됩니다. 기존 LLM 맥락 설정도 함께 사용됩니다.</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>모든 언어</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>사용 안 함</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation>승인됨</translation>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation>초안</translation>
+    </message>
+    <message>
+        <source>No speaker</source>
+        <translation>화자 없음</translation>
+    </message>
+    <message>
+        <source>Selected region: {text}</source>
+        <translation>선택 영역: {text}</translation>
+    </message>
+    <message>
+        <source>Select a text region on the page to assign a speaker.</source>
+        <translation>페이지의 텍스트 영역을 선택하여 화자를 지정하세요.</translation>
+    </message>
+    <message>
+        <source>Approved glossary entries, assigned character notes, and project notes guide LLM translation.</source>
+        <translation>승인된 용어집 항목, 지정된 등장인물 메모 및 프로젝트 메모를 LLM 번역에 활용합니다.</translation>
+    </message>
+    <message>
+        <source>This translator does not support structured LLM context. Project entries remain editable for use with an LLM.</source>
+        <translation>이 번역기는 구조화된 LLM 맥락을 지원하지 않습니다. 프로젝트 항목은 LLM에서 사용할 수 있도록 계속 편집할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Unapplied changes. Apply to use them for translation.</source>
+        <translation>적용하지 않은 변경 사항이 있습니다. 번역에 사용하려면 적용하세요.</translation>
+    </message>
+    <message>
+        <source>No unapplied changes.</source>
+        <translation>적용하지 않은 변경 사항이 없습니다.</translation>
+    </message>
+    <message>
+        <source>Suggest glossary terms…</source>
+        <translation>용어집에 추가할 용어 제안…</translation>
+    </message>
+</context>
+<context>
+    <name>GradientRepairDialog</name>
+    <message>
+        <source>Gradient repair</source>
+        <translation>그라데이션 복구</translation>
+    </message>
+    <message>
+        <source>Repair one smooth background area at a time. Click at least four clean spots around the entire mask, away from text and borders. Six or more samples improve reliability.</source>
+        <translation>부드러운 배경 영역을 한 번에 하나씩 복구하세요. 글자와 테두리를 피해 마스크 전체를 둘러싼 깨끗한 지점을 최소 네 곳 클릭하세요. 여섯 개 이상이면 안정성이 높아집니다.</translation>
+    </message>
+    <message>
+        <source>Sample from</source>
+        <translation>샘플 원본</translation>
+    </message>
+    <message>
+        <source>Edited page</source>
+        <translation>편집된 페이지</translation>
+    </message>
+    <message>
+        <source>Original page</source>
+        <translation>원본 페이지</translation>
+    </message>
+    <message>
+        <source>Changing the source clears samples. Preview pixels are never used as samples.</source>
+        <translation>원본을 바꾸면 샘플이 지워집니다. 미리 보기의 픽셀은 샘플로 사용되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Show mask</source>
+        <translation>마스크 표시</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>복구 영역에 맞추기</translation>
+    </message>
+    <message>
+        <source>Fit page</source>
+        <translation>페이지에 맞추기</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>축소</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>확대</translation>
+    </message>
+    <message>
+        <source>Sample background</source>
+        <translation>배경 샘플링</translation>
+    </message>
+    <message>
+        <source>Repair preview</source>
+        <translation>복구 미리 보기</translation>
+    </message>
+    <message>
+        <source>Remove last sample</source>
+        <translation>마지막 샘플 제거</translation>
+    </message>
+    <message>
+        <source>Clear samples</source>
+        <translation>샘플 지우기</translation>
+    </message>
+    <message>
+        <source>Generate preview</source>
+        <translation>미리 보기 생성</translation>
+    </message>
+    <message>
+        <source>Drag to pan; use the mouse wheel to zoom. Only pixels inside the painted mask will change.</source>
+        <translation>드래그하여 이동하고 마우스 휠로 확대하거나 축소하세요. 칠한 마스크 안의 픽셀만 변경됩니다.</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>적용</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Samples: {count}</source>
+        <translation>샘플: {count}</translation>
+    </message>
+    <message>
+        <source>Click inside the page image.</source>
+        <translation>페이지 이미지 안을 클릭하세요.</translation>
+    </message>
+    <message>
+        <source>Choose a clean spot outside the painted mask.</source>
+        <translation>칠한 마스크 밖의 깨끗한 지점을 선택하세요.</translation>
+    </message>
+    <message>
+        <source>That pixel is already sampled. Choose another clean spot.</source>
+        <translation>이미 샘플링한 픽셀입니다. 다른 깨끗한 지점을 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Use at most 64 samples. Remove a sample before adding another.</source>
+        <translation>샘플은 최대 64개입니다. 새로 추가하려면 기존 샘플을 제거하세요.</translation>
+    </message>
+    <message>
+        <source>Choose at least four distinct clean spots around the repair.</source>
+        <translation>복구 영역 주변에서 서로 다른 깨끗한 지점을 최소 네 곳 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Spread samples in both directions; do not place them along one line.</source>
+        <translation>샘플을 한 줄로 놓지 말고 가로와 세로 방향으로 분산하세요.</translation>
+    </message>
+    <message>
+        <source>Place clean samples around all sides of the painted mask.</source>
+        <translation>칠한 마스크의 모든 방향에 깨끗한 샘플을 배치하세요.</translation>
+    </message>
+    <message>
+        <source>The samples do not describe a smooth background. Remove spots on text or borders, or add more clean samples.</source>
+        <translation>샘플로 부드러운 배경을 추정할 수 없습니다. 글자나 테두리 위의 지점을 제거하거나 깨끗한 샘플을 더 추가하세요.</translation>
+    </message>
+    <message>
+        <source>Cannot build this repair from the image, mask, and samples.</source>
+        <translation>이미지, 마스크 및 샘플로 이 복구를 생성할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>The preview would not change any pixels.</source>
+        <translation>미리 보기로 변경되는 픽셀이 없습니다.</translation>
+    </message>
+    <message>
+        <source>Preview ready: {used} of {total} samples used.</source>
+        <translation>미리 보기 준비 완료: 전체 {total}개 중 {used}개 샘플 사용.</translation>
+    </message>
+    <message>
+        <source>Ready to generate a preview.</source>
+        <translation>미리 보기를 생성할 준비가 되었습니다.</translation>
+    </message>
+    <message>
+        <source>Generating preview…</source>
+        <translation>미리 보기 생성 중…</translation>
+    </message>
+    <message>
+        <source>Preview unavailable: {reason}</source>
+        <translation>미리 보기를 사용할 수 없습니다: {reason}</translation>
+    </message>
+    <message>
+        <source>Unable to generate preview: {error}</source>
+        <translation>미리 보기를 생성할 수 없습니다: {error}</translation>
+    </message>
+    <message>
+        <source>Shift-drag to sample a line of background color.</source>
+        <translation>Shift 키를 누른 채 드래그하면 선을 따라 배경색을 채취합니다.</translation>
+    </message>
+</context>
+<context>
+    <name>HealRepairDialog</name>
+    <message>
+        <source>Experimental Heal preview</source>
+        <translation>복구 미리보기(실험 기능)</translation>
+    </message>
+    <message>
+        <source>Compare one fixed clone sample with a color-adjusted copy. This prototype preserves sampled texture and shifts its color toward your picked color. It does not reconstruct detail or borrow nearby pixels.</source>
+        <translation>고정된 복제 샘플과 색상을 조정한 사본을 비교합니다. 이 실험 기능은 샘플의 질감을 유지하면서 선택한 색상에 가깝게 조정합니다. 세부 묘사를 재구성하거나 주변 픽셀을 가져오지 않습니다.</translation>
+    </message>
+    <message>
+        <source>The entire painted mask must fit inside one sample centered on the mask. Use a larger clean clone sample or a smaller mask. Only painted, unprotected pixels can change; texture will not be tiled.</source>
+        <translation>칠한 마스크 전체가 마스크 중앙에 배치된 하나의 샘플 안에 들어가야 합니다. 더 큰 깨끗한 복제 샘플이나 더 작은 마스크를 사용하세요. 칠한 영역 중 보호되지 않은 픽셀만 변경되며, 질감을 반복 배치하지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Picked target color: RGB {0}</source>
+        <translation>선택한 대상 색상: RGB {0}</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>복구 영역에 맞추기</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>축소</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>확대</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>현재 페이지</translation>
+    </message>
+    <message>
+        <source>Ordinary Clone</source>
+        <translation>일반 복제</translation>
+    </message>
+    <message>
+        <source>Heal preview</source>
+        <translation>복구 미리보기</translation>
+    </message>
+    <message>
+        <source>Color adjustment</source>
+        <translation>색상 조정</translation>
+    </message>
+    <message>
+        <source>Apply Heal</source>
+        <translation>복구 적용</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>This preview would not change any pixels.</source>
+        <translation>이 미리보기는 어떤 픽셀도 변경하지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Preview ready. Compare the texture and color before applying.</source>
+        <translation>미리보기가 준비되었습니다. 적용하기 전에 질감과 색상을 비교하세요.</translation>
+    </message>
+    <message>
+        <source>The mask extends beyond the clean clone sample. Cancel and use a larger clean sample or a smaller mask.</source>
+        <translation>마스크가 깨끗한 복제 샘플 범위를 벗어납니다. 취소하고 더 큰 깨끗한 샘플이나 더 작은 마스크를 사용하세요.</translation>
+    </message>
+    <message>
+        <source>All masked pixels are protected. No repair can be applied.</source>
+        <translation>마스크의 모든 픽셀이 보호되어 있습니다. 복구를 적용할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Paint a repair mask before opening Heal preview.</source>
+        <translation>복구 미리보기를 열기 전에 복구 마스크를 칠하세요.</translation>
+    </message>
+    <message>
+        <source>The repair inputs are invalid. Cancel and sample again.</source>
+        <translation>복구 입력이 올바르지 않습니다. 취소하고 다시 샘플링하세요.</translation>
+    </message>
+    <message>
+        <source>Could not generate the preview. No changes were applied.</source>
+        <translation>미리보기를 생성하지 못했습니다. 변경 사항은 적용되지 않았습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>PixelProtectionController</name>
+    <message>
+        <source>Protect artwork</source>
+        <translation>그림 보호</translation>
+    </message>
+    <message>
+        <source>Unprotect artwork</source>
+        <translation>그림 보호 해제</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesController</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>레터링 스타일</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before applying a lettering style.</source>
+        <translation>처리가 끝난 후 레터링 스타일을 적용하세요.</translation>
+    </message>
+    <message>
+        <source>Open a page before editing project lettering styles.</source>
+        <translation>페이지를 연 후 프로젝트 레터링 스타일을 편집하세요.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one current page to apply a style.</source>
+        <translation>현재 페이지의 텍스트 상자를 선택하여 스타일을 적용하세요.</translation>
+    </message>
+    <message>
+        <source>Select one copy of each text region before applying a style.</source>
+        <translation>스타일을 적용하기 전에 각 텍스트 영역의 사본을 하나씩만 선택하세요.</translation>
+    </message>
+    <message>
+        <source>The page, lettering or presets changed. Open a new style preview.</source>
+        <translation>페이지, 레터링 또는 프리셋이 변경되었습니다. 스타일 미리보기를 다시 여세요.</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesDialog</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>레터링 스타일</translation>
+    </message>
+    <message>
+        <source>Save lettering from a selected text box as a named project style. Choose which properties to apply; word emphasis is preserved unless you select Bold, Italic or Underline.</source>
+        <translation>선택한 텍스트 상자의 서식을 이름이 있는 프로젝트 스타일로 저장합니다. 적용할 속성을 선택하세요. 굵게, 기울임 또는 밑줄을 선택하지 않으면 단어별 강조 서식이 유지됩니다.</translation>
+    </message>
+    <message>
+        <source>Project styles</source>
+        <translation>프로젝트 스타일</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>스타일 이름</translation>
+    </message>
+    <message>
+        <source>Dialogue, narration, sound effects…</source>
+        <translation>대사, 내레이션, 효과음…</translation>
+    </message>
+    <message>
+        <source>Save from previewed text box</source>
+        <translation>미리보기 텍스트 상자에서 저장</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the text box chosen in Preview text box.</source>
+        <translation>「미리볼 텍스트 상자」에서 선택한 텍스트 상자로 새 스타일을 만듭니다.</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>이름 변경</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>스타일 삭제</translation>
+    </message>
+    <message>
+        <source>Replace style from previewed text box</source>
+        <translation>미리보기 텍스트 상자로 스타일 교체</translation>
+    </message>
+    <message>
+        <source>Properties to apply</source>
+        <translation>적용할 속성</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>글꼴</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>글꼴 크기</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>텍스트 색상</translation>
+    </message>
+    <message>
+        <source>Outline</source>
+        <translation>윤곽선</translation>
+    </message>
+    <message>
+        <source>Line spacing</source>
+        <translation>줄 간격</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>정렬</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>굵게</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>기울임꼴</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>밑줄</translation>
+    </message>
+    <message>
+        <source>Preview text box</source>
+        <translation>미리볼 텍스트 상자</translation>
+    </message>
+    <message>
+        <source>{0}: {1}</source>
+        <translation>{0}: {1}</translation>
+    </message>
+    <message>
+        <source>{0} selected text boxes</source>
+        <translation>선택한 텍스트 상자 {0}개</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>미리보기 맞춤</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>현재 배치</translation>
+    </message>
+    <message>
+        <source>Styled</source>
+        <translation>스타일 적용 후</translation>
+    </message>
+    <message>
+        <source>Preview uses a neutral background. Inspect text fit after changing font or size.</source>
+        <translation>미리보기는 중립적인 배경을 사용합니다. 글꼴이나 크기를 변경한 후 텍스트가 상자에 맞는지 확인하세요.</translation>
+    </message>
+    <message>
+        <source>Apply despite these font warnings</source>
+        <translation>이 글꼴 경고를 무시하고 적용</translation>
+    </message>
+    <message>
+        <source>Save presets only</source>
+        <translation>프리셋만 저장</translation>
+    </message>
+    <message>
+        <source>Apply to selection</source>
+        <translation>선택 항목에 적용</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Changes to presets are saved only when you choose Save presets only or Apply to selection.</source>
+        <translation>프리셋 변경 사항은 「프리셋만 저장」 또는 「선택 항목에 적용」을 선택해야 저장됩니다.</translation>
+    </message>
+    <message>
+        <source>Enter a style name.</source>
+        <translation>스타일 이름을 입력하세요.</translation>
+    </message>
+    <message>
+        <source>A style with this name already exists. Choose another name.</source>
+        <translation>이 이름의 스타일이 이미 있습니다. 다른 이름을 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Could not capture this text style. No preset was added.</source>
+        <translation>이 텍스트 스타일을 가져올 수 없습니다. 프리셋이 추가되지 않았습니다.</translation>
+    </message>
+    <message>
+        <source>Ready to apply this style to {0} text boxes.</source>
+        <translation>텍스트 상자 {0}개에 이 스타일을 적용할 준비가 되었습니다.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still rename or delete project presets.</source>
+        <translation>스타일을 가져오거나 적용하려면 한 페이지의 텍스트 상자를 선택하세요. 프로젝트 프리셋의 이름 변경이나 삭제는 계속할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, or enter a name and save the previewed text box as a new style.</source>
+        <translation>프로젝트 스타일을 선택하거나 이름을 입력하고 미리보기 텍스트 상자를 새 스타일로 저장하세요.</translation>
+    </message>
+    <message>
+        <source>Choose at least one property to apply.</source>
+        <translation>적용할 속성을 하나 이상 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Could not build the style preview. No changes were applied.</source>
+        <translation>스타일 미리보기를 만들 수 없습니다. 변경 사항이 적용되지 않았습니다.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" is unavailable. A fallback font will be used.</source>
+        <translation>텍스트 상자 {0}: 글꼴 「{1}」을 사용할 수 없습니다. 대체 글꼴이 사용됩니다.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" lacks these characters: {2}. Fallback glyphs may differ.</source>
+        <translation>텍스트 상자 {0}: 글꼴 「{1}」에 다음 문자가 없습니다: {2}. 대체 글리프의 모양이 다를 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Reuse a project style or change emphasis directly. Bold, Italic and Underline affect whole selected text boxes; Keep existing preserves individual-word formatting.</source>
+        <translation>프로젝트 스타일을 재사용하거나 강조를 직접 변경하세요. 굵게, 기울임꼴, 밑줄은 선택한 텍스트 상자 전체에 적용됩니다. 기존 서식 유지는 단어별 서식을 보존합니다.</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the current text box and your emphasis choices.</source>
+        <translation>현재 텍스트 상자와 선택한 강조 설정으로 새 스타일을 만듭니다.</translation>
+    </message>
+    <message>
+        <source>Replaces the selected preset with the current text box style and your emphasis choices.</source>
+        <translation>선택한 프리셋을 현재 텍스트 상자의 스타일과 선택한 강조 설정으로 바꿉니다.</translation>
+    </message>
+    <message>
+        <source>Keep existing</source>
+        <translation>기존 서식 유지</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>켜기</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>끄기</translation>
+    </message>
+    <message>
+        <source>Use preset</source>
+        <translation>프리셋 사용</translation>
+    </message>
+    <message>
+        <source>On and Off change this emphasis for each entire selected box. Keep existing preserves word-level formatting. Use preset copies the saved value.</source>
+        <translation>켜기와 끄기는 선택한 각 상자 전체의 강조를 변경합니다. 기존 서식 유지는 단어별 서식을 보존합니다. 프리셋 사용은 저장된 값을 적용합니다.</translation>
+    </message>
+    <message>
+        <source>Ready to apply formatting to {0} text boxes.</source>
+        <translation>텍스트 상자 {0}개에 서식을 적용할 준비가 되었습니다.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, save a new style, or set Bold, Italic or Underline to On or Off.</source>
+        <translation>프로젝트 스타일을 선택하거나 새 스타일을 저장하거나 굵게, 기울임꼴, 밑줄을 켜기 또는 끄기로 설정하세요.</translation>
+    </message>
+    <message>
+        <source>Import presets…</source>
+        <translation>프리셋 가져오기…</translation>
+    </message>
+    <message>
+        <source>Export presets…</source>
+        <translation>프리셋 내보내기…</translation>
+    </message>
+    <message>
+        <source>Lettering presets (*.json)</source>
+        <translation>레터링 프리셋 (*.json)</translation>
+    </message>
+    <message>
+        <source>Export all presets in this list to a file.</source>
+        <translation>이 목록의 모든 프리셋을 파일로 내보냅니다.</translation>
+    </message>
+    <message>
+        <source>Existing presets are kept. Name conflicts receive a numbered suffix.</source>
+        <translation>기존 프리셋은 유지됩니다. 이름이 겹치면 가져오는 프리셋의 이름 뒤에 번호가 붙습니다.</translation>
+    </message>
+    <message>
+        <source>Imported: {0}. Renamed: {1}. Skipped duplicates: {2}.</source>
+        <translation>가져옴: {0}개. 이름 변경: {1}개. 건너뛴 중복 항목: {2}개.</translation>
+    </message>
+    <message>
+        <source>Exported {0} presets.</source>
+        <translation>프리셋 {0}개를 내보냈습니다.</translation>
+    </message>
+    <message>
+        <source>Could not read the preset file.</source>
+        <translation>프리셋 파일을 읽을 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Could not write the preset file.</source>
+        <translation>프리셋 파일을 저장할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>The preset file is too large.</source>
+        <translation>프리셋 파일이 너무 큽니다.</translation>
+    </message>
+    <message>
+        <source>This file is not a lettering preset library.</source>
+        <translation>이 파일은 레터링 프리셋 라이브러리가 아닙니다.</translation>
+    </message>
+    <message>
+        <source>This preset file version is unsupported.</source>
+        <translation>지원하지 않는 버전의 프리셋 파일입니다.</translation>
+    </message>
+    <message>
+        <source>The preset file contains invalid styles.</source>
+        <translation>프리셋 파일에 유효하지 않은 스타일이 있습니다.</translation>
+    </message>
+    <message>
+        <source>The import would exceed the project limit of 100 presets.</source>
+        <translation>가져오면 프로젝트당 프리셋 한도인 100개를 초과합니다.</translation>
+    </message>
+    <message>
+        <source>The preset library is empty.</source>
+        <translation>프리셋 라이브러리가 비어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still manage project presets.</source>
+        <translation>스타일을 저장하거나 적용하려면 같은 페이지의 텍스트 상자를 선택하세요. 선택한 상자가 없어도 프로젝트 프리셋을 관리할 수 있습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>controller</name>
+    <message>
+        <source>Apply lettering style</source>
+        <translation>레터링 스타일 적용</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformController</name>
+    <message>
+        <source>Text shape</source>
+        <translation>텍스트 모양</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before changing text shape.</source>
+        <translation>텍스트 모양을 변경하기 전에 처리가 끝날 때까지 기다려 주세요.</translation>
+    </message>
+    <message>
+        <source>Open a page and select one text box to change its shape.</source>
+        <translation>페이지를 열고 모양을 변경할 텍스트 상자 하나를 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Select one text box on the current page to change its shape.</source>
+        <translation>현재 페이지에서 모양을 변경할 텍스트 상자 하나를 선택하세요.</translation>
+    </message>
+    <message>
+        <source>The page or lettering changed. Open a new text shape preview.</source>
+        <translation>페이지 또는 텍스트가 변경되었습니다. 텍스트 모양 미리보기를 다시 여세요.</translation>
+    </message>
+    <message>
+        <source>Transform lettering</source>
+        <translation>레터링 변형</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformDialog</name>
+    <message>
+        <source>Text shape</source>
+        <translation>텍스트 모양</translation>
+    </message>
+    <message>
+        <source>Stretch, skew or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>텍스트와 개별 단어 서식을 편집 가능한 상태로 유지하면서 늘이기, 기울이기 또는 원근을 적용합니다.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>너비</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>높이</translation>
+    </message>
+    <message>
+        <source>Skew</source>
+        <translation>기울기</translation>
+    </message>
+    <message>
+        <source>Horizontal perspective</source>
+        <translation>가로 원근</translation>
+    </message>
+    <message>
+        <source>Vertical perspective</source>
+        <translation>세로 원근</translation>
+    </message>
+    <message>
+        <source>Reset distortion</source>
+        <translation>변형 초기화</translation>
+    </message>
+    <message>
+        <source>Width and height stretch the lettering without changing line wrapping. Use the canvas handles to resize the text box or rotate it.</source>
+        <translation>너비와 높이는 줄 바꿈을 변경하지 않고 레터링을 늘입니다. 텍스트 상자의 크기를 조절하거나 회전하려면 캔버스의 핸들을 사용하세요.</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>현재 배치</translation>
+    </message>
+    <message>
+        <source>Transformed</source>
+        <translation>변형 후</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>미리보기 맞춤</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>적용</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Preview only. Apply creates one undoable change.</source>
+        <translation>미리보기만 표시합니다. 적용하면 실행 취소할 수 있는 변경이 생성됩니다.</translation>
+    </message>
+    <message>
+        <source>PSD: perspective lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: 원근 레터링은 표시된 이미지 레이어로 내보내집니다. 텍스트와 모양을 편집하려면 프로젝트 파일을 보관하세요.</translation>
+    </message>
+    <message>
+        <source>PSD: this lettering exports as an editable text layer.</source>
+        <translation>PSD: 이 레터링은 편집 가능한 텍스트 레이어로 내보내집니다.</translation>
+    </message>
+    <message>
+        <source>This transform could not be previewed. Reset the distortion and try again.</source>
+        <translation>이 변형을 미리 볼 수 없습니다. 변형을 초기화하고 다시 시도하세요.</translation>
+    </message>
+    <message>
+        <source>Stretch, skew, curve or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>글자를 늘이거나 기울이고, 곡선 또는 원근 효과를 적용해도 텍스트와 개별 단어의 서식을 계속 편집할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>곡률</translation>
+    </message>
+    <message>
+        <source>Positive curves arch upward; negative curves bend downward. Each line keeps its text and formatting.</source>
+        <translation>양수는 위로 볼록하게, 음수는 아래로 볼록하게 휩니다. 각 줄의 텍스트와 서식은 유지됩니다.</translation>
+    </message>
+    <message>
+        <source>Curves are available for horizontal lettering.</source>
+        <translation>곡선 효과는 가로쓰기 텍스트에 사용할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>PSD: curved lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: 곡선 텍스트는 유형이 표시된 이미지 레이어로 내보내집니다. 텍스트와 모양을 편집하려면 프로젝트 파일을 보관하세요.</translation>
+    </message>
+</context>
+<context>
+    <name>RectItemController</name>
+    <message>
+        <source>Edit lettering geometry</source>
+        <translation>레터링 모양 편집</translation>
+    </message>
+</context>
+<context>
+    <name>SummarySuggestionDialog</name>
+    <message>
+        <source>Suggest story summary</source>
+        <translation>줄거리 요약 제안</translation>
+    </message>
+    <message>
+        <source>Generate locally with {provider}.</source>
+        <translation>{provider} 모델로 로컬에서 생성합니다.</translation>
+    </message>
+    <message>
+        <source>Generate sends the displayed material to {destination} using {provider}.</source>
+        <translation>생성을 누르면 표시된 자료가 {provider} 서비스를 통해 {destination}에 전송됩니다.</translation>
+    </message>
+    <message>
+        <source>Approved translations ({count}) · {source} → {target}</source>
+        <translation>승인한 번역 ({count}개) · {source} → {target}</translation>
+    </message>
+    <message>
+        <source>Current summary</source>
+        <translation>현재 요약</translation>
+    </message>
+    <message>
+        <source>Suggested summary</source>
+        <translation>제안된 요약</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>생성</translation>
+    </message>
+    <message>
+        <source>Use suggestion</source>
+        <translation>제안 사용</translation>
+    </message>
+    <message>
+        <source>Generating suggestion…</source>
+        <translation>제안 생성 중…</translation>
+    </message>
+</context>
+<context>
+    <name>GlossarySuggestionDialog</name>
+    <message>
+        <source>Suggest glossary terms</source>
+        <translation>용어집에 추가할 용어 제안</translation>
+    </message>
+    <message>
+        <source>Add selected terms</source>
+        <translation>선택한 용어 추가</translation>
+    </message>
+    <message>
+        <source>Approved example</source>
+        <translation>승인한 예문</translation>
+    </message>
+    <message>
+        <source>No new terms found in the approved translations.</source>
+        <translation>승인한 번역에서 새 용어를 찾지 못했습니다.</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation for each selected row.</source>
+        <translation>선택한 각 행에 원문 용어와 선호 번역을 입력하세요.</translation>
+    </message>
+    <message>
+        <source>A selected source term already exists in this language pair or appears twice in your selection.</source>
+        <translation>선택한 원문 용어 중 이 언어 조합에 이미 등록되어 있거나 선택 항목 내에서 중복된 용어가 있습니다.</translation>
+    </message>
+    <message>
+        <source>Select terms to add to the draft glossary.</source>
+        <translation>용어집 초안에 추가할 용어를 선택하세요.</translation>
     </message>
 </context>
 </TS>

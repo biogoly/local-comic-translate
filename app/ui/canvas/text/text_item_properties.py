@@ -3,6 +3,8 @@ from typing import Optional, List, Any
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt
 from app.ui.canvas.text_item import OutlineType
+from modules.utils.region_metadata import normalize_layout_preferences
+from modules.utils.lettering_transform import normalize_lettering_transform
 
 @dataclass
 class TextItemProperties:
@@ -26,6 +28,7 @@ class TextItemProperties:
     rotation: float = 0
     scale: float = 1.0
     transform_origin: Optional[tuple] = None  # (x, y)
+    lettering_transform: dict = field(default_factory=dict)
     
     # Layout properties
     width: Optional[float] = None
@@ -34,6 +37,9 @@ class TextItemProperties:
     
     # Advanced properties
     selection_outlines: list = field(default_factory=list)
+    region_id: str = ""
+    layout_preferences: dict = field(default_factory=dict)
+    document_font: str = ""
             
     @classmethod
     def from_dict(cls, data: dict) -> 'TextItemProperties':
@@ -92,6 +98,7 @@ class TextItemProperties:
         props.rotation = data.get('rotation', 0)
         props.scale = data.get('scale', 1.0)
         props.transform_origin = data.get('transform_origin')
+        props.lettering_transform = normalize_lettering_transform(data.get('lettering_transform'))
         
         # Layout
         props.width = data.get('width')
@@ -100,6 +107,9 @@ class TextItemProperties:
         
         # Advanced
         props.selection_outlines = data.get('selection_outlines', [])
+        props.region_id = data.get('region_id', '') if isinstance(data.get('region_id', ''), str) else ''
+        props.layout_preferences = normalize_layout_preferences(data.get('layout_preferences'))
+        props.document_font = data.get('document_font', '') if isinstance(data.get('document_font', ''), str) else ''
         
         return props
     
@@ -127,17 +137,23 @@ class TextItemProperties:
         props.position = (item.pos().x(), item.pos().y())
         props.rotation = item.rotation()
         props.scale = item.scale()
+        props.lettering_transform = normalize_lettering_transform(getattr(item, 'lettering_transform', None))
         if hasattr(item, 'transformOriginPoint'):
             origin = item.transformOriginPoint()
             props.transform_origin = (origin.x(), origin.y())
         
         # Layout properties
-        props.width = item.boundingRect().width()
+        # Curved ink can extend beyond the layout box. Persist the wrap width,
+        # otherwise each reopen would reflow and progressively change the arc.
+        props.width = item.logical_text_width()
         props.height = item.boundingRect().height()
         props.vertical = getattr(item, 'vertical', False)
         
         # Advanced properties
         props.selection_outlines = getattr(item, 'selection_outlines', []).copy()
+        props.region_id = getattr(item, 'region_id', '')
+        props.layout_preferences = normalize_layout_preferences(getattr(item, 'layout_preferences', None))
+        props.document_font = item.document().defaultFont().toString()
         
         return props
     
@@ -161,10 +177,14 @@ class TextItemProperties:
             'rotation': self.rotation,
             'scale': self.scale,
             'transform_origin': self.transform_origin,
+            'lettering_transform': normalize_lettering_transform(self.lettering_transform),
             'width': self.width,
             'height': self.height,
             'vertical': self.vertical,
             'selection_outlines': self.selection_outlines,
+            'region_id': self.region_id,
+            'layout_preferences': normalize_layout_preferences(self.layout_preferences),
+            'document_font': self.document_font,
         }
 
 

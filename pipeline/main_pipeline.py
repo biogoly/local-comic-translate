@@ -98,9 +98,9 @@ class ComicTranslatePipeline:
         self.block_detection.on_blk_detect_complete(result)
 
     # Inpainting methods (delegate to inpainting)
-    def manual_inpaint(self):
+    def manual_inpaint(self, *, automatic=False):
         """Perform manual inpainting."""
-        return self.inpainting.manual_inpaint()
+        return self.inpainting.manual_inpaint(automatic=automatic)
 
     def inpaint_complete(self, patch_list):
         """Handle completion of inpainting."""
@@ -110,19 +110,16 @@ class ComicTranslatePipeline:
         """Get inpainted patches from mask and image."""
         return self.inpainting.get_inpainted_patches(mask, inpainted_image)
 
-    def inpaint(self):
+    def inpaint(self, *, automatic=False):
         """Perform inpainting and return patches."""
-        return self.inpainting.inpaint()
+        return self.inpainting.inpaint(automatic=automatic)
 
     def get_selected_block(self):
         """Get the currently selected text block."""
         rect = self.main_page.image_viewer.selected_rect
         if not rect:
             return None
-        srect = rect.mapRectToScene(rect.rect())
-        srect_coords = srect.getCoords()
-        blk = self.main_page.rect_item_ctrl.find_corresponding_text_block(srect_coords)
-        return blk
+        return self.main_page.rect_item_ctrl.find_corresponding_text_block(rect)
 
     # OCR methods (delegate to ocr_handler)
     def OCR_image(self, single_block=False):
@@ -143,6 +140,17 @@ class ComicTranslatePipeline:
         self.translation_handler.translate_webtoon_visible_area(single_block)
     
     # Batch processing methods
+    def prepare_translation_session(self, paths):
+        from modules.translation.processor import Translator
+        from pipeline.translation_job import BatchTranslationSession
+        if getattr(self.main_page.render_settings(), 'auto_bubble_fit', False):
+            paths = [path for path in paths if not (
+                self.main_page.image_states[path].get('viewer_state', {}).get('text_items_state')
+                and not self.main_page.image_states[path].get('blk_list'))]
+        session = BatchTranslationSession(self.main_page, paths, Translator)
+        self.batch_processor._prepared_translation_session = session
+        self.webtoon_batch_processor._prepared_translation_session = session
+
     def batch_process(self, selected_paths=None):
         """Regular batch processing."""
         return self.batch_processor.batch_process(selected_paths)

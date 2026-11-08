@@ -225,6 +225,7 @@ class SettingsPageUI(QtWidgets.QWidget):
 
         # LLMs
         self.image_checkbox = self.llms_page.image_checkbox
+        self.spatial_context_checkbox = self.llms_page.spatial_context_checkbox
         self.extra_context = self.llms_page.extra_context
 
         # Text rendering
@@ -232,6 +233,8 @@ class SettingsPageUI(QtWidgets.QWidget):
         self.max_font_spinbox = self.text_rendering_page.max_font_spinbox
         self.font_browser = self.text_rendering_page.font_browser
         self.uppercase_checkbox = self.text_rendering_page.uppercase_checkbox
+        self.auto_bubble_fit_checkbox = self.text_rendering_page.auto_bubble_fit_checkbox
+        self.auto_bubble_padding_spinbox = self.text_rendering_page.auto_bubble_padding_spinbox
 
         # Export
         self.raw_text_checkbox = self.export_page.raw_text_checkbox

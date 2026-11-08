@@ -11,6 +11,9 @@ import msgpack
 
 from .parsers import ProjectDecoder, ProjectEncoder, ensure_string_keys
 from .patch_metadata import normalize_patch_kind, sanitize_patch_metadata
+from .project_metadata import normalize_project_pages
+from .translation_profile import profile_for_project, reset_translation_project
+from .lettering_styles import reset_lettering_project, styles_for_project
 from modules.utils.file_handler import ensure_prepared_path_materialized
 
 if TYPE_CHECKING:
@@ -185,17 +188,25 @@ def register_lazy_blob_path(project_file: str, output_path: str, blob_hash: str)
         _LAZY_BLOBS_BY_PATH[abs_path] = (db_key, str(blob_hash))
 
 
+def _has_blob_file(path: str) -> bool:
+    try:
+        return os.path.isfile(path) and os.path.getsize(path) > 0
+    except OSError:
+        return False
+
+
 def ensure_lazy_blob_materialized(path: str) -> bool:
     if not path:
         return False
     abs_path = os.path.abspath(path)
-    try:
-        if os.path.isfile(abs_path) and os.path.getsize(abs_path) > 0:
-            return True
-    except Exception:
-        pass
+    if _has_blob_file(abs_path):
+        return True
 
     with _LAZY_BLOB_LOCK:
+        # A thumbnail or page reader may have published and opened the image
+        # while this reader waited. Windows can reject replacing an open file.
+        if _has_blob_file(abs_path):
+            return True
         mapped = _LAZY_BLOBS_BY_PATH.get(abs_path)
         if mapped is None:
             return os.path.isfile(abs_path)
@@ -226,6 +237,7 @@ def ensure_lazy_blob_materialized(path: str) -> bool:
 
 def save_state_to_proj_file_v2(comic_translate: "ComicTranslate", file_name: str) -> None:
     encoder = ProjectEncoder()
+    normalize_project_pages(comic_translate)
 
     target_dir = os.path.dirname(os.path.abspath(file_name))
     if target_dir:
@@ -403,6 +415,8 @@ def save_state_to_proj_file_v2(comic_translate: "ComicTranslate", file_name: str
         "displayed_images": list(comic_translate.displayed_images),
         "loaded_images": comic_translate.loaded_images,
         "llm_extra_context": comic_translate.settings_page.get_llm_settings().get("extra_context", ""),
+        "translation_profile": profile_for_project(comic_translate),
+        "lettering_styles": styles_for_project(comic_translate),
         "webtoon_mode": comic_translate.webtoon_mode,
         "webtoon_view_state": comic_translate.image_viewer.webtoon_view_state,
         "unique_images": ensure_string_keys(unique_images),
@@ -577,6 +591,7 @@ def _materialize_from_manifest_and_pages(
         original_to_temp.get(page, page): (row.get("image_state", {}) or {})
         for page, row in page_rows.items()
     }
+    normalize_project_pages(comic_translate)
 
     current_history_index = manifest.get("current_history_index", {})
     comic_translate.current_history_index = {
@@ -714,15 +729,26 @@ def _load_from_legacy_state_blob(
         "displayed_images": state.get("displayed_images", []),
         "loaded_images": state.get("loaded_images", []),
         "llm_extra_context": state.get("llm_extra_context", ""),
+        "translation_profile": state.get("translation_profile", {}),
+        "lettering_styles": state.get("lettering_styles", {}),
         "webtoon_mode": state.get("webtoon_mode", False),
         "webtoon_view_state": state.get("webtoon_view_state", {}),
         "unique_images": state.get("unique_images", {}),
     }
 
-    return _materialize_from_manifest_and_pages(comic_translate, file_name, manifest, page_rows)
+    saved_ctx = _materialize_from_manifest_and_pages(comic_translate, file_name, manifest, page_rows)
+    translation_profile = profile_for_project(
+        comic_translate, manifest.get("translation_profile", {})
+    )
+    lettering_styles = styles_for_project(comic_translate, manifest.get('lettering_styles', {}))
+    comic_translate.translation_profile = translation_profile
+    comic_translate.lettering_styles = lettering_styles
+    return saved_ctx
 
 
 def load_state_from_proj_file_v2(comic_translate: "ComicTranslate", file_name: str):
+    reset_translation_project(comic_translate)
+    reset_lettering_project(comic_translate)
     decoder = ProjectDecoder()
     conn, conn_lock = _get_cached_connection(file_name)
     with conn_lock:
@@ -755,4 +781,10 @@ def load_state_from_proj_file_v2(comic_translate: "ComicTranslate", file_name: s
             if hasattr(comic_translate, 'batch_report_ctrl'):
                 comic_translate.batch_report_ctrl.restore_latest_batch_report(batch_report)
 
+        translation_profile = profile_for_project(
+            comic_translate, manifest.get("translation_profile", {})
+        )
+        lettering_styles = styles_for_project(comic_translate, manifest.get('lettering_styles', {}))
+        comic_translate.translation_profile = translation_profile
+        comic_translate.lettering_styles = lettering_styles
         return saved_ctx

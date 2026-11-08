@@ -7,7 +7,9 @@ This class is stateless and relies on live data from other managers.
 
 from typing import Optional
 from PySide6.QtCore import QPointF, QRectF
-from PySide6.QtGui import QColor, QPainterPath
+from PySide6.QtGui import QPainterPath
+
+from app.ui.canvas.brush_stroke_style import stroke_record
 
 
 class CoordinateConverter:
@@ -70,29 +72,8 @@ class CoordinateConverter:
         if not (0 <= page_idx < len(self.layout_manager.image_positions)):
             return page_local_path
             
-        # Create a new path in scene coordinates
-        scene_path = QPainterPath()
-        
-        # Convert each element of the path
-        for i in range(page_local_path.elementCount()):
-            element = page_local_path.elementAt(i)
-            page_local_point = QPointF(element.x, element.y)
-            scene_point = self.page_local_to_scene_position(page_local_point, page_idx)
-            
-            if element.type == QPainterPath.ElementType.MoveToElement:
-                scene_path.moveTo(scene_point)
-            elif element.type == QPainterPath.ElementType.LineToElement:
-                scene_path.lineTo(scene_point)
-            elif element.type == QPainterPath.ElementType.CurveToElement:
-                # Handle curve elements
-                if i + 2 < page_local_path.elementCount():
-                    c1 = page_local_path.elementAt(i + 1)
-                    c2 = page_local_path.elementAt(i + 2)
-                    c1_scene = self.page_local_to_scene_position(QPointF(c1.x, c1.y), page_idx)
-                    c2_scene = self.page_local_to_scene_position(QPointF(c2.x, c2.y), page_idx)
-                    scene_path.cubicTo(scene_point, c1_scene, c2_scene)
-        
-        return scene_path
+        origin = self.page_local_to_scene_position(QPointF(), page_idx)
+        return page_local_path.translated(origin)
     
     def convert_stroke_to_page_local(self, stroke_item, page_idx: int) -> Optional[dict]:
         """Convert a brush stroke to page-local coordinates and clip to page bounds."""
@@ -116,7 +97,10 @@ class CoordinateConverter:
         page_rect = QRectF(page_x_offset, page_y, page_width, page_height)
         
         # Get the original path
-        original_path = stroke_item.path()
+        original_path = stroke_item.mapToScene(stroke_item.path())
+        if page_rect.contains(original_path.controlPointRect()):
+            local_path = original_path.translated(-page_rect.topLeft())
+            return stroke_record(local_path, stroke_item.pen(), stroke_item.brush())
         
         # Create a new path translated to page-local coordinates
         local_path = QPainterPath()
@@ -146,14 +130,8 @@ class CoordinateConverter:
         
         # Only return the stroke if it has meaningful content for this page
         if not local_path.isEmpty():
-            return {
-                'path': local_path,
-                # Preserve alpha. Segmentation masks use a semi-transparent
-                # brush; QColor.name() drops that channel on lazy unload.
-                'pen': stroke_item.pen().color().name(QColor.HexArgb) if hasattr(stroke_item, 'pen') else '#80ff0000',
-                'brush': stroke_item.brush().color().name(QColor.HexArgb) if hasattr(stroke_item, 'brush') else '#00000000',
-                'width': stroke_item.pen().width() if hasattr(stroke_item, 'pen') else 25
-            }
+            local_path.setFillRule(original_path.fillRule())
+            return stroke_record(local_path, stroke_item.pen(), stroke_item.brush())
         
         return None
     

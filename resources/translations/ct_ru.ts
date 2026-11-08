@@ -776,6 +776,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>Художественное редактирование</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Контекст перевода</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Стили леттеринга</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Форма текста</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -1574,6 +1586,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>Художественное редактирование</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Контекст перевода</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Стили леттеринга</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Форма текста</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -1916,6 +1940,14 @@ It may have been moved, renamed, or deleted.
         <source>Top K:</source>
         <translation>Top K:</translation>
     </message>
+    <message>
+        <source>Provide text-box coordinates (experimental)</source>
+        <translation>Передавать координаты текстовых блоков (экспериментально)</translation>
+    </message>
+    <message>
+        <source>Send text-box positions with the page image. Requires image input and a vision-capable model; improvement is not guaranteed.</source>
+        <translation>Передаёт позиции текстовых блоков вместе с изображением страницы. Требуются передача изображения и модель с поддержкой изображений; улучшение результата не гарантируется.</translation>
+    </message>
 </context>
 <context>
     <name>Messages</name>
@@ -2124,6 +2156,22 @@ Please check your internet connection.</source>
     <message>
         <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
         <translation>Укажите API-ключ и обязательные поля в разделе Настройки &gt; API провайдеров: {provider}</translation>
+    </message>
+    <message>
+        <source>Page already contains rendered text; use manual Render to add missing regions.</source>
+        <translation>На странице уже есть отрисованный текст; для добавления недостающих областей используйте отрисовку в ручном режиме.</translation>
+    </message>
+    <message>
+        <source>Existing Rendered Text</source>
+        <translation>Уже отрисованный текст</translation>
+    </message>
+    <message>
+        <source>Perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit the perspective lettering.</source>
+        <translation>Надпись с перспективой из этого PSD импортирована как пиксели фона. Остальной текст остаётся редактируемым поверх него. Для редактирования надписи с перспективой используйте исходный проект.</translation>
+    </message>
+    <message>
+        <source>Curved or perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit its text and shape.</source>
+        <translation>Изогнутый текст и текст с перспективой в этом PSD импортированы как пиксели фона. Остальной текст остаётся редактируемым поверх него. Для изменения текста и формы этих элементов используйте исходный проект.</translation>
     </message>
 </context>
 <context>
@@ -3201,6 +3249,18 @@ Open or create a project to get started.</source>
         <source>Render Text in UpperCase</source>
         <translation>Отображать текст прописными буквами</translation>
     </message>
+    <message>
+        <source>Fit to bubble when rendering</source>
+        <translation>Подгонять текст к реплике при отрисовке</translation>
+    </message>
+    <message>
+        <source>Bubble padding:</source>
+        <translation>Отступ внутри реплики:</translation>
+    </message>
+    <message>
+        <source>Fit newly rendered text to speech-bubble interiors, with Box fallback. Existing lettering is preserved; other regions continue through processing.</source>
+        <translation>Подгоняет вновь отрисованный текст к внутренней области реплики, при необходимости используя прямоугольную область. Существующий текст сохраняется; обработка остальных областей продолжается.</translation>
+    </message>
 </context>
 <context>
     <name>ToolsPage</name>
@@ -3581,6 +3641,18 @@ back on the Image (for further editing)</source>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
         <source>Artistic Edit</source>
         <translation>Художественное редактирование</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Контекст перевода</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Стили леттеринга</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>Форма текста</translation>
     </message>
 </context>
 <context>
@@ -4644,6 +4716,42 @@ Prompt: {prompt}</source>
         <source>{model} (experimental)</source>
         <translation>{model} (экспериментально)</translation>
     </message>
+    <message>
+        <source>Artwork protection changed. Regenerate the preview.</source>
+        <translation>Защита рисунка изменилась. Создайте предпросмотр заново.</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (provider API; sends the writable edit area).</source>
+        <translation>OCR: {engine} (API поставщика; отправляет редактируемую область).</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (local).</source>
+        <translation>OCR: {engine} (локально).</translation>
+    </message>
+    <message>
+        <source>Checks use the translation target language. Pixels outside the writable area and protected pixels are excluded.</source>
+        <translation>Проверка использует целевой язык перевода. Пиксели вне редактируемой области и защищённые пиксели исключаются.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>Проверка надписи недоступна: {error}</translation>
+    </message>
+    <message>
+        <source>A previous lettering check is still finishing.</source>
+        <translation>Предыдущая проверка надписи ещё не завершена.</translation>
+    </message>
+    <message>
+        <source>The preview changed. Run Check lettering again.</source>
+        <translation>Предпросмотр изменился. Снова нажмите «Проверить надпись».</translation>
+    </message>
+    <message>
+        <source>OCR check failed ({error_type}). Check your OCR settings and try again.</source>
+        <translation>Ошибка проверки OCR ({error_type}). Проверьте настройки OCR и повторите попытку.</translation>
+    </message>
+    <message>
+        <source>Candidate {number}</source>
+        <translation>Вариант {number}</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4988,6 +5096,102 @@ Prompt: {prompt}</source>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
+    <message>
+        <source>Check lettering</source>
+        <translation>Проверить надпись</translation>
+    </message>
+    <message>
+        <source>Lettering details</source>
+        <translation>Подробности надписи</translation>
+    </message>
+    <message>
+        <source>Stylized lettering can confuse OCR. Review the image before applying.</source>
+        <translation>Стилизованные надписи могут распознаваться неверно. Проверьте изображение перед применением.</translation>
+    </message>
+    <message>
+        <source>Lettering check details</source>
+        <translation>Подробности проверки надписи</translation>
+    </message>
+    <message>
+        <source>Not checked yet.</source>
+        <translation>Проверка ещё не выполнена.</translation>
+    </message>
+    <message>
+        <source>Use selected translation with Artistic lettering to supply exact wording. Editing that prompt clears the lettering check.</source>
+        <translation>Выберите «Использовать выбранный перевод» в режиме «Художественная надпись», чтобы задать точный текст. Изменение этого запроса отключает проверку надписи.</translation>
+    </message>
+    <message>
+        <source>Requested wording:</source>
+        <translation>Запрошенный текст:</translation>
+    </message>
+    <message>
+        <source>OCR reading:</source>
+        <translation>Результат OCR:</translation>
+    </message>
+    <message>
+        <source>(no text)</source>
+        <translation>(нет текста)</translation>
+    </message>
+    <message>
+        <source>Differences:</source>
+        <translation>Расхождения:</translation>
+    </message>
+    <message>
+        <source>Not read by OCR: {expected}</source>
+        <translation>Не распознано OCR: {expected}</translation>
+    </message>
+    <message>
+        <source>Extra OCR text: {recognized}</source>
+        <translation>Лишний текст OCR: {recognized}</translation>
+    </message>
+    <message>
+        <source>Requested: {expected} | OCR: {recognized}</source>
+        <translation>Запрошено: {expected} | OCR: {recognized}</translation>
+    </message>
+    <message>
+        <source>Checking lettering…</source>
+        <translation>Проверка надписи…</translation>
+    </message>
+    <message>
+        <source>OCR text matches the requested wording.</source>
+        <translation>Текст OCR совпадает с запрошенным текстом.</translation>
+    </message>
+    <message>
+        <source>Possible lettering differences</source>
+        <translation>Возможные расхождения в надписи</translation>
+    </message>
+    <message>
+        <source>OCR could not read enough text to compare.</source>
+        <translation>OCR не удалось распознать достаточно текста для сравнения.</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>Проверка надписи недоступна: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>Вариант</translation>
+    </message>
+    <message>
+        <source>Compare with</source>
+        <translation>Сравнить с</translation>
+    </message>
+    <message>
+        <source>Generate alternative</source>
+        <translation>Создать другой вариант</translation>
+    </message>
+    <message>
+        <source>Two candidates are already available.</source>
+        <translation>Уже доступны два варианта.</translation>
+    </message>
+    <message>
+        <source>The preview is stale. Generate a fresh preview to compare alternatives.</source>
+        <translation>Предпросмотр устарел. Создайте новый предпросмотр, чтобы сравнить варианты.</translation>
+    </message>
+    <message>
+        <source>Generate a second candidate to compare.</source>
+        <translation>Создайте второй вариант для сравнения.</translation>
+    </message>
 </context>
 <context>
     <name>MBigView</name>
@@ -5261,6 +5465,78 @@ Prompt: {prompt}</source>
         <source>Soft edge</source>
         <translation>Мягкий край</translation>
     </message>
+    <message>
+        <source>Fill method</source>
+        <translation>Способ заливки</translation>
+    </message>
+    <message>
+        <source>Solid</source>
+        <translation>Сплошная</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>Градиент</translation>
+    </message>
+    <message>
+        <source>Preview gradient fill…</source>
+        <translation>Предпросмотр градиентной заливки…</translation>
+    </message>
+    <message>
+        <source>Sample clean points around one masked background area, then preview a smooth gradient before applying it.</source>
+        <translation>Возьмите образцы чистых точек вокруг одного замаскированного участка фона, затем просмотрите плавный градиент перед применением.</translation>
+    </message>
+    <message>
+        <source>Heal (experimental)</source>
+        <translation>Восстановление (экспериментальное)</translation>
+    </message>
+    <message>
+        <source>Protect artwork</source>
+        <translation>Защитить рисунок</translation>
+    </message>
+    <message>
+        <source>Paint areas that cleanup and artistic edits must leave unchanged.</source>
+        <translation>Закрасьте участки, которые очистка и художественное редактирование должны оставить неизменными.</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>Защитить</translation>
+    </message>
+    <message>
+        <source>Protect brush</source>
+        <translation>Кисть защиты</translation>
+    </message>
+    <message>
+        <source>Brush over artwork to protect its pixels. Uses the brush size slider. Each stroke can be undone.</source>
+        <translation>Проведите кистью по рисунку, чтобы защитить его пиксели. Размер задаётся ползунком кисти. Каждый мазок можно отменить.</translation>
+    </message>
+    <message>
+        <source>Unprotect</source>
+        <translation>Снять защиту</translation>
+    </message>
+    <message>
+        <source>Unprotect brush</source>
+        <translation>Кисть снятия защиты</translation>
+    </message>
+    <message>
+        <source>Brush over protected pixels to allow editing again. This does not erase artwork.</source>
+        <translation>Проведите кистью по защищённым пикселям, чтобы снова разрешить их редактирование. Рисунок при этом не стирается.</translation>
+    </message>
+    <message>
+        <source>Show protected pixels</source>
+        <translation>Показать защищённые пиксели</translation>
+    </message>
+    <message>
+        <source>Purple marks protected artwork. This overlay is never exported.</source>
+        <translation>Защищённые участки рисунка отмечены фиолетовым. Этот слой не экспортируется.</translation>
+    </message>
+    <message>
+        <source>Preview Heal…</source>
+        <translation>Предпросмотр восстановления…</translation>
+    </message>
+    <message>
+        <source>Use a fixed clone sample and a picked background color to preview one small masked repair. The mask must fit inside the sample.</source>
+        <translation>Используйте фиксированный образец клонирования и выбранный цвет фона для предпросмотра восстановления небольшого участка маски. Маска должна помещаться внутри образца.</translation>
+    </message>
 </context>
 <context>
     <name>LocalRepairController</name>
@@ -5287,6 +5563,26 @@ Prompt: {prompt}</source>
     <message>
         <source>Sampled color fill</source>
         <translation>Заливка выбранным цветом</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new gradient preview before applying the repair.</source>
+        <translation>Страница или маска изменилась. Откройте новый предпросмотр градиента перед применением восстановления.</translation>
+    </message>
+    <message>
+        <source>Sampled gradient fill</source>
+        <translation>Градиентная заливка по образцам</translation>
+    </message>
+    <message>
+        <source>Alt-click a clean area with Clone to capture a sample first.</source>
+        <translation>Сначала выберите клонирование и щёлкните чистый участок с зажатой Alt, чтобы взять образец.</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new repair preview before applying.</source>
+        <translation>Страница или маска изменилась. Откройте новый предпросмотр восстановления перед применением.</translation>
+    </message>
+    <message>
+        <source>Heal repair</source>
+        <translation>Восстановление</translation>
     </message>
 </context>
 <context>
@@ -5514,6 +5810,1552 @@ Prompt: {prompt}</source>
         <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
         <source>The LoRA file changed during verification. Select it again and retry.</source>
         <translation>Файл LoRA изменился во время проверки. Выберите его заново и повторите попытку.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitDialog</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>Подогнать текст</translation>
+    </message>
+    <message>
+        <source>Preview text layout inside the fitting area. Artwork and cleanup masks are unchanged.</source>
+        <translation>Предпросмотр расположения текста в области подгонки. Изображение и маски очистки не изменяются.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Ширина</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Высота</translation>
+    </message>
+    <message>
+        <source>Fitting area: width × height</source>
+        <translation>Область подгонки: ширина × высота</translation>
+    </message>
+    <message>
+        <source>Minimum font size</source>
+        <translation>Минимальный размер шрифта</translation>
+    </message>
+    <message>
+        <source>Maximum font size</source>
+        <translation>Максимальный размер шрифта</translation>
+    </message>
+    <message>
+        <source>Keep manual line breaks</source>
+        <translation>Сохранить ручные разрывы строк</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Текущий</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Сбалансированный</translation>
+    </message>
+    <message>
+        <source>Larger text</source>
+        <translation>Более крупный текст</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Расположение</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Применить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Minimum font size must not exceed maximum font size.</source>
+        <translation>Минимальный размер шрифта не должен превышать максимальный.</translation>
+    </message>
+    <message>
+        <source>Fits within the area.</source>
+        <translation>Текст помещается в области.</translation>
+    </message>
+    <message>
+        <source>Does not fit. Enlarge the area or shorten the text.</source>
+        <translation>Текст не помещается. Увеличьте область или сократите текст.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>Текст меньше минимального размера для чтения.</translation>
+    </message>
+    <message>
+        <source>Font size: {size} — {status}</source>
+        <translation>Размер шрифта: {size} — {status}</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>Прямоугольная область</translation>
+    </message>
+    <message>
+        <source>Bubble interior</source>
+        <translation>Внутри реплики</translation>
+    </message>
+    <message>
+        <source>Fit mode</source>
+        <translation>Режим подгонки</translation>
+    </message>
+    <message>
+        <source>Estimate from original</source>
+        <translation>Определить по оригиналу</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Прямоугольник</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>Эллипс</translation>
+    </message>
+    <message>
+        <source>Boundary</source>
+        <translation>Граница</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>Слева</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>Сверху</translation>
+    </message>
+    <message>
+        <source>Boundary origin: X × Y</source>
+        <translation>Начало границы: X × Y</translation>
+    </message>
+    <message>
+        <source>Padding</source>
+        <translation>Внутренний отступ</translation>
+    </message>
+    <message>
+        <source>Estimated interior. Check the boundary before applying.</source>
+        <translation>Внутренняя область определена автоматически. Проверьте границу перед применением.</translation>
+    </message>
+    <message>
+        <source>Manual boundary.</source>
+        <translation>Граница задана вручную.</translation>
+    </message>
+    <message>
+        <source>Bubble fitting requires unrotated horizontal text at normal scale. Using Box.</source>
+        <translation>Подгонка внутри реплики требует горизонтального текста без поворота и с обычным масштабом. Используется прямоугольная область.</translation>
+    </message>
+    <message>
+        <source>Original image unavailable or its dimensions changed. Using Box.</source>
+        <translation>Исходное изображение недоступно или его размеры изменились. Используется прямоугольная область.</translation>
+    </message>
+    <message>
+        <source>Padding leaves no usable interior. Using Box.</source>
+        <translation>Из-за отступа не остаётся пригодной внутренней области. Используется прямоугольная область.</translation>
+    </message>
+    <message>
+        <source>Fitting area is too large. Using Box.</source>
+        <translation>Область подгонки слишком большая. Используется прямоугольная область.</translation>
+    </message>
+    <message>
+        <source>No reliable enclosed interior was found. Using Box. Try Rectangle or Ellipse.</source>
+        <translation>Не удалось надёжно определить замкнутую внутреннюю область. Используется прямоугольная область. Попробуйте прямоугольник или эллипс.</translation>
+    </message>
+    <message>
+        <source>The boundary is outside the page or has no usable area. Using Box.</source>
+        <translation>Граница находится за пределами страницы или не охватывает пригодную область. Используется прямоугольная область.</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitController</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>Подогнать текст</translation>
+    </message>
+    <message>
+        <source>Text overflows the fitting area.</source>
+        <translation>Текст выходит за границы области подгонки.</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>Текст меньше минимального размера для чтения.</translation>
+    </message>
+    <message>
+        <source>The text or page changed. Open Fit Text again to make a new preview.</source>
+        <translation>Текст или страница изменились. Снова откройте «Подогнать текст», чтобы создать новый предпросмотр.</translation>
+    </message>
+    <message>
+        <source>Fit Text requires a text item contained within one page.</source>
+        <translation>Для подгонки текстовый элемент должен целиком находиться на одной странице.</translation>
+    </message>
+    <message>
+        <source>Wait for page processing to finish before fitting text.</source>
+        <translation>Дождитесь завершения обработки страницы, прежде чем подгонять текст.</translation>
+    </message>
+    <message>
+        <source>Reset text shape to fit.</source>
+        <translation>Сбросьте форму для подгонки текста.</translation>
+    </message>
+    <message>
+        <source>Fit Text is unavailable for transformed lettering. Reset the lettering transform first.</source>
+        <translation>Подгонка текста недоступна для преобразованной надписи. Сначала сбросьте преобразование надписи.</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewPanel</name>
+    <message>
+        <source>Review</source>
+        <translation>Проверка</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>Все страницы</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Текущая страница</translation>
+    </message>
+    <message>
+        <source>Review scope</source>
+        <translation>Область проверки</translation>
+    </message>
+    <message>
+        <source>All issues</source>
+        <translation>Все проблемы</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>Нет распознанного текста</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>Нет перевода</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>Переполнение</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>Мелкий текст</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>Ошибка операции</translation>
+    </message>
+    <message>
+        <source>Awaiting review</source>
+        <translation>Ожидает проверки</translation>
+    </message>
+    <message>
+        <source>Issue filter</source>
+        <translation>Фильтр проблем</translation>
+    </message>
+    <message>
+        <source>Review issues</source>
+        <translation>Проблемы для проверки</translation>
+    </message>
+    <message>
+        <source>No issues in this view.</source>
+        <translation>В этом представлении проблем нет.</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>Далее</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Обновить</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Исходный текст</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Перевод</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Разметка</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>Очистка</translation>
+    </message>
+    <message>
+        <source>Review stage</source>
+        <translation>Этап проверки</translation>
+    </message>
+    <message>
+        <source>Mark reviewed</source>
+        <translation>Отметить проверенным</translation>
+    </message>
+    <message>
+        <source>Ignore issue</source>
+        <translation>Игнорировать</translation>
+    </message>
+    <message>
+        <source>Keep source</source>
+        <translation>Сохранить исходный текст</translation>
+    </message>
+    <message>
+        <source>Keep translation</source>
+        <translation>Сохранить перевод</translation>
+    </message>
+    <message>
+        <source>Keep layout</source>
+        <translation>Сохранить разметку</translation>
+    </message>
+    <message>
+        <source>Skip automatic cleanup</source>
+        <translation>Пропустить автоочистку</translation>
+    </message>
+    <message>
+        <source>Fit Text</source>
+        <translation>Подогнать текст</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>Отчёт</translation>
+    </message>
+    <message>
+        <source>Pages: {pages} · Regions: {regions} · Issues: {issues}</source>
+        <translation>Страницы: {pages} · Области: {regions} · Проблемы: {issues}</translation>
+    </message>
+    <message>
+        <source>Page-wide operations keep protected stages. Direct edits remain allowed.</source>
+        <translation>Операции над всей страницей сохраняют защищённые этапы. Прямое редактирование остаётся доступным.</translation>
+    </message>
+    <message>
+        <source>Uncertain OCR</source>
+        <translation>Сомнительное распознавание</translation>
+    </message>
+    <message>
+        <source>Retry OCR…</source>
+        <translation>Распознать повторно…</translation>
+    </message>
+    <message>
+        <source>Lowest line score {score} ({model})</source>
+        <translation>Минимальная оценка строки: {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest word score {score} ({model})</source>
+        <translation>Минимальная оценка слова: {score} ({model})</translation>
+    </message>
+    <message>
+        <source>Lowest sequence score {score} ({model})</source>
+        <translation>Минимальная оценка последовательности: {score} ({model})</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewController</name>
+    <message>
+        <source>Change review state</source>
+        <translation>Изменить состояние проверки</translation>
+    </message>
+    <message>
+        <source>Apply reviewed text</source>
+        <translation>Применить проверенный текст</translation>
+    </message>
+    <message>
+        <source>Checking text layouts…</source>
+        <translation>Проверка разметки текста…</translation>
+    </message>
+    <message>
+        <source>Detect text regions to start reviewing.</source>
+        <translation>Обнаружьте текстовые области, чтобы начать проверку.</translation>
+    </message>
+    <message>
+        <source>Bubble outlines are checked when their page is open.</source>
+        <translation>Контуры реплик проверяются, когда открыта соответствующая страница.</translation>
+    </message>
+    <message>
+        <source>Awaiting review: {stage}</source>
+        <translation>Ожидает проверки: {stage}</translation>
+    </message>
+    <message>
+        <source>The page is not ready. Try selecting the issue again.</source>
+        <translation>Страница ещё не готова. Попробуйте выбрать проблему снова.</translation>
+    </message>
+    <message>
+        <source>This region has changed. Refresh the review list.</source>
+        <translation>Эта область изменилась. Обновите список проверки.</translation>
+    </message>
+    <message>
+        <source>The original page is unavailable for this preview.</source>
+        <translation>Исходная страница недоступна для этого предпросмотра.</translation>
+    </message>
+    <message>
+        <source>Review replacement</source>
+        <translation>Проверить замену</translation>
+    </message>
+    <message>
+        <source>Current text</source>
+        <translation>Текущий текст</translation>
+    </message>
+    <message>
+        <source>Proposed text</source>
+        <translation>Предлагаемый текст</translation>
+    </message>
+    <message>
+        <source>Apply keeps the protection and existing lettering geometry. Use Clean and Render for missing lettering.</source>
+        <translation>Применение сохраняет защиту и геометрию существующего текста. Для недостающего текста используйте «Очистить» и «Отрисовка».</translation>
+    </message>
+    <message>
+        <source>This region changed while the preview was open. Run the action again.</source>
+        <translation>Эта область изменилась, пока был открыт предпросмотр. Выполните действие ещё раз.</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>Нет распознанного текста</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>Нет перевода</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>Переполнение</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>Мелкий текст</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>Ошибка операции</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Исходный текст</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Перевод</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>Разметка</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>Очистка</translation>
+    </message>
+    <message>
+        <source>Retry OCR</source>
+        <translation>Распознать повторно</translation>
+    </message>
+    <message>
+        <source>Local recognizer</source>
+        <translation>Локальный движок распознавания</translation>
+    </message>
+    <message>
+        <source>Missing model files will be downloaded when you continue.</source>
+        <translation>При продолжении будут загружены недостающие файлы модели.</translation>
+    </message>
+    <message>
+        <source>No alternative local recognizer is available for this source language.</source>
+        <translation>Для этого языка оригинала нет другого локального движка распознавания.</translation>
+    </message>
+    <message>
+        <source>Select a text region first.</source>
+        <translation>Сначала выберите область текста.</translation>
+    </message>
+    <message>
+        <source>The recognizer returned no text.</source>
+        <translation>Движок не распознал текст.</translation>
+    </message>
+    <message>
+        <source>Apply replaces the source text for this region.</source>
+        <translation>Кнопка «Применить» заменит исходный текст этой области.</translation>
+    </message>
+</context>
+<context>
+    <name>ContextEntryDialog</name>
+    <message>
+        <source>Glossary entry</source>
+        <translation>Запись глоссария</translation>
+    </message>
+    <message>
+        <source>Character</source>
+        <translation>Персонаж</translation>
+    </message>
+    <message>
+        <source>One alias per line</source>
+        <translation>Один псевдоним в строке</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>Исходный термин</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Имя</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>Предпочтительный перевод</translation>
+    </message>
+    <message>
+        <source>Aliases</source>
+        <translation>Другие имена</translation>
+    </message>
+    <message>
+        <source>Source language</source>
+        <translation>Исходный язык</translation>
+    </message>
+    <message>
+        <source>Target language</source>
+        <translation>Язык перевода</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Автоматически</translation>
+    </message>
+    <message>
+        <source>Whole word</source>
+        <translation>Целое слово</translation>
+    </message>
+    <message>
+        <source>Substring</source>
+        <translation>Подстрока</translation>
+    </message>
+    <message>
+        <source>Matching rule</source>
+        <translation>Правило сопоставления</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Заметки</translation>
+    </message>
+    <message>
+        <source>Voice and formality notes</source>
+        <translation>Манера речи и степень формальности</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>Включено</translation>
+    </message>
+    <message>
+        <source>Approved for translation</source>
+        <translation>Одобрено для перевода</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>Любой язык</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation.</source>
+        <translation>Введите исходный термин и предпочтительный перевод.</translation>
+    </message>
+    <message>
+        <source>Enter a character name.</source>
+        <translation>Введите имя персонажа.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextController</name>
+    <message>
+        <source>Choose an LLM translator to suggest a summary.</source>
+        <translation>Для создания краткого содержания выберите переводчик на базе LLM.</translation>
+    </message>
+    <message>
+        <source>In Review, mark a translation reviewed for this source and target language pair.</source>
+        <translation>В разделе «Проверка» отметьте как проверенный перевод с этого исходного языка на выбранный язык перевода.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit or shorten the story summary to fit approved translations.</source>
+        <translation>Увеличьте лимит токенов контекста или сократите краткое содержание, чтобы поместились одобренные переводы.</translation>
+    </message>
+    <message>
+        <source>Check the selected translator’s connection settings.</source>
+        <translation>Проверьте настройки подключения выбранного переводчика.</translation>
+    </message>
+    <message>
+        <source>The model returned an unusable summary.</source>
+        <translation>Модель вернула непригодное для использования краткое содержание.</translation>
+    </message>
+    <message>
+        <source>The summary request failed. Check the translator settings and try again.</source>
+        <translation>Не удалось получить краткое содержание. Проверьте настройки переводчика и повторите попытку.</translation>
+    </message>
+    <message>
+        <source>The project or summary inputs changed. Open the suggestion again.</source>
+        <translation>Проект или исходные данные для краткого содержания изменились. Откройте предложение снова.</translation>
+    </message>
+    <message>
+        <source>Change translation context</source>
+        <translation>Изменить контекст перевода</translation>
+    </message>
+    <message>
+        <source>Select a text region to preview its request.</source>
+        <translation>Выберите текстовую область для предпросмотра запроса.</translation>
+    </message>
+    <message>
+        <source>The current page has no text regions to preview.</source>
+        <translation>На текущей странице нет текстовых областей для предпросмотра.</translation>
+    </message>
+    <message>
+        <source>Cannot build request preview: {error}</source>
+        <translation>Не удалось создать предпросмотр запроса: {error}</translation>
+    </message>
+    <message>
+        <source>Choose an LLM translator to suggest glossary terms.</source>
+        <translation>Чтобы получить предложения для глоссария, выберите переводчик на базе LLM.</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit to fit approved translations.</source>
+        <translation>Увеличьте лимит токенов контекста, чтобы в него поместились одобренные переводы.</translation>
+    </message>
+    <message>
+        <source>The model returned unusable glossary suggestions.</source>
+        <translation>Модель вернула предложения, которые нельзя использовать в глоссарии.</translation>
+    </message>
+    <message>
+        <source>The glossary request failed. Check the translator settings and try again.</source>
+        <translation>Не удалось получить термины для глоссария. Проверьте настройки переводчика и повторите попытку.</translation>
+    </message>
+    <message>
+        <source>The project or glossary inputs changed. Open the suggestion again.</source>
+        <translation>Проект или исходные данные для подбора терминов изменились. Откройте предложения снова.</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextDialog</name>
+    <message>
+        <source>Suggest story summary…</source>
+        <translation>Предложить краткое содержание…</translation>
+    </message>
+    <message>
+        <source>Include approved translations from earlier pages</source>
+        <translation>Включать одобренные переводы с предыдущих страниц</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>Контекст перевода</translation>
+    </message>
+    <message>
+        <source>Glossary</source>
+        <translation>Глоссарий</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>Персонажи</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>Исходный термин</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Имя</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>Предпочтительный перевод</translation>
+    </message>
+    <message>
+        <source>Language pair</source>
+        <translation>Языковая пара</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Состояние</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Изменить</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Add selected source/translation</source>
+        <translation>Добавить выбранный оригинал/перевод</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>Говорящий</translation>
+    </message>
+    <message>
+        <source>Assign selected region</source>
+        <translation>Назначить выбранной области</translation>
+    </message>
+    <message>
+        <source>Project notes</source>
+        <translation>Заметки проекта</translation>
+    </message>
+    <message>
+        <source>Setting, tone, terminology guidance, and other context for this work.</source>
+        <translation>Место действия, тон, указания по терминологии и другой контекст произведения.</translation>
+    </message>
+    <message>
+        <source>Story summary</source>
+        <translation>Краткое содержание</translation>
+    </message>
+    <message>
+        <source>Context token limit</source>
+        <translation>Лимит токенов контекста</translation>
+    </message>
+    <message>
+        <source>Uses a conservative estimate. Required context that exceeds the available budget must be shortened.</source>
+        <translation>Используется оценка с запасом. Обязательный контекст, превышающий доступный лимит, необходимо сократить.</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Заметки</translation>
+    </message>
+    <message>
+        <source>Request preview</source>
+        <translation>Предпросмотр запроса</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Текущая страница</translation>
+    </message>
+    <message>
+        <source>Selected region</source>
+        <translation>Выбранная область</translation>
+    </message>
+    <message>
+        <source>Preview scope</source>
+        <translation>Область предпросмотра</translation>
+    </message>
+    <message>
+        <source>Build preview</source>
+        <translation>Создать предпросмотр</translation>
+    </message>
+    <message>
+        <source>Undo context</source>
+        <translation>Отменить изменение контекста</translation>
+    </message>
+    <message>
+        <source>Redo context</source>
+        <translation>Повторить изменение контекста</translation>
+    </message>
+    <message>
+        <source>Revert draft</source>
+        <translation>Сбросить черновик</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Применить</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <source>Changes apply to this project. The existing LLM context setting also remains in use.</source>
+        <translation>Изменения применяются к этому проекту. Существующая настройка контекста LLM также продолжает использоваться.</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>Любой язык</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>Отключено</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation>Одобрено</translation>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation>Черновик</translation>
+    </message>
+    <message>
+        <source>No speaker</source>
+        <translation>Говорящий не задан</translation>
+    </message>
+    <message>
+        <source>Selected region: {text}</source>
+        <translation>Выбранная область: {text}</translation>
+    </message>
+    <message>
+        <source>Select a text region on the page to assign a speaker.</source>
+        <translation>Выберите текстовую область на странице, чтобы назначить говорящего.</translation>
+    </message>
+    <message>
+        <source>Approved glossary entries, assigned character notes, and project notes guide LLM translation.</source>
+        <translation>Одобренные записи глоссария, заметки назначенных персонажей и заметки проекта направляют перевод LLM.</translation>
+    </message>
+    <message>
+        <source>This translator does not support structured LLM context. Project entries remain editable for use with an LLM.</source>
+        <translation>Этот переводчик не поддерживает структурированный контекст LLM. Записи проекта можно редактировать для использования с LLM.</translation>
+    </message>
+    <message>
+        <source>Unapplied changes. Apply to use them for translation.</source>
+        <translation>Есть неприменённые изменения. Примените их для использования в переводе.</translation>
+    </message>
+    <message>
+        <source>No unapplied changes.</source>
+        <translation>Нет неприменённых изменений.</translation>
+    </message>
+    <message>
+        <source>Suggest glossary terms…</source>
+        <translation>Предложить термины для глоссария…</translation>
+    </message>
+</context>
+<context>
+    <name>GradientRepairDialog</name>
+    <message>
+        <source>Gradient repair</source>
+        <translation>Восстановление градиентом</translation>
+    </message>
+    <message>
+        <source>Repair one smooth background area at a time. Click at least four clean spots around the entire mask, away from text and borders. Six or more samples improve reliability.</source>
+        <translation>Восстанавливайте по одному участку плавного фона за раз. Щёлкните минимум по четырём чистым участкам вокруг всей маски, подальше от текста и границ. Шесть и более образцов повышают надёжность.</translation>
+    </message>
+    <message>
+        <source>Sample from</source>
+        <translation>Источник образцов</translation>
+    </message>
+    <message>
+        <source>Edited page</source>
+        <translation>Изменённая страница</translation>
+    </message>
+    <message>
+        <source>Original page</source>
+        <translation>Исходная страница</translation>
+    </message>
+    <message>
+        <source>Changing the source clears samples. Preview pixels are never used as samples.</source>
+        <translation>При смене источника образцы очищаются. Пиксели предпросмотра никогда не используются как образцы.</translation>
+    </message>
+    <message>
+        <source>Show mask</source>
+        <translation>Показать маску</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>Вписать область восстановления</translation>
+    </message>
+    <message>
+        <source>Fit page</source>
+        <translation>Вписать страницу</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>Уменьшить</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>Увеличить</translation>
+    </message>
+    <message>
+        <source>Sample background</source>
+        <translation>Образцы фона</translation>
+    </message>
+    <message>
+        <source>Repair preview</source>
+        <translation>Предпросмотр восстановления</translation>
+    </message>
+    <message>
+        <source>Remove last sample</source>
+        <translation>Удалить последний образец</translation>
+    </message>
+    <message>
+        <source>Clear samples</source>
+        <translation>Очистить образцы</translation>
+    </message>
+    <message>
+        <source>Generate preview</source>
+        <translation>Создать предпросмотр</translation>
+    </message>
+    <message>
+        <source>Drag to pan; use the mouse wheel to zoom. Only pixels inside the painted mask will change.</source>
+        <translation>Перетаскивайте для перемещения, используйте колесо мыши для масштаба. Изменятся только пиксели внутри нарисованной маски.</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Применить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Samples: {count}</source>
+        <translation>Образцов: {count}</translation>
+    </message>
+    <message>
+        <source>Click inside the page image.</source>
+        <translation>Щёлкните внутри изображения страницы.</translation>
+    </message>
+    <message>
+        <source>Choose a clean spot outside the painted mask.</source>
+        <translation>Выберите чистый участок за пределами нарисованной маски.</translation>
+    </message>
+    <message>
+        <source>That pixel is already sampled. Choose another clean spot.</source>
+        <translation>Этот пиксель уже выбран. Выберите другой чистый участок.</translation>
+    </message>
+    <message>
+        <source>Use at most 64 samples. Remove a sample before adding another.</source>
+        <translation>Допускается не более 64 образцов. Удалите один, прежде чем добавлять новый.</translation>
+    </message>
+    <message>
+        <source>Choose at least four distinct clean spots around the repair.</source>
+        <translation>Выберите минимум четыре разных чистых участка вокруг области восстановления.</translation>
+    </message>
+    <message>
+        <source>Spread samples in both directions; do not place them along one line.</source>
+        <translation>Распределите образцы в обоих направлениях, а не вдоль одной линии.</translation>
+    </message>
+    <message>
+        <source>Place clean samples around all sides of the painted mask.</source>
+        <translation>Разместите чистые образцы со всех сторон нарисованной маски.</translation>
+    </message>
+    <message>
+        <source>The samples do not describe a smooth background. Remove spots on text or borders, or add more clean samples.</source>
+        <translation>Образцы не соответствуют плавному фону. Удалите точки на тексте или границах либо добавьте больше чистых образцов.</translation>
+    </message>
+    <message>
+        <source>Cannot build this repair from the image, mask, and samples.</source>
+        <translation>Не удалось построить восстановление по изображению, маске и образцам.</translation>
+    </message>
+    <message>
+        <source>The preview would not change any pixels.</source>
+        <translation>Предпросмотр не изменит ни одного пикселя.</translation>
+    </message>
+    <message>
+        <source>Preview ready: {used} of {total} samples used.</source>
+        <translation>Предпросмотр готов: использовано {used} из {total} образцов.</translation>
+    </message>
+    <message>
+        <source>Ready to generate a preview.</source>
+        <translation>Всё готово для создания предпросмотра.</translation>
+    </message>
+    <message>
+        <source>Generating preview…</source>
+        <translation>Создание предпросмотра…</translation>
+    </message>
+    <message>
+        <source>Preview unavailable: {reason}</source>
+        <translation>Предпросмотр недоступен: {reason}</translation>
+    </message>
+    <message>
+        <source>Unable to generate preview: {error}</source>
+        <translation>Не удалось создать предпросмотр: {error}</translation>
+    </message>
+    <message>
+        <source>Shift-drag to sample a line of background color.</source>
+        <translation>Удерживая Shift, проведите линию, чтобы взять образец цвета фона вдоль неё.</translation>
+    </message>
+</context>
+<context>
+    <name>HealRepairDialog</name>
+    <message>
+        <source>Experimental Heal preview</source>
+        <translation>Предпросмотр восстановления (экспериментальный)</translation>
+    </message>
+    <message>
+        <source>Compare one fixed clone sample with a color-adjusted copy. This prototype preserves sampled texture and shifts its color toward your picked color. It does not reconstruct detail or borrow nearby pixels.</source>
+        <translation>Сравните фиксированный образец клонирования с копией, цвет которой скорректирован. Этот прототип сохраняет текстуру образца и приближает её цвет к выбранному. Он не восстанавливает детали и не заимствует соседние пиксели.</translation>
+    </message>
+    <message>
+        <source>The entire painted mask must fit inside one sample centered on the mask. Use a larger clean clone sample or a smaller mask. Only painted, unprotected pixels can change; texture will not be tiled.</source>
+        <translation>Вся нарисованная маска должна помещаться в один образец, расположенный по её центру. Используйте чистый образец клонирования большего размера или уменьшите маску. Изменятся только закрашенные незащищённые пиксели; текстура не будет повторяться плитками.</translation>
+    </message>
+    <message>
+        <source>Picked target color: RGB {0}</source>
+        <translation>Выбранный целевой цвет: RGB {0}</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>Вписать область восстановления</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>Уменьшить</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>Увеличить</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>Текущая страница</translation>
+    </message>
+    <message>
+        <source>Ordinary Clone</source>
+        <translation>Обычное клонирование</translation>
+    </message>
+    <message>
+        <source>Heal preview</source>
+        <translation>Предпросмотр восстановления</translation>
+    </message>
+    <message>
+        <source>Color adjustment</source>
+        <translation>Коррекция цвета</translation>
+    </message>
+    <message>
+        <source>Apply Heal</source>
+        <translation>Применить восстановление</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>This preview would not change any pixels.</source>
+        <translation>Этот предпросмотр не изменит ни одного пикселя.</translation>
+    </message>
+    <message>
+        <source>Preview ready. Compare the texture and color before applying.</source>
+        <translation>Предпросмотр готов. Сравните текстуру и цвет перед применением.</translation>
+    </message>
+    <message>
+        <source>The mask extends beyond the clean clone sample. Cancel and use a larger clean sample or a smaller mask.</source>
+        <translation>Маска выходит за пределы чистого образца клонирования. Отмените операцию и используйте чистый образец большего размера или уменьшите маску.</translation>
+    </message>
+    <message>
+        <source>All masked pixels are protected. No repair can be applied.</source>
+        <translation>Все пиксели маски защищены. Восстановление невозможно применить.</translation>
+    </message>
+    <message>
+        <source>Paint a repair mask before opening Heal preview.</source>
+        <translation>Нарисуйте маску восстановления перед открытием предпросмотра.</translation>
+    </message>
+    <message>
+        <source>The repair inputs are invalid. Cancel and sample again.</source>
+        <translation>Недопустимые данные для восстановления. Отмените операцию и возьмите образец заново.</translation>
+    </message>
+    <message>
+        <source>Could not generate the preview. No changes were applied.</source>
+        <translation>Не удалось создать предпросмотр. Изменения не применены.</translation>
+    </message>
+</context>
+<context>
+    <name>PixelProtectionController</name>
+    <message>
+        <source>Protect artwork</source>
+        <translation>Защитить рисунок</translation>
+    </message>
+    <message>
+        <source>Unprotect artwork</source>
+        <translation>Снять защиту рисунка</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesController</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Стили леттеринга</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before applying a lettering style.</source>
+        <translation>Дождитесь завершения обработки, прежде чем применять стиль леттеринга.</translation>
+    </message>
+    <message>
+        <source>Open a page before editing project lettering styles.</source>
+        <translation>Откройте страницу, прежде чем редактировать стили леттеринга проекта.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one current page to apply a style.</source>
+        <translation>Выберите текстовые блоки на текущей странице, чтобы применить стиль.</translation>
+    </message>
+    <message>
+        <source>Select one copy of each text region before applying a style.</source>
+        <translation>Перед применением стиля выберите только одну копию каждой текстовой области.</translation>
+    </message>
+    <message>
+        <source>The page, lettering or presets changed. Open a new style preview.</source>
+        <translation>Страница, текст или пресеты изменились. Откройте новый предпросмотр стиля.</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesDialog</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>Стили леттеринга</translation>
+    </message>
+    <message>
+        <source>Save lettering from a selected text box as a named project style. Choose which properties to apply; word emphasis is preserved unless you select Bold, Italic or Underline.</source>
+        <translation>Сохраните оформление выбранного текстового блока как именованный стиль проекта. Выберите применяемые свойства; выделение отдельных слов сохраняется, если не выбраны полужирный, курсив или подчёркивание.</translation>
+    </message>
+    <message>
+        <source>Project styles</source>
+        <translation>Стили проекта</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>Название стиля</translation>
+    </message>
+    <message>
+        <source>Dialogue, narration, sound effects…</source>
+        <translation>Диалог, повествование, звуковые эффекты…</translation>
+    </message>
+    <message>
+        <source>Save from previewed text box</source>
+        <translation>Сохранить из блока предпросмотра</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the text box chosen in Preview text box.</source>
+        <translation>Создаёт новый стиль из блока, выбранного в поле «Текстовый блок для предпросмотра».</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>Переименовать</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>Удалить стиль</translation>
+    </message>
+    <message>
+        <source>Replace style from previewed text box</source>
+        <translation>Заменить стиль из блока предпросмотра</translation>
+    </message>
+    <message>
+        <source>Properties to apply</source>
+        <translation>Применяемые свойства</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>Шрифт</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>Размер шрифта</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>Цвет текста</translation>
+    </message>
+    <message>
+        <source>Outline</source>
+        <translation>Контур</translation>
+    </message>
+    <message>
+        <source>Line spacing</source>
+        <translation>Межстрочный интервал</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>Выравнивание</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>Жирный</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Курсив</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Подчеркнутый</translation>
+    </message>
+    <message>
+        <source>Preview text box</source>
+        <translation>Текстовый блок для предпросмотра</translation>
+    </message>
+    <message>
+        <source>{0}: {1}</source>
+        <translation>{0}: {1}</translation>
+    </message>
+    <message>
+        <source>{0} selected text boxes</source>
+        <translation>Выбрано текстовых блоков: {0}</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>Вписать предпросмотр</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Текущий</translation>
+    </message>
+    <message>
+        <source>Styled</source>
+        <translation>Со стилем</translation>
+    </message>
+    <message>
+        <source>Preview uses a neutral background. Inspect text fit after changing font or size.</source>
+        <translation>В предпросмотре используется нейтральный фон. После изменения шрифта или размера проверьте, помещается ли текст.</translation>
+    </message>
+    <message>
+        <source>Apply despite these font warnings</source>
+        <translation>Применить несмотря на предупреждения о шрифте</translation>
+    </message>
+    <message>
+        <source>Save presets only</source>
+        <translation>Сохранить только пресеты</translation>
+    </message>
+    <message>
+        <source>Apply to selection</source>
+        <translation>Применить к выделенному</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Changes to presets are saved only when you choose Save presets only or Apply to selection.</source>
+        <translation>Изменения пресетов сохраняются только при выборе «Сохранить только пресеты» или «Применить к выделенному».</translation>
+    </message>
+    <message>
+        <source>Enter a style name.</source>
+        <translation>Введите название стиля.</translation>
+    </message>
+    <message>
+        <source>A style with this name already exists. Choose another name.</source>
+        <translation>Стиль с таким названием уже существует. Выберите другое название.</translation>
+    </message>
+    <message>
+        <source>Could not capture this text style. No preset was added.</source>
+        <translation>Не удалось получить стиль текста. Пресет не добавлен.</translation>
+    </message>
+    <message>
+        <source>Ready to apply this style to {0} text boxes.</source>
+        <translation>Можно применить стиль к {0} текстовым блокам.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still rename or delete project presets.</source>
+        <translation>Выберите текстовые блоки на одной странице, чтобы получить или применить стиль. Переименование и удаление пресетов проекта остаются доступны.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, or enter a name and save the previewed text box as a new style.</source>
+        <translation>Выберите стиль проекта или введите название и сохраните блок предпросмотра как новый стиль.</translation>
+    </message>
+    <message>
+        <source>Choose at least one property to apply.</source>
+        <translation>Выберите хотя бы одно свойство для применения.</translation>
+    </message>
+    <message>
+        <source>Could not build the style preview. No changes were applied.</source>
+        <translation>Не удалось создать предпросмотр стиля. Изменения не применены.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" is unavailable. A fallback font will be used.</source>
+        <translation>Текстовый блок {0}: шрифт «{1}» недоступен. Будет использован резервный шрифт.</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" lacks these characters: {2}. Fallback glyphs may differ.</source>
+        <translation>Текстовый блок {0}: в шрифте «{1}» нет следующих символов: {2}. Резервные глифы могут отличаться.</translation>
+    </message>
+    <message>
+        <source>Reuse a project style or change emphasis directly. Bold, Italic and Underline affect whole selected text boxes; Keep existing preserves individual-word formatting.</source>
+        <translation>Используйте стиль проекта или измените выделение напрямую. Жирный, Курсив и Подчёркнутый применяются ко всему тексту выбранных блоков; Сохранить текущее оставляет форматирование отдельных слов.</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the current text box and your emphasis choices.</source>
+        <translation>Создаёт новый стиль из текущего текстового блока с учётом выбранных настроек выделения.</translation>
+    </message>
+    <message>
+        <source>Replaces the selected preset with the current text box style and your emphasis choices.</source>
+        <translation>Заменяет выбранный пресет стилем текущего текстового блока с учётом выбранных настроек выделения.</translation>
+    </message>
+    <message>
+        <source>Keep existing</source>
+        <translation>Сохранить текущее</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Вкл.</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Выкл.</translation>
+    </message>
+    <message>
+        <source>Use preset</source>
+        <translation>Использовать пресет</translation>
+    </message>
+    <message>
+        <source>On and Off change this emphasis for each entire selected box. Keep existing preserves word-level formatting. Use preset copies the saved value.</source>
+        <translation>Вкл. и Выкл. изменяют это выделение во всём тексте каждого выбранного блока. Сохранить текущее оставляет форматирование отдельных слов. Использовать пресет применяет сохранённое значение.</translation>
+    </message>
+    <message>
+        <source>Ready to apply formatting to {0} text boxes.</source>
+        <translation>Всё готово для применения форматирования к {0} текстовым блокам.</translation>
+    </message>
+    <message>
+        <source>Choose a project style, save a new style, or set Bold, Italic or Underline to On or Off.</source>
+        <translation>Выберите стиль проекта, сохраните новый стиль или установите для Жирный, Курсив или Подчёркнутый значение Вкл. либо Выкл.</translation>
+    </message>
+    <message>
+        <source>Import presets…</source>
+        <translation>Импортировать пресеты…</translation>
+    </message>
+    <message>
+        <source>Export presets…</source>
+        <translation>Экспортировать пресеты…</translation>
+    </message>
+    <message>
+        <source>Lettering presets (*.json)</source>
+        <translation>Пресеты леттеринга (*.json)</translation>
+    </message>
+    <message>
+        <source>Export all presets in this list to a file.</source>
+        <translation>Экспортировать в файл все пресеты из этого списка.</translation>
+    </message>
+    <message>
+        <source>Existing presets are kept. Name conflicts receive a numbered suffix.</source>
+        <translation>Существующие пресеты сохраняются. Если имя занято, к имени импортируемого пресета добавляется номер.</translation>
+    </message>
+    <message>
+        <source>Imported: {0}. Renamed: {1}. Skipped duplicates: {2}.</source>
+        <translation>Импортировано: {0}. Переименовано: {1}. Пропущено дубликатов: {2}.</translation>
+    </message>
+    <message>
+        <source>Exported {0} presets.</source>
+        <translation>Экспортировано пресетов: {0}.</translation>
+    </message>
+    <message>
+        <source>Could not read the preset file.</source>
+        <translation>Не удалось прочитать файл пресетов.</translation>
+    </message>
+    <message>
+        <source>Could not write the preset file.</source>
+        <translation>Не удалось записать файл пресетов.</translation>
+    </message>
+    <message>
+        <source>The preset file is too large.</source>
+        <translation>Файл пресетов слишком велик.</translation>
+    </message>
+    <message>
+        <source>This file is not a lettering preset library.</source>
+        <translation>Этот файл не является библиотекой пресетов леттеринга.</translation>
+    </message>
+    <message>
+        <source>This preset file version is unsupported.</source>
+        <translation>Эта версия файла пресетов не поддерживается.</translation>
+    </message>
+    <message>
+        <source>The preset file contains invalid styles.</source>
+        <translation>Файл пресетов содержит недопустимые стили.</translation>
+    </message>
+    <message>
+        <source>The import would exceed the project limit of 100 presets.</source>
+        <translation>После импорта в проекте будет больше 100 пресетов — это превышает допустимый предел.</translation>
+    </message>
+    <message>
+        <source>The preset library is empty.</source>
+        <translation>Библиотека пресетов пуста.</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still manage project presets.</source>
+        <translation>Выберите текстовые блоки на одной странице, чтобы сохранить или применить стиль. Управлять пресетами проекта можно и без выбора блоков.</translation>
+    </message>
+</context>
+<context>
+    <name>controller</name>
+    <message>
+        <source>Apply lettering style</source>
+        <translation>Применить стиль леттеринга</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformController</name>
+    <message>
+        <source>Text shape</source>
+        <translation>Форма текста</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before changing text shape.</source>
+        <translation>Дождитесь завершения обработки, прежде чем менять форму текста.</translation>
+    </message>
+    <message>
+        <source>Open a page and select one text box to change its shape.</source>
+        <translation>Откройте страницу и выберите один текстовый блок, чтобы изменить его форму.</translation>
+    </message>
+    <message>
+        <source>Select one text box on the current page to change its shape.</source>
+        <translation>Выберите один текстовый блок на текущей странице, чтобы изменить его форму.</translation>
+    </message>
+    <message>
+        <source>The page or lettering changed. Open a new text shape preview.</source>
+        <translation>Страница или текст изменились. Откройте новый предпросмотр формы текста.</translation>
+    </message>
+    <message>
+        <source>Transform lettering</source>
+        <translation>Преобразовать надпись</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformDialog</name>
+    <message>
+        <source>Text shape</source>
+        <translation>Форма текста</translation>
+    </message>
+    <message>
+        <source>Stretch, skew or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>Растягивайте, наклоняйте или добавляйте перспективу, сохраняя возможность редактировать текст и форматирование отдельных слов.</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Ширина</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Высота</translation>
+    </message>
+    <message>
+        <source>Skew</source>
+        <translation>Наклон</translation>
+    </message>
+    <message>
+        <source>Horizontal perspective</source>
+        <translation>Горизонтальная перспектива</translation>
+    </message>
+    <message>
+        <source>Vertical perspective</source>
+        <translation>Вертикальная перспектива</translation>
+    </message>
+    <message>
+        <source>Reset distortion</source>
+        <translation>Сбросить искажение</translation>
+    </message>
+    <message>
+        <source>Width and height stretch the lettering without changing line wrapping. Use the canvas handles to resize the text box or rotate it.</source>
+        <translation>Ширина и высота растягивают надпись, не меняя переносы строк. Для изменения размера или поворота текстового блока используйте маркеры на холсте.</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>Текущий</translation>
+    </message>
+    <message>
+        <source>Transformed</source>
+        <translation>После преобразования</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>Вписать предпросмотр</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Применить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Preview only. Apply creates one undoable change.</source>
+        <translation>Только предпросмотр. Нажатие «Применить» создаёт изменение, которое можно отменить.</translation>
+    </message>
+    <message>
+        <source>PSD: perspective lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: Надпись с перспективой экспортируется как помеченный слой изображения. Сохраните файл проекта для редактирования текста и формы.</translation>
+    </message>
+    <message>
+        <source>PSD: this lettering exports as an editable text layer.</source>
+        <translation>PSD: Эта надпись экспортируется как редактируемый текстовый слой.</translation>
+    </message>
+    <message>
+        <source>This transform could not be previewed. Reset the distortion and try again.</source>
+        <translation>Не удалось показать предпросмотр этого преобразования. Сбросьте искажение и повторите попытку.</translation>
+    </message>
+    <message>
+        <source>Stretch, skew, curve or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>Растягивайте, наклоняйте, изгибайте текст или добавляйте перспективу, сохраняя возможность редактировать текст и форматирование отдельных слов.</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>Изгиб</translation>
+    </message>
+    <message>
+        <source>Positive curves arch upward; negative curves bend downward. Each line keeps its text and formatting.</source>
+        <translation>Положительные значения выгибают текст вверх, отрицательные — вниз. Текст и форматирование каждой строки сохраняются.</translation>
+    </message>
+    <message>
+        <source>Curves are available for horizontal lettering.</source>
+        <translation>Изгиб доступен для горизонтального текста.</translation>
+    </message>
+    <message>
+        <source>PSD: curved lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD: изогнутый текст экспортируется как помеченный слой изображения. Сохраните файл проекта, чтобы редактировать текст и его форму.</translation>
+    </message>
+</context>
+<context>
+    <name>RectItemController</name>
+    <message>
+        <source>Edit lettering geometry</source>
+        <translation>Изменить геометрию надписи</translation>
+    </message>
+</context>
+<context>
+    <name>SummarySuggestionDialog</name>
+    <message>
+        <source>Suggest story summary</source>
+        <translation>Предложить краткое содержание</translation>
+    </message>
+    <message>
+        <source>Generate locally with {provider}.</source>
+        <translation>Создать локально с помощью {provider}.</translation>
+    </message>
+    <message>
+        <source>Generate sends the displayed material to {destination} using {provider}.</source>
+        <translation>При нажатии «Создать» показанные материалы будут отправлены в {destination} через {provider}.</translation>
+    </message>
+    <message>
+        <source>Approved translations ({count}) · {source} → {target}</source>
+        <translation>Одобренные переводы ({count}) · {source} → {target}</translation>
+    </message>
+    <message>
+        <source>Current summary</source>
+        <translation>Текущее краткое содержание</translation>
+    </message>
+    <message>
+        <source>Suggested summary</source>
+        <translation>Предложенное краткое содержание</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>Создать</translation>
+    </message>
+    <message>
+        <source>Use suggestion</source>
+        <translation>Использовать предложение</translation>
+    </message>
+    <message>
+        <source>Generating suggestion…</source>
+        <translation>Создание предложения…</translation>
+    </message>
+</context>
+<context>
+    <name>GlossarySuggestionDialog</name>
+    <message>
+        <source>Suggest glossary terms</source>
+        <translation>Предложить термины для глоссария</translation>
+    </message>
+    <message>
+        <source>Add selected terms</source>
+        <translation>Добавить выбранные термины</translation>
+    </message>
+    <message>
+        <source>Approved example</source>
+        <translation>Одобренный пример</translation>
+    </message>
+    <message>
+        <source>No new terms found in the approved translations.</source>
+        <translation>В одобренных переводах не найдено новых терминов.</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation for each selected row.</source>
+        <translation>В каждой выбранной строке укажите исходный термин и предпочтительный перевод.</translation>
+    </message>
+    <message>
+        <source>A selected source term already exists in this language pair or appears twice in your selection.</source>
+        <translation>Один из исходных терминов уже есть в глоссарии для этой языковой пары или повторяется в выбранных строках.</translation>
+    </message>
+    <message>
+        <source>Select terms to add to the draft glossary.</source>
+        <translation>Выберите термины для добавления в черновик глоссария.</translation>
     </message>
 </context>
 </TS>

@@ -1,9 +1,13 @@
 import numpy as np
+import copy
 
 from ..utils.textblock import TextBlock
 from ..utils.translator_utils import has_translatable_content
 from .base import LLMTranslation
 from .factory import TranslationFactory
+from .context import normalize_translation_profile
+from .history import capture_approved_history, history_is_current
+from .request import build_request, StaleTranslationRequest
 
 
 class Translator:
@@ -26,6 +30,7 @@ class Translator:
         """
         self.main_page = main_page
         self.settings = main_page.settings_page
+        self.translation_profile = normalize_translation_profile(getattr(main_page, 'translation_profile', None))
         
         self.translator_key = self._get_translator_key(self.settings.get_tool_selection('translator'))
         
@@ -35,15 +40,22 @@ class Translator:
         self.target_lang_en = self._get_english_lang(main_page, self.target_lang)
         
         # Create appropriate engine using factory
-        self.engine = TranslationFactory.create_engine(
+        self.engine = copy.copy(TranslationFactory.create_engine(
             self.settings,
             self.source_lang_en,
             self.target_lang_en,
             self.translator_key
-        )
+        ))
+        # Traditional engines keep language codes rather than both names.
+        # A shallow private engine copy freezes configuration without copying
+        # provider client/session internals or changing the factory's cache.
+        self.engine.source_lang = self.source_lang_en
+        self.engine.target_lang = self.target_lang_en
         
         # Track engine type for method dispatching
         self.is_llm_engine = isinstance(self.engine, LLMTranslation)
+        self.approved_history = (capture_approved_history(main_page)
+                                 if self.is_llm_engine and self.translation_profile['include_approved_history'] else None)
     
     def _get_translator_key(self, localized_translator: str) -> str:
         """
@@ -86,7 +98,15 @@ class Translator:
         """
         return main_page.lang_mapping.get(translated_lang, translated_lang)
     
-    def translate(self, blk_list: list[TextBlock], image: np.ndarray = None, extra_context: str = "") -> list[TextBlock]:
+    def prepare_request(self, blk_list, image=None, extra_context='', *, profile=None, page_id=None, history=None):
+        blocks = [block for block in blk_list if has_translatable_content(getattr(block, 'text', ''))]
+        return build_request(self.engine, blocks, image, extra_context,
+                             profile=self.translation_profile if profile is None else profile,
+                             provider=self.translator_key, page_id=page_id,
+                             history=self.approved_history if history is None else history,
+                             structured_context_supported=self.is_llm_engine)
+
+    def translate(self, blk_list: list[TextBlock], image: np.ndarray = None, extra_context: str = "", *, request=None) -> list[TextBlock]:
         """
         Translate text in text blocks using the configured translation engine.
         
@@ -98,20 +118,33 @@ class Translator:
         Returns:
             List of updated TextBlock objects with translations
         """
-        translatable_blocks = []
-        for block in blk_list:
-            if has_translatable_content(getattr(block, "text", "")):
-                translatable_blocks.append(block)
-            else:
-                block.translation = ""
-
-        if not translatable_blocks:
-            return blk_list
-
+        original = list(blk_list)
+        translatable_blocks = [block for block in original if has_translatable_content(getattr(block, 'text', ''))]
+        request = request or self.prepare_request(translatable_blocks, image, extra_context)
+        if not history_is_current(request, self.main_page):
+            raise StaleTranslationRequest('Approved translation history changed. Retry the translation.')
+        request_blocks = request.assert_current(translatable_blocks)
+        before = [(block, getattr(block, 'region_id', ''), block.text, block.translation) for block in original]
         if self.is_llm_engine:
-            # LLM translators need image and extra context
-            self.engine.translate(translatable_blocks, image, extra_context)
+            translations = self.engine.translate_request(request)
         else:
-            # Text-based translators only need the text blocks
-            self.engine.translate(translatable_blocks)
+            copies = [request_blocks[identity].deep_copy() for identity in request.region_ids]
+            if copies:
+                self.engine.translate(copies)
+            translations = {f'block_{index}': block.translation for index, block in enumerate(copies)}
+        # No field is changed until the complete request succeeds and every
+        # original input is still current; reordering is handled by stable IDs.
+        if len(blk_list) != len(original) or {id(block) for block in blk_list} != {id(block) for block in original}:
+            raise StaleTranslationRequest('Translation regions changed while the request was running. Retry the translation.')
+        for block, identity, source, target in before:
+            if (getattr(block, 'region_id', ''), block.text, block.translation) != (identity, source, target):
+                raise StaleTranslationRequest('Source or target text changed while the request was running. Retry the translation.')
+        by_id = request.assert_current(translatable_blocks)
+        if not history_is_current(request, self.main_page):
+            raise StaleTranslationRequest('Approved translation history changed. Retry the translation.')
+        for index, identity in enumerate(request.region_ids):
+            by_id[identity].translation = translations[request.expected_keys[index]]
+        for block in original:
+            if not has_translatable_content(block.text):
+                block.translation = ''
         return blk_list

@@ -9,6 +9,7 @@ from PySide6.QtGui import QColor, QBrush, QPen, QPainterPath, QCursor, QPixmap, 
 from app.ui.commands.brush import BrushStrokeCommand, ClearBrushStrokesCommand, \
                             SegmentBoxesCommand, EraseUndoCommand
 from app.ui.commands.base import PathCommandBase as pcb
+from app.ui.canvas.brush_stroke_style import add_stored_stroke, stroke_record
 import imkit as imk
 from modules.utils.image_utils import build_block_mask_data, clip_mask_to_bubble, clip_mask_components_to_bubble
 from modules.utils.textblock import adjust_text_line_coordinates
@@ -215,28 +216,13 @@ class DrawingManager:
         # Also collect any currently visible strokes
         for item in self._scene.items():
             if isinstance(item, QGraphicsPathItem) and item != self.viewer.photo:
-                strokes.append({
-                    'path': item.path(),
-                    'pen': item.pen().color().name(QColor.HexArgb),
-                    'brush': item.brush().color().name(QColor.HexArgb),
-                    'width': item.pen().width()
-                })
+                strokes.append(stroke_record(item.mapToScene(item.path()), item.pen(), item.brush()))
         return strokes
 
     def load_brush_strokes(self, strokes: List[Dict]):
         self.clear_brush_strokes(page_switch=True)
         for stroke in reversed(strokes):
-            pen = QPen()
-            pen.setColor(QColor(stroke['pen']))
-            pen.setWidth(stroke['width'])
-            pen.setStyle(Qt.SolidLine)
-            pen.setCapStyle(Qt.RoundCap)
-            pen.setJoinStyle(Qt.RoundJoin)
-            brush = QBrush(QColor(stroke['brush']))
-            if brush.color() == QColor("#80ff0000"):
-                self._scene.addPath(stroke['path'], pen, brush)
-            else:
-                self._scene.addPath(stroke['path'], pen)
+            add_stored_stroke(self._scene, stroke['path'], stroke)
                 
     def clear_brush_strokes(self, page_switch=False):
         if page_switch:      
@@ -468,13 +454,8 @@ class DrawingManager:
         if path.isEmpty():
             return None
 
-        stroke = {
-            'path': path,
-            'pen': QColor(255, 0, 0).name(QColor.HexArgb),
-            'brush': QColor(255, 0, 0, 128).name(QColor.HexArgb),
-            'width': 2,
-        }
-        return stroke
+        return stroke_record(path, QPen(QColor(255, 0, 0), 2, Qt.SolidLine),
+                             QBrush(QColor(255, 0, 0, 128)))
 
     # def draw_segmentation_lines(self, bboxes, layers: int = 1, scale_factor: float = 1.0):
     #     if not self.viewer.hasPhoto() or not bboxes: return

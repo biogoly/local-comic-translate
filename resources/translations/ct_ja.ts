@@ -167,7 +167,7 @@
     <message>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="44"/>
         <source>Render</source>
-        <translation>与える</translation>
+        <translation>描画</translation>
     </message>
     <message>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="61"/>
@@ -776,6 +776,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>アート編集</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻訳コンテキスト</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>文字の形状</translation>
+    </message>
 </context>
 <context>
     <name>ComicTranslateUI</name>
@@ -970,7 +982,7 @@ It may have been moved, renamed, or deleted.
     <message>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="44"/>
         <source>Render</source>
-        <translation>与える</translation>
+        <translation>描画</translation>
     </message>
     <message>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="61"/>
@@ -1574,6 +1586,18 @@ It may have been moved, renamed, or deleted.
         <source>Artistic Edit</source>
         <translation>アート編集</translation>
     </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻訳コンテキスト</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>文字の形状</translation>
+    </message>
 </context>
 <context>
     <name>CredentialsPage</name>
@@ -1916,6 +1940,14 @@ It may have been moved, renamed, or deleted.
         <source>Top K:</source>
         <translation>Top K:</translation>
     </message>
+    <message>
+        <source>Provide text-box coordinates (experimental)</source>
+        <translation>テキスト枠の座標を送信（試験的機能）</translation>
+    </message>
+    <message>
+        <source>Send text-box positions with the page image. Requires image input and a vision-capable model; improvement is not guaranteed.</source>
+        <translation>ページ画像とともにテキスト枠の位置を送信します。画像入力と画像を理解できるモデルが必要です。結果の改善は保証されません。</translation>
+    </message>
 </context>
 <context>
     <name>Messages</name>
@@ -2124,6 +2156,22 @@ Open Batch Report to see all skipped images and reasons.</source>
     <message>
         <source>Configure the API key and required fields in Settings &gt; Provider APIs: {provider}</source>
         <translation>設定 &gt; プロバイダーAPIでAPIキーと必須項目を設定してください: {provider}</translation>
+    </message>
+    <message>
+        <source>Page already contains rendered text; use manual Render to add missing regions.</source>
+        <translation>このページには描画済みの文字があります。不足している領域を追加するには、手動モードで描画してください。</translation>
+    </message>
+    <message>
+        <source>Existing Rendered Text</source>
+        <translation>描画済みの文字</translation>
+    </message>
+    <message>
+        <source>Perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit the perspective lettering.</source>
+        <translation>このPSDの遠近変形した文字は背景のピクセルとして読み込まれました。他のテキストはその上で編集可能です。遠近変形した文字を編集するには、元のプロジェクトを使用してください。</translation>
+    </message>
+    <message>
+        <source>Curved or perspective lettering in this PSD was imported as background pixels. Other text remains editable above it. Use the original project to edit its text and shape.</source>
+        <translation>このPSD内の湾曲文字や遠近効果付き文字は、背景のピクセルとして読み込まれました。その上にある他の文字は引き続き編集できます。湾曲文字や遠近効果付き文字のテキストと形状を編集するには、元のプロジェクトを使用してください。</translation>
     </message>
 </context>
 <context>
@@ -3201,6 +3249,18 @@ Open or create a project to get started.</source>
         <source>Render Text in UpperCase</source>
         <translation>テキストを大文字でレンダリングする</translation>
     </message>
+    <message>
+        <source>Fit to bubble when rendering</source>
+        <translation>描画時に文字を吹き出しに合わせる</translation>
+    </message>
+    <message>
+        <source>Bubble padding:</source>
+        <translation>吹き出しの内側の余白:</translation>
+    </message>
+    <message>
+        <source>Fit newly rendered text to speech-bubble interiors, with Box fallback. Existing lettering is preserved; other regions continue through processing.</source>
+        <translation>新しく描画する文字を吹き出しの内側に合わせ、できない場合は矩形枠に合わせます。既存の文字は保持され、他の領域の処理は続行されます。</translation>
+    </message>
 </context>
 <context>
     <name>ToolsPage</name>
@@ -3328,7 +3388,7 @@ then do inpainting on the resized image.</source>
     <message>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="42"/>
         <source>Render</source>
-        <translation>与える</translation>
+        <translation>描画</translation>
     </message>
     <message>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="59"/>
@@ -3581,6 +3641,18 @@ back on the Image (for further editing)</source>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="438"/>
         <source>Artistic Edit</source>
         <translation>アート編集</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻訳コンテキスト</translation>
+    </message>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Text shape</source>
+        <translation>文字の形状</translation>
     </message>
 </context>
 <context>
@@ -4644,6 +4716,42 @@ Prompt: {prompt}</source>
         <source>{model} (experimental)</source>
         <translation>{model}（実験的）</translation>
     </message>
+    <message>
+        <source>Artwork protection changed. Regenerate the preview.</source>
+        <translation>絵の保護設定が変更されました。プレビューを再生成してください。</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (provider API; sends the writable edit area).</source>
+        <translation>OCR：{engine}（プロバイダーAPI。編集可能な領域を送信します）。</translation>
+    </message>
+    <message>
+        <source>OCR: {engine} (local).</source>
+        <translation>OCR：{engine}（ローカル）。</translation>
+    </message>
+    <message>
+        <source>Checks use the translation target language. Pixels outside the writable area and protected pixels are excluded.</source>
+        <translation>確認には翻訳先の言語を使用します。編集可能な領域の外側のピクセルと保護されたピクセルは除外されます。</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>文字を確認できません：{error}</translation>
+    </message>
+    <message>
+        <source>A previous lettering check is still finishing.</source>
+        <translation>前の文字確認がまだ完了していません。</translation>
+    </message>
+    <message>
+        <source>The preview changed. Run Check lettering again.</source>
+        <translation>プレビューが変更されました。「文字を確認」を再実行してください。</translation>
+    </message>
+    <message>
+        <source>OCR check failed ({error_type}). Check your OCR settings and try again.</source>
+        <translation>OCRによる確認に失敗しました（{error_type}）。OCR設定を確認して再試行してください。</translation>
+    </message>
+    <message>
+        <source>Candidate {number}</source>
+        <translation>候補 {number}</translation>
+    </message>
 </context>
 <context>
     <name>ArtisticEditPanel</name>
@@ -4988,6 +5096,102 @@ Prompt: {prompt}</source>
         <source>Apply</source>
         <translation>適用</translation>
     </message>
+    <message>
+        <source>Check lettering</source>
+        <translation>文字を確認</translation>
+    </message>
+    <message>
+        <source>Lettering details</source>
+        <translation>文字の詳細</translation>
+    </message>
+    <message>
+        <source>Stylized lettering can confuse OCR. Review the image before applying.</source>
+        <translation>装飾された文字はOCRで誤認識されることがあります。適用する前に画像を確認してください。</translation>
+    </message>
+    <message>
+        <source>Lettering check details</source>
+        <translation>文字確認の詳細</translation>
+    </message>
+    <message>
+        <source>Not checked yet.</source>
+        <translation>まだ確認していません。</translation>
+    </message>
+    <message>
+        <source>Use selected translation with Artistic lettering to supply exact wording. Editing that prompt clears the lettering check.</source>
+        <translation>「アート文字」で「選択した翻訳を使用」を選び、正確な文言を指定してください。そのプロンプトを編集すると文字確認は無効になります。</translation>
+    </message>
+    <message>
+        <source>Requested wording:</source>
+        <translation>指定した文言：</translation>
+    </message>
+    <message>
+        <source>OCR reading:</source>
+        <translation>OCRの読み取り結果：</translation>
+    </message>
+    <message>
+        <source>(no text)</source>
+        <translation>（文字なし）</translation>
+    </message>
+    <message>
+        <source>Differences:</source>
+        <translation>相違点：</translation>
+    </message>
+    <message>
+        <source>Not read by OCR: {expected}</source>
+        <translation>OCRで読み取れなかった文字：{expected}</translation>
+    </message>
+    <message>
+        <source>Extra OCR text: {recognized}</source>
+        <translation>OCRが余分に読み取った文字：{recognized}</translation>
+    </message>
+    <message>
+        <source>Requested: {expected} | OCR: {recognized}</source>
+        <translation>指定：{expected} | OCR：{recognized}</translation>
+    </message>
+    <message>
+        <source>Checking lettering…</source>
+        <translation>文字を確認中…</translation>
+    </message>
+    <message>
+        <source>OCR text matches the requested wording.</source>
+        <translation>OCRの読み取り結果は指定した文言と一致しています。</translation>
+    </message>
+    <message>
+        <source>Possible lettering differences</source>
+        <translation>文字に相違がある可能性があります</translation>
+    </message>
+    <message>
+        <source>OCR could not read enough text to compare.</source>
+        <translation>比較に必要な文字をOCRで十分に読み取れませんでした。</translation>
+    </message>
+    <message>
+        <source>Lettering check unavailable: {error}</source>
+        <translation>文字を確認できません：{error}</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>候補</translation>
+    </message>
+    <message>
+        <source>Compare with</source>
+        <translation>比較対象</translation>
+    </message>
+    <message>
+        <source>Generate alternative</source>
+        <translation>別の候補を生成</translation>
+    </message>
+    <message>
+        <source>Two candidates are already available.</source>
+        <translation>すでに2つの候補があります。</translation>
+    </message>
+    <message>
+        <source>The preview is stale. Generate a fresh preview to compare alternatives.</source>
+        <translation>プレビューが古くなっています。候補を比較するには、新しいプレビューを生成してください。</translation>
+    </message>
+    <message>
+        <source>Generate a second candidate to compare.</source>
+        <translation>比較する2つ目の候補を生成します。</translation>
+    </message>
 </context>
 <context>
     <name>MBigView</name>
@@ -5261,6 +5465,78 @@ Prompt: {prompt}</source>
         <source>Soft edge</source>
         <translation>境界のぼかし</translation>
     </message>
+    <message>
+        <source>Fill method</source>
+        <translation>塗りつぶし方法</translation>
+    </message>
+    <message>
+        <source>Solid</source>
+        <translation>単色</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>グラデーション</translation>
+    </message>
+    <message>
+        <source>Preview gradient fill…</source>
+        <translation>グラデーション塗りつぶしをプレビュー…</translation>
+    </message>
+    <message>
+        <source>Sample clean points around one masked background area, then preview a smooth gradient before applying it.</source>
+        <translation>マスクを塗った1つの背景領域の周囲からきれいな場所をサンプリングし、滑らかなグラデーションをプレビューしてから適用します。</translation>
+    </message>
+    <message>
+        <source>Heal (experimental)</source>
+        <translation>修復（試験機能）</translation>
+    </message>
+    <message>
+        <source>Protect artwork</source>
+        <translation>絵を保護</translation>
+    </message>
+    <message>
+        <source>Paint areas that cleanup and artistic edits must leave unchanged.</source>
+        <translation>クリーンアップやアート編集で変更しない領域を塗ってください。</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>保護</translation>
+    </message>
+    <message>
+        <source>Protect brush</source>
+        <translation>保護ブラシ</translation>
+    </message>
+    <message>
+        <source>Brush over artwork to protect its pixels. Uses the brush size slider. Each stroke can be undone.</source>
+        <translation>絵の上をブラシでなぞるとピクセルを保護できます。サイズはブラシサイズのスライダーで調整します。各ストロークは元に戻せます。</translation>
+    </message>
+    <message>
+        <source>Unprotect</source>
+        <translation>保護を解除</translation>
+    </message>
+    <message>
+        <source>Unprotect brush</source>
+        <translation>保護解除ブラシ</translation>
+    </message>
+    <message>
+        <source>Brush over protected pixels to allow editing again. This does not erase artwork.</source>
+        <translation>保護されたピクセルをブラシでなぞると、再び編集できるようになります。絵が消えることはありません。</translation>
+    </message>
+    <message>
+        <source>Show protected pixels</source>
+        <translation>保護されたピクセルを表示</translation>
+    </message>
+    <message>
+        <source>Purple marks protected artwork. This overlay is never exported.</source>
+        <translation>紫色は保護された絵の領域を示します。この表示がエクスポートされることはありません。</translation>
+    </message>
+    <message>
+        <source>Preview Heal…</source>
+        <translation>修復プレビュー…</translation>
+    </message>
+    <message>
+        <source>Use a fixed clone sample and a picked background color to preview one small masked repair. The mask must fit inside the sample.</source>
+        <translation>固定した複製サンプルと選択した背景色を使い、小さなマスク領域の修復をプレビューします。マスクはサンプル内に収まる必要があります。</translation>
+    </message>
 </context>
 <context>
     <name>LocalRepairController</name>
@@ -5287,6 +5563,26 @@ Prompt: {prompt}</source>
     <message>
         <source>Sampled color fill</source>
         <translation>取得色で塗りつぶし</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new gradient preview before applying the repair.</source>
+        <translation>ページまたはマスクが変更されました。修復を適用する前に、新しいグラデーションプレビューを開いてください。</translation>
+    </message>
+    <message>
+        <source>Sampled gradient fill</source>
+        <translation>サンプルからのグラデーション塗りつぶし</translation>
+    </message>
+    <message>
+        <source>Alt-click a clean area with Clone to capture a sample first.</source>
+        <translation>まず複製ツールで汚れのない領域をAltキーを押しながらクリックし、サンプルを取得してください。</translation>
+    </message>
+    <message>
+        <source>The page or mask changed. Open a new repair preview before applying.</source>
+        <translation>ページまたはマスクが変更されました。適用する前に新しい修復プレビューを開いてください。</translation>
+    </message>
+    <message>
+        <source>Heal repair</source>
+        <translation>修復</translation>
     </message>
 </context>
 <context>
@@ -5514,6 +5810,1552 @@ Prompt: {prompt}</source>
         <location filename="../../app/ui/dialogs/comfyui_settings.py" line="53"/>
         <source>The LoRA file changed during verification. Select it again and retry.</source>
         <translation>検証中に LoRA ファイルが変更されました。ファイルを選択し直して再試行してください。</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitDialog</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>文字を枠に合わせる</translation>
+    </message>
+    <message>
+        <source>Preview text layout inside the fitting area. Artwork and cleanup masks are unchanged.</source>
+        <translation>指定範囲内の文字配置をプレビューします。画像と消去マスクは変更されません。</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>幅</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高さ</translation>
+    </message>
+    <message>
+        <source>Fitting area: width × height</source>
+        <translation>文字を収める範囲：幅 × 高さ</translation>
+    </message>
+    <message>
+        <source>Minimum font size</source>
+        <translation>最小フォントサイズ</translation>
+    </message>
+    <message>
+        <source>Maximum font size</source>
+        <translation>最大フォントサイズ</translation>
+    </message>
+    <message>
+        <source>Keep manual line breaks</source>
+        <translation>手動で入れた改行を保持</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>現在の配置</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>バランス重視</translation>
+    </message>
+    <message>
+        <source>Larger text</source>
+        <translation>文字を大きく</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>配置</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Minimum font size must not exceed maximum font size.</source>
+        <translation>最小フォントサイズは最大フォントサイズ以下にしてください。</translation>
+    </message>
+    <message>
+        <source>Fits within the area.</source>
+        <translation>範囲内に収まっています。</translation>
+    </message>
+    <message>
+        <source>Does not fit. Enlarge the area or shorten the text.</source>
+        <translation>範囲に収まりません。範囲を広げるか、文章を短くしてください。</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>文字が読みやすさの下限サイズを下回っています。</translation>
+    </message>
+    <message>
+        <source>Font size: {size} — {status}</source>
+        <translation>フォントサイズ：{size} — {status}</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>矩形枠</translation>
+    </message>
+    <message>
+        <source>Bubble interior</source>
+        <translation>吹き出しの内側</translation>
+    </message>
+    <message>
+        <source>Fit mode</source>
+        <translation>調整モード</translation>
+    </message>
+    <message>
+        <source>Estimate from original</source>
+        <translation>原画像から推定</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>長方形</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>楕円</translation>
+    </message>
+    <message>
+        <source>Boundary</source>
+        <translation>境界</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>左</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>上</translation>
+    </message>
+    <message>
+        <source>Boundary origin: X × Y</source>
+        <translation>境界の起点：X × Y</translation>
+    </message>
+    <message>
+        <source>Padding</source>
+        <translation>内側の余白</translation>
+    </message>
+    <message>
+        <source>Estimated interior. Check the boundary before applying.</source>
+        <translation>内側を推定しました。適用前に境界を確認してください。</translation>
+    </message>
+    <message>
+        <source>Manual boundary.</source>
+        <translation>手動で指定した境界です。</translation>
+    </message>
+    <message>
+        <source>Bubble fitting requires unrotated horizontal text at normal scale. Using Box.</source>
+        <translation>吹き出しへの調整は、回転していない横書き文字を通常の倍率で使用する場合に対応しています。矩形枠を使用します。</translation>
+    </message>
+    <message>
+        <source>Original image unavailable or its dimensions changed. Using Box.</source>
+        <translation>原画像を利用できないか、画像の寸法が変更されています。矩形枠を使用します。</translation>
+    </message>
+    <message>
+        <source>Padding leaves no usable interior. Using Box.</source>
+        <translation>余白を設定すると使用可能な内側の領域がなくなります。矩形枠を使用します。</translation>
+    </message>
+    <message>
+        <source>Fitting area is too large. Using Box.</source>
+        <translation>文字を収める範囲が大きすぎます。矩形枠を使用します。</translation>
+    </message>
+    <message>
+        <source>No reliable enclosed interior was found. Using Box. Try Rectangle or Ellipse.</source>
+        <translation>信頼できる閉じた内側の領域が見つかりませんでした。矩形枠を使用します。長方形または楕円をお試しください。</translation>
+    </message>
+    <message>
+        <source>The boundary is outside the page or has no usable area. Using Box.</source>
+        <translation>境界がページ外にあるか、使用可能な領域がありません。矩形枠を使用します。</translation>
+    </message>
+</context>
+<context>
+    <name>TextFitController</name>
+    <message>
+        <source>Fit Text</source>
+        <translation>文字を枠に合わせる</translation>
+    </message>
+    <message>
+        <source>Text overflows the fitting area.</source>
+        <translation>文字が指定範囲からはみ出しています。</translation>
+    </message>
+    <message>
+        <source>Text is below the minimum readable size.</source>
+        <translation>文字が読みやすさの下限サイズを下回っています。</translation>
+    </message>
+    <message>
+        <source>The text or page changed. Open Fit Text again to make a new preview.</source>
+        <translation>文字またはページが変更されました。「文字を枠に合わせる」を開き直してプレビューを作成してください。</translation>
+    </message>
+    <message>
+        <source>Fit Text requires a text item contained within one page.</source>
+        <translation>「文字を枠に合わせる」は、1ページ内に収まるテキスト要素でのみ使用できます。</translation>
+    </message>
+    <message>
+        <source>Wait for page processing to finish before fitting text.</source>
+        <translation>ページの処理が完了してから文字を調整してください。</translation>
+    </message>
+    <message>
+        <source>Reset text shape to fit.</source>
+        <translation>文字を合わせるには形状をリセットしてください。</translation>
+    </message>
+    <message>
+        <source>Fit Text is unavailable for transformed lettering. Reset the lettering transform first.</source>
+        <translation>変形した文字には「テキストを合わせる」を使用できません。先に文字の変形をリセットしてください。</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewPanel</name>
+    <message>
+        <source>Review</source>
+        <translation>確認</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>すべてのページ</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Review scope</source>
+        <translation>確認範囲</translation>
+    </message>
+    <message>
+        <source>All issues</source>
+        <translation>すべての問題</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR未実行</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>翻訳なし</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>文字のはみ出し</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>小さい文字</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>処理失敗</translation>
+    </message>
+    <message>
+        <source>Awaiting review</source>
+        <translation>確認待ち</translation>
+    </message>
+    <message>
+        <source>Issue filter</source>
+        <translation>問題の絞り込み</translation>
+    </message>
+    <message>
+        <source>Review issues</source>
+        <translation>確認する問題</translation>
+    </message>
+    <message>
+        <source>No issues in this view.</source>
+        <translation>この表示に問題はありません。</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>次へ</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>原文</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>翻訳</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>レイアウト</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>消去</translation>
+    </message>
+    <message>
+        <source>Review stage</source>
+        <translation>確認する工程</translation>
+    </message>
+    <message>
+        <source>Mark reviewed</source>
+        <translation>確認済みにする</translation>
+    </message>
+    <message>
+        <source>Ignore issue</source>
+        <translation>問題を無視</translation>
+    </message>
+    <message>
+        <source>Keep source</source>
+        <translation>原文を保持</translation>
+    </message>
+    <message>
+        <source>Keep translation</source>
+        <translation>翻訳を保持</translation>
+    </message>
+    <message>
+        <source>Keep layout</source>
+        <translation>レイアウトを保持</translation>
+    </message>
+    <message>
+        <source>Skip automatic cleanup</source>
+        <translation>自動消去をスキップ</translation>
+    </message>
+    <message>
+        <source>Fit Text</source>
+        <translation>文字を枠に合わせる</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>レポート</translation>
+    </message>
+    <message>
+        <source>Pages: {pages} · Regions: {regions} · Issues: {issues}</source>
+        <translation>ページ: {pages} · 領域: {regions} · 問題: {issues}</translation>
+    </message>
+    <message>
+        <source>Page-wide operations keep protected stages. Direct edits remain allowed.</source>
+        <translation>ページ全体の処理では保護した工程は変更されません。直接編集することは引き続き可能です。</translation>
+    </message>
+    <message>
+        <source>Uncertain OCR</source>
+        <translation>認識結果が不確かな文字</translation>
+    </message>
+    <message>
+        <source>Retry OCR…</source>
+        <translation>文字を再認識…</translation>
+    </message>
+    <message>
+        <source>Lowest line score {score} ({model})</source>
+        <translation>行ごとのスコアの最小値：{score}（{model}）</translation>
+    </message>
+    <message>
+        <source>Lowest word score {score} ({model})</source>
+        <translation>単語ごとのスコアの最小値：{score}（{model}）</translation>
+    </message>
+    <message>
+        <source>Lowest sequence score {score} ({model})</source>
+        <translation>文字列ごとのスコアの最小値：{score}（{model}）</translation>
+    </message>
+</context>
+<context>
+    <name>ReviewController</name>
+    <message>
+        <source>Change review state</source>
+        <translation>確認状態を変更</translation>
+    </message>
+    <message>
+        <source>Apply reviewed text</source>
+        <translation>確認した文字を適用</translation>
+    </message>
+    <message>
+        <source>Checking text layouts…</source>
+        <translation>文字のレイアウトを確認中…</translation>
+    </message>
+    <message>
+        <source>Detect text regions to start reviewing.</source>
+        <translation>確認を始めるには文字領域を検出してください。</translation>
+    </message>
+    <message>
+        <source>Bubble outlines are checked when their page is open.</source>
+        <translation>吹き出しの輪郭は、そのページを開いているときに確認されます。</translation>
+    </message>
+    <message>
+        <source>Awaiting review: {stage}</source>
+        <translation>確認待ち: {stage}</translation>
+    </message>
+    <message>
+        <source>The page is not ready. Try selecting the issue again.</source>
+        <translation>ページの準備ができていません。問題をもう一度選択してください。</translation>
+    </message>
+    <message>
+        <source>This region has changed. Refresh the review list.</source>
+        <translation>この領域は変更されました。確認リストを更新してください。</translation>
+    </message>
+    <message>
+        <source>The original page is unavailable for this preview.</source>
+        <translation>このプレビューでは元のページを使用できません。</translation>
+    </message>
+    <message>
+        <source>Review replacement</source>
+        <translation>置き換えを確認</translation>
+    </message>
+    <message>
+        <source>Current text</source>
+        <translation>現在の文字</translation>
+    </message>
+    <message>
+        <source>Proposed text</source>
+        <translation>提案された文字</translation>
+    </message>
+    <message>
+        <source>Apply keeps the protection and existing lettering geometry. Use Clean and Render for missing lettering.</source>
+        <translation>適用しても保護設定と既存の文字の配置は保持されます。不足している文字には「クリーン」と「描画」を使用してください。</translation>
+    </message>
+    <message>
+        <source>This region changed while the preview was open. Run the action again.</source>
+        <translation>プレビューを開いている間に、この領域が変更されました。操作をやり直してください。</translation>
+    </message>
+    <message>
+        <source>Missing OCR</source>
+        <translation>OCR未実行</translation>
+    </message>
+    <message>
+        <source>Missing translation</source>
+        <translation>翻訳なし</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>文字のはみ出し</translation>
+    </message>
+    <message>
+        <source>Small text</source>
+        <translation>小さい文字</translation>
+    </message>
+    <message>
+        <source>Failed operation</source>
+        <translation>処理失敗</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>原文</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>翻訳</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>レイアウト</translation>
+    </message>
+    <message>
+        <source>Cleanup</source>
+        <translation>消去</translation>
+    </message>
+    <message>
+        <source>Retry OCR</source>
+        <translation>文字を再認識</translation>
+    </message>
+    <message>
+        <source>Local recognizer</source>
+        <translation>ローカル文字認識エンジン</translation>
+    </message>
+    <message>
+        <source>Missing model files will be downloaded when you continue.</source>
+        <translation>続行すると、不足しているモデルファイルをダウンロードします。</translation>
+    </message>
+    <message>
+        <source>No alternative local recognizer is available for this source language.</source>
+        <translation>この原文の言語に対応する別のローカル文字認識エンジンはありません。</translation>
+    </message>
+    <message>
+        <source>Select a text region first.</source>
+        <translation>先にテキスト領域を選択してください。</translation>
+    </message>
+    <message>
+        <source>The recognizer returned no text.</source>
+        <translation>文字を認識できませんでした。</translation>
+    </message>
+    <message>
+        <source>Apply replaces the source text for this region.</source>
+        <translation>「適用」を押すと、この領域の原文が置き換わります。</translation>
+    </message>
+</context>
+<context>
+    <name>ContextEntryDialog</name>
+    <message>
+        <source>Glossary entry</source>
+        <translation>用語集の項目</translation>
+    </message>
+    <message>
+        <source>Character</source>
+        <translation>登場人物</translation>
+    </message>
+    <message>
+        <source>One alias per line</source>
+        <translation>別名は1行に1つ入力</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>原語</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>指定訳</translation>
+    </message>
+    <message>
+        <source>Aliases</source>
+        <translation>別名</translation>
+    </message>
+    <message>
+        <source>Source language</source>
+        <translation>原文の言語</translation>
+    </message>
+    <message>
+        <source>Target language</source>
+        <translation>翻訳先の言語</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Whole word</source>
+        <translation>単語全体</translation>
+    </message>
+    <message>
+        <source>Substring</source>
+        <translation>部分一致</translation>
+    </message>
+    <message>
+        <source>Matching rule</source>
+        <translation>一致ルール</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>メモ</translation>
+    </message>
+    <message>
+        <source>Voice and formality notes</source>
+        <translation>口調・敬語のメモ</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>Approved for translation</source>
+        <translation>翻訳への使用を承認</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>すべての言語</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation.</source>
+        <translation>原語と指定訳を入力してください。</translation>
+    </message>
+    <message>
+        <source>Enter a character name.</source>
+        <translation>登場人物の名前を入力してください。</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextController</name>
+    <message>
+        <source>Choose an LLM translator to suggest a summary.</source>
+        <translation>あらすじの提案には LLM 翻訳エンジンを選択してください。</translation>
+    </message>
+    <message>
+        <source>In Review, mark a translation reviewed for this source and target language pair.</source>
+        <translation>「確認」で、この原文言語と翻訳先言語の組み合わせに該当する翻訳を確認済みにしてください。</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit or shorten the story summary to fit approved translations.</source>
+        <translation>承認済み翻訳を含められるように、コンテキストのトークン上限を増やすか、あらすじを短くしてください。</translation>
+    </message>
+    <message>
+        <source>Check the selected translator’s connection settings.</source>
+        <translation>選択した翻訳エンジンの接続設定を確認してください。</translation>
+    </message>
+    <message>
+        <source>The model returned an unusable summary.</source>
+        <translation>モデルから利用できる形式のあらすじを取得できませんでした。</translation>
+    </message>
+    <message>
+        <source>The summary request failed. Check the translator settings and try again.</source>
+        <translation>あらすじの生成に失敗しました。翻訳エンジンの設定を確認して、再試行してください。</translation>
+    </message>
+    <message>
+        <source>The project or summary inputs changed. Open the suggestion again.</source>
+        <translation>プロジェクトまたはあらすじの入力内容が変更されました。提案をもう一度開いてください。</translation>
+    </message>
+    <message>
+        <source>Change translation context</source>
+        <translation>翻訳コンテキストを変更</translation>
+    </message>
+    <message>
+        <source>Select a text region to preview its request.</source>
+        <translation>テキスト範囲を選択してリクエストをプレビューしてください。</translation>
+    </message>
+    <message>
+        <source>The current page has no text regions to preview.</source>
+        <translation>現在のページにはプレビューできるテキスト範囲がありません。</translation>
+    </message>
+    <message>
+        <source>Cannot build request preview: {error}</source>
+        <translation>リクエストのプレビューを作成できません: {error}</translation>
+    </message>
+    <message>
+        <source>Choose an LLM translator to suggest glossary terms.</source>
+        <translation>用語集に追加する用語を提案するには、LLM 翻訳エンジンを選択してください。</translation>
+    </message>
+    <message>
+        <source>Increase the context token limit to fit approved translations.</source>
+        <translation>承認済みの翻訳を含められるように、コンテキストのトークン上限を増やしてください。</translation>
+    </message>
+    <message>
+        <source>The model returned unusable glossary suggestions.</source>
+        <translation>モデルが返した用語の提案を使用できませんでした。</translation>
+    </message>
+    <message>
+        <source>The glossary request failed. Check the translator settings and try again.</source>
+        <translation>用語の提案を取得できませんでした。翻訳エンジンの設定を確認して、もう一度お試しください。</translation>
+    </message>
+    <message>
+        <source>The project or glossary inputs changed. Open the suggestion again.</source>
+        <translation>プロジェクトまたは用語の提案に使う内容が変更されました。提案をもう一度開いてください。</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContextDialog</name>
+    <message>
+        <source>Suggest story summary…</source>
+        <translation>あらすじの提案…</translation>
+    </message>
+    <message>
+        <source>Include approved translations from earlier pages</source>
+        <translation>前のページの承認済み翻訳を含める</translation>
+    </message>
+    <message>
+        <source>Translation context</source>
+        <translation>翻訳コンテキスト</translation>
+    </message>
+    <message>
+        <source>Glossary</source>
+        <translation>用語集</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>登場人物</translation>
+    </message>
+    <message>
+        <source>Source term</source>
+        <translation>原語</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>Preferred translation</source>
+        <translation>指定訳</translation>
+    </message>
+    <message>
+        <source>Language pair</source>
+        <translation>言語ペア</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>編集</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Add selected source/translation</source>
+        <translation>選択した原文・訳文を追加</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>話者</translation>
+    </message>
+    <message>
+        <source>Assign selected region</source>
+        <translation>選択範囲に割り当て</translation>
+    </message>
+    <message>
+        <source>Project notes</source>
+        <translation>プロジェクトのメモ</translation>
+    </message>
+    <message>
+        <source>Setting, tone, terminology guidance, and other context for this work.</source>
+        <translation>作品の舞台、文体、用語の指針などを入力します。</translation>
+    </message>
+    <message>
+        <source>Story summary</source>
+        <translation>あらすじ</translation>
+    </message>
+    <message>
+        <source>Context token limit</source>
+        <translation>コンテキストのトークン上限</translation>
+    </message>
+    <message>
+        <source>Uses a conservative estimate. Required context that exceeds the available budget must be shortened.</source>
+        <translation>余裕を持った推定値を使用します。必要なコンテキストが利用可能な上限を超える場合は短くしてください。</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>メモ</translation>
+    </message>
+    <message>
+        <source>Request preview</source>
+        <translation>リクエストのプレビュー</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Selected region</source>
+        <translation>選択範囲</translation>
+    </message>
+    <message>
+        <source>Preview scope</source>
+        <translation>プレビューの対象</translation>
+    </message>
+    <message>
+        <source>Build preview</source>
+        <translation>プレビューを作成</translation>
+    </message>
+    <message>
+        <source>Undo context</source>
+        <translation>コンテキストを元に戻す</translation>
+    </message>
+    <message>
+        <source>Redo context</source>
+        <translation>コンテキストをやり直す</translation>
+    </message>
+    <message>
+        <source>Revert draft</source>
+        <translation>下書きを元に戻す</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>近い</translation>
+    </message>
+    <message>
+        <source>Changes apply to this project. The existing LLM context setting also remains in use.</source>
+        <translation>変更はこのプロジェクトに適用されます。既存のLLMコンテキスト設定も引き続き使用されます。</translation>
+    </message>
+    <message>
+        <source>Any language</source>
+        <translation>すべての言語</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>無効</translation>
+    </message>
+    <message>
+        <source>Approved</source>
+        <translation>承認済み</translation>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation>下書き</translation>
+    </message>
+    <message>
+        <source>No speaker</source>
+        <translation>話者なし</translation>
+    </message>
+    <message>
+        <source>Selected region: {text}</source>
+        <translation>選択範囲: {text}</translation>
+    </message>
+    <message>
+        <source>Select a text region on the page to assign a speaker.</source>
+        <translation>ページ上のテキスト範囲を選択して話者を割り当ててください。</translation>
+    </message>
+    <message>
+        <source>Approved glossary entries, assigned character notes, and project notes guide LLM translation.</source>
+        <translation>承認済みの用語、割り当てた登場人物のメモ、プロジェクトのメモをLLM翻訳に使用します。</translation>
+    </message>
+    <message>
+        <source>This translator does not support structured LLM context. Project entries remain editable for use with an LLM.</source>
+        <translation>この翻訳エンジンは構造化LLMコンテキストに対応していません。プロジェクトの項目はLLMで使用できるよう引き続き編集できます。</translation>
+    </message>
+    <message>
+        <source>Unapplied changes. Apply to use them for translation.</source>
+        <translation>未適用の変更があります。翻訳に使用するには適用してください。</translation>
+    </message>
+    <message>
+        <source>No unapplied changes.</source>
+        <translation>未適用の変更はありません。</translation>
+    </message>
+    <message>
+        <source>Suggest glossary terms…</source>
+        <translation>用語集に追加する用語を提案…</translation>
+    </message>
+</context>
+<context>
+    <name>GradientRepairDialog</name>
+    <message>
+        <source>Gradient repair</source>
+        <translation>グラデーション修復</translation>
+    </message>
+    <message>
+        <source>Repair one smooth background area at a time. Click at least four clean spots around the entire mask, away from text and borders. Six or more samples improve reliability.</source>
+        <translation>滑らかな背景領域を1つずつ修復してください。マスク全体を囲むように、文字や枠線のない場所を4か所以上クリックしてください。6か所以上あると精度が安定します。</translation>
+    </message>
+    <message>
+        <source>Sample from</source>
+        <translation>サンプル元</translation>
+    </message>
+    <message>
+        <source>Edited page</source>
+        <translation>編集済みページ</translation>
+    </message>
+    <message>
+        <source>Original page</source>
+        <translation>元のページ</translation>
+    </message>
+    <message>
+        <source>Changing the source clears samples. Preview pixels are never used as samples.</source>
+        <translation>サンプル元を変更するとサンプルはクリアされます。プレビューの画素はサンプルに使用されません。</translation>
+    </message>
+    <message>
+        <source>Show mask</source>
+        <translation>マスクを表示</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>修復範囲に合わせる</translation>
+    </message>
+    <message>
+        <source>Fit page</source>
+        <translation>ページに合わせる</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>縮小</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>拡大</translation>
+    </message>
+    <message>
+        <source>Sample background</source>
+        <translation>背景をサンプリング</translation>
+    </message>
+    <message>
+        <source>Repair preview</source>
+        <translation>修復プレビュー</translation>
+    </message>
+    <message>
+        <source>Remove last sample</source>
+        <translation>最後のサンプルを削除</translation>
+    </message>
+    <message>
+        <source>Clear samples</source>
+        <translation>サンプルをクリア</translation>
+    </message>
+    <message>
+        <source>Generate preview</source>
+        <translation>プレビューを生成</translation>
+    </message>
+    <message>
+        <source>Drag to pan; use the mouse wheel to zoom. Only pixels inside the painted mask will change.</source>
+        <translation>ドラッグで移動、マウスホイールで拡大・縮小できます。塗ったマスクの内側だけが変更されます。</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Samples: {count}</source>
+        <translation>サンプル数: {count}</translation>
+    </message>
+    <message>
+        <source>Click inside the page image.</source>
+        <translation>ページ画像の内側をクリックしてください。</translation>
+    </message>
+    <message>
+        <source>Choose a clean spot outside the painted mask.</source>
+        <translation>塗ったマスクの外側で、きれいな背景部分を選んでください。</translation>
+    </message>
+    <message>
+        <source>That pixel is already sampled. Choose another clean spot.</source>
+        <translation>その画素はすでにサンプリング済みです。別のきれいな場所を選んでください。</translation>
+    </message>
+    <message>
+        <source>Use at most 64 samples. Remove a sample before adding another.</source>
+        <translation>サンプルは64個までです。追加する前に1つ削除してください。</translation>
+    </message>
+    <message>
+        <source>Choose at least four distinct clean spots around the repair.</source>
+        <translation>修復範囲の周囲で、異なるきれいな場所を4か所以上選んでください。</translation>
+    </message>
+    <message>
+        <source>Spread samples in both directions; do not place them along one line.</source>
+        <translation>サンプルは一直線に並べず、縦横に分散させてください。</translation>
+    </message>
+    <message>
+        <source>Place clean samples around all sides of the painted mask.</source>
+        <translation>塗ったマスクを四方から囲むように、きれいな場所を選んでください。</translation>
+    </message>
+    <message>
+        <source>The samples do not describe a smooth background. Remove spots on text or borders, or add more clean samples.</source>
+        <translation>サンプルから滑らかな背景を推定できません。文字や枠線上のサンプルを削除するか、きれいな場所のサンプルを追加してください。</translation>
+    </message>
+    <message>
+        <source>Cannot build this repair from the image, mask, and samples.</source>
+        <translation>この画像、マスク、サンプルから修復を生成できません。</translation>
+    </message>
+    <message>
+        <source>The preview would not change any pixels.</source>
+        <translation>このプレビューでは画素は変更されません。</translation>
+    </message>
+    <message>
+        <source>Preview ready: {used} of {total} samples used.</source>
+        <translation>プレビュー完了: {total}個中{used}個のサンプルを使用しました。</translation>
+    </message>
+    <message>
+        <source>Ready to generate a preview.</source>
+        <translation>プレビューを生成できます。</translation>
+    </message>
+    <message>
+        <source>Generating preview…</source>
+        <translation>プレビューを生成中…</translation>
+    </message>
+    <message>
+        <source>Preview unavailable: {reason}</source>
+        <translation>プレビューを表示できません: {reason}</translation>
+    </message>
+    <message>
+        <source>Unable to generate preview: {error}</source>
+        <translation>プレビューを生成できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Shift-drag to sample a line of background color.</source>
+        <translation>Shift キーを押しながらドラッグすると、線に沿って背景色をサンプリングできます。</translation>
+    </message>
+</context>
+<context>
+    <name>HealRepairDialog</name>
+    <message>
+        <source>Experimental Heal preview</source>
+        <translation>修復プレビュー（試験機能）</translation>
+    </message>
+    <message>
+        <source>Compare one fixed clone sample with a color-adjusted copy. This prototype preserves sampled texture and shifts its color toward your picked color. It does not reconstruct detail or borrow nearby pixels.</source>
+        <translation>固定した複製サンプルと、色を調整したコピーを比較します。この試験機能はサンプルの質感を保ちながら、選択した色に近づけます。細部の再構築や周辺ピクセルの取り込みは行いません。</translation>
+    </message>
+    <message>
+        <source>The entire painted mask must fit inside one sample centered on the mask. Use a larger clean clone sample or a smaller mask. Only painted, unprotected pixels can change; texture will not be tiled.</source>
+        <translation>描いたマスク全体が、マスクの中心に配置された1つのサンプル内に収まる必要があります。より大きな汚れのない複製サンプルか、より小さなマスクを使用してください。変更されるのは描画済みの保護されていないピクセルだけで、質感の繰り返し配置は行いません。</translation>
+    </message>
+    <message>
+        <source>Picked target color: RGB {0}</source>
+        <translation>選択した目標色：RGB {0}</translation>
+    </message>
+    <message>
+        <source>Fit repair area</source>
+        <translation>修復範囲に合わせる</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>縮小</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>拡大</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Ordinary Clone</source>
+        <translation>通常の複製</translation>
+    </message>
+    <message>
+        <source>Heal preview</source>
+        <translation>修復プレビュー</translation>
+    </message>
+    <message>
+        <source>Color adjustment</source>
+        <translation>色の調整</translation>
+    </message>
+    <message>
+        <source>Apply Heal</source>
+        <translation>修復を適用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>This preview would not change any pixels.</source>
+        <translation>このプレビューではピクセルは変更されません。</translation>
+    </message>
+    <message>
+        <source>Preview ready. Compare the texture and color before applying.</source>
+        <translation>プレビューの準備ができました。適用する前に質感と色を比較してください。</translation>
+    </message>
+    <message>
+        <source>The mask extends beyond the clean clone sample. Cancel and use a larger clean sample or a smaller mask.</source>
+        <translation>マスクが汚れのない複製サンプルの範囲を超えています。キャンセルして、より大きな汚れのないサンプルか、より小さなマスクを使用してください。</translation>
+    </message>
+    <message>
+        <source>All masked pixels are protected. No repair can be applied.</source>
+        <translation>マスク内のすべてのピクセルが保護されています。修復を適用できません。</translation>
+    </message>
+    <message>
+        <source>Paint a repair mask before opening Heal preview.</source>
+        <translation>修復プレビューを開く前に修復マスクを描いてください。</translation>
+    </message>
+    <message>
+        <source>The repair inputs are invalid. Cancel and sample again.</source>
+        <translation>修復の入力データが無効です。キャンセルして、もう一度サンプルを取得してください。</translation>
+    </message>
+    <message>
+        <source>Could not generate the preview. No changes were applied.</source>
+        <translation>プレビューを生成できませんでした。変更は適用されていません。</translation>
+    </message>
+</context>
+<context>
+    <name>PixelProtectionController</name>
+    <message>
+        <source>Protect artwork</source>
+        <translation>絵を保護</translation>
+    </message>
+    <message>
+        <source>Unprotect artwork</source>
+        <translation>絵の保護を解除</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesController</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before applying a lettering style.</source>
+        <translation>処理が完了してから文字スタイルを適用してください。</translation>
+    </message>
+    <message>
+        <source>Open a page before editing project lettering styles.</source>
+        <translation>ページを開いてからプロジェクトの文字スタイルを編集してください。</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one current page to apply a style.</source>
+        <translation>現在のページ内のテキストボックスを選択してスタイルを適用してください。</translation>
+    </message>
+    <message>
+        <source>Select one copy of each text region before applying a style.</source>
+        <translation>スタイルを適用する前に、各テキスト領域を1つずつ選択してください。</translation>
+    </message>
+    <message>
+        <source>The page, lettering or presets changed. Open a new style preview.</source>
+        <translation>ページ、文字、またはプリセットが変更されました。スタイルのプレビューを開き直してください。</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringStylesDialog</name>
+    <message>
+        <source>Lettering styles</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Save lettering from a selected text box as a named project style. Choose which properties to apply; word emphasis is preserved unless you select Bold, Italic or Underline.</source>
+        <translation>選択したテキストボックスの書式を、名前付きのプロジェクトスタイルとして保存します。適用する項目を選んでください。「太字」「斜体」「下線」を選択しない限り、単語ごとの強調書式は保持されます。</translation>
+    </message>
+    <message>
+        <source>Project styles</source>
+        <translation>プロジェクトのスタイル</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>スタイル名</translation>
+    </message>
+    <message>
+        <source>Dialogue, narration, sound effects…</source>
+        <translation>セリフ、ナレーション、効果音…</translation>
+    </message>
+    <message>
+        <source>Save from previewed text box</source>
+        <translation>プレビュー中のテキストボックスから保存</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the text box chosen in Preview text box.</source>
+        <translation>「プレビューするテキストボックス」で選んだボックスから新しいスタイルを作成します。</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前を変更</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>スタイルを削除</translation>
+    </message>
+    <message>
+        <source>Replace style from previewed text box</source>
+        <translation>プレビュー中のテキストボックスでスタイルを置換</translation>
+    </message>
+    <message>
+        <source>Properties to apply</source>
+        <translation>適用する項目</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>フォント</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>文字サイズ</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>文字色</translation>
+    </message>
+    <message>
+        <source>Outline</source>
+        <translation>概要</translation>
+    </message>
+    <message>
+        <source>Line spacing</source>
+        <translation>行間</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>配置</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>大胆な</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>イタリック</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>下線</translation>
+    </message>
+    <message>
+        <source>Preview text box</source>
+        <translation>プレビューするテキストボックス</translation>
+    </message>
+    <message>
+        <source>{0}: {1}</source>
+        <translation>{0}: {1}</translation>
+    </message>
+    <message>
+        <source>{0} selected text boxes</source>
+        <translation>選択中のテキストボックス: {0}</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>プレビューを全体表示</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>現在の配置</translation>
+    </message>
+    <message>
+        <source>Styled</source>
+        <translation>スタイル適用後</translation>
+    </message>
+    <message>
+        <source>Preview uses a neutral background. Inspect text fit after changing font or size.</source>
+        <translation>プレビューには中立的な背景を使用します。フォントやサイズを変更した後は、文字が枠に収まるか確認してください。</translation>
+    </message>
+    <message>
+        <source>Apply despite these font warnings</source>
+        <translation>フォントの警告を承知のうえで適用</translation>
+    </message>
+    <message>
+        <source>Save presets only</source>
+        <translation>プリセットのみ保存</translation>
+    </message>
+    <message>
+        <source>Apply to selection</source>
+        <translation>選択範囲に適用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Changes to presets are saved only when you choose Save presets only or Apply to selection.</source>
+        <translation>プリセットの変更は、「プリセットのみ保存」または「選択範囲に適用」を選んだときに保存されます。</translation>
+    </message>
+    <message>
+        <source>Enter a style name.</source>
+        <translation>スタイル名を入力してください。</translation>
+    </message>
+    <message>
+        <source>A style with this name already exists. Choose another name.</source>
+        <translation>同じ名前のスタイルが既にあります。別の名前を選んでください。</translation>
+    </message>
+    <message>
+        <source>Could not capture this text style. No preset was added.</source>
+        <translation>この文字スタイルを取得できませんでした。プリセットは追加されていません。</translation>
+    </message>
+    <message>
+        <source>Ready to apply this style to {0} text boxes.</source>
+        <translation>{0} 個のテキストボックスにこのスタイルを適用できます。</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still rename or delete project presets.</source>
+        <translation>スタイルの取得や適用には、同じページ内のテキストボックスを選択してください。プロジェクトのプリセット名の変更や削除は引き続き行えます。</translation>
+    </message>
+    <message>
+        <source>Choose a project style, or enter a name and save the previewed text box as a new style.</source>
+        <translation>プロジェクトのスタイルを選ぶか、名前を入力してプレビュー中のテキストボックスを新しいスタイルとして保存してください。</translation>
+    </message>
+    <message>
+        <source>Choose at least one property to apply.</source>
+        <translation>適用する項目を1つ以上選択してください。</translation>
+    </message>
+    <message>
+        <source>Could not build the style preview. No changes were applied.</source>
+        <translation>スタイルのプレビューを作成できませんでした。変更は適用されていません。</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" is unavailable. A fallback font will be used.</source>
+        <translation>テキストボックス {0}: フォント「{1}」は使用できません。代替フォントを使用します。</translation>
+    </message>
+    <message>
+        <source>Text box {0}: font "{1}" lacks these characters: {2}. Fallback glyphs may differ.</source>
+        <translation>テキストボックス {0}: フォント「{1}」には次の文字がありません: {2}。代替字形では見た目が異なる場合があります。</translation>
+    </message>
+    <message>
+        <source>Reuse a project style or change emphasis directly. Bold, Italic and Underline affect whole selected text boxes; Keep existing preserves individual-word formatting.</source>
+        <translation>プロジェクトのスタイルを再利用するか、強調を直接変更できます。太字・斜体・下線は選択したテキストボックス全体に適用されます。「現在の書式を保持」は単語ごとの書式を保持します。</translation>
+    </message>
+    <message>
+        <source>Creates a new style from the current text box and your emphasis choices.</source>
+        <translation>現在のテキストボックスと選択した強調設定から新しいスタイルを作成します。</translation>
+    </message>
+    <message>
+        <source>Replaces the selected preset with the current text box style and your emphasis choices.</source>
+        <translation>選択したプリセットを、現在のテキストボックスのスタイルと選択した強調設定で置き換えます。</translation>
+    </message>
+    <message>
+        <source>Keep existing</source>
+        <translation>現在の書式を保持</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>オン</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>オフ</translation>
+    </message>
+    <message>
+        <source>Use preset</source>
+        <translation>プリセットを使用</translation>
+    </message>
+    <message>
+        <source>On and Off change this emphasis for each entire selected box. Keep existing preserves word-level formatting. Use preset copies the saved value.</source>
+        <translation>「オン」と「オフ」は、選択した各ボックス全体の強調を変更します。「現在の書式を保持」は単語ごとの書式を保持します。「プリセットを使用」は保存済みの値を適用します。</translation>
+    </message>
+    <message>
+        <source>Ready to apply formatting to {0} text boxes.</source>
+        <translation>{0} 個のテキストボックスに書式を適用する準備ができました。</translation>
+    </message>
+    <message>
+        <source>Choose a project style, save a new style, or set Bold, Italic or Underline to On or Off.</source>
+        <translation>プロジェクトのスタイルを選択するか、新しいスタイルを保存するか、太字・斜体・下線をオンまたはオフにしてください。</translation>
+    </message>
+    <message>
+        <source>Import presets…</source>
+        <translation>プリセットをインポート…</translation>
+    </message>
+    <message>
+        <source>Export presets…</source>
+        <translation>プリセットをエクスポート…</translation>
+    </message>
+    <message>
+        <source>Lettering presets (*.json)</source>
+        <translation>レタリングのプリセット (*.json)</translation>
+    </message>
+    <message>
+        <source>Export all presets in this list to a file.</source>
+        <translation>一覧のすべてのプリセットをファイルに書き出します。</translation>
+    </message>
+    <message>
+        <source>Existing presets are kept. Name conflicts receive a numbered suffix.</source>
+        <translation>既存のプリセットは保持されます。同じ名前がある場合は、インポートする名前の末尾に番号が付きます。</translation>
+    </message>
+    <message>
+        <source>Imported: {0}. Renamed: {1}. Skipped duplicates: {2}.</source>
+        <translation>インポート：{0} 件。名前変更：{1} 件。重複のためスキップ：{2} 件。</translation>
+    </message>
+    <message>
+        <source>Exported {0} presets.</source>
+        <translation>プリセットを {0} 件エクスポートしました。</translation>
+    </message>
+    <message>
+        <source>Could not read the preset file.</source>
+        <translation>プリセットファイルを読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not write the preset file.</source>
+        <translation>プリセットファイルを書き込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The preset file is too large.</source>
+        <translation>プリセットファイルのサイズが大きすぎます。</translation>
+    </message>
+    <message>
+        <source>This file is not a lettering preset library.</source>
+        <translation>このファイルはレタリングのプリセットライブラリではありません。</translation>
+    </message>
+    <message>
+        <source>This preset file version is unsupported.</source>
+        <translation>このバージョンのプリセットファイルには対応していません。</translation>
+    </message>
+    <message>
+        <source>The preset file contains invalid styles.</source>
+        <translation>プリセットファイルに無効なスタイルが含まれています。</translation>
+    </message>
+    <message>
+        <source>The import would exceed the project limit of 100 presets.</source>
+        <translation>インポートすると、プロジェクトのプリセット数が上限の 100 件を超えます。</translation>
+    </message>
+    <message>
+        <source>The preset library is empty.</source>
+        <translation>プリセットライブラリが空です。</translation>
+    </message>
+    <message>
+        <source>Select text boxes on one page to capture or apply a style. You can still manage project presets.</source>
+        <translation>スタイルを取り込んだり適用したりするには、同じページのテキストボックスを選択してください。選択しなくてもプロジェクトのプリセットは管理できます。</translation>
+    </message>
+</context>
+<context>
+    <name>controller</name>
+    <message>
+        <source>Apply lettering style</source>
+        <translation>文字スタイルを適用</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformController</name>
+    <message>
+        <source>Text shape</source>
+        <translation>文字の形状</translation>
+    </message>
+    <message>
+        <source>Wait for processing to finish before changing text shape.</source>
+        <translation>文字の形状を変更する前に、処理が終わるまでお待ちください。</translation>
+    </message>
+    <message>
+        <source>Open a page and select one text box to change its shape.</source>
+        <translation>ページを開き、形状を変更するテキストボックスを1つ選択してください。</translation>
+    </message>
+    <message>
+        <source>Select one text box on the current page to change its shape.</source>
+        <translation>現在のページで、形状を変更するテキストボックスを1つ選択してください。</translation>
+    </message>
+    <message>
+        <source>The page or lettering changed. Open a new text shape preview.</source>
+        <translation>ページまたは文字が変更されました。文字の形状プレビューを開き直してください。</translation>
+    </message>
+    <message>
+        <source>Transform lettering</source>
+        <translation>文字を変形</translation>
+    </message>
+</context>
+<context>
+    <name>LetteringTransformDialog</name>
+    <message>
+        <source>Text shape</source>
+        <translation>文字の形状</translation>
+    </message>
+    <message>
+        <source>Stretch, skew or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>テキストと単語ごとの書式を編集可能なまま、伸縮、傾斜、遠近変形を適用します。</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>幅</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高さ</translation>
+    </message>
+    <message>
+        <source>Skew</source>
+        <translation>傾斜</translation>
+    </message>
+    <message>
+        <source>Horizontal perspective</source>
+        <translation>水平方向の遠近変形</translation>
+    </message>
+    <message>
+        <source>Vertical perspective</source>
+        <translation>垂直方向の遠近変形</translation>
+    </message>
+    <message>
+        <source>Reset distortion</source>
+        <translation>変形をリセット</translation>
+    </message>
+    <message>
+        <source>Width and height stretch the lettering without changing line wrapping. Use the canvas handles to resize the text box or rotate it.</source>
+        <translation>幅と高さは改行位置を変えずに文字を伸縮します。テキストボックスのサイズ変更や回転には、キャンバス上のハンドルを使用してください。</translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation>現在の配置</translation>
+    </message>
+    <message>
+        <source>Transformed</source>
+        <translation>変形後</translation>
+    </message>
+    <message>
+        <source>Fit preview</source>
+        <translation>プレビューを全体表示</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Preview only. Apply creates one undoable change.</source>
+        <translation>プレビューのみです。「適用」で取り消し可能な変更を作成します。</translation>
+    </message>
+    <message>
+        <source>PSD: perspective lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD：遠近変形した文字は、明示された画像レイヤーとして書き出されます。文字と形状を編集するには、プロジェクトファイルを保存しておいてください。</translation>
+    </message>
+    <message>
+        <source>PSD: this lettering exports as an editable text layer.</source>
+        <translation>PSD：この文字は編集可能なテキストレイヤーとして書き出されます。</translation>
+    </message>
+    <message>
+        <source>This transform could not be previewed. Reset the distortion and try again.</source>
+        <translation>この変形をプレビューできませんでした。変形をリセットして再試行してください。</translation>
+    </message>
+    <message>
+        <source>Stretch, skew, curve or add perspective while keeping text and individual-word formatting editable.</source>
+        <translation>文字を伸縮・傾斜・湾曲させたり遠近効果を加えたりできます。テキストや単語ごとの書式は引き続き編集できます。</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>湾曲</translation>
+    </message>
+    <message>
+        <source>Positive curves arch upward; negative curves bend downward. Each line keeps its text and formatting.</source>
+        <translation>正の値では上向きの弧に、負の値では下向きの弧になります。各行のテキストと書式は保持されます。</translation>
+    </message>
+    <message>
+        <source>Curves are available for horizontal lettering.</source>
+        <translation>湾曲は横書きの文字に使用できます。</translation>
+    </message>
+    <message>
+        <source>PSD: curved lettering exports as a labeled image layer. Keep the project file to edit its text and shape.</source>
+        <translation>PSD：湾曲した文字は、種類を示す名前付きの画像レイヤーとして書き出されます。テキストや形状を編集するにはプロジェクトファイルを保管してください。</translation>
+    </message>
+</context>
+<context>
+    <name>RectItemController</name>
+    <message>
+        <source>Edit lettering geometry</source>
+        <translation>文字の形状を編集</translation>
+    </message>
+</context>
+<context>
+    <name>SummarySuggestionDialog</name>
+    <message>
+        <source>Suggest story summary</source>
+        <translation>あらすじの提案</translation>
+    </message>
+    <message>
+        <source>Generate locally with {provider}.</source>
+        <translation>{provider} を使ってローカルで生成します。</translation>
+    </message>
+    <message>
+        <source>Generate sends the displayed material to {destination} using {provider}.</source>
+        <translation>「生成」を選ぶと、表示された資料が {provider} 経由で {destination} に送信されます。</translation>
+    </message>
+    <message>
+        <source>Approved translations ({count}) · {source} → {target}</source>
+        <translation>承認済み翻訳（{count} 件）· {source} → {target}</translation>
+    </message>
+    <message>
+        <source>Current summary</source>
+        <translation>現在のあらすじ</translation>
+    </message>
+    <message>
+        <source>Suggested summary</source>
+        <translation>提案されたあらすじ</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Use suggestion</source>
+        <translation>提案を採用</translation>
+    </message>
+    <message>
+        <source>Generating suggestion…</source>
+        <translation>提案を生成中…</translation>
+    </message>
+</context>
+<context>
+    <name>GlossarySuggestionDialog</name>
+    <message>
+        <source>Suggest glossary terms</source>
+        <translation>用語集に追加する用語を提案</translation>
+    </message>
+    <message>
+        <source>Add selected terms</source>
+        <translation>選択した用語を追加</translation>
+    </message>
+    <message>
+        <source>Approved example</source>
+        <translation>承認済みの用例</translation>
+    </message>
+    <message>
+        <source>No new terms found in the approved translations.</source>
+        <translation>承認済みの翻訳から新しい用語は見つかりませんでした。</translation>
+    </message>
+    <message>
+        <source>Enter a source term and preferred translation for each selected row.</source>
+        <translation>選択した各行に原語と指定訳を入力してください。</translation>
+    </message>
+    <message>
+        <source>A selected source term already exists in this language pair or appears twice in your selection.</source>
+        <translation>選択した原語の中に、この言語ペアにすでに登録されているもの、または選択範囲内で重複しているものがあります。</translation>
+    </message>
+    <message>
+        <source>Select terms to add to the draft glossary.</source>
+        <translation>用語集の下書きに追加する用語を選択してください。</translation>
     </message>
 </context>
 </TS>

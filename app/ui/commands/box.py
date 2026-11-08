@@ -1,11 +1,81 @@
 import numpy as np
 from PySide6.QtGui import QUndoCommand
-from PySide6.QtCore import QRectF, QPointF
+from PySide6.QtCore import QRectF, QPointF, QCoreApplication
 
 from .base import RectCommandBase
 from ..canvas.rectangle import MoveableRectItem
 from ..canvas.text_item import TextBlockItem
-from pipeline.webtoon_utils import get_first_visible_block
+from pipeline.webtoon_utils import find_block_page_index, get_first_visible_block
+from modules.utils.region_metadata import find_region
+
+
+class SetLetteringAngleCommand(QUndoCommand):
+    """Restore the manual angle by page and region ID, including after navigation."""
+    def __init__(self, main, path, block, new_angle, *, ocr_states=None):
+        super().__init__(QCoreApplication.translate("RectItemController", "Edit lettering geometry"))
+        self.main = main
+        self.path = path
+        self.region_id = block.region_id
+        self.page_id = main.image_states[path].get("page_id")
+        self.epoch = getattr(main, "_translation_project_epoch", None)
+        self.angles = (getattr(block, "manual_lettering_angle", None), new_angle)
+        self.ocr_states = ocr_states
+
+    def _apply(self, index):
+        main = self.main
+        state = main.image_states.get(self.path)
+        if (state is None or self.path not in main.image_files or self.page_id != state.get("page_id")
+                or self.epoch != getattr(main, "_translation_project_epoch", None)):
+            return
+        saved = find_region(state.get("blk_list", []), region_id=self.region_id)
+        page_index = main.image_files.index(self.path)
+        candidates = main.blk_list if page_index == main.curr_img_idx else []
+        if main.image_viewer.webtoon_mode:
+            candidates = [block for block in main.blk_list if block.region_id == self.region_id and
+                          find_block_page_index(block, main.image_viewer.webtoon_manager) == page_index]
+        live = find_region(candidates, region_id=self.region_id)
+        for block in (saved, live):
+            if block is None:
+                continue
+            block.manual_lettering_angle = self.angles[index]
+            if self.ocr_states:
+                angle, origin = self.ocr_states[index]
+                block.angle = angle
+                block.tr_origin_point = origin
+        if self.ocr_states:
+            angle, origin = self.ocr_states[index]
+            if live is not None:
+                rectangles = main.image_viewer.rectangles
+                rects = [item for item in rectangles if getattr(item, 'region_id', None) == self.region_id]
+                if len(rects) != 1:
+                    candidates = rects or [r for r in rectangles if not getattr(r, 'region_id', None)]
+                    rects = [item for item in candidates if self._matches_rect(
+                        item.pos().x(), item.pos().y(), item.rect().width(), item.rect().height(), live)]
+                if len(rects) == 1:
+                    rects[0].region_id = self.region_id
+                    rects[0].setTransformOriginPoint(QPointF(*origin) if origin else rects[0].boundingRect().center())
+                    rects[0].setRotation(angle)
+            if saved is not None:
+                saved_rectangles = state.get('viewer_state', {}).get('rectangles', [])
+                rects = [props for props in saved_rectangles if props.get('region_id') == self.region_id]
+                if not rects:
+                    rects = [props for props in saved_rectangles if not props.get('region_id')
+                             and self._matches_rect(*props['rect'], saved)]
+                if len(rects) == 1:
+                    rects[0]['rotation'] = angle
+                    rects[0]['transform_origin'] = origin or (0., 0.)
+        main.mark_project_dirty()
+
+    @staticmethod
+    def _matches_rect(x, y, w, h, block):
+        # Old project files store the graphics item bounds including its pen.
+        return np.allclose((x, y, x + w, y + h), block.xyxy, atol=1, rtol=0)
+
+    def redo(self):
+        self._apply(1)
+
+    def undo(self):
+        self._apply(0)
 
 
 class AddRectangleCommand(QUndoCommand, RectCommandBase):
@@ -130,6 +200,7 @@ class ResizeBlocksCommand(QUndoCommand):
             rect = QRectF(0, 0, x2 - x1, y2 - y1)
             transform_origin = QPointF(*blk.tr_origin_point) if blk.tr_origin_point else None
             rect_item = viewer.add_rectangle(rect, QPointF(x1, y1), blk.angle, transform_origin)
+            rect_item.region_id = blk.region_id
             self.main.connect_rect_item_signals(rect_item)
 
         if self.main.webtoon_mode:
@@ -257,6 +328,7 @@ class ReplaceDetectedBlocksCommand(QUndoCommand):
                 {
                     "rect": (float(x1), float(y1), float(x2 - x1), float(y2 - y1)),
                     "rotation": float(getattr(blk, "angle", 0)),
+                    "region_id": blk.region_id,
                     "transform_origin": tuple(getattr(blk, "tr_origin_point", ()) or (0.0, 0.0)),
                 }
             )
@@ -287,6 +359,7 @@ class ReplaceDetectedBlocksCommand(QUndoCommand):
             rect = QRectF(0, 0, x2 - x1, y2 - y1)
             transform_origin = QPointF(*blk.tr_origin_point) if blk.tr_origin_point else None
             rect_item = viewer.add_rectangle(rect, QPointF(x1, y1), blk.angle, transform_origin)
+            rect_item.region_id = blk.region_id
             self.main.connect_rect_item_signals(rect_item)
 
         first_block = self.main.blk_list[0]

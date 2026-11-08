@@ -8,6 +8,7 @@ from PySide6.QtCore import QPointF, Qt, QRectF
 from PySide6.QtGui import QTextDocument, QTextCursor
 from app.ui.canvas.text_item import TextBlockItem
 from app.ui.canvas.text.text_item_properties import TextItemProperties
+import copy
 
 
 class TextItemManager:
@@ -30,7 +31,8 @@ class TextItemManager:
     def load_text_items(self, state: dict, page_idx: int):
         """Load text items for a specific page."""
         text_items = state.get('viewer_state', {}).get('text_items_state', [])
-        for text_data in text_items:
+        # Match the top-first state written by scene.items() during unloading.
+        for text_data in reversed(text_items):
             # Convert from page-local coordinates to scene coordinates
             page_local_pos = QPointF(*text_data['position'])
             scene_pos = self.coordinate_converter.page_local_to_scene_position(page_local_pos, page_idx)
@@ -39,6 +41,8 @@ class TextItemManager:
             text_data = text_data.copy()  # Don't modify the original
             text_data['position'] = (scene_pos.x(), scene_pos.y())
             text_item = self.viewer.add_text_item(text_data)
+            if self.main_controller is not None:
+                text_item._page_path = self.main_controller.image_files[page_idx]
     
     def unload_text_items(self, page_idx: int, page_y: float, page_bottom: float, file_path: str):
         """Unload text items for a specific page."""
@@ -50,8 +54,13 @@ class TextItemManager:
                 text_item = item
                 text_y = text_item.pos().y()
                 
-                # Check if text item is on this page
-                if text_y >= page_y and text_y < page_bottom:
+                # A warped item keeps a single owning page, even if its origin
+                # or transformed footprint crosses a page boundary.
+                owner = getattr(text_item, '_page_path', None)
+                warped = bool(getattr(text_item, 'lettering_transform', None))
+                belongs_here = (owner == file_path if warped and owner is not None
+                                else page_y <= text_y < page_bottom)
+                if belongs_here:
                     # Convert to page-local coordinates
                     scene_pos = text_item.pos()
                     page_local_pos = self.coordinate_converter.scene_to_page_local_position(scene_pos, page_idx)
@@ -198,6 +207,21 @@ class TextItemManager:
         for item in self.viewer._scene.items():
             if isinstance(item, TextBlockItem):
                 text_item = item
+                if getattr(text_item, 'lettering_transform', None):
+                    # Never line-split a projective document. Keep one full
+                    # editable source; page export clips the mapped geometry.
+                    paths = self.image_loader.image_file_paths
+                    owner = getattr(text_item, '_page_path', None)
+                    page_idx = paths.index(owner) if owner in paths else self.layout_manager.get_page_at_position(text_item.pos().y())
+                    if not (isinstance(page_idx, int) and 0 <= page_idx < len(paths)):
+                        pages = list(self.layout_manager.get_pages_for_scene_bounds(text_item.sceneBoundingRect()))
+                        page_idx = min(pages) if pages else None
+                    if isinstance(page_idx, int) and 0 <= page_idx < len(paths):
+                        props = TextItemProperties.from_text_item(text_item)
+                        local = self.coordinate_converter.scene_to_page_local_position(text_item.pos(), page_idx)
+                        props.position = (local.x(), local.y())
+                        scene_items_by_page[page_idx]['text_items'].append(props.to_dict())
+                    continue
                 # Get all pages this text item intersects with
                 text_scene_bounds = QRectF(
                     text_item.pos().x(),
@@ -273,6 +297,11 @@ class TextItemManager:
         
         for original_page_idx, text_items in existing_text_items_by_page.items():
             for text_item_data in text_items:
+                if text_item_data.get('lettering_transform'):
+                    # Unloaded transformed items already have a stable owner;
+                    # guessing dimensions and splitting HTML corrupts the warp.
+                    scene_items_by_page[original_page_idx]['text_items'].append(copy.deepcopy(text_item_data))
+                    continue
                 # Create a unique identifier for this text item to avoid duplicates
                 text_id = id(text_item_data)
                 if text_id in processed_text_items:
@@ -412,6 +441,18 @@ class TextItemManager:
         for existing_text_item in existing_text_items:
             if 'position' not in existing_text_item:
                 continue
+
+            if new_text_item.get('lettering_transform') or existing_text_item.get('lettering_transform'):
+                # Separate editable regions must not be discarded merely because
+                # their visible text and anchor happen to match.
+                new_id = new_text_item.get('region_id')
+                old_id = existing_text_item.get('region_id')
+                if new_id and old_id:
+                    if new_id == old_id:
+                        return True
+                    continue
+                if new_text_item != existing_text_item:
+                    continue
                 
             ex_x, ex_y = existing_text_item['position']
             ex_raw_text = existing_text_item.get('text', '')
@@ -452,6 +493,8 @@ class TextItemManager:
             text_items = state.get('viewer_state', {}).get('text_items_state', [])
             
             for text_item in text_items:
+                if text_item.get('lettering_transform'):
+                    continue  # A full warped source is never a clipped fragment.
                 # Convert to scene coordinates for comparison
                 local_pos = QPointF(text_item['position'][0], text_item['position'][1])
                 scene_pos = self.coordinate_converter.page_local_to_scene_position(local_pos, page_idx)

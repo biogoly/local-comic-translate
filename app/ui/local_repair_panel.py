@@ -5,6 +5,7 @@ from app.ui.dayu_widgets.push_button import MPushButton
 from app.ui.dayu_widgets.tool_button import MToolButton
 from app.ui.dayu_widgets.check_box import MCheckBox
 from app.ui.dayu_widgets.spin_box import MSpinBox
+from app.ui.dayu_widgets.combo_box import MComboBox
 
 
 class LocalRepairPanel(QtWidgets.QWidget):
@@ -36,10 +37,24 @@ class LocalRepairPanel(QtWidgets.QWidget):
         row.addWidget(self.clone)
         if tool_layout is None:
             layout.addLayout(row)
+        self._has_color = False
+        self._color_icon = QtGui.QIcon()
+        fill_row = QtWidgets.QHBoxLayout()
+        fill_label = QtWidgets.QLabel(self.tr("Fill method"))
+        self.fill_mode = MComboBox()
+        self.fill_mode.addItem(self.tr("Solid"), "solid")
+        self.fill_mode.addItem(self.tr("Gradient"), "gradient")
+        self.fill_mode.addItem(self.tr("Heal (experimental)"), "heal")
+        self.fill_mode.setAccessibleName(self.tr("Fill method"))
+        fill_label.setBuddy(self.fill_mode)
+        fill_row.addWidget(fill_label)
+        fill_row.addWidget(self.fill_mode, 1)
+        layout.addLayout(fill_row)
         self.fill = MPushButton(self.tr("Fill mask with sampled color"))
         self.fill.setEnabled(False)
         self.fill.setToolTip(self.tr("Fill the painted or segmented mask on this page, without AI inpainting or extra mask expansion."))
         layout.addWidget(self.fill)
+        self.fill_mode.currentIndexChanged.connect(self._update_fill_mode)
         self.clone_options = QtWidgets.QWidget()
         options = QtWidgets.QHBoxLayout(self.clone_options)
         options.setContentsMargins(0, 0, 0, 0)
@@ -60,9 +75,65 @@ class LocalRepairPanel(QtWidgets.QWidget):
         layout.addWidget(self.clone_options)
         self.clone_options.hide()
 
+        protection_group = QtWidgets.QWidget()
+        protection_layout = QtWidgets.QVBoxLayout(protection_group)
+        protection_layout.setContentsMargins(0, 0, 0, 0)
+        self.protection_toggle = MToolButton()
+        self.protection_toggle.setText(self.tr("Protect artwork"))
+        self.protection_toggle.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.protection_toggle.setArrowType(QtCore.Qt.RightArrow)
+        self.protection_toggle.setCheckable(True)
+        self.protection_toggle.setToolTip(self.tr("Paint areas that cleanup and artistic edits must leave unchanged."))
+        protection_layout.addWidget(self.protection_toggle, alignment=QtCore.Qt.AlignLeft)
+        self.protection_options = QtWidgets.QWidget()
+        protection_options_layout = QtWidgets.QVBoxLayout(self.protection_options)
+        protection_options_layout.setContentsMargins(0, 0, 0, 0)
+        protection_brushes = QtWidgets.QHBoxLayout()
+        self.protect = MToolButton().svg("brush-fill.svg")
+        self.protect.setText(self.tr("Protect"))
+        self.protect.setAccessibleName(self.tr("Protect brush"))
+        self.protect.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.protect.setCheckable(True)
+        self.protect.setToolTip(self.tr("Brush over artwork to protect its pixels. Uses the brush size slider. Each stroke can be undone."))
+        self.unprotect = MToolButton().svg("eraser_fill.svg")
+        self.unprotect.setText(self.tr("Unprotect"))
+        self.unprotect.setAccessibleName(self.tr("Unprotect brush"))
+        self.unprotect.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.unprotect.setCheckable(True)
+        self.unprotect.setToolTip(self.tr("Brush over protected pixels to allow editing again. This does not erase artwork."))
+        protection_brushes.addWidget(self.protect)
+        protection_brushes.addWidget(self.unprotect)
+        protection_brushes.addStretch()
+        protection_options_layout.addLayout(protection_brushes)
+        self.show_protected = MCheckBox(self.tr("Show protected pixels"))
+        self.show_protected.setChecked(True)
+        self.show_protected.setToolTip(self.tr("Purple marks protected artwork. This overlay is never exported."))
+        protection_options_layout.addWidget(self.show_protected)
+        protection_layout.addWidget(self.protection_options)
+        self.protection_options.hide()
+        self.protection_toggle.toggled.connect(self._toggle_protection)
+        layout.addWidget(protection_group)
+
+    def _toggle_protection(self, expanded):
+        self.protection_options.setVisible(expanded)
+        self.protection_toggle.setArrowType(QtCore.Qt.DownArrow if expanded else QtCore.Qt.RightArrow)
+
     def set_color(self, color):
         swatch = QtGui.QPixmap(18, 18)
         swatch.fill(color)
-        self.fill.setIcon(QtGui.QIcon(swatch))
+        self._color_icon = QtGui.QIcon(swatch)
         self.fill.setIconSize(QtCore.QSize(18, 18))
-        self.fill.setEnabled(True)
+        self._has_color = True
+        self._update_fill_mode()
+
+    def _update_fill_mode(self):
+        gradient = self.fill_mode.currentData() == "gradient"
+        heal = self.fill_mode.currentData() == "heal"
+        self.fill.setText(self.tr("Preview gradient fill…") if gradient else
+                          self.tr("Preview Heal…") if heal else self.tr("Fill mask with sampled color"))
+        self.fill.setIcon(QtGui.QIcon() if gradient or heal else self._color_icon)
+        self.fill.setEnabled(gradient or self._has_color)
+        self.fill.setToolTip(
+            self.tr("Sample clean points around one masked background area, then preview a smooth gradient before applying it.")
+            if gradient else self.tr("Use a fixed clone sample and a picked background color to preview one small masked repair. The mask must fit inside the sample.")
+            if heal else self.tr("Fill the painted or segmented mask on this page, without AI inpainting or extra mask expansion."))

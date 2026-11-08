@@ -132,21 +132,30 @@ def parse_translation_object(
     ordered_keys = tuple(expected_keys)
     expected = set(ordered_keys)
     required_content = set(required_content_keys or ())
-    decoder = json.JSONDecoder()
-    validation_errors: list[str] = []
-    found_object = False
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise TranslationResponseError(f'duplicate key: {key}')
+            result[key] = value
+        return result
+
+    decoder = json.JSONDecoder(object_pairs_hook=unique_object)
 
     for index, character in enumerate(content):
         if character != "{":
             continue
         try:
-            candidate, _ = decoder.raw_decode(content[index:])
+            candidate, consumed = decoder.raw_decode(content[index:])
         except json.JSONDecodeError:
             continue
+        except TranslationResponseError:
+            # A duplicate-ID response is ambiguous even if a later object
+            # happens to be well formed. Never silently choose one value.
+            raise
         if not isinstance(candidate, dict):
             continue
 
-        found_object = True
         actual = set(candidate.keys())
         missing = sorted(expected - actual)
         extra = sorted(actual - expected)
@@ -162,6 +171,15 @@ def parse_translation_object(
         )
 
         if not missing and not extra and not non_string and not empty:
+            remainder = content[index + consumed:]
+            for offset, char in enumerate(remainder):
+                if char == '{':
+                    try:
+                        another, _ = decoder.raw_decode(remainder[offset:])
+                    except json.JSONDecodeError:
+                        continue
+                    if isinstance(another, dict):
+                        raise TranslationResponseError('The model returned multiple JSON objects.')
             return {key: candidate[key] for key in ordered_keys}
 
         problems = []
@@ -173,10 +191,8 @@ def parse_translation_object(
             problems.append(f"non-string values: {', '.join(non_string)}")
         if empty:
             problems.append(f"values without translated text: {', '.join(empty)}")
-        validation_errors.append("; ".join(problems))
+        # Do not scan into this object looking for a nested object that happens
+        # to have the requested IDs: the complete response itself must match.
+        raise TranslationResponseError("; ".join(problems))
 
-    if validation_errors:
-        raise TranslationResponseError(validation_errors[0])
-    if found_object:
-        raise TranslationResponseError("No usable translation object was found.")
     raise TranslationResponseError("The model did not return a JSON object.")

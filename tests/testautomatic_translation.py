@@ -73,7 +73,7 @@ class AllRegionWorkflowTests(unittest.TestCase):
             },
         )
         main = SimpleNamespace(
-            image_files=["page.png"], curr_img_idx=0, blk_list=blocks,
+            image_files=["page.png"], curr_img_idx=0, blk_list=[],
             current_worker=None, settings_page=settings,
             image_states={"page.png": {
                 "source_lang": "Spanish", "target_lang": "English", "viewer_state": {},
@@ -109,7 +109,8 @@ class AllRegionWorkflowTests(unittest.TestCase):
             patch("pipeline.batch_processor.pyside_word_wrap", side_effect=lambda text, *_a, **_kw: (text, 12, 50, 50)),
         ):
             batch.batch_process()
-        self.assertCountEqual(translator.return_value.translate.call_args.args[0], blocks)
+        self.assertCountEqual([b.region_id for b in translator.return_value.translate.call_args.args[0]],
+                              [b.region_id for b in blocks])
         self.assertCountEqual(mask.call_args.args[1], blocks)
         self.assertCountEqual(inpaint.call_args.kwargs["blk_list"], blocks)
         self.assertEqual(len(main.image_states["page.png"]["viewer_state"]["text_items_state"]), 3)

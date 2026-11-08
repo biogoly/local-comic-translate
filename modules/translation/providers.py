@@ -25,3 +25,13 @@ def credential_service(name: str) -> str:
         return "Google Cloud"
     provider = provider_for_translator(name)
     return PROVIDERS[provider][0] if provider else name
+
+
+def translator_supports_images(name: str, model: str = '') -> bool:
+    """Whether the adapter routes images; arbitrary local models still need vision."""
+    if name == 'Local LLM':
+        return True
+    provider = provider_for_translator(name)
+    if provider == 'Deepseek':
+        return model == 'deepseek-flash'
+    return provider in ('OpenAI', 'Google Gemini', 'Anthropic Claude')

@@ -186,6 +186,9 @@ class LazyImageLoader:
                 # Notify webtoon manager that image is loaded (for scene item loading)
                 if self.webtoon_manager and hasattr(self.webtoon_manager, 'on_image_loaded'):
                     self.webtoon_manager.on_image_loaded(page_idx, img)
+                protection = getattr(self.viewer, "protection_controller", None)
+                if protection is not None:
+                    protection.refresh_overlay()
                 
                 # If this is the current page being loaded, ensure proper view setup
                 if page_idx == self.layout_manager.current_page_index and len(self.loaded_pages) == 1:
@@ -315,6 +318,9 @@ class LazyImageLoader:
 
         self._ensure_placeholder(page_idx)
         self.loaded_pages.remove(page_idx)
+        protection = getattr(self.viewer, "protection_controller", None)
+        if protection is not None:
+            protection.refresh_overlay()
             
         print(f"Unloaded page {page_idx + 1}")
     
@@ -501,6 +507,9 @@ class LazyImageLoader:
             # the exported comic page.
             repair = getattr(self.viewer, 'repair_controller', None)
             transient_items = repair.transient_items() if repair is not None else []
+            protection = getattr(self.viewer, 'protection_controller', None)
+            if protection is not None:
+                transient_items.extend(protection.transient_items())
             transient_items.append(self.viewer.brush_cursor_overlay.item)
             editor_items = [
                 item

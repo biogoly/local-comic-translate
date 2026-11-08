@@ -14,6 +14,8 @@ from pipeline.block_detection import BlockDetectionHandler
 from pipeline.cache_manager import CacheManager
 from pipeline.ocr_handler import OCRHandler
 from pipeline.translation_handler import TranslationHandler
+from modules.translation.llm.local import LocalLLMTranslation
+from modules.translation.request import build_request
 
 
 def block(coords=(10, 10, 90, 70), manual=False, **kwargs):
@@ -94,6 +96,15 @@ class ManualRegionPipelineTests(unittest.TestCase):
         self.ocr.ocr = Mock()
         self.translation = TranslationHandler(self.main, self.cache, self.pipeline)
 
+    def prepare_translator(self, factory):
+        translator = factory.return_value
+        translator.source_lang, translator.target_lang, translator.translator_key = 'English', 'French', 'Local LLM'
+        engine = LocalLLMTranslation()
+        engine.source_lang, engine.target_lang = 'English', 'French'
+        engine.img_as_llm_input = True
+        translator.prepare_request.side_effect = lambda blocks, image, context: build_request(engine, blocks, image, context)
+        return translator
+
     def test_detection_replaces_automatic_boxes_but_retains_manual_region_and_state(self):
         new = block((200, 100, 280, 180))
         handler = BlockDetectionHandler(self.main)
@@ -130,8 +141,11 @@ class ManualRegionPipelineTests(unittest.TestCase):
 
     def test_whole_page_translation_does_not_change_manual_text_or_case(self):
         with patch('pipeline.translation_handler.Translator') as factory:
-            def translate(blocks, image, context):
-                self.assertEqual(blocks, [self.pending])
+            self.prepare_translator(factory)
+            def translate(blocks, image, context, *, request):
+                self.assertEqual([b.region_id for b in blocks], [self.pending.region_id])
+                self.assertIsNot(blocks[0], self.pending)
+                self.assertEqual(request.region_ids, (self.pending.region_id,))
                 blocks[0].translation = 'Bonne nuit'
             factory.return_value.translate.side_effect = translate
             self.translation.translate_image()
@@ -144,9 +158,11 @@ class ManualRegionPipelineTests(unittest.TestCase):
         old.translation = 'An obsolete translation'
         pending = self.pending.deep_copy()
         pending.translation = 'Bonne nuit'
-        key = self.cache._get_translation_cache_key(self.image, 'English', 'French', 'Local LLM', '')
-        self.cache._cache_translation_results(key, [old, pending])
         with patch('pipeline.translation_handler.Translator') as factory:
+            translator = self.prepare_translator(factory)
+            request = translator.prepare_request([self.pending], self.image, '')
+            key = self.cache._get_translation_cache_key(self.image, 'English', 'French', 'Local LLM', '', request=request)
+            self.cache._cache_translation_results(key, [old, pending])
             self.translation.translate_image()
             factory.return_value.translate.assert_not_called()
         self.assertEqual(self.manual.translation, 'Bonjour mon ami')
@@ -158,8 +174,11 @@ class ManualRegionPipelineTests(unittest.TestCase):
             self.ocr.OCR_image()
         self.assertEqual(self.ocr.ocr.process.call_args.args[1], self.main.blk_list)
         with patch('pipeline.translation_handler.Translator') as factory:
+            self.prepare_translator(factory)
             self.translation.translate_image()
-            self.assertEqual(factory.return_value.translate.call_args.args[0], self.main.blk_list)
+            translated = factory.return_value.translate.call_args.args[0]
+            self.assertEqual([b.region_id for b in translated], [b.region_id for b in self.main.blk_list])
+            self.assertTrue(all(a is not b for a, b in zip(translated, self.main.blk_list)))
 
     def test_page_with_only_completed_manual_regions_does_not_call_models(self):
         self.main.blk_list = [self.manual]
@@ -202,8 +221,12 @@ class ManualRegionPipelineTests(unittest.TestCase):
         self.ocr.OCR_webtoon_visible_area()
         self.assertEqual(self.ocr.ocr.process.call_args.args[1], [self.pending])
         with patch('pipeline.translation_handler.Translator') as factory:
+            self.prepare_translator(factory)
             self.translation.translate_webtoon_visible_area()
-            self.assertEqual(factory.return_value.translate.call_args.args[0], [self.pending])
+            translated = factory.return_value.translate.call_args.args[0]
+            self.assertEqual([b.region_id for b in translated], [self.pending.region_id])
+            self.assertIsNot(translated[0], self.pending)
+            np.testing.assert_array_equal(translated[0].xyxy, [100, 100, 180, 160])
         np.testing.assert_array_equal(self.manual.xyxy, before)
         self.assertEqual(self.manual.lines, [[15, 1015, 80, 1035]])
         self.assertEqual(self.manual.translation, 'Bonjour mon ami')

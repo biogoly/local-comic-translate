@@ -3,6 +3,13 @@
 Status: **tested locally; public binary release not cleared by this review**.
 This is an engineering evidence checklist, not legal advice.
 
+## November 7, 2026 — beta 3
+
+The public Windows setup asset contains editor source, UI resources, and a launcher that installs dependencies on the user's machine. The separately tested offline ZIP embeds the runtime libraries. Two findings are relevant to distributing that offline ZIP.
+
+- NVIDIA's 9.26.0 redistribution manifest lists cuDNN 9.26.0.51 for Windows x64 with CUDA 13 and links terms that permit runtime DLL redistribution subject to conditions. The license shipped in the pinned PyPI wheel names an older DLL. The September inquiry had no reply as of this review. For a future offline package, establish the applicable terms for the files actually shipped. [NVIDIA manifest](https://developer.download.nvidia.com/compute/cudnn/redist/redistrib_9.26.0.json) · [Version-specific SDK agreement](https://docs.nvidia.com/deeplearning/cudnn/backend/v9.26.0/reference/eula.html)
+- The tested bundle includes Qt's software OpenGL DLL. Its version strings identify Mesa 11.2.2 and LLVM 3.6.2. The package review did not locate the corresponding Mesa permission text in the supplied notices. Add the matching notices and complete the source and replacement materials for the LGPL libraries before distributing the offline package. [Qt software OpenGL attribution](https://doc.qt.io/qt-6.5/qt-attribution-llvmpipe.html) · [LLVM license](https://releases.llvm.org/3.6.2/LICENSE.TXT) · [Source and replacement materials](SOURCE_REPLACEMENT.md)
+
 ## October 9, 2026 beta refresh
 
 Version 0.1.0b2 is being prepared for local testing with the existing locked

@@ -2,6 +2,7 @@ import numpy as np
 import imkit as imk
 
 from .base import OCREngine
+from .evidence import lowest_reported_score, make_ocr_evidence
 from ..utils.textblock import TextBlock
 from ..utils.textblock import lists_to_blk_list
 
@@ -39,6 +40,7 @@ class MicrosoftOCR(OCREngine):
 
         texts_bboxes = []
         texts_string = []
+        line_scores = []
         
         image_buffer = imk.encode_image(img, 'jpg')
         result = self.client.analyze(
@@ -59,5 +61,12 @@ class MicrosoftOCR(OCREngine):
                     
                     texts_bboxes.append((x1, y1, x2, y2))
                     texts_string.append(line.text)
+                    words = getattr(line, "words", None) or []
+                    line_scores.append(lowest_reported_score(getattr(word, "confidence", None) for word in words))
             
-        return lists_to_blk_list(blk_list, texts_bboxes, texts_string)
+        def record_reading(block, indices):
+            model = getattr(result, "model_version", None) or "Read"
+            block.ocr_evidence = make_ocr_evidence(block.text, "Microsoft OCR", model,
+                                                   line_scores=[line_scores[i] for i in indices])
+
+        return lists_to_blk_list(blk_list, texts_bboxes, texts_string, on_text_assigned=record_reading)

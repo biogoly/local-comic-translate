@@ -1,6 +1,7 @@
 from typing import Any
 
 from .gpt import GPTTranslation
+from ..providers import translator_supports_images
 from ...utils.translator_utils import MODEL_MAP
 
 
@@ -29,7 +30,7 @@ class DeepseekTranslation(GPTTranslation):
         credentials = settings.get_credentials(settings.ui.tr('Deepseek'))
         self.api_key = credentials.get('api_key', '')
         self.model = (credentials.get('model') or MODEL_MAP.get(self.model_name))
-        self.supports_images = self.model == "deepseek-flash"
+        self.supports_images = translator_supports_images('Deepseek', self.model)
 
     def _make_api_request(self, payload, headers):
         payload = dict(payload)

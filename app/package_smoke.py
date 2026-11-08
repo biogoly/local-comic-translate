@@ -223,7 +223,7 @@ def _check_qwen_lora(root: Path) -> dict:
             "runtime_started": False, "inference_tested": False}
 
 
-def _exercise_package(root: Path, checks: _Checks, *, require_cuda: bool) -> None:
+def _exercise_package(root: Path, checks: _Checks, *, require_cuda: bool, smoke_project: Path | None = None) -> None:
     from PySide6.QtCore import QCoreApplication, QEvent, QSettings, QTranslator
     from PySide6.QtGui import QIcon, QPixmap
     from PySide6.QtWidgets import QApplication
@@ -485,6 +485,9 @@ def _exercise_package(root: Path, checks: _Checks, *, require_cuda: bool) -> Non
                 QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
         checks.run("main_window", check_window)
+        if smoke_project is not None:
+            from app.package_editor_check import exercise_editor_project
+            checks.run("editable_project", lambda: exercise_editor_project(app, root, smoke_project))
         archives.close_pdf_cache()
 
         def check_offline():
@@ -502,14 +505,21 @@ def _exercise_package(root: Path, checks: _Checks, *, require_cuda: bool) -> Non
     app.quit()
 
 
-def run_smoke_test(report_path: str, require_cuda: bool = False) -> int:
+def run_smoke_test(report_path: str, require_cuda: bool = False, smoke_project: str | None = None) -> int:
     """Write a path-free JSON acceptance report; return 0 only when all pass."""
     destination = Path(report_path).expanduser().resolve()
+    project = Path(smoke_project).resolve() if smoke_project else None
+    if project is not None and destination == project:
+        raise ValueError("The report must be separate from the input project.")
     checks = _Checks()
     with tempfile.TemporaryDirectory(prefix="local-comic-package-smoke-") as temporary:
         root = Path(temporary)
         with _isolated_environment(root):
-            checks.run("package_checks", lambda: _exercise_package(root, checks, require_cuda=require_cuda))
+            options = {"require_cuda": require_cuda}
+            if project is not None:
+                options["smoke_project"] = project
+            checks.run("package_checks", lambda: _exercise_package(
+                root, checks, **options))
     report = {
         "schema_version": 1,
         "frozen": bool(getattr(sys, "frozen", False)),

@@ -11,15 +11,17 @@ class RectState:
     rect: tuple  # (x1, y1, x2, y2)
     rotation: float
     transform_origin: QPointF
+    region_id: str | None = None
 
     @classmethod
     def from_item(cls, item: QGraphicsRectItem):
         """Create RectState from a MoveableRectItem"""
-        rect = QRectF(item.pos(), item.boundingRect().size()).getCoords()
+        rect = QRectF(item.pos(), item.rect().size()).getCoords()
         return cls(
             rect=rect,
             rotation=item.rotation(),
-            transform_origin=item.transformOriginPoint()
+            transform_origin=item.transformOriginPoint(),
+            region_id=getattr(item, 'region_id', None),
         )
 
 class RectSignals(QObject):
@@ -82,6 +84,9 @@ class MoveableRectItem(QGraphicsRectItem):
 
             ocr.triggered.connect(self.signals.ocr_block.emit)
             translate.triggered.connect(self.signals.translate_block.emit)
+            review = getattr(view, 'review_controller', None)
+            if review is not None:
+                review.add_context_actions(menu)
 
             menu.exec_(global_pos)
 

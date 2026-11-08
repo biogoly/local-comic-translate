@@ -20,16 +20,15 @@ La configuration testée utilise Klein 9B INT8 natif avec un encodeur en précis
 
 **Qwen Image 2.1** est également disponible comme alternative expérimentale à Klein. Son profil INT8 utilise des fichiers de modèle, d’encodeur et de VAE déjà installés et prend en charge des LoRA Qwen 2.1 validés qui modifient uniquement le modèle, avec une intensité réglable ; les adaptateurs de l’encodeur de texte ne sont pas pris en charge. Les réglages initiaux sont de 25 étapes et un CFG de 1,0. Le chargement et l’application des LoRA ont été testés, sans garantie d’amélioration du lettrage artistique ; les machines disposant de moins de mémoire restent à valider. Consultez la [configuration de Qwen et ses limites](COMFYUI_BACKEND.md#experimental-qwen-image-21) (en anglais).
 
-## Dernière mise à jour — 0.1.0b2
+## Dernière mise à jour — 0.1.0b3
 
-La bêta 2 ajoute le backend ComfyUI, Qwen Image 2.1 avec des LoRA et les nouvelles options de portugais et de vietnamien. Consultez les [notes de la bêta 2](RELEASE_NOTES_0.1.0b2.md) (en anglais) pour les changements, la validation et les limites du paquet.
+La bêta 3 ajoute des outils de lettrage, de révision des pages et de restauration du dessin. Sous Windows, le [ZIP d’installation de la bêta 3](https://github.com/biogoly/local-comic-translate/releases/tag/v0.1.0b3) contient le code source et un lanceur qui installe les dépendances au premier démarrage. Consultez les [notes de la bêta 3](RELEASE_NOTES_0.1.0b3.md) (en anglais).
 
-- **Artistic Edit :** FLUX.2 Klein 4B/9B en local avec des LoRA compatibles, ou l’API Black Forest Labs, avec aperçu avant application, annulation et conservation des retouches dans le projet.
-- **Choix du moteur de traduction :** conservez vos réglages de llama-server local tout en passant à OpenAI, Gemini, Claude ou Deepseek avec vos propres clés API.
-- **Flux de travail manuel amélioré :** l’OCR fonctionne directement sur les zones tracées à la main ; les traductions manuelles terminées et leur mise en forme sont conservées lors des traitements ultérieurs de la page entière ; les langues source et cible restent sélectionnées d’une page à l’autre.
-- **Nettoyage localisé :** restaurez les pixels d’origine au pinceau, clonez un échantillon fixe de couleur et de texture, ou remplissez un masque avec une couleur prélevée sur le fond.
-- **Interface soignée :** thèmes Midnight, Parchment, Lavender et Mint en complément de Light/Dark, commandes d’Artistic Edit plus lisibles, nouvel écran de démarrage et catalogues de traduction de l’interface mis à jour.
-- **Identité propre au fork :** réglages et données d’application séparés, sans notifications de mise à jour ni recours aux services payants du projet d’origine.
+- Avec **Fit Text**, prévisualisez les retours à la ligne et la taille du texte dans un cadre ou une bulle. Le navigateur **Review** permet de repérer le texte manquant ou qui déborde et de relancer l’OCR sur une zone sélectionnée.
+- Le glossaire du projet, les notes sur les personnages et les traductions déjà approuvées aident à garder une terminologie cohérente. Si un modèle de vision reçoit l’image de la page, vous pouvez aussi lui fournir les coordonnées des blocs de texte pour l’aider à distinguer des mots identiques dans des cases différentes.
+- Enregistrez des styles de lettrage, appliquez une perspective ou une courbure au texte éditable et alignez son inclinaison sur celle du lettrage d’origine.
+- Pour restaurer un fond coloré avec **Gradient**, cliquez sur des pixels intacts ou maintenez **Maj** enfoncée et tracez de courts segments à échantillonner. Vous pouvez protéger le dessin voisin ou comparer **Clone** et **Heal** dans les zones texturées.
+- Comparez deux aperçus dans **Artistic Edit** et appliquez celui que vous préférez. Vous pouvez vérifier le lettrage par OCR avant de choisir, puis annuler la modification si nécessaire.
 
 ## Points forts de ce fork
 
@@ -140,15 +139,11 @@ La traduction automatique reste disponible, mais une restauration soignée des b
 
 Vous pouvez aussi tracer une zone oubliée et choisir **OCR**, puis **Translate** dans son menu contextuel, sans détecter d’abord le reste de la page. Sa traduction terminée reste intacte si vous lancez ensuite le flux manuel sur toute la page. Pour les fonds colorés ou texturés, essayez le remplissage avec une couleur prélevée, le pinceau de restauration ou le pinceau de clonage avant de répéter l’inpainting sur la même zone. Utilisez Artistic Edit lorsque le lettrage doit s’intégrer au dessin plutôt que rester un calque de texte modifiable ordinaire.
 
-Le détecteur conserve volontairement aussi bien le texte des bulles que le texte libre. Cela évite de perdre des zones OCR valides en mode manuel, mais signifie aussi que **Translate All** peut effacer par inpainting des titres artistiques, des panneaux, des onomatopées ou d’autres lettrages faisant partie du dessin. Une vérification manuelle avant le nettoyage est recommandée lorsque la préservation du dessin est importante.
+Le détecteur repère les bulles de dialogue, mais aussi les titres, les panneaux et les onomatopées. En mode Manual, choisissez **Translate** dans le menu contextuel pour mettre à jour le texte de la zone sélectionnée. Utilisez **Segment** pour voir quels pixels seront touchés et vérifiez le masque. Utilisez ensuite **Clean** pour effacer le lettrage d’origine, puis **Render** pour placer la traduction.
 
 ## Installation
 
-Le [guide de création du paquet Windows](../packaging/windows/README.md) propose
-une procédure expérimentale pour une **bêta Windows x64**. Elle produit un ZIP
-portable avec les dépendances Python/Qt/ONNX de l’éditeur principal ; les modèles
-et environnements LLM locaux et FLUX restent séparés. Les binaires bêta doivent
-être testés avant toute publication publique.
+Téléchargez **LCT-0.1.0b3-Windows-setup.zip** depuis la [page de la bêta 3](https://github.com/biogoly/local-comic-translate/releases/tag/v0.1.0b3). Extrayez tout le ZIP et exécutez le lanceur Windows inclus. Une connexion Internet est nécessaire au premier démarrage pour installer les dépendances de l’éditeur. Les modèles et environnements d’exécution du LLM local et de FLUX s’obtiennent séparément. Pour créer vous-même l’exécutable de l’éditeur, consultez le [guide de création du paquet Windows](../packaging/windows/README.md).
 
 ### Prérequis
 
@@ -294,7 +289,7 @@ Les vérifications de publication couvrent l’OCR et la conservation des zones 
 
 ## Limites actuelles
 
-- Ce fork est encore jeune. Utilisez le code source à jour ou une bêta de la version correspondante ; les essais sur un large éventail de langues, de modèles, de mises en page et de systèmes d’exploitation sont toujours en cours. Une compilation bêta locale ne signifie pas que la diffusion publique des binaires a été autorisée.
+- Les tests se poursuivent sur différentes langues, différents modèles, mises en page et systèmes d’exploitation.
 - Le mode automatique ne distingue pas toujours les dialogues du lettrage qui appartient au dessin. Utilisez le mode Manual lorsque la préservation du dessin est importante.
 - La détection, l’OCR, la traduction, la segmentation et l’inpainting peuvent tous nécessiter des corrections humaines sur les pages difficiles.
 - L’envoi d’images nécessite un véritable modèle multimodal, un serveur compatible et, le cas échéant, le fichier de projecteur correspondant.

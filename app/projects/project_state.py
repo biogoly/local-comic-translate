@@ -13,6 +13,9 @@ import imkit as imk
 from modules.utils.archives import close_pdf_cache
 from .parsers import ProjectEncoder, ProjectDecoder, ensure_string_keys
 from .patch_metadata import normalize_patch_kind, sanitize_patch_metadata
+from .project_metadata import normalize_project_pages
+from .translation_profile import profile_for_project, reset_translation_project
+from .lettering_styles import reset_lettering_project, styles_for_project
 from .project_state_v2 import (
     close_cached_connection as close_state_v2_cached_connection,
     ensure_lazy_blob_materialized,
@@ -64,6 +67,8 @@ def load_state_from_proj_file(comic_translate: ComicTranslate, file_name: str):
     if is_sqlite_project_file(file_name):
         return load_state_from_proj_file_v2(comic_translate, file_name)
 
+    reset_translation_project(comic_translate)
+    reset_lettering_project(comic_translate)
     decoder = ProjectDecoder()
 
     if not hasattr(comic_translate, 'temp_dir'):
@@ -192,6 +197,7 @@ def load_state_from_proj_file(comic_translate: ComicTranslate, file_name: str):
     comic_translate.image_states = {
         original_to_temp.get(file, file): img_state for file, img_state in image_states.items()
     }
+    normalize_project_pages(comic_translate)
 
     current_history_index = state.get('current_history_index', {})
     comic_translate.current_history_index = {
@@ -255,5 +261,11 @@ def load_state_from_proj_file(comic_translate: ComicTranslate, file_name: str):
 
     # restore LLM extra context
     saved_ctx = state.get('llm_extra_context', '')
+    translation_profile = profile_for_project(
+        comic_translate, state.get('translation_profile', {})
+    )
+    lettering_styles = styles_for_project(comic_translate, state.get('lettering_styles', {}))
+    comic_translate.translation_profile = translation_profile
+    comic_translate.lettering_styles = lettering_styles
     return saved_ctx
 

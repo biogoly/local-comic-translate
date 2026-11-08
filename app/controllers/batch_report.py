@@ -206,6 +206,11 @@ class BatchReportController:
         return self.main.tr("Try again")
 
     def _format_batch_skip_reason(self, skip_reason: str, error: str) -> str:
+        if skip_reason == "Existing Rendered Text":
+            return QtCore.QCoreApplication.translate(
+                "Messages",
+                "Page already contains rendered text; use manual Render to add missing regions.",
+            )
         detail = self._localize_batch_skip_detail(error)
         action = self._localize_batch_skip_action(skip_reason, error)
         reason_map = {
@@ -244,11 +249,14 @@ class BatchReportController:
                 "image_path": image_path,
                 "image_name": os.path.basename(image_path),
                 "reasons": [reason_text] if reason_text else [],
+                "informational": skip_reason == "Existing Rendered Text",
             }
             return
 
         if reason_text and reason_text not in existing["reasons"]:
             existing["reasons"].append(reason_text)
+        if skip_reason != "Existing Rendered Text":
+            existing["informational"] = False
 
     def finalize_batch_report(self, was_cancelled: bool):
         report = self._current_batch_report

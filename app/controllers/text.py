@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from PySide6 import QtCore
 from PySide6.QtGui import QColor, QTextCursor
+from shiboken6 import isValid
 
 from app.ui.commands.textformat import TextFormatCommand
 from app.ui.commands.box import AddTextItemCommand, ResizeBlocksCommand
@@ -15,13 +16,15 @@ from app.ui.canvas.text_item import TextBlockItem
 from app.ui.canvas.text.text_item_properties import TextItemProperties
 
 from modules.utils.textblock import TextBlock
-from modules.rendering.render import TextRenderingSettings, manual_wrap, is_vertical_block, pyside_word_wrap
+from modules.utils.region_metadata import ensure_region_id, find_region
+from modules.rendering.render import TextRenderingSettings, manual_wrap, is_vertical_block, pyside_word_wrap, orient_new_lettering
 from modules.utils.pipeline_config import font_selected
 from modules.utils.language_utils import get_language_code, get_layout_direction, is_no_space_lang
 from modules.utils.language_utils import to_canonical_language_name
 from modules.utils.image_utils import get_smart_text_color
 from modules.utils.common_utils import is_close
 from modules.utils.translator_utils import format_translations, is_renderable_translation
+from modules.utils.region_policy import permits_region_operation
 
 if TYPE_CHECKING:
     from controller import ComicTranslate
@@ -50,12 +53,23 @@ class TextController:
         self._suspend_text_command = False
         self._is_updating_from_edit = False
         self._render_macro_stack = None
+        self._render_original_cache = {}
+        from app.controllers.text_fit import TextFitController
+        self.fit_controller = TextFitController(self)
 
     def connect_text_item_signals(self, text_item: TextBlockItem, force_reconnect: bool = False):
         if getattr(text_item, "_ct_signals_connected", False) and not force_reconnect:
             return
+        if not self.main.image_viewer.webtoon_mode and 0 <= self.main.curr_img_idx < len(self.main.image_files):
+            text_item._page_path = self.main.image_files[self.main.curr_img_idx]
 
         if force_reconnect:
+            try:
+                text_item.fit_requested.disconnect(self.fit_controller.open_preview)
+                text_item.document().contentsChanged.disconnect(self.fit_controller.schedule)
+                text_item.change_undo.disconnect(self.fit_controller.schedule)
+            except (TypeError, RuntimeError):
+                pass
             try:
                 text_item.item_selected.disconnect(self.on_text_item_selected)
             except (TypeError, RuntimeError):
@@ -84,6 +98,9 @@ class TextController:
             )
 
         text_item.item_selected.connect(self.on_text_item_selected)
+        text_item.fit_requested.connect(self.fit_controller.open_preview)
+        text_item.document().contentsChanged.connect(self.fit_controller.schedule)
+        text_item.change_undo.connect(self.fit_controller.schedule)
         text_item.item_deselected.connect(self.on_text_item_deselected)
         text_item.text_changed.connect(text_item._ct_text_changed_slot)
         text_item.text_highlighted.connect(self.set_values_from_highlight)
@@ -97,6 +114,7 @@ class TextController:
         self.main.curr_tblock_item = None
         self.main.s_text_edit.clear()
         self.main.t_text_edit.clear()
+        self.fit_controller.schedule()
 
     def on_blk_rendered(self, text: str, font_size: int, blk: TextBlock, image_path: str):
         if not self.main.webtoon_mode:
@@ -108,6 +126,12 @@ class TextController:
 
         if not self.main.image_viewer.hasPhoto():
             print("No main image to add to.")
+            return
+
+        identity = ensure_region_id(blk)
+        if any(getattr(item, 'region_id', '') == identity
+               and getattr(item, '_page_path', image_path) == image_path
+               for item in self.main.image_viewer.text_items):
             return
 
         target_lang = self.main.lang_mapping.get(self.main.t_combo.currentText(), None)
@@ -135,6 +159,7 @@ class TextController:
 
         properties = TextItemProperties(
             text=text,
+            region_id=ensure_region_id(blk),
             font_family=font_family,
             font_size=font_size,
             text_color=text_color,
@@ -147,19 +172,51 @@ class TextController:
             underline=underline,
             direction=direction,
             position=(blk.xyxy[0], blk.xyxy[1]),
-            rotation=blk.angle,
             vertical=vertical,
         )
+        center_lettering = orient_new_lettering(properties, blk)
         
-        text_item = self.main.image_viewer.add_text_item(properties)
-        text_item.set_plain_text(text)
+        prepared = blk.__dict__.pop('_render_text_properties', None)
+        saved_origin = blk.__dict__.pop('_render_page_origin', None)
+        if prepared is not None:
+            properties = TextItemProperties.from_dict(prepared)
+            if self.main.image_viewer.webtoon_mode:
+                origin = self._render_page_origin(image_path)
+                if origin is None and saved_origin is not None:
+                    origin = QtCore.QPointF(*saved_origin)
+                if origin is None:
+                    return
+                if saved_origin is not None:
+                    delta = (origin.x() - saved_origin[0], origin.y() - saved_origin[1])
+                    for name in ('xyxy', 'bubble_xyxy'):
+                        bounds = getattr(blk, name, None)
+                        if bounds is not None:
+                            setattr(blk, name, [bounds[0] + delta[0], bounds[1] + delta[1],
+                                               bounds[2] + delta[0], bounds[3] + delta[1]])
+                properties.position = (properties.position[0] + origin.x(), properties.position[1] + origin.y())
+        elif getattr(render_settings, 'auto_bubble_fit', False):
+            properties = self._fit_new_render_properties(properties, blk, image_path, render_settings)
+
+        suspended = self._suspend_text_command
+        keep_target = not permits_region_operation(blk, 'translation')
+        self._suspend_text_command = suspended or keep_target
+        try:
+            text_item = self.main.image_viewer.add_text_item(properties)
+            text_item._page_path = image_path
+            if prepared is None and properties.layout_preferences.get('mode') != 'bubble':
+                text_item.set_plain_text(text)
+            elif properties.layout_preferences.get('mode') == 'bubble' and not keep_target:
+                blk.translation = text_item.toPlainText()
+            if prepared is None and center_lettering:
+                self._center_new_lettering_item(text_item, properties, blk)
+        finally:
+            self._suspend_text_command = suspended
 
         # Update or append the block in the main controller's blk_list
         existing_idx = next(
             (
                 i for i, b in enumerate(self.main.blk_list)
-                if is_close(b.xyxy[0], blk.xyxy[0], 5) and is_close(b.xyxy[1], blk.xyxy[1], 5)
-                and is_close(b.angle, blk.angle, 1)
+                if getattr(b, 'region_id', '') == blk.region_id
             ),
             None
         )
@@ -173,23 +230,75 @@ class TextController:
         if stack is not None:
             stack.push(command)
 
+    def _render_page_origin(self, image_path):
+        from app.controllers.text_fit import page_to_scene_position
+        if not self.main.image_viewer.webtoon_mode:
+            return QtCore.QPointF()
+        if image_path not in self.main.image_files:
+            return None
+        index = self.main.image_files.index(image_path)
+        try:
+            return page_to_scene_position(self.main.image_viewer, index, QtCore.QPointF())
+        except (IndexError, ValueError):
+            return None
+
+    @staticmethod
+    def _center_new_lettering_item(item, properties, block):
+        bounds = item.boundingRect()
+        orient_new_lettering(properties, block, (bounds.width(), bounds.height()))
+        item.setTransformOriginPoint(bounds.center())
+        item.setPos(QtCore.QPointF(*properties.position) - bounds.topLeft())
+
+    def _fit_new_render_properties(self, properties, block, image_path, settings):
+        from modules.rendering.auto_bubble_fit import fit_new_text_item, load_original_for_fitting
+        origin = self._render_page_origin(image_path)
+        if origin is None:
+            return properties
+        source_block = block.deep_copy()
+        for name in ('xyxy', 'bubble_xyxy'):
+            bounds = getattr(source_block, name, None)
+            if bounds is not None:
+                setattr(source_block, name, [float(bounds[0]) - origin.x(), float(bounds[1]) - origin.y(),
+                                           float(bounds[2]) - origin.x(), float(bounds[3]) - origin.y()])
+        local_props = copy.deepcopy(properties)
+        local_props.position = (properties.position[0] - origin.x(), properties.position[1] - origin.y())
+        current = getattr(self.main, 'image_data', {}).get(image_path)
+        shape = current.shape if current is not None else None
+        key = (image_path, self.fit_controller._file_stamp(image_path), shape)
+        if key not in self._render_original_cache:
+            if len(self._render_original_cache) >= 2:
+                self._render_original_cache.clear()
+            self._render_original_cache[key] = load_original_for_fitting(image_path, shape)
+        result = fit_new_text_item(local_props, source_block, self._render_original_cache[key], settings,
+                                   source_text=block.translation)
+        result.position = (result.position[0] + origin.x(), result.position[1] + origin.y())
+        return result
+
+    @staticmethod
+    def _already_rendered(block, items):
+        """Retain moved/resized lettering by identity; legacy items use geometry."""
+        identity = getattr(block, 'region_id', '')
+        for item in items:
+            if isinstance(item, dict):
+                item_id = item.get('region_id', '')
+                position, rotation = item.get('position', (0, 0)), item.get('rotation', 0)
+            else:
+                item_id = getattr(item, 'region_id', '')
+                position, rotation = (item.pos().x(), item.pos().y()), item.rotation()
+            if identity and item_id == identity:
+                return True
+            if (not item_id and is_close(position[0], block.xyxy[0], 1)
+                    and is_close(position[1], block.xyxy[1], 1) and is_close(rotation, block.angle, 1)):
+                return True
+        return False
+
     def on_text_item_selected(self, text_item: TextBlockItem):
         self._commit_pending_text_command()
         self.main.curr_tblock_item = text_item
         self._last_item_text[text_item] = text_item.toPlainText()
         self._last_item_html[text_item] = text_item.document().toHtml()
 
-        x1, y1 = int(text_item.pos().x()), int(text_item.pos().y())
-        rotation = text_item.rotation()
-
-        self.main.curr_tblock = next(
-            (
-            blk for blk in self.main.blk_list
-            if is_close(blk.xyxy[0], x1, 5) and is_close(blk.xyxy[1], y1, 5)
-            and is_close(blk.angle, rotation, 1)
-            ),
-            None
-        )
+        self.main.curr_tblock = self._find_text_block_for_item(text_item)
 
         # Update both s_text_edit and t_text_edit
         if self.main.curr_tblock:
@@ -202,6 +311,7 @@ class TextController:
         self.main.t_text_edit.blockSignals(False)
 
         self.set_values_for_blk_item(text_item)
+        self.fit_controller.schedule()
 
     def on_text_item_deselected(self):
         self._commit_pending_text_command()
@@ -290,7 +400,21 @@ class TextController:
 
     def commit_target_editor_text(self):
         """Commit target text after focus-out, including completed IME input."""
-        self.update_text_block_from_edit()
+        # Selecting or translating a region refreshes this editor without a
+        # user edit. Leaving it must not materialize or overwrite lettering.
+        block = self.main.curr_tblock
+        item = self.main.curr_tblock_item
+        text = self.main.t_text_edit.toPlainText()
+        matches_target = block is not None and text == block.translation
+        # Selecting existing lettering can display its older wording while a
+        # fresh translation is still waiting for the explicit Render step.
+        matches_lettering = (
+            item is not None and isValid(item)
+            and item.scene() is self.main.image_viewer._scene
+            and text == item.toPlainText()
+        )
+        if not matches_target and not matches_lettering:
+            self.update_text_block_from_edit()
         self._commit_pending_text_command()
 
     def create_manual_text_item(self, blk: TextBlock, text: str) -> TextBlockItem | None:
@@ -298,17 +422,18 @@ class TextController:
         if not text or not self.main.image_viewer.hasPhoto():
             return None
 
-        existing = next(
-            (
-                item
-                for item in self.main.image_viewer.text_items
-                if is_close(item.pos().x(), blk.xyxy[0], 5)
-                and is_close(item.pos().y(), blk.xyxy[1], 5)
-                and is_close(item.rotation(), blk.angle, 1)
-            ),
-            None,
-        )
+        identity = ensure_region_id(blk)
+        matches = [item for item in self.main.image_viewer.text_items
+                   if getattr(item, 'region_id', '') == identity]
+        if not matches:
+            matches = [item for item in self.main.image_viewer.text_items
+                       if not getattr(item, 'region_id', '')
+                       and is_close(item.pos().x(), blk.xyxy[0], 5)
+                       and is_close(item.pos().y(), blk.xyxy[1], 5)
+                       and is_close(item.rotation(), blk.angle, 1)]
+        existing = matches[0] if len(matches) == 1 else None
         if existing is not None:
+            existing.region_id = identity
             self.main.curr_tblock_item = existing
             return existing
 
@@ -335,6 +460,7 @@ class TextController:
 
         properties = TextItemProperties(
             text=text,
+            region_id=ensure_region_id(blk),
             font_family=render_settings.font_family,
             font_size=font_size,
             text_color=text_color,
@@ -347,17 +473,19 @@ class TextController:
             underline=render_settings.underline,
             direction=render_settings.direction,
             position=(x1, y1),
-            rotation=blk.angle,
             scale=1.0,
             transform_origin=blk.tr_origin_point if blk.tr_origin_point else (0, 0),
             width=max(1, width),
             height=max(1, height),
             vertical=vertical,
         )
+        center_lettering = orient_new_lettering(properties, blk)
         text_item = self.main.image_viewer.add_text_item(properties)
         # Keep the drawn width even for a one-character initial value.
         if not vertical:
             text_item.setTextWidth(max(1, width))
+        if center_lettering:
+            self._center_new_lettering_item(text_item, properties, blk)
 
         self.main.image_viewer.deselect_all()
         text_item.selected = True
@@ -495,15 +623,11 @@ class TextController:
         x1, y1 = int(text_item.pos().x()), int(text_item.pos().y())
         rotation = text_item.rotation()
 
-        return next(
-            (
-                blk for blk in self.main.blk_list
-                if is_close(blk.xyxy[0], x1, 5)
-                and is_close(blk.xyxy[1], y1, 5)
-                and is_close(blk.angle, rotation, 1)
-            ),
-            None
-        )
+        block = find_region(self.main.blk_list, region_id=getattr(text_item, 'region_id', ''),
+                            x=x1, y=y1, angle=rotation)
+        if block is not None:
+            text_item.region_id = ensure_region_id(block)
+        return block
 
     def _schedule_text_change_command(self, text_item: TextBlockItem, new_text: str, blk: TextBlock | None):
         if self._suspend_text_command:
@@ -808,11 +932,13 @@ class TextController:
 
             alignment_to_button = {
                 QtCore.Qt.AlignmentFlag.AlignLeft: 0,
-                QtCore.Qt.AlignmentFlag.AlignCenter: 1,
+                QtCore.Qt.AlignmentFlag.AlignHCenter: 1,
                 QtCore.Qt.AlignmentFlag.AlignRight: 2,
             }
 
-            alignment = text_item.alignment
+            # Presets and paragraph formats can include vertical alignment bits.
+            # These three controls represent horizontal alignment only.
+            alignment = text_item.alignment & QtCore.Qt.AlignmentFlag.AlignHorizontal_Mask
             button_group = self.main.alignment_tool_group.get_button_group()
 
             if alignment in alignment_to_button:
@@ -872,12 +998,14 @@ class TextController:
 
             alignment_to_button = {
                 QtCore.Qt.AlignmentFlag.AlignLeft: 0,
-                QtCore.Qt.AlignmentFlag.AlignCenter: 1,
+                QtCore.Qt.AlignmentFlag.AlignHCenter: 1,
                 QtCore.Qt.AlignmentFlag.AlignRight: 2,
             }
 
             button_group = self.main.alignment_tool_group.get_button_group()
 
+            if alignment is not None:
+                alignment &= QtCore.Qt.AlignmentFlag.AlignHorizontal_Mask
             if alignment in alignment_to_button:
                 button_index = alignment_to_button[alignment]
                 button_group.buttons()[button_index].setChecked(True)
@@ -957,22 +1085,21 @@ class TextController:
                     trg_lng_cd = get_language_code(target_lang_en)
                     viewer_state = state.setdefault("viewer_state", {})
                     existing_text_items = list(viewer_state.get("text_items_state", []))
-                    existing_keys = {
-                        (
-                            int(item.get("position", (0, 0))[0]),
-                            int(item.get("position", (0, 0))[1]),
-                            float(item.get("rotation", 0)),
-                        )
-                        for item in existing_text_items
-                    }
                     new_blocks = [
                         blk for blk in blk_list
-                        if (int(blk.xyxy[0]), int(blk.xyxy[1]), float(blk.angle)) not in existing_keys
+                        if not self._already_rendered(blk, existing_text_items)
+                        and permits_region_operation(blk, 'layout')
                         and not self.main.manual_workflow_ctrl._has_rendered_manual_translation(
                             blk, existing_text_items,
                         )
                     ]
-                    format_translations(new_blocks, trg_lng_cd, upper_case=upper)
+                    format_translations([blk for blk in new_blocks if permits_region_operation(blk, 'translation')],
+                                        trg_lng_cd, upper_case=upper)
+                    original = None
+                    if new_blocks and getattr(render_settings, 'auto_bubble_fit', False):
+                        from modules.rendering.auto_bubble_fit import load_original_for_fitting
+                        current = getattr(self.main, 'image_data', {}).get(file_path)
+                        original = load_original_for_fitting(file_path, current.shape if current is not None else None)
 
                     new_text_items_state = []
                     for blk in new_blocks:
@@ -1003,6 +1130,7 @@ class TextController:
 
                         font_color = get_smart_text_color(blk.font_color, setting_font_color)
                         text_props = TextItemProperties(
+                            region_id=ensure_region_id(blk),
                             text=wrapped,
                             font_family=font_family,
                             font_size=font_size,
@@ -1016,13 +1144,16 @@ class TextController:
                             underline=underline,
                             direction=direction,
                             position=(x1, y1),
-                            rotation=blk.angle,
                             scale=1.0,
                             transform_origin=blk.tr_origin_point if blk.tr_origin_point else (0, 0),
                             width=rendered_width,
                             height=rendered_height,
                             vertical=vertical,
                         )
+                        orient_new_lettering(text_props, blk)
+                        if getattr(render_settings, 'auto_bubble_fit', False):
+                            from modules.rendering.auto_bubble_fit import fit_new_text_item
+                            text_props = fit_new_text_item(text_props, blk, original, render_settings, source_text=translation)
                         new_text_items_state.append(text_props.to_dict())
 
                     if new_text_items_state:
@@ -1071,13 +1202,10 @@ class TextController:
                 if item not in self.main.image_viewer._scene.items():
                     self.main.image_viewer._scene.addItem(item)
 
-            # Create a dictionary to map text items to their positions and rotations
-            existing_text_items = {item: (int(item.pos().x()), int(item.pos().y()), item.rotation()) for item in self.main.image_viewer.text_items}
-
-            # Identify new blocks based on position and rotation
             new_blocks = [
                 blk for blk in self.main.blk_list
-                if (int(blk.xyxy[0]), int(blk.xyxy[1]), blk.angle) not in existing_text_items.values()
+                if not self._already_rendered(blk, self.main.image_viewer.text_items)
+                and permits_region_operation(blk, 'layout')
                 and not self.main.manual_workflow_ctrl._has_rendered_manual_translation(
                     blk, self.main.image_viewer.text_items,
                 )
@@ -1103,7 +1231,8 @@ class TextController:
             trg_lng_cd = get_language_code(target_lang_en)
 
             self.main.run_threaded(
-            lambda: format_translations(new_blocks, trg_lng_cd, upper_case=upper)
+                lambda: format_translations([blk for blk in new_blocks if permits_region_operation(blk, 'translation')],
+                                            trg_lng_cd, upper_case=upper)
             )
 
             min_font_size = self.main.settings_page.get_min_font_size()
@@ -1120,6 +1249,16 @@ class TextController:
 
             if new_blocks:
                 self._begin_render_macro()
+
+            page_paths = None
+            if self.main.image_viewer.webtoon_mode:
+                page_paths = {}
+                for block in new_blocks:
+                    center = QtCore.QPointF((block.xyxy[0] + block.xyxy[2]) / 2,
+                                           (block.xyxy[1] + block.xyxy[3]) / 2)
+                    page_index, _ = self.main.image_viewer.scene_to_page_coordinates(center)
+                    if page_index is not None and 0 <= page_index < len(self.main.image_files):
+                        page_paths[block.region_id] = self.main.image_files[page_index]
 
             self.main.run_threaded(
                 manual_wrap, 
@@ -1138,7 +1277,8 @@ class TextController:
                 alignment, 
                 direction, 
                 max_font_size,
-                min_font_size
+                min_font_size,
+                page_paths=page_paths,
             )
 
     def on_render_complete(self, rendered_image: np.ndarray):
@@ -1146,6 +1286,7 @@ class TextController:
         self.main.loading.setVisible(False)
         self.main.enable_hbutton_group()
         self._end_render_macro()
+        self._render_original_cache.clear()
 
     def render_settings(self) -> TextRenderingSettings:
         target_lang = self.main.lang_mapping.get(self.main.t_combo.currentText(), None)
@@ -1165,5 +1306,9 @@ class TextController:
             italic = self.main.italic_button.isChecked(),
             underline = self.main.underline_button.isChecked(),
             line_spacing = self.main.line_spacing_dropdown.currentText(),
-            direction = direction
+            direction = direction,
+            auto_bubble_fit = bool(getattr(self.main.settings_page.ui, 'auto_bubble_fit_checkbox', None)
+                                   and self.main.settings_page.ui.auto_bubble_fit_checkbox.isChecked()),
+            bubble_padding = (self.main.settings_page.ui.auto_bubble_padding_spinbox.value()
+                              if hasattr(self.main.settings_page.ui, 'auto_bubble_padding_spinbox') else 8.0)
         )

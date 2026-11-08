@@ -4,6 +4,9 @@ import numpy as np
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
 from modules.utils.textblock import TextBlock
+from modules.ocr.evidence import current_ocr_evidence
+from modules.utils.region_metadata import ensure_region_id, normalize_region_metadata
+from modules.utils.lettering_angle import optional_lettering_angle
 from ..ui.canvas.text_item import OutlineInfo, OutlineType
 
 class ProjectEncoder:
@@ -56,6 +59,7 @@ class ProjectEncoder:
 
     @staticmethod
     def encode_textblock(obj):
+        ensure_region_id(obj)
         data = obj.__dict__
         return {
             'type': 'textblock',
@@ -175,6 +179,11 @@ class ProjectDecoder:
     def decode_textblock(obj):
         text_block = TextBlock()
         text_block.__dict__.update(obj['data'])  
+        text_block.detected_lettering_angle = optional_lettering_angle(text_block.detected_lettering_angle)
+        text_block.manual_lettering_angle = optional_lettering_angle(text_block.manual_lettering_angle)
+        text_block.ocr_evidence = current_ocr_evidence(text_block)
+        ensure_region_id(text_block)
+        text_block.region_metadata = normalize_region_metadata(getattr(text_block, 'region_metadata', None))
         return text_block
 
     @staticmethod

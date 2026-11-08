@@ -196,13 +196,24 @@ class ArtisticEditControllerTests(unittest.TestCase):
             "lettering",
         )
         self.assertIn('"UNA REVOLUCIÓN \\"LLAMADA\\""', prompt)
-        self.assertIn('exactly "A REVOLUTION CALLED"', prompt)
+        self.assertIn('with "A REVOLUTION CALLED"', prompt)
         self.assertIn("Leave every other part", prompt)
 
         bubble_prompt = build_translation_prompt("Hola", "Hello", "empty_bubble")
         self.assertIn("Do not put any text inside the bubble", bubble_prompt)
         with self.assertRaisesRegex(ValueError, "no translation"):
             build_translation_prompt("Hola", "", "lettering")
+
+    def test_lettering_literal_uses_visible_case_cues(self):
+        for source, target, expected in (
+            ("Hola, iPhone de NASA", "HELLO, IPHONE FROM NASA", "Hello, iPhone from NASA"),
+            ("habla bajito", "KEEP QUIET", "keep quiet"),
+            ("El Mar", "THE PIRATE'S SEA", "The Pirate's Sea"),
+            ("待って！", "WAIT! I'LL GO.", "Wait! I'll go."),
+            ("Hola", "Signed by McKay", "Signed by McKay"),
+        ):
+            with self.subTest(source=source):
+                self.assertIn(f'with "{expected}"', build_translation_prompt(source, target, 'lettering'))
 
     def test_panel_accepts_full_nonnegative_64_bit_seed_range(self):
         self.panel.seed_edit.setText(str((2**63) - 1))
@@ -340,6 +351,28 @@ class ArtisticEditControllerTests(unittest.TestCase):
         self.assertEqual(self.window_modified_updates, 0)
         self.assertIsNone(self.controller._session)
 
+    def test_generated_preview_clips_protection_and_rejects_changed_mask(self):
+        from modules.repair.protection import encode_protection
+        session = self._session()
+        self.controller._session = session
+        protected = np.zeros(self.page.shape[:2], np.uint8)
+        protected[20:30, 20:30] = 255
+        self.main.image_states = {self.page_path: {'pixel_protection': encode_protection(protected)}}
+        Image.fromarray(np.full_like(session.prepared.model_input, 180)).save(session.request.output_path)
+        result = SimpleNamespace(request_id=session.request.request_id, output_path=session.request.output_path,
+                                 validate_path=lambda _: None)
+        with patch.object(self.controller, '_show_preview') as show:
+            self.controller._on_result(result)
+            show.assert_called_once()
+        image = self.page.copy()
+        x, y, w, h = session.patch.bbox
+        image[y:y+h, x:x+w] = session.patch.image
+        np.testing.assert_array_equal(image[protected != 0], self.page[protected != 0])
+        self.assertTrue(np.any(image[protected == 0] != self.page[protected == 0]))
+        self.assertTrue(self.controller._source_is_current(session)[0])
+        self.main.image_states[self.page_path].pop('pixel_protection')
+        self.assertFalse(self.controller._source_is_current(session)[0])
+
     def test_apply_creates_one_typed_undoable_patch_and_marks_dirty(self):
         session = self._session()
         self.controller._session = session
@@ -372,7 +405,6 @@ class ArtisticEditControllerTests(unittest.TestCase):
         self.panel.set_prompt("Repair only this lettering")
         self.panel.edit_margin_spin.setValue(8)
 
-        self.controller.shutdown()
         self.controller.worker_factory = _FakeWorker
         self.controller.configured_worker_python = lambda: os.path.abspath(__file__)
         self.controller.update_availability()

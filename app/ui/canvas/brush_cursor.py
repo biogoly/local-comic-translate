@@ -33,7 +33,7 @@ class BrushCursorOverlay(QtCore.QObject):
         if self._refreshing:
             return
         viewer = self.viewer
-        if viewer.current_tool not in {'brush', 'eraser', 'restore'} or not viewer.hasPhoto():
+        if viewer.current_tool not in {'brush', 'eraser', 'restore', 'protect_pixels', 'unprotect_pixels'} or not viewer.hasPhoto():
             self.hide()
             return
         if scene_pos is None:

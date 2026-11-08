@@ -14,9 +14,10 @@ from app.ui.commands.inpaint import PatchClearCommand, PatchInsertCommand
 from app.ui.commands.inpaint import PatchCommandBase
 from app.ui.commands.box import AddTextItemCommand
 from app.projects.patch_metadata import PATCH_KIND_INPAINT, patch_matches_kind
+from app.projects.project_metadata import normalize_page_state
 from app.ui.list_view_image_loader import ListViewImageLoader
 from app.thread_worker import GenericWorker
-from app.path_materialization import ensure_path_materialized
+from app.path_materialization import ensure_path_materialized, load_original_rgb
 from app.controllers.psd_importer import ImportedPsdPage, import_psd_files, prepare_psd_font_catalog
 from app.controllers.psd_support import require_photoshopapi
 from modules.utils.language_utils import to_canonical_language_name, to_ui_language_label
@@ -146,7 +147,7 @@ class ImageStateController:
                 state.get("export_group_name") or self._default_export_group_name(file_path)
             ),
         })
-        return state
+        return normalize_page_state(state)
 
     def restore_page_languages(self, state: dict, *, seed_sticky_languages: bool = False):
         """Restore page languages while keeping both manual language choices sticky.
@@ -208,7 +209,7 @@ class ImageStateController:
     def _resolve_skip_message_type(self, skip_reason: str, error: str) -> str:
         if self._is_content_flagged_error(error):
             return MMessage.ErrorType
-        if skip_reason == "Text Blocks":
+        if skip_reason in {"Text Blocks", "Existing Rendered Text"}:
             return MMessage.InfoType
         return MMessage.WarningType
 
@@ -237,6 +238,13 @@ class ImageStateController:
         file_name = os.path.basename(image_path)
         reason = self._summarize_skip_error(error)
         t = QtCore.QCoreApplication.translate
+
+        if skip_reason == "Existing Rendered Text":
+            detail = t(
+                "Messages",
+                "Page already contains rendered text; use manual Render to add missing regions.",
+            )
+            return f"{file_name}\n{detail}"
 
         message_map = {
             "Image Load": t("Messages", "Could not open image.\nSkipping:"),
@@ -367,6 +375,8 @@ class ImageStateController:
             return self.load_image(file_paths[0])
         return None
 
+    load_original_image = staticmethod(load_original_rgb)
+
     def load_image(self, file_path: str) -> np.ndarray:
         if file_path in self.main.image_data and self.main.image_data[file_path] is not None:
             return self.main.image_data[file_path]
@@ -394,6 +404,19 @@ class ImageStateController:
 
 
     def clear_state(self):
+        from app.projects.translation_profile import reset_translation_project
+        reset_translation_project(self.main)
+        from app.projects.lettering_styles import reset_lettering_project
+        reset_lettering_project(self.main)
+        styles = getattr(self.main, 'lettering_styles_ctrl', None)
+        if styles is not None:
+            styles.reset_for_project()
+        transform = getattr(self.main, 'lettering_transform_ctrl', None)
+        if transform is not None:
+            transform.reset_for_project()
+        context = getattr(self.main, "translation_context_ctrl", None)
+        if context is not None:
+            context.reset_for_project()
         artistic = getattr(self.main, "artistic_edit_ctrl", None)
         if artistic is not None:
             artistic.invalidate_project()
@@ -1313,6 +1336,9 @@ class ImageStateController:
                 needs_default_fit = True
 
             self.main.text_ctrl.clear_text_edits()
+            protection = getattr(self.main, "pixel_protection_ctrl", None)
+            if protection is not None:
+                protection.refresh_overlay()
         finally:
             viewer.setUpdatesEnabled(True)
             viewer.viewport().update()
@@ -1419,7 +1445,8 @@ class ImageStateController:
             stored_blk_list = self.main.image_states.get(file_path, {}).get('blk_list', [])
             self.main.blk_list = stored_blk_list.copy() if stored_blk_list else []
 
-            for data in viewer_state.get('text_items_state', []):
+            # Persisted text is top-first; rebuild equal-z scene items bottom-first.
+            for data in reversed(viewer_state.get('text_items_state', [])):
                 viewer.add_text_item(data)
 
             if viewer_state.get('push_to_stack', False):

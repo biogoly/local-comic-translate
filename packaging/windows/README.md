@@ -1,5 +1,14 @@
 # Windows x64 beta builds
 
+For the public beta 3 download, use the [Windows source setup guide](SOURCE_SETUP.md). Its launcher installs dependencies into a per-user runtime on first use. The versioned source ZIP can be reproduced from the tagged commit and checked against the release checksum:
+
+```powershell
+$revision = git rev-parse 'v0.1.0b3^{commit}'
+python packaging/windows/build_source_asset.py build --commit $revision --output release-artifacts/source
+```
+
+## Offline bundle
+
 This folder builds a one-folder, unsigned Windows x64 beta ZIP with PyInstaller.
 The main editor includes Python, Qt, ONNX Runtime and CUDA/cuDNN libraries;
 Python and a CUDA Toolkit installation are not required to run it. GPU processing

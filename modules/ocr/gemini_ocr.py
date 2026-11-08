@@ -2,6 +2,7 @@ import numpy as np
 import requests
 
 from .base import OCREngine
+from .evidence import assign_unscored_reading
 from ..utils.textblock import TextBlock, adjust_text_line_coordinates
 from ..utils.translator_utils import MODEL_MAP
 from app.ui.settings.settings_page import SettingsPage
@@ -76,7 +77,7 @@ class GeminiOCR(OCREngine):
                 encoded_img = self.encode_image(cropped_img)
                 
                 # Get OCR result from Gemini
-                blk.text = self._get_gemini_block_ocr(encoded_img)
+                assign_unscored_reading(blk, self._get_gemini_block_ocr(encoded_img), "Gemini", self.model)
                 
         return blk_list
     

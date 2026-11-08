@@ -15,13 +15,16 @@ def has_manual_translation(block) -> bool:
     )
 
 
-def merge_manual_regions(previous, detected):
-    """Keep manual boxes intact and suppress detections of the same text.
+def merge_manual_regions(previous, detected, *, retain_ids=()):
+    """Keep manual/protected boxes intact and suppress duplicate detections.
 
-    New detections still replace old automatic boxes. A slight overlap alone
+    New detections still replace unprotected automatic boxes. A slight overlap alone
     must not suppress neighbouring text or a much larger detected paragraph.
     """
-    manual = [block for block in previous if is_manual_region(block)]
+    from .region_policy import should_preserve_region
+    retain_ids = set(retain_ids)
+    manual = [block for block in previous if should_preserve_region(block)
+              or getattr(block, 'region_id', '') in retain_ids]
     additions = []
     for block in detected:
         duplicate = False

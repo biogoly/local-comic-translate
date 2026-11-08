@@ -17,11 +17,58 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
+# Leave room for Explorer's destination folder and its suggested ZIP-name folder.
+MAX_MEMBER_UNITS = 145
+
+
+def run_source_tests():
+    """Run the editor tests with real glyphs in the Windows offscreen Qt session."""
+    import unittest
+    from PySide6.QtGui import QFont, QFontDatabase, QRawFont
+    from PySide6.QtWidgets import QApplication
+
+    app = QApplication([])
+    # The Windows offscreen platform can enumerate zero installed families.
+    # Register the host's fonts for tests only; they are not package assets.
+    font_dir = Path(os.environ["SystemRoot"]) / "Fonts"
+    for name in ("arial.ttf", "arialbd.ttf", "ariali.ttf", "arialbi.ttf",
+                 "segoeui.ttf", "segoeuib.ttf", "meiryo.ttc", "meiryob.ttc", "malgun.ttf"):
+        if (font_dir / name).is_file():
+            QFontDatabase.addApplicationFont(str(font_dir / name))
+    app.setFont(QFont("Segoe UI", 9))
+    glyphs = QRawFont.fromFont(QFont("Arial", 20)).glyphIndexesForString("Hello")
+    if len(set(glyphs)) < 2:
+        raise RuntimeError("Qt could not load a usable system font for the editor tests.")
+    suite = unittest.defaultTestLoader.discover("tests")
+    return unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful()
 
 
 def run(command, *, env=None, cwd=ROOT):
     print("Running:", " ".join(map(str, command)), flush=True)
     subprocess.run(list(map(str, command)), cwd=cwd, env=env, check=True)
+
+
+def copy_source_notices(source: Path, destination: Path) -> None:
+    """Shorten redundant archive prefixes while preserving upstream relative links."""
+    groups = []
+    aliases = set()
+    for archive in sorted(source.iterdir()):
+        roots = list(archive.iterdir()) if archive.is_dir() else []
+        if len(roots) != 1 or not roots[0].is_dir():
+            raise ValueError(f"Expected one upstream notice root under {archive.name}")
+        alias = archive.name.partition("-")[0]
+        if not alias.isascii() or not alias.isalnum() or alias.casefold() in aliases:
+            raise ValueError(f"Ambiguous notice directory name: {archive.name}")
+        aliases.add(alias.casefold())
+        groups.append((alias, archive.name, roots[0]))
+    if not groups:
+        raise ValueError("The upstream source notice collection is empty.")
+    destination.mkdir(parents=True, exist_ok=False)
+    index = ["Package folder\tOriginal archive and top-level directory"]
+    for alias, archive_name, root in groups:
+        shutil.copytree(root, destination / alias)
+        index.append(f"{alias}/\t{archive_name}/{root.name}/")
+    (destination / "INDEX.txt").write_text("\n".join(index) + "\n", encoding="utf-8")
 
 
 def prepare_payload(payload: Path) -> str:
@@ -30,7 +77,11 @@ def prepare_payload(payload: Path) -> str:
         shutil.copy2(ROOT / name, payload / name)
     for name in ("README_fr.md", "README_ko.md", "README_zh-CN.md", "README_es.md",
                  "COMFYUI_BACKEND.md", "COMFYUI_RUNTIME_VALIDATION.md", "COMFYUI_BACKEND_PLAN.md",
-                 "LANGUAGE_SUPPORT.md", "RELEASE_NOTES_0.1.0b2.md"):
+                 "LANGUAGE_SUPPORT.md", "RELEASE_NOTES_0.1.0b2.md", f"RELEASE_NOTES_{version}.md",
+                 "TEXT_FIT_M0_M1A.md", "TEXT_FIT_M1B.md", "AUTOMATIC_BUBBLE_FITTING.md",
+                 "REVIEW_NAVIGATOR.md", "TRANSLATION_CONTEXT.md", "SPATIAL_TRANSLATION_CONTEXT.md",
+                 "GRADIENT_REPAIR.md", "PROTECTED_REPAIRS.md", "LETTERING_STYLES.md",
+                 "LETTERING_TRANSFORMS.md", "LETTERING_CHECK.md", "ARTISTIC_EDIT_PREVIEWS.md"):
         (payload / "docs").mkdir(exist_ok=True)
         shutil.copy2(ROOT / "docs" / name, payload / "docs" / name)
     lora_docs = payload / "models/loras/flux2-klein"
@@ -44,7 +95,9 @@ def prepare_payload(payload: Path) -> str:
         shutil.copy2(ROOT / "packaging/windows" / name, payload / "packaging/windows" / name)
     extra_licenses = ROOT / "packaging/windows/licenses"
     if extra_licenses.is_dir():
-        shutil.copytree(extra_licenses, payload / "licenses")
+        shutil.copytree(extra_licenses, payload / "licenses",
+                        ignore=lambda at, names: ["source-notices"] if Path(at) == extra_licenses else [])
+        copy_source_notices(extra_licenses / "source-notices", payload / "licenses/src")
 
     packages = []
     for dist in sorted(metadata.distributions(), key=lambda d: d.metadata["Name"].lower()):
@@ -94,13 +147,21 @@ def prepare_payload(payload: Path) -> str:
 
 def archive_verified_bundle(bundle: Path, output: Path, version: str) -> Path:
     """Archive only after callers have obtained a passing packaged smoke report."""
-    archive = output / f"LocalComicTranslate-{version}-windows-x64.zip"
+    archive = output / f"LCT-{version}-x64.zip"
+    members = []
+    for file in sorted(bundle.rglob("*")):
+        if not file.is_file():
+            continue
+        member = file.relative_to(bundle.parent).as_posix()
+        units = len(member.encode("utf-16-le")) // 2
+        if units > MAX_MEMBER_UNITS:
+            raise ValueError(f"Windows ZIP path is too long ({units} > {MAX_MEMBER_UNITS}): {member}")
+        if file.suffix.lower() in {".gguf", ".safetensors", ".ctpr", ".onnx", ".pt", ".pth"}:
+            raise RuntimeError(f"Unexpected model or project in bundle: {file.name}")
+        members.append((file, member))
     with zipfile.ZipFile(archive, "x", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as target:
-        for file in sorted(bundle.rglob("*")):
-            if file.is_file():
-                if file.suffix.lower() in {".gguf", ".safetensors", ".ctpr", ".onnx", ".pt", ".pth"}:
-                    raise RuntimeError(f"Unexpected model or project in bundle: {file.name}")
-                target.write(file, file.relative_to(bundle.parent))
+        for file, member in members:
+            target.write(file, member)
     if archive.stat().st_size >= 2 * 1024**3:
         raise RuntimeError("ZIP exceeds the per-asset GitHub Release size limit; do not publish it.")
     with archive.open("rb") as handle:
@@ -144,9 +205,8 @@ def main() -> None:
     if not args.skip_tests:
         # Create QApplication before discovery: some protocol tests create a
         # QCoreApplication otherwise, which cannot later host widget tests.
-        run([sys.executable, "-c", "from PySide6.QtWidgets import QApplication; app = QApplication([]); "
-             "import unittest; r = unittest.TextTestRunner(verbosity=1).run(unittest.defaultTestLoader.discover('tests')); "
-             "raise SystemExit(not r.wasSuccessful())"], env=environment)
+        run([sys.executable, "-c", "import runpy; check = runpy.run_path('packaging/windows/build.py'); "
+             "raise SystemExit(not check['run_source_tests']())"], env=environment)
         run([sys.executable, "resources/translations/check_translations.py"], env=environment)
     run([sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean",
          "--workpath", work / "pyinstaller", "--distpath", work / "dist",

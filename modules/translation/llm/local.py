@@ -21,10 +21,8 @@ from .local_response import (
     build_chat_payload,
     chat_completions_url,
     extract_message_content,
-    request_valid_translation,
 )
 from ...utils.textblock import TextBlock
-from ...utils.translator_utils import get_raw_text
 
 
 logger = logging.getLogger(__name__)
@@ -90,40 +88,10 @@ class LocalLLMTranslation(BaseLLMTranslation):
         image: np.ndarray | None,
         extra_context: str,
     ) -> list[TextBlock]:
-        if not blk_list:
-            return blk_list
-
-        expected_keys = [f"block_{index}" for index in range(len(blk_list))]
-        raw_text = get_raw_text(blk_list)
-        system_prompt = self.get_system_prompt(self.source_lang, self.target_lang)
-        system_prompt += (
-            "\nReturn exactly one valid JSON object. Its keys must be exactly: "
-            f"{', '.join(expected_keys)}. Every value must be a non-empty translated string. "
-            "Never leave a value blank; preserve a name or symbol verbatim when it should not change."
-        )
-        base_user_prompt = (
-            f"{extra_context.strip()}\n"
-            "Use the page image for visual context when one is provided. Correct obvious OCR mistakes "
-            "from that context, then make the translation sound natural.\n"
-            f"Translate this JSON:\n{raw_text}"
-        ).strip()
-
         try:
-            translations = request_valid_translation(
-                lambda prompt: self._perform_translation(prompt, system_prompt, image),
-                base_user_prompt,
-                expected_keys,
-                max_attempts=self.MAX_RESPONSE_ATTEMPTS,
-                required_content_keys=expected_keys,
-            )
+            return super().translate(blk_list, image, extra_context)
         except TranslationResponseError as exc:
             raise RuntimeError(f"The local model returned an {exc}") from exc
-
-        # Commit only after the whole response validates so a failed local
-        # request never leaves a page with partially shifted translations.
-        for index, block in enumerate(blk_list):
-            block.translation = translations[f"block_{index}"]
-        return blk_list
 
     def _perform_translation(
         self,
@@ -131,6 +99,12 @@ class LocalLLMTranslation(BaseLLMTranslation):
         system_prompt: str,
         image: np.ndarray | None,
     ) -> str:
+        return self._request_chat(user_prompt, system_prompt, image, retry_connection=True)
+
+    def complete_text_once(self, user_prompt: str, system_prompt: str) -> str:
+        return self._request_chat(user_prompt, system_prompt, None, retry_connection=False)
+
+    def _request_chat(self, user_prompt, system_prompt, image, *, retry_connection):
         api_base_url = self._get_api_base_url()
         headers = {"Content-Type": "application/json"}
         if self.api_key:
@@ -163,12 +137,14 @@ class LocalLLMTranslation(BaseLLMTranslation):
                     headers=headers,
                     json=payload,
                     timeout=self.timeout,
+                    # An explicitly confirmed summary may only go to the displayed endpoint.
+                    allow_redirects=retry_connection,
                 )
                 response.raise_for_status()
                 response_data = response.json()
                 break
             except requests.exceptions.ConnectionError as exc:
-                if attempt == 0:
+                if attempt == 0 and retry_connection:
                     if self.runtime_mode == "managed":
                         runtime = get_llama_server_runtime()
                         previous_server_output = runtime.recent_output()

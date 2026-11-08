@@ -46,6 +46,7 @@ class RectangleManager:
                 rotation=rect_data['rotation'],
                 origin=origin
             )
+            rect_item.region_id = rect_data.get('region_id')
             
             # Connect signals - the viewer's add_rectangle should handle this
             self.viewer.connect_rect_item.emit(rect_item)
@@ -74,6 +75,7 @@ class RectangleManager:
                     page_local_pos = self.coordinate_converter.scene_to_page_local_position(scene_pos, page_idx)
                     
                     rect_data = {
+                        'region_id': getattr(rect_item, 'region_id', None),
                         'rect': (page_local_pos.x(), page_local_pos.y(), 
                                 rect_item.boundingRect().width(), rect_item.boundingRect().height()),
                         'rotation': rect_item.rotation(),
@@ -115,6 +117,7 @@ class RectangleManager:
                         clipped_rect = self.coordinate_converter.clip_rectangle_to_page(rect_item, page_idx)
                         if clipped_rect and clipped_rect[2] > 0 and clipped_rect[3] > 0:
                             rect_data = {
+                                'region_id': getattr(rect_item, 'region_id', None),
                                 'rect': clipped_rect,
                                 'rotation': rect_item.rotation(),
                                 'transform_origin': (rect_item.transformOriginPoint().x(), 
@@ -177,6 +180,7 @@ class RectangleManager:
                     clipped_rect = self.coordinate_converter.clip_rectangle_to_page(mock_rect, page_idx)
                     if clipped_rect and clipped_rect[2] > 0 and clipped_rect[3] > 0:
                         clipped_rect_data = {
+                            'region_id': rect_data.get('region_id'),
                             'rect': clipped_rect,
                             'rotation': rect_data.get('rotation', 0.0),
                             'transform_origin': rect_data.get('transform_origin', (0, 0))

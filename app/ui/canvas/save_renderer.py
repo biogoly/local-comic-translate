@@ -1,3 +1,4 @@
+import copy
 from PySide6 import QtCore, QtGui, QtWidgets
 import imkit as imk
 import numpy as np
@@ -30,41 +31,48 @@ class ImageSaveRenderer:
     def add_state_to_image(self, state, page_idx=None, main_page=None):
         # Add spanning text items if we have the context to do so
         if page_idx is not None and main_page is not None:
+            state = dict(state)
             self.add_spanning_text_items(state, page_idx, main_page)
 
-        for text_block in state.get('text_items_state', []):
-            # Use TextItemProperties for consistent text item construction
-            text_props = TextItemProperties.from_dict(text_block)
-            
-            text_item = TextBlockItem(
-                text=text_props.text,
-                font_family=text_props.font_family,
-                font_size=text_props.font_size,
-                render_color=text_props.text_color,
-                alignment=text_props.alignment,
-                line_spacing=text_props.line_spacing,
-                outline_color=text_props.outline_color,
-                outline_width=text_props.outline_width,
-                bold=text_props.bold,
-                italic=text_props.italic,
-                underline=text_props.underline,
-                direction=text_props.direction,
-            )
+        # State and PSD layers are top-first; equal-z Qt siblings are last-on-top.
+        for text_block in reversed(state.get('text_items_state', [])):
+            self.scene.addItem(self.create_text_item(text_block))
 
-            text_item.set_text(text_props.text, text_props.width)
-            if text_props.direction:
-                text_item.set_direction(text_props.direction)
-            if text_props.transform_origin:
-                text_item.setTransformOriginPoint(QtCore.QPointF(*text_props.transform_origin))
-            text_item.setPos(QtCore.QPointF(*text_props.position))
-            text_item.setRotation(text_props.rotation)
-            text_item.setScale(text_props.scale)
-            text_item.set_vertical(bool(text_props.vertical))
-            text_item.set_color(text_props.text_color)
-            text_item.selection_outlines = text_props.selection_outlines.copy()
-            text_item.update()
-
-            self.scene.addItem(text_item)
+    @staticmethod
+    def create_text_item(state):
+        """Build the same editable text geometry used by page and PSD exports."""
+        props = TextItemProperties.from_dict(state)
+        item = TextBlockItem(
+            text=props.text, font_family=props.font_family, font_size=props.font_size,
+            render_color=props.text_color, alignment=props.alignment,
+            line_spacing=props.line_spacing, outline_color=props.outline_color,
+            outline_width=props.outline_width, bold=props.bold, italic=props.italic,
+            underline=props.underline, direction=props.direction,
+        )
+        item.set_text(props.text, props.width)
+        item.region_id = props.region_id
+        item.layout_preferences = copy.deepcopy(props.layout_preferences)
+        if props.document_font:
+            font = QtGui.QFont()
+            if font.fromString(props.document_font):
+                item.document().setDefaultFont(font)
+        item.set_direction(props.direction)
+        item.set_vertical(bool(props.vertical))
+        if item.vertical and item.layout and props.layout_preferences.get('bound_height'):
+            item.layout.set_max_size(props.width, props.layout_preferences['bound_height'])
+        # Restoring rich HTML must not recolor explicit word-level spans.
+        item.setDefaultTextColor(props.text_color)
+        item.selection_outlines = copy.deepcopy(props.selection_outlines)
+        item.setPos(QtCore.QPointF(*props.position))
+        item.setRotation(props.rotation)
+        item.setScale(props.scale)
+        item.set_lettering_transform(props.lettering_transform)
+        # Installing a curved document layout can update its visual center.
+        # The saved pivot is authoritative and must be restored afterwards.
+        if props.transform_origin is not None:
+            item.setTransformOriginPoint(QtCore.QPointF(*props.transform_origin))
+        item.update()
+        return item
 
     def add_spanning_text_items(self, viewer_state, page_idx, main_page):
         """
@@ -74,7 +82,8 @@ class ImageSaveRenderer:
         the intended visible area are positioned off-canvas and are clipped by
         the renderer.
         """
-        existing_text_items = viewer_state.get('text_items_state', [])
+        # Work on a new list: export must not persist generated seam copies.
+        existing_text_items = list(viewer_state.get('text_items_state', []))
 
         current_image_path = main_page.image_files[page_idx]
         ensure_path_materialized(current_image_path)
@@ -116,6 +125,8 @@ class ImageSaveRenderer:
                 continue
 
             for text_item in other_text_items:
+                if text_item.get('lettering_transform'):
+                    continue  # Full transformed geometry is handled below.
                 pos = text_item.get('position', (0, 0))
                 item_x1, item_y1 = pos
                 height = self._resolve_text_item_height(text_item)
@@ -150,7 +161,51 @@ class ImageSaveRenderer:
                     spanning_text_item['position'] = new_pos
                     existing_text_items.append(spanning_text_item)
 
+        self._add_transformed_spanning_items(existing_text_items, page_idx, main_page)
         viewer_state['text_items_state'] = existing_text_items
+
+    def _add_transformed_spanning_items(self, existing, page_idx, main_page):
+        """Clip whole warped documents at export; never split their rich text."""
+        sources = [(index, item) for index, path in enumerate(main_page.image_files)
+                   if index != page_idx
+                   for item in main_page.image_states.get(path, {}).get('viewer_state', {}).get('text_items_state', [])
+                   if item.get('lettering_transform')]
+        if not sources:
+            return
+        # Pages are centered in the continuous canvas. Read headers rather than
+        # decoding every image when calculating long-range overflow offsets.
+        from PIL import Image
+        sizes = []
+        for path in main_page.image_files:
+            cached = getattr(main_page, 'image_data', {}).get(path)
+            if cached is not None:
+                sizes.append((cached.shape[1], cached.shape[0]))
+            else:
+                ensure_path_materialized(path)
+                with Image.open(path) as image:
+                    sizes.append(image.size)
+        target_width, target_height = sizes[page_idx]
+        offsets, offset = [], 0
+        for _width, height in sizes:
+            offsets.append(offset)
+            offset += height
+        target_rect = QtCore.QRectF(0, 0, target_width, target_height)
+        seen = {(item.get('region_id'), tuple(item.get('position', ())))
+                for item in existing if item.get('region_id')}
+        for index, state in sources:
+            item = self.create_text_item(state)
+            delta = QtCore.QPointF((target_width - sizes[index][0]) / 2,
+                                  offsets[index] - offsets[page_idx])
+            item.setPos(item.pos() + delta)
+            if not item.sceneBoundingRect().intersects(target_rect):
+                continue
+            copied = copy.deepcopy(state)
+            copied['position'] = (item.pos().x(), item.pos().y())
+            identity = (copied.get('region_id'), copied['position'])
+            if copied.get('region_id') and identity in seen:
+                continue
+            existing.append(copied)
+            seen.add(identity)
 
     def _resolve_text_item_height(self, text_item_state):
         height = text_item_state.get('height')
@@ -174,9 +229,15 @@ class ImageSaveRenderer:
                 direction=text_props.direction,
             )
             text_item.set_text(text_props.text, text_props.width)
+            if text_props.document_font:
+                document_font = QtGui.QFont()
+                if document_font.fromString(text_props.document_font):
+                    text_item.document().setDefaultFont(document_font)
             if text_props.direction:
                 text_item.set_direction(text_props.direction)
             text_item.set_vertical(bool(text_props.vertical))
+            if text_props.vertical and text_item.layout and text_props.layout_preferences.get('bound_height'):
+                text_item.layout.set_max_size(text_props.width, text_props.layout_preferences['bound_height'])
             text_item.set_color(text_props.text_color)
             return float(text_item.boundingRect().height())
         except Exception:

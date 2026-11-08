@@ -9,7 +9,7 @@ from PySide6.QtGui import QFont, QFontDatabase
 from app.shortcuts import get_default_shortcuts
 from .settings_ui import SettingsPageUI
 from modules.utils.device import is_gpu_available
-from modules.translation.providers import credential_service, provider_for_translator
+from modules.translation.providers import credential_service, provider_for_translator, translator_supports_images
 from modules.utils.translator_utils import MODEL_MAP
 from app.update_checker import UpdateChecker
 from modules.utils.paths import get_user_data_dir, get_default_project_autosave_dir
@@ -52,14 +52,26 @@ class SettingsPage(QtWidgets.QWidget):
         self.ui.theme_combo.currentTextChanged.connect(self.on_theme_changed)
         self.ui.lang_combo.currentTextChanged.connect(self.on_language_changed)
         self.ui.translator_combo.currentTextChanged.connect(self._sync_extra_context_limit)
+        self.ui.translator_combo.currentTextChanged.connect(self._sync_spatial_context)
+        for key, widget in self.ui.credential_widgets.items():
+            if key.endswith('_model') and isinstance(widget, QtWidgets.QComboBox):
+                widget.currentTextChanged.connect(self._sync_spatial_context)
         self.ui.font_browser.sig_files_changed.connect(self.import_font)
         self.ui.shortcuts_page.shortcut_changed.connect(self.on_shortcut_changed)
         self.ui.check_update_button.clicked.connect(self.check_for_updates)
         self._sync_extra_context_limit(self.ui.translator_combo.currentText())
+        self._sync_spatial_context()
 
     def _sync_extra_context_limit(self, translator: str) -> None:
         self.ui.llms_page.set_extra_context_unlimited(True)
         self.ui.llms_page.set_local_settings_visible(True)
+
+    def _sync_spatial_context(self, *_):
+        translator = self.ui.translator_combo.currentText()
+        translator = self.ui.value_mappings.get(translator, translator)
+        model_widget = self.ui.credential_widgets.get(credential_service(translator) + '_model')
+        model = model_widget.currentText().strip() if model_widget is not None else ''
+        self.ui.llms_page.set_translator_supports_images(translator_supports_images(translator, model))
 
     def on_theme_changed(self, theme: str):
         self.theme_changed.emit(theme)
@@ -89,6 +101,7 @@ class SettingsPage(QtWidgets.QWidget):
         return {
             'extra_context': self.ui.extra_context.toPlainText(),
             'image_input_enabled': self.ui.image_checkbox.isChecked(),
+            'spatial_context_enabled': self.ui.spatial_context_checkbox.isChecked(),
             'local_runtime': local_page.local_runtime_combo.currentData() or 'managed',
             'local_endpoint': local_page.local_endpoint.text().strip(),
             'local_model': local_page.local_model.text().strip(),
@@ -163,6 +176,12 @@ class SettingsPage(QtWidgets.QWidget):
 
         return settings
     
+    def get_bubble_render_settings(self):
+        return {
+            'auto_bubble_fit': self.ui.auto_bubble_fit_checkbox.isChecked(),
+            'bubble_padding': float(self.ui.auto_bubble_padding_spinbox.value()),
+        }
+
     def get_all_settings(self):
         return {
             'language': self.get_language(),
@@ -177,6 +196,7 @@ class SettingsPage(QtWidgets.QWidget):
             },
             'llm': self.get_llm_settings(),
             'export': self.get_export_settings(),
+            'text_rendering': self.get_bubble_render_settings(),
             'shortcuts': self.ui.shortcuts_page.get_shortcuts(),
             'credentials': self.get_credentials(),
             'save_keys': self.ui.save_keys_checkbox.isChecked()
@@ -349,10 +369,17 @@ class SettingsPage(QtWidgets.QWidget):
         settings.endGroup()  # hd_strategy
         settings.endGroup()  # tools
 
+        # Missing keys keep the optional fitting behavior disabled in older installs.
+        settings.beginGroup('text_rendering')
+        self.ui.auto_bubble_fit_checkbox.setChecked(settings.value('auto_bubble_fit', False, type=bool))
+        self.ui.auto_bubble_padding_spinbox.setValue(settings.value('bubble_padding', 8, type=int))
+        settings.endGroup()
+
         # Load LLM settings
         settings.beginGroup('llm')
         self.ui.extra_context.setPlainText(settings.value('extra_context', ''))
         self.ui.image_checkbox.setChecked(settings.value('image_input_enabled', False, type=bool))
+        self.ui.spatial_context_checkbox.setChecked(settings.value('spatial_context_enabled', False, type=bool))
         local_page = self.ui.llms_page
         local_page.set_local_runtime(settings.value('local_runtime', 'managed', type=str))
         local_page.local_endpoint.setText(settings.value('local_endpoint', 'http://127.0.0.1:11434/v1', type=str))

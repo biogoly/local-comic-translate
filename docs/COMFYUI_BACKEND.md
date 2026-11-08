@@ -32,7 +32,8 @@ operate during normal editing.
    selections returns the preset selector to **Custom / native checkpoint**.
    Save the configuration.
 5. Use the existing selection/painted-area/whole-page controls and prompt, then
-   **Generate Preview**. Inspect the result before **Apply**. Apply creates the
+   **Generate Preview**. Inspect the result, or [compare two versions](ARTISTIC_EDIT_PREVIEWS.md),
+   before **Apply**. Apply creates the
    same reversible image patch as the other backends; Undo and Revert Artistic
    Edits remain available. Editable text overlays are not baked into the input.
 

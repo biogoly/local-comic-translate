@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
+from copy import deepcopy
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, List
 
@@ -12,11 +13,15 @@ from app.path_materialization import ensure_path_materialized
 from app.ui.canvas.save_renderer import ImageSaveRenderer
 from app.ui.canvas.text.text_item_properties import TextItemProperties
 from app.ui.canvas.text_item import OutlineInfo, OutlineType
-from modules.rendering.render import get_best_render_area, is_vertical_block, pyside_word_wrap
+from modules.rendering.render import (
+    block_for_render_area, get_best_render_area, is_vertical_block, orient_new_lettering, pyside_word_wrap,
+)
+from modules.rendering.auto_bubble_fit import fit_new_text_item, load_original_for_fitting
 from modules.utils.image_utils import get_smart_text_color
 from modules.utils.language_utils import get_language_code, is_no_space_lang
 from modules.utils.textblock import TextBlock
 from modules.utils.translator_utils import format_translations, get_raw_text, get_raw_translation, is_renderable_translation
+from modules.utils.region_policy import permits_region_operation, retained_layout_states
 
 if TYPE_CHECKING:
     from .processor import WebtoonBatchProcessor
@@ -32,9 +37,14 @@ class RenderMixin:
         has_patches: bool,
     ) -> List[TextBlock]:
         page_state = self.main_page.image_states[image_path]
+        session = getattr(self, '_translation_session', None)
+        if session is not None:
+            session.validate(image_path)
         if not blocks:
             page_state["blk_list"] = []
             page_state["skip_render"] = not has_patches
+            if session is not None:
+                session.mark_published(image_path)
             return []
 
         render_settings = self.main_page.render_settings()
@@ -42,11 +52,17 @@ class RenderMixin:
         target_lang_code = get_language_code(target_lang)
 
         format_translations(
-            blocks, target_lang_code, upper_case=render_settings.upper_case
+            [block for block in blocks if permits_region_operation(block, 'translation')
+             and block.region_id not in getattr(self, '_review_manual_ids', ())], target_lang_code, upper_case=render_settings.upper_case
         )
 
         page_state["blk_list"] = blocks
         page_state["skip_render"] = False
+        if session is not None:
+            # This checkpoint includes our deliberate case formatting. The
+            # renderer below keeps wrapping in text properties/copies; advancing
+            # again after rendering could accept an intervening user text edit.
+            session.mark_published(image_path)
         return blocks
 
     def _store_page_text_items(
@@ -59,13 +75,23 @@ class RenderMixin:
     ) -> None:
         page_state = self.main_page.image_states[image_path]
         viewer_state = page_state.setdefault("viewer_state", {})
+        session = getattr(self, '_translation_session', None)
+        spatial = image_path in getattr(session, 'spatial_paths', ())
+        # Sizing a rotated layer or a layer referenced by the vision request
+        # must preserve the canonical OCR/cleanup box, including at page seams.
+        canonical_blocks = blocks
+        blocks = [block.deep_copy() if spatial else block_for_render_area(block)
+                  for block in canonical_blocks]
+        render_settings = self.main_page.render_settings()
+        auto_bubble_fit = bool(getattr(render_settings, "auto_bubble_fit", False))
+        previous_items = viewer_state.get("text_items_state", [])
+        existing_by_id = retained_layout_states(blocks, previous_items, retain_all=auto_bubble_fit)
         viewer_state["text_items_state"] = []
         viewer_state["push_to_stack"] = True
 
         if not blocks:
             return
 
-        render_settings = self.main_page.render_settings()
         font = render_settings.font_family
         base_font_color = QColor(render_settings.color)
         max_font_size = render_settings.max_font_size
@@ -84,11 +110,22 @@ class RenderMixin:
         target_lang_code = get_language_code(target_lang)
 
         virtual_img = SimpleNamespace(shape=image_shape)
+        fit_blocks = {
+            id(block): block.deep_copy() for block in blocks
+        } if auto_bubble_fit else {}
+        original_for_fitting = (
+            load_original_for_fitting(image_path, expected_shape=image_shape)
+            if auto_bubble_fit and any(block.region_id not in existing_by_id
+                                       and permits_region_operation(block, 'layout') for block in blocks)
+            else None
+        )
         # Avoid clipping seam-owned overflow blocks (needed for page-spanning text).
         in_bounds_blocks = [
             block
             for block in blocks
             if float(block.xyxy[1]) >= 0 and float(block.xyxy[3]) <= float(image_shape[0])
+            and block.region_id not in existing_by_id
+            and permits_region_operation(block, 'layout')
         ]
         if in_bounds_blocks:
             get_best_render_area(in_bounds_blocks, virtual_img)
@@ -100,9 +137,20 @@ class RenderMixin:
         live_block_ids = (
             None if live_blocks is None else {id(block) for block in live_blocks}
         )
+        live_region_ids = None if live_blocks is None else {block.region_id for block in live_blocks}
         page_scene_offset = self._get_page_scene_offset(page_index)
 
-        for block in blocks:
+        for block, canonical in zip(blocks, canonical_blocks):
+            # Incremental webtoon publishing revisits accumulated blocks. Keep
+            # their exact fitted/manual properties rather than fitting twice.
+            # Never guess identity from overlap after a fresh detection pass.
+            if block.region_id in existing_by_id:
+                viewer_state["text_items_state"].append(deepcopy(existing_by_id[block.region_id]))
+                continue
+            if not permits_region_operation(block, 'layout'):
+                viewer_state['text_items_state'].extend(deepcopy(item) for item in previous_items
+                                                        if item.get('region_id') == block.region_id)
+                continue
             x1, y1, x2, y2 = [float(v) for v in block.xyxy]
             width = max(1.0, x2 - x1)
             height = max(1.0, y2 - y1)
@@ -137,22 +185,9 @@ class RenderMixin:
             )
 
             font_color = get_smart_text_color(block.font_color, base_font_color)
-            if should_emit_live and (live_block_ids is None or id(block) in live_block_ids):
-                render_block = block.deep_copy()
-                render_block.translation = wrapped_translation
-                render_block.xyxy = list(render_block.xyxy)
-                render_block.xyxy[1] += page_scene_offset
-                render_block.xyxy[3] += page_scene_offset
-                if render_block.bubble_xyxy is not None:
-                    render_block.bubble_xyxy = list(render_block.bubble_xyxy)
-                    render_block.bubble_xyxy[1] += page_scene_offset
-                    render_block.bubble_xyxy[3] += page_scene_offset
-                self.main_page.blk_rendered.emit(
-                    wrapped_translation, font_size, render_block, image_path
-                )
-
             text_props = TextItemProperties(
                 text=wrapped_translation,
+                region_id=block.region_id,
                 font_family=font,
                 font_size=font_size,
                 text_color=font_color,
@@ -164,7 +199,6 @@ class RenderMixin:
                 italic=italic,
                 underline=underline,
                 position=(x1, y1),
-                rotation=block.angle,
                 scale=1.0,
                 transform_origin=block.tr_origin_point if block.tr_origin_point else (0, 0),
                 width=rendered_width,
@@ -183,7 +217,35 @@ class RenderMixin:
                 if outline
                 else [],
             )
-            viewer_state["text_items_state"].append(text_props.to_dict())
+            orient_new_lettering(text_props, block)
+            if auto_bubble_fit:
+                text_props = fit_new_text_item(
+                    text_props, fit_blocks[id(block)], original_for_fitting,
+                    render_settings, source_text=translation,
+                )
+            properties = text_props.to_dict()
+            viewer_state["text_items_state"].append(properties)
+
+            # Construct saved properties first so the live item can use the
+            # same HTML, font, width and page-local position as reload/export.
+            emit_block = ((live_region_ids is None or block.region_id in live_region_ids) if spatial
+                          else (live_block_ids is None or id(canonical) in live_block_ids))
+            if should_emit_live and emit_block:
+                render_block = canonical.deep_copy()
+                render_block.translation = wrapped_translation
+                render_block.xyxy = list(render_block.xyxy)
+                render_block.xyxy[1] += page_scene_offset
+                render_block.xyxy[3] += page_scene_offset
+                if render_block.bubble_xyxy is not None:
+                    render_block.bubble_xyxy = list(render_block.bubble_xyxy)
+                    render_block.bubble_xyxy[1] += page_scene_offset
+                    render_block.bubble_xyxy[3] += page_scene_offset
+                if auto_bubble_fit or block is not canonical:
+                    render_block._render_text_properties = deepcopy(properties)
+                    render_block._render_page_origin = (0, page_scene_offset)
+                self.main_page.blk_rendered.emit(
+                    wrapped_translation, text_props.font_size, render_block, image_path
+                )
 
     def _save_final_rendered_page(
         self: WebtoonBatchProcessor, page_idx: int, image_path: str, timestamp: str
@@ -197,6 +259,9 @@ class RenderMixin:
 
         ensure_path_materialized(image_path)
         image = imk.read_image(image_path)
+        compose = getattr(getattr(self.main_page, 'image_ctrl', None), 'get_composited_page_image', None)
+        if callable(compose):
+            image = compose(image_path)
         if image is None:
             logger.error("Failed to load physical image for rendering: %s", image_path)
             return

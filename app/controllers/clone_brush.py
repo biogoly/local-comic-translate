@@ -53,9 +53,11 @@ class CloneBrushController(QtCore.QObject):
         local = QtCore.QPointF(math.floor(local.x()) + 0.5, math.floor(local.y()) + 0.5)
         stack = self.main.undo_stacks[file_path]
         if set_source:
-            image = (self.main.image_ctrl.load_image(file_path) if self.panel.clone_original.isChecked()
-                     else self.main.image_ctrl.get_composited_page_image(file_path))
-            if image is None:
+            self.source = None
+            current = self.main.image_ctrl.get_composited_page_image(file_path)
+            image = (self.main.image_ctrl.load_original_image(file_path) if self.panel.clone_original.isChecked()
+                     else current)
+            if current is None or image is None or image.shape != current.shape:
                 self.repair._notice(self.tr("The clone source image is unavailable."))
                 return
             if not (0 <= local.x() < image.shape[1] and 0 <= local.y() < image.shape[0]):

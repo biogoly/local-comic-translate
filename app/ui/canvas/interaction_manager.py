@@ -48,6 +48,9 @@ class InteractionManager:
     def _in_rotate_ring(self, item: Optional[MoveableRectItem|TextBlockItem], scene_pos) -> bool:
         """Checks if a scene position is within the item's rotation ring."""
         if not item: return False
+        if getattr(item, 'lettering_transform', None):
+            distance = self._transformed_edge_distance(item, scene_pos)
+            return distance is not None and self.rotate_margin_min < distance < self.rotate_margin_max
         local = item.mapFromScene(scene_pos)
         r = item.boundingRect()
         dx = max(r.left() - local.x(), 0, local.x() - r.right())
@@ -58,12 +61,51 @@ class InteractionManager:
     def _in_resize_area(self, item: Optional[MoveableRectItem|TextBlockItem], scene_pos) -> bool:
         """Checks if a scene position is within the item's resize area."""
         if not item: return False
+        if getattr(item, 'lettering_transform', None):
+            return self._transformed_resize_handle(item, scene_pos) is not None
         local = item.mapFromScene(scene_pos)
         r = item.boundingRect()
         dx = max(r.left() - local.x(), 0, local.x() - r.right())
         dy = max(r.top() - local.y(), 0, local.y() - r.bottom())
         dist = math.hypot(dx, dy)
         return self.resize_margin_min < dist < self.resize_margin_max
+
+    @staticmethod
+    def _segment_distance(point, a, b):
+        delta = b - a
+        length = delta.x() ** 2 + delta.y() ** 2
+        if length <= 1e-12:
+            return math.hypot(point.x() - a.x(), point.y() - a.y())
+        t = max(0.0, min(1.0, ((point - a).x() * delta.x() + (point - a).y() * delta.y()) / length))
+        nearest = a + delta * t
+        return math.hypot(point.x() - nearest.x(), point.y() - nearest.y())
+
+    def _transformed_quad(self, item):
+        rect = item.boundingRect()
+        mapping = self.viewer.viewportTransform()
+        return [mapping.map(item.mapToScene(p)) for p in
+                (rect.topLeft(), rect.topRight(), rect.bottomRight(), rect.bottomLeft())]
+
+    def _transformed_edge_distance(self, item, scene_pos):
+        if item.boundingRect().contains(item.mapFromScene(scene_pos)):
+            return None
+        quad = self._transformed_quad(item)
+        point = self.viewer.viewportTransform().map(scene_pos)
+        return min(self._segment_distance(point, quad[i], quad[(i + 1) % 4]) for i in range(4))
+
+    def _transformed_resize_handle(self, item, scene_pos):
+        if item.boundingRect().contains(item.mapFromScene(scene_pos)):
+            return None
+        quad = self._transformed_quad(item)
+        point = self.viewer.viewportTransform().map(scene_pos)
+        # Keep grab distances in screen pixels regardless of zoom or distortion.
+        for name, corner in zip(('top_left', 'top_right', 'bottom_right', 'bottom_left'), quad):
+            if math.hypot(point.x() - corner.x(), point.y() - corner.y()) <= 10:
+                return name
+        for i, name in enumerate(('top', 'right', 'bottom', 'left')):
+            if self._segment_distance(point, quad[i], quad[(i + 1) % 4]) <= 8:
+                return name
+        return None
 
     def rotate_cursor(self, cursor, steps):
         cursor_map = {
@@ -77,7 +119,7 @@ class InteractionManager:
     def get_resize_cursor(self, item: MoveableRectItem | TextBlockItem, pos: QPointF) -> QtGui.QCursor:
         """Gets the appropriate resize cursor for a given position."""
         rect = item.boundingRect()
-        handle = self.get_handle_at_position(pos, rect)
+        handle = self.get_resize_handle(item, pos)
         
         cursors = {
             'top_left': Qt.CursorShape.SizeFDiagCursor,
@@ -91,6 +133,14 @@ class InteractionManager:
         }
         
         if handle:
+            if getattr(item, 'lettering_transform', None):
+                center = rect.center()
+                destination = QPointF(rect.right() if 'right' in handle else rect.left() if 'left' in handle else center.x(),
+                                      rect.bottom() if 'bottom' in handle else rect.top() if 'top' in handle else center.y())
+                mapping = self.viewer.viewportTransform()
+                vector = mapping.map(item.mapToScene(destination)) - mapping.map(item.mapToScene(center))
+                step = round(math.degrees(math.atan2(vector.y(), vector.x())) / 45) % 4
+                return QtGui.QCursor((Qt.SizeHorCursor, Qt.SizeFDiagCursor, Qt.SizeVerCursor, Qt.SizeBDiagCursor)[step])
             cursor = cursors.get(handle, Qt.CursorShape.ArrowCursor)
             # Adjust cursor based on rotation
             rotation = item.rotation() % 360
@@ -117,6 +167,8 @@ class InteractionManager:
 
     def get_resize_handle(self, item: MoveableRectItem | TextBlockItem, pos: QPointF) -> str | None:
         """Determines which resize handle is at a position (pos is in item's local coordinates)."""
+        if getattr(item, 'lettering_transform', None):
+            return self._transformed_resize_handle(item, item.mapToScene(pos))
         return self.get_handle_at_position(pos, item.boundingRect())
 
     def get_handle_at_position(self, pos, rect):
@@ -149,18 +201,31 @@ class InteractionManager:
 
         return None
 
-    def get_rotation_cursor(self, outer_rect, pos, angle):
+    def get_rotation_cursor(self, outer_rect, pos, angle, item=None):
         """Gets the appropriate rotation cursor for a given position."""
+        if getattr(item, 'lettering_transform', None):
+            handle = self._outside_handle(item.boundingRect(), pos)
+            return self.viewer.rotate_cursors.get_cursor(handle) if handle else QtGui.QCursor(QtCore.Qt.ArrowCursor)
         inner_rect = outer_rect.adjusted(self.rotate_margin_max, self.rotate_margin_max,
                                          -self.rotate_margin_max, -self.rotate_margin_max)
         handle = self._resolve_rotate_handle(inner_rect, outer_rect, pos, angle)
         return self.viewer.rotate_cursors.get_cursor(handle) if handle else QtGui.QCursor(QtCore.Qt.ArrowCursor)
 
-    def get_rotate_handle(self, outer_rect, pos, angle):
+    def get_rotate_handle(self, outer_rect, pos, angle, item=None):
         """Determines which rotation handle (e.g., 'top_left') is at a position."""
+        if getattr(item, 'lettering_transform', None):
+            return self._outside_handle(item.boundingRect(), pos)
         inner_rect = outer_rect.adjusted(self.rotate_margin_max, self.rotate_margin_max,
                                          -self.rotate_margin_max, -self.rotate_margin_max)
         return self._resolve_rotate_handle(inner_rect, outer_rect, pos, angle)
+
+    @staticmethod
+    def _outside_handle(rect, pos):
+        if pos.y() < rect.top():
+            return 'top_left' if pos.x() < rect.left() else 'top_right' if pos.x() > rect.right() else 'top'
+        if pos.y() > rect.bottom():
+            return 'bottom_left' if pos.x() < rect.left() else 'bottom_right' if pos.x() > rect.right() else 'bottom'
+        return 'left' if pos.x() < rect.left() else 'right' if pos.x() > rect.right() else None
 
     def _resolve_rotate_handle(self, inner: QRectF, outer: QRectF, pos: QPointF, angle: float) -> str | None:
         if not outer.contains(pos) or inner.contains(pos):
