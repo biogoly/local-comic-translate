@@ -28,6 +28,10 @@ SETUP = {
     "packaging/windows/start_source.ps1",
     "packaging/windows/SOURCE_SETUP.md",
     "packaging/windows/DAYU_LICENSE.txt",
+    "packaging/windows/README.md",
+    "packaging/windows/RELEASE_REVIEW.md",
+    "packaging/windows/SOURCE_REPLACEMENT.md",
+    "packaging/windows/source-archives.json",
 }
 RESOURCE_SUFFIXES = {".svg", ".png", ".gif", ".ico", ".icns", ".qss", ".json", ".qm"}
 

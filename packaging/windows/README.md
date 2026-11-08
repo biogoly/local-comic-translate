@@ -1,6 +1,6 @@
 # Windows x64 beta builds
 
-For the public beta 3 download, use the [Windows source setup guide](SOURCE_SETUP.md). Its launcher installs dependencies into a per-user runtime on first use. The versioned source ZIP can be reproduced from the tagged commit and checked against the release checksum:
+For the public beta 3 download, use the [Windows source setup guide](SOURCE_SETUP.md). Its launcher installs dependencies into a per-user runtime on first use. To reproduce the ZIP, run the following in a Git checkout of the tagged repository and compare the result with the release checksum.
 
 ```powershell
 $revision = git rev-parse 'v0.1.0b3^{commit}'

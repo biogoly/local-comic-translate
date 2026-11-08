@@ -63,15 +63,27 @@ if (-not $basePython) {
     throw 'Install Python 3.12 for Windows x64 from python.org (current-user install with the Python Launcher), or use uv python install 3.12, then rerun run.bat.'
 }
 
+function Get-RuntimeHash([string]$Path) {
+    $algorithm = [Security.Cryptography.SHA256]::Create()
+    $stream = [IO.File]::OpenRead($Path)
+    try {
+        $digest = $algorithm.ComputeHash($stream)
+        return [BitConverter]::ToString($digest).Replace('-', '').ToLowerInvariant()
+    } finally {
+        $stream.Dispose()
+        $algorithm.Dispose()
+    }
+}
+
 $lock = Join-Path $PSScriptRoot 'runtime.lock'
 if (-not (Test-Path -LiteralPath $lock -PathType Leaf)) {
     # A source checkout keeps one authoritative lock, including its build tools.
     $sourceLock=Join-Path $PSScriptRoot 'requirements.lock'
-    $lock=Join-Path $RuntimeRoot ((Get-FileHash -LiteralPath $sourceLock -Algorithm SHA256).Hash+'.lock')
+    $lock=Join-Path $RuntimeRoot ((Get-RuntimeHash $sourceLock)+'.lock')
     & $basePython (Join-Path $PSScriptRoot 'build_source_asset.py') runtime-lock $sourceLock $lock
     if ($LASTEXITCODE -ne 0) { throw 'Could not derive the runtime dependencies from the Windows lock.' }
 }
-$hash=(Get-FileHash -LiteralPath $lock -Algorithm SHA256).Hash.ToLowerInvariant()
+$hash=Get-RuntimeHash $lock
 $slot=Join-Path $RuntimeRoot ('py312-'+$hash.Substring(0,16))
 $owner=Join-Path $slot 'source-runtime.id'
 try {
