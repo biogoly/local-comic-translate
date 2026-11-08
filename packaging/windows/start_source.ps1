@@ -123,7 +123,7 @@ try {
         } else {
             & $python -m ensurepip --default-pip
             if ($LASTEXITCODE -ne 0) { throw 'The installed Python must include venv and ensurepip.' }
-            & $python -m pip --isolated --disable-pip-version-check install --index-url https://pypi.org/simple --require-hashes --no-deps -r $lock
+            & $python -m pip --isolated --disable-pip-version-check --cache-dir $env:PIP_CACHE_DIR install --index-url https://pypi.org/simple --require-hashes --no-deps -r $lock
             if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed. Check the network and disk space, then rerun run.bat.' }
             & $python -m pip --isolated --disable-pip-version-check check
         }
